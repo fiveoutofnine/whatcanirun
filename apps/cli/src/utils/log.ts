@@ -1,10 +1,10 @@
-const RESET = "\x1b[0m";
-const BOLD = "\x1b[1m";
-const DIM = "\x1b[2m";
-const GREEN = "\x1b[32m";
-const YELLOW = "\x1b[33m";
-const RED = "\x1b[31m";
-const CYAN = "\x1b[36m";
+const RESET = '\x1b[0m';
+const BOLD = '\x1b[1m';
+const DIM = '\x1b[2m';
+const GREEN = '\x1b[32m';
+const YELLOW = '\x1b[33m';
+const RED = '\x1b[31m';
+const CYAN = '\x1b[36m';
 
 export function info(msg: string) {
   console.log(`${DIM}${msg}${RESET}`);
@@ -42,6 +42,6 @@ export class LogCollector {
   }
 
   toString() {
-    return this.lines.join("\n");
+    return this.lines.join('\n');
   }
 }

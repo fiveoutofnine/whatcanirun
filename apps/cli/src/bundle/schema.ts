@@ -1,5 +1,5 @@
-import type { TrialResult } from "../metrics/collector.ts";
-import type { AggregateMetrics } from "../metrics/aggregator.ts";
+import type { AggregateMetrics } from '../metrics/aggregator.ts';
+import type { TrialResult } from '../metrics/collector.ts';
 
 export interface Manifest {
   schema_version: string;
@@ -48,15 +48,15 @@ export function validateManifest(manifest: unknown): string[] {
   const m = manifest as Record<string, unknown>;
 
   const required = [
-    "schema_version",
-    "bundle_id",
-    "created_at",
-    "task",
-    "scenario_id",
-    "harness",
-    "device",
-    "runtime",
-    "model",
+    'schema_version',
+    'bundle_id',
+    'created_at',
+    'task',
+    'scenario_id',
+    'harness',
+    'device',
+    'runtime',
+    'model',
   ];
 
   for (const field of required) {
@@ -65,11 +65,11 @@ export function validateManifest(manifest: unknown): string[] {
     }
   }
 
-  if (m.task !== "llm.generate.v1") {
+  if (m.task !== 'llm.generate.v1') {
     errors.push(`Invalid task: ${m.task}. Expected: llm.generate.v1`);
   }
 
-  const validScenarios = ["chat_short_v1", "chat_long_v1"];
+  const validScenarios = ['chat_short_v1', 'chat_long_v1'];
   if (!validScenarios.includes(m.scenario_id as string)) {
     errors.push(`Invalid scenario_id: ${m.scenario_id}`);
   }
@@ -86,20 +86,20 @@ export function validateResults(results: unknown): string[] {
     return errors;
   }
 
-  if (!r.aggregate || typeof r.aggregate !== "object") {
+  if (!r.aggregate || typeof r.aggregate !== 'object') {
     errors.push("Missing or invalid 'aggregate' object");
   }
 
   for (let i = 0; i < r.trials.length; i++) {
     const trial = r.trials[i] as Record<string, unknown>;
     const requiredFields = [
-      "input_tokens",
-      "output_tokens",
-      "ttft_ms",
-      "total_ms",
-      "decode_tps",
-      "weighted_tps",
-      "exit_status",
+      'input_tokens',
+      'output_tokens',
+      'ttft_ms',
+      'total_ms',
+      'decode_tps',
+      'weighted_tps',
+      'exit_status',
     ];
     for (const field of requiredFields) {
       if (!(field in trial)) {

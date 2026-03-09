@@ -1,0 +1,18 @@
+# Dependencies
+node_modules
+pnpm-lock.yaml
+
+# Build outputs
+dist
+build
+target
+bundles
+
+# IDE
+.cursor
+.vscode
+.idea
+
+# Misc
+*.log
+.DS_Store

@@ -1,11 +1,11 @@
-import { randomBytes } from "crypto";
+import { randomBytes } from 'crypto';
 
 export function generateBundleId(): string {
-  return randomBytes(3).toString("hex");
+  return randomBytes(3).toString('hex');
 }
 
 export function formatTimestamp(date: Date = new Date()): string {
-  return date.toISOString().replace(/[:.]/g, "-").replace("Z", "Z");
+  return date.toISOString().replace(/[:.]/g, '-').replace('Z', 'Z');
 }
 
 export function bundleFilename(timestamp: string, bundleId: string): string {

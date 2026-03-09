@@ -1,17 +1,18 @@
-import { defineCommand } from "citty";
-import { existsSync } from "fs";
-import { validateBundle } from "../bundle/validate.ts";
-import * as log from "../utils/log.ts";
+import { defineCommand } from 'citty';
+import { existsSync } from 'fs';
+
+import { validateBundle } from '../bundle/validate.ts';
+import * as log from '../utils/log.ts';
 
 export const validateCommand = defineCommand({
   meta: {
-    name: "validate",
-    description: "Validate a bundle locally",
+    name: 'validate',
+    description: 'Validate a bundle locally',
   },
   args: {
     bundle: {
-      type: "positional",
-      description: "Path to bundle zip file",
+      type: 'positional',
+      description: 'Path to bundle zip file',
       required: true,
     },
   },
@@ -27,9 +28,9 @@ export const validateCommand = defineCommand({
     const result = await validateBundle(bundlePath);
 
     if (result.valid) {
-      log.success("Bundle is valid.");
+      log.success('Bundle is valid.');
     } else {
-      log.error("Bundle validation failed:");
+      log.error('Bundle validation failed:');
       for (const err of result.errors) {
         log.error(`  ${err}`);
       }

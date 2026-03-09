@@ -1,5 +1,5 @@
-import type { RuntimeAdapter, GenerateOpts } from "../runtime/types.ts";
-import { MemoryTracker } from "./memory.ts";
+import type { GenerateOpts, RuntimeAdapter } from '../runtime/types.ts';
+import { MemoryTracker } from './memory.ts';
 
 export interface TrialResult {
   input_tokens: number;
@@ -18,7 +18,7 @@ export async function runTrial(
   adapter: RuntimeAdapter,
   opts: GenerateOpts,
   inputTokens: number,
-  memTracker: MemoryTracker,
+  memTracker: MemoryTracker
 ): Promise<TrialResult> {
   const tStart = performance.now();
   let tFirstToken: number | null = null;
@@ -36,20 +36,20 @@ export async function runTrial(
 
     for await (const event of gen) {
       switch (event.type) {
-        case "token":
+        case 'token':
           if (tFirstToken === null) {
             tFirstToken = performance.now();
           }
           tLastToken = performance.now();
           outputTokens++;
           break;
-        case "done":
+        case 'done':
           tLastToken = performance.now();
           if (event.output_tokens > 0) {
             outputTokens = event.output_tokens;
           }
           break;
-        case "error":
+        case 'error':
           exitStatus = 1;
           break;
       }
@@ -69,8 +69,7 @@ export async function runTrial(
   const totalMs = tLastToken - tStart;
   const decodeMs = tLastToken - tFirstToken;
   const decodeTps = decodeMs > 0 ? outputTokens / (decodeMs / 1000) : 0;
-  const weightedTps =
-    totalMs > 0 ? (inputTokens + outputTokens) / (totalMs / 1000) : 0;
+  const weightedTps = totalMs > 0 ? (inputTokens + outputTokens) / (totalMs / 1000) : 0;
 
   return {
     input_tokens: inputTokens,

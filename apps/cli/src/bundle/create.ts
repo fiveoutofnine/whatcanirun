@@ -1,18 +1,15 @@
-import { resolve, join } from "path";
-import { mkdirSync, existsSync } from "fs";
-import type { Manifest, Results } from "./schema.ts";
-import type { DeviceInfo } from "../device/detect.ts";
-import type { RuntimeInfo } from "../runtime/types.ts";
-import type { ModelInfo } from "../model/resolve.ts";
-import type { TrialResult } from "../metrics/collector.ts";
-import type { AggregateMetrics } from "../metrics/aggregator.ts";
-import type { ScenarioDefinition } from "../scenarios/types.ts";
-import { formatSysinfo } from "../device/detect.ts";
-import {
-  generateBundleId,
-  formatTimestamp,
-  bundleFilename,
-} from "../utils/id.ts";
+import { existsSync, mkdirSync } from 'fs';
+import { join, resolve } from 'path';
+
+import type { DeviceInfo } from '../device/detect.ts';
+import { formatSysinfo } from '../device/detect.ts';
+import type { AggregateMetrics } from '../metrics/aggregator.ts';
+import type { TrialResult } from '../metrics/collector.ts';
+import type { ModelInfo } from '../model/resolve.ts';
+import type { RuntimeInfo } from '../runtime/types.ts';
+import type { ScenarioDefinition } from '../scenarios/types.ts';
+import { bundleFilename, formatTimestamp, generateBundleId } from '../utils/id.ts';
+import type { Manifest, Results } from './schema.ts';
 
 export interface BundleOpts {
   outputDir: string;
@@ -43,14 +40,14 @@ export async function createBundle(opts: BundleOpts): Promise<string> {
   }
 
   const manifest: Manifest = {
-    schema_version: "v1",
+    schema_version: 'v1',
     bundle_id: bundleId,
     created_at: now.toISOString(),
-    task: "llm.generate.v1",
+    task: 'llm.generate.v1',
     scenario_id: opts.scenario.id,
     canonical: opts.canonical,
     harness: {
-      version: "0.1.0",
+      version: '0.1.0',
       git_sha: await getGitSha(),
     },
     device: {
@@ -87,46 +84,32 @@ export async function createBundle(opts: BundleOpts): Promise<string> {
   // Create a temporary directory for bundle contents
   const tmpDir = join(opts.outputDir, `.tmp_${bundleId}`);
   mkdirSync(tmpDir, { recursive: true });
-  mkdirSync(join(tmpDir, "logs"), { recursive: true });
+  mkdirSync(join(tmpDir, 'logs'), { recursive: true });
 
   // Write files with deterministic formatting
-  await Bun.write(
-    join(tmpDir, "manifest.json"),
-    JSON.stringify(manifest, null, 2) + "\n",
-  );
-  await Bun.write(
-    join(tmpDir, "results.json"),
-    JSON.stringify(results, null, 2) + "\n",
-  );
-  await Bun.write(join(tmpDir, "sysinfo.txt"), sysinfo + "\n");
-  await Bun.write(join(tmpDir, "logs", "harness.log"), opts.harnessLog);
-  await Bun.write(join(tmpDir, "logs", "runtime.log"), opts.runtimeLog);
+  await Bun.write(join(tmpDir, 'manifest.json'), JSON.stringify(manifest, null, 2) + '\n');
+  await Bun.write(join(tmpDir, 'results.json'), JSON.stringify(results, null, 2) + '\n');
+  await Bun.write(join(tmpDir, 'sysinfo.txt'), sysinfo + '\n');
+  await Bun.write(join(tmpDir, 'logs', 'harness.log'), opts.harnessLog);
+  await Bun.write(join(tmpDir, 'logs', 'runtime.log'), opts.runtimeLog);
 
   // Create deterministic zip using system zip command
   // -rX: recurse + no extra attributes for determinism
   const outputPath = resolve(opts.outputDir, filename);
   const zipProc = Bun.spawn(
-    [
-      "zip",
-      "-rX",
-      outputPath,
-      "manifest.json",
-      "results.json",
-      "sysinfo.txt",
-      "logs/",
-    ],
+    ['zip', '-rX', outputPath, 'manifest.json', 'results.json', 'sysinfo.txt', 'logs/'],
     {
       cwd: tmpDir,
-      stdout: "ignore",
-      stderr: "ignore",
-    },
+      stdout: 'ignore',
+      stderr: 'ignore',
+    }
   );
   await zipProc.exited;
 
   // Clean up temp dir
-  const rmProc = Bun.spawn(["rm", "-rf", tmpDir], {
-    stdout: "ignore",
-    stderr: "ignore",
+  const rmProc = Bun.spawn(['rm', '-rf', tmpDir], {
+    stdout: 'ignore',
+    stderr: 'ignore',
   });
   await rmProc.exited;
 
@@ -135,14 +118,14 @@ export async function createBundle(opts: BundleOpts): Promise<string> {
 
 async function getGitSha(): Promise<string> {
   try {
-    const proc = Bun.spawn(["git", "rev-parse", "--short", "HEAD"], {
-      stdout: "pipe",
-      stderr: "ignore",
+    const proc = Bun.spawn(['git', 'rev-parse', '--short', 'HEAD'], {
+      stdout: 'pipe',
+      stderr: 'ignore',
     });
     const sha = (await new Response(proc.stdout).text()).trim();
     await proc.exited;
-    return sha || "unknown";
+    return sha || 'unknown';
   } catch {
-    return "unknown";
+    return 'unknown';
   }
 }

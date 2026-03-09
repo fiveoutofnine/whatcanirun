@@ -9,47 +9,47 @@ export interface DeviceInfo {
 
 async function exec(cmd: string[]): Promise<string> {
   try {
-    const proc = Bun.spawn(cmd, { stdout: "pipe", stderr: "ignore" });
+    const proc = Bun.spawn(cmd, { stdout: 'pipe', stderr: 'ignore' });
     const text = await new Response(proc.stdout).text();
     await proc.exited;
     return text.trim();
   } catch {
-    return "";
+    return '';
   }
 }
 
 async function detectMacOS(): Promise<DeviceInfo> {
   const [cpu, memBytes, osVersion, hostname, gpuRaw] = await Promise.all([
-    exec(["sysctl", "-n", "machdep.cpu.brand_string"]),
-    exec(["sysctl", "-n", "hw.memsize"]),
-    exec(["sw_vers", "-productVersion"]),
-    exec(["hostname"]),
-    exec(["system_profiler", "SPDisplaysDataType", "-detailLevel", "mini"]),
+    exec(['sysctl', '-n', 'machdep.cpu.brand_string']),
+    exec(['sysctl', '-n', 'hw.memsize']),
+    exec(['sw_vers', '-productVersion']),
+    exec(['hostname']),
+    exec(['system_profiler', 'SPDisplaysDataType', '-detailLevel', 'mini']),
   ]);
 
-  let gpu = "Unknown";
+  let gpu = 'Unknown';
   const chipMatch = gpuRaw.match(/Chipset Model:\s*(.+)/);
   if (chipMatch) {
     gpu = chipMatch[1]!.trim();
   }
 
   return {
-    cpu_model: cpu || "Unknown",
+    cpu_model: cpu || 'Unknown',
     gpu_model: gpu,
-    ram_gb: Math.round(parseInt(memBytes || "0", 10) / 1024 / 1024 / 1024),
-    os_name: "macOS",
-    os_version: osVersion || "Unknown",
-    hostname: hostname || "Unknown",
+    ram_gb: Math.round(parseInt(memBytes || '0', 10) / 1024 / 1024 / 1024),
+    os_name: 'macOS',
+    os_version: osVersion || 'Unknown',
+    hostname: hostname || 'Unknown',
   };
 }
 
 async function detectLinux(): Promise<DeviceInfo> {
   const [cpuinfo, meminfo, osRelease, hostname, gpu] = await Promise.all([
-    exec(["cat", "/proc/cpuinfo"]),
-    exec(["cat", "/proc/meminfo"]),
-    exec(["cat", "/etc/os-release"]),
-    exec(["hostname"]),
-    exec(["nvidia-smi", "--query-gpu=name", "--format=csv,noheader"]),
+    exec(['cat', '/proc/cpuinfo']),
+    exec(['cat', '/proc/meminfo']),
+    exec(['cat', '/etc/os-release']),
+    exec(['hostname']),
+    exec(['nvidia-smi', '--query-gpu=name', '--format=csv,noheader']),
   ]);
 
   const cpuMatch = cpuinfo.match(/model name\s*:\s*(.+)/);
@@ -58,20 +58,20 @@ async function detectLinux(): Promise<DeviceInfo> {
   const osVersionMatch = osRelease.match(/VERSION_ID="(.+)"/);
 
   return {
-    cpu_model: cpuMatch?.[1]?.trim() || "Unknown",
-    gpu_model: gpu?.split("\n")[0]?.trim() || "None",
-    ram_gb: Math.round(parseInt(memMatch?.[1] || "0", 10) / 1024 / 1024),
-    os_name: osNameMatch?.[1] || "Linux",
-    os_version: osVersionMatch?.[1] || "Unknown",
-    hostname: hostname || "Unknown",
+    cpu_model: cpuMatch?.[1]?.trim() || 'Unknown',
+    gpu_model: gpu?.split('\n')[0]?.trim() || 'None',
+    ram_gb: Math.round(parseInt(memMatch?.[1] || '0', 10) / 1024 / 1024),
+    os_name: osNameMatch?.[1] || 'Linux',
+    os_version: osVersionMatch?.[1] || 'Unknown',
+    hostname: hostname || 'Unknown',
   };
 }
 
 export async function detectDevice(): Promise<DeviceInfo> {
-  if (process.platform === "darwin") {
+  if (process.platform === 'darwin') {
     return detectMacOS();
   }
-  if (process.platform === "linux") {
+  if (process.platform === 'linux') {
     return detectLinux();
   }
   throw new Error(`Unsupported platform: ${process.platform}`);
@@ -86,5 +86,5 @@ export function formatSysinfo(device: DeviceInfo): string {
     `os: ${device.os_name} ${device.os_version}`,
     `hostname: ${device.hostname}`,
   ];
-  return lines.join("\n");
+  return lines.join('\n');
 }

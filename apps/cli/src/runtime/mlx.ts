@@ -1,23 +1,19 @@
-import { join } from "path";
-import { tmpdir } from "os";
-import { mkdtempSync, rmSync } from "fs";
-import type {
-  RuntimeAdapter,
-  RuntimeInfo,
-  GenerateOpts,
-  TokenEvent,
-} from "./types.ts";
+import { mkdtempSync, rmSync } from 'fs';
+import { tmpdir } from 'os';
+import { join } from 'path';
+
+import type { GenerateOpts, RuntimeAdapter, RuntimeInfo, TokenEvent } from './types.ts';
 
 export class MlxAdapter implements RuntimeAdapter {
-  name = "mlx";
+  name = 'mlx';
   private pid: number | null = null;
 
   async detect(): Promise<RuntimeInfo | null> {
     try {
-      const proc = Bun.spawn(
-        ["python3", "-c", "import mlx_lm; print(mlx_lm.__version__)"],
-        { stdout: "pipe", stderr: "ignore" },
-      );
+      const proc = Bun.spawn(['python3', '-c', 'import mlx_lm; print(mlx_lm.__version__)'], {
+        stdout: 'pipe',
+        stderr: 'ignore',
+      });
       const version = (await new Response(proc.stdout).text()).trim();
       const code = await proc.exited;
       if (code !== 0 || !version) return null;
@@ -27,13 +23,11 @@ export class MlxAdapter implements RuntimeAdapter {
     }
   }
 
-  async *generate(
-    opts: GenerateOpts,
-  ): AsyncGenerator<TokenEvent, void, unknown> {
+  async *generate(opts: GenerateOpts): AsyncGenerator<TokenEvent, void, unknown> {
     // Write prompt and config to temp files to avoid shell escaping issues
-    const tmpDir = mkdtempSync(join(tmpdir(), "whatcanirun-mlx-"));
-    const configPath = join(tmpDir, "config.json");
-    const scriptPath = join(tmpDir, "run.py");
+    const tmpDir = mkdtempSync(join(tmpdir(), 'whatcanirun-mlx-'));
+    const configPath = join(tmpDir, 'config.json');
+    const scriptPath = join(tmpDir, 'run.py');
 
     const config = {
       model_path: opts.modelPath,
@@ -78,15 +72,15 @@ print(json.dumps(done_event), flush=True)
 
     await Bun.write(scriptPath, script);
 
-    const proc = Bun.spawn(["python3", scriptPath], {
-      stdout: "pipe",
-      stderr: "pipe",
+    const proc = Bun.spawn(['python3', scriptPath], {
+      stdout: 'pipe',
+      stderr: 'pipe',
     });
     this.pid = proc.pid;
 
     const decoder = new TextDecoder();
     const reader = proc.stdout.getReader();
-    let buffer = "";
+    let buffer = '';
 
     try {
       while (true) {
@@ -94,8 +88,8 @@ print(json.dumps(done_event), flush=True)
         if (done) break;
 
         buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split("\n");
-        buffer = lines.pop() || "";
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || '';
 
         for (const line of lines) {
           if (!line.trim()) continue;

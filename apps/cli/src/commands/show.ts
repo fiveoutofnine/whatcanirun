@@ -1,23 +1,24 @@
-import { defineCommand } from "citty";
-import { detectDevice } from "../device/detect.ts";
-import { resolveRuntime } from "../runtime/resolve.ts";
-import { resolveModel, inspectModel } from "../model/resolve.ts";
-import * as log from "../utils/log.ts";
+import { defineCommand } from 'citty';
+
+import { detectDevice } from '../device/detect.ts';
+import { inspectModel, resolveModel } from '../model/resolve.ts';
+import { resolveRuntime } from '../runtime/resolve.ts';
+import * as log from '../utils/log.ts';
 
 export const showCommand = defineCommand({
   meta: {
-    name: "show",
-    description: "Display detected device, runtime, or model information",
+    name: 'show',
+    description: 'Display detected device, runtime, or model information',
   },
   args: {
     target: {
-      type: "positional",
-      description: "What to show: device, runtime, or model",
+      type: 'positional',
+      description: 'What to show: device, runtime, or model',
       required: true,
     },
     value: {
-      type: "positional",
-      description: "Runtime name or model path (for runtime/model targets)",
+      type: 'positional',
+      description: 'Runtime name or model path (for runtime/model targets)',
       required: false,
     },
   },
@@ -25,15 +26,15 @@ export const showCommand = defineCommand({
     const target = args.target as string;
 
     switch (target) {
-      case "device": {
+      case 'device': {
         const device = await detectDevice();
         console.log(JSON.stringify(device, null, 2));
         break;
       }
-      case "runtime": {
+      case 'runtime': {
         const name = args.value as string | undefined;
         if (!name) {
-          log.error("Usage: whatcanirun show runtime <name>");
+          log.error('Usage: whatcanirun show runtime <name>');
           process.exit(1);
         }
         const adapter = resolveRuntime(name);
@@ -45,10 +46,10 @@ export const showCommand = defineCommand({
         console.log(JSON.stringify({ name: adapter.name, ...info }, null, 2));
         break;
       }
-      case "model": {
+      case 'model': {
         const path = args.value as string | undefined;
         if (!path) {
-          log.error("Usage: whatcanirun show model <path>");
+          log.error('Usage: whatcanirun show model <path>');
           process.exit(1);
         }
         const resolved = await resolveModel(path);

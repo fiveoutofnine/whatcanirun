@@ -1,8 +1,8 @@
 export async function getProcessRSS(pid: number): Promise<number> {
   try {
-    const proc = Bun.spawn(["ps", "-o", "rss=", "-p", String(pid)], {
-      stdout: "pipe",
-      stderr: "ignore",
+    const proc = Bun.spawn(['ps', '-o', 'rss=', '-p', String(pid)], {
+      stdout: 'pipe',
+      stderr: 'ignore',
     });
     const output = (await new Response(proc.stdout).text()).trim();
     await proc.exited;

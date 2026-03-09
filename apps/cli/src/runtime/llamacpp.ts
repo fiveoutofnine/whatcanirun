@@ -1,23 +1,19 @@
-import { join } from "path";
-import { tmpdir } from "os";
-import { mkdtempSync, rmSync } from "fs";
-import type {
-  RuntimeAdapter,
-  RuntimeInfo,
-  GenerateOpts,
-  TokenEvent,
-} from "./types.ts";
+import { mkdtempSync, rmSync } from 'fs';
+import { tmpdir } from 'os';
+import { join } from 'path';
+
+import type { GenerateOpts, RuntimeAdapter, RuntimeInfo, TokenEvent } from './types.ts';
 
 export class LlamaCppAdapter implements RuntimeAdapter {
-  name = "llama.cpp";
+  name = 'llama.cpp';
   private pid: number | null = null;
 
   async detect(): Promise<RuntimeInfo | null> {
-    for (const bin of ["llama-cli", "llama-cpp", "main"]) {
+    for (const bin of ['llama-cli', 'llama-cpp', 'main']) {
       try {
-        const proc = Bun.spawn([bin, "--version"], {
-          stdout: "pipe",
-          stderr: "pipe",
+        const proc = Bun.spawn([bin, '--version'], {
+          stdout: 'pipe',
+          stderr: 'pipe',
         });
         const stdout = (await new Response(proc.stdout).text()).trim();
         const stderr = (await new Response(proc.stderr).text()).trim();
@@ -25,14 +21,9 @@ export class LlamaCppAdapter implements RuntimeAdapter {
         if (code !== 0) continue;
 
         const output = stdout || stderr;
-        const versionMatch = output.match(
-          /version:\s*(\S+)|llama\.cpp\s+(\S+)|build:\s*(\d+)/i,
-        );
+        const versionMatch = output.match(/version:\s*(\S+)|llama\.cpp\s+(\S+)|build:\s*(\d+)/i);
         const version =
-          versionMatch?.[1] ||
-          versionMatch?.[2] ||
-          versionMatch?.[3] ||
-          output.slice(0, 50);
+          versionMatch?.[1] || versionMatch?.[2] || versionMatch?.[3] || output.slice(0, 50);
         return { version };
       } catch {
         continue;
@@ -42,42 +33,40 @@ export class LlamaCppAdapter implements RuntimeAdapter {
   }
 
   private async findBinary(): Promise<string> {
-    for (const candidate of ["llama-cli", "llama-cpp", "main"]) {
+    for (const candidate of ['llama-cli', 'llama-cpp', 'main']) {
       try {
-        const check = Bun.spawn(["which", candidate], {
-          stdout: "pipe",
-          stderr: "ignore",
+        const check = Bun.spawn(['which', candidate], {
+          stdout: 'pipe',
+          stderr: 'ignore',
         });
         const path = (await new Response(check.stdout).text()).trim();
         const code = await check.exited;
         if (code === 0 && path) return candidate;
       } catch {}
     }
-    return "llama-cli";
+    return 'llama-cli';
   }
 
-  async *generate(
-    opts: GenerateOpts,
-  ): AsyncGenerator<TokenEvent, void, unknown> {
+  async *generate(opts: GenerateOpts): AsyncGenerator<TokenEvent, void, unknown> {
     // Write prompt to temp file to handle long/complex prompts safely
-    const tmpDir = mkdtempSync(join(tmpdir(), "whatcanirun-llamacpp-"));
-    const promptPath = join(tmpDir, "prompt.txt");
+    const tmpDir = mkdtempSync(join(tmpdir(), 'whatcanirun-llamacpp-'));
+    const promptPath = join(tmpDir, 'prompt.txt');
     await Bun.write(promptPath, opts.prompt);
 
     const bin = await this.findBinary();
     const args = [
-      "-m",
+      '-m',
       opts.modelPath,
-      "-f",
+      '-f',
       promptPath,
-      "-n",
+      '-n',
       String(opts.maxTokens),
-      "--temp",
+      '--temp',
       String(opts.temperature),
-      "--top-p",
+      '--top-p',
       String(opts.topP),
-      "--log-disable",
-      "-no-display-prompt",
+      '--log-disable',
+      '-no-display-prompt',
     ];
 
     if (opts.runtimeFlags) {
@@ -85,8 +74,8 @@ export class LlamaCppAdapter implements RuntimeAdapter {
     }
 
     const proc = Bun.spawn([bin, ...args], {
-      stdout: "pipe",
-      stderr: "pipe",
+      stdout: 'pipe',
+      stderr: 'pipe',
     });
     this.pid = proc.pid;
 
@@ -104,7 +93,7 @@ export class LlamaCppAdapter implements RuntimeAdapter {
 
         tokenCount++;
         yield {
-          type: "token" as const,
+          type: 'token' as const,
           text,
           timestamp: performance.now(),
         };
@@ -116,7 +105,7 @@ export class LlamaCppAdapter implements RuntimeAdapter {
     }
 
     yield {
-      type: "done" as const,
+      type: 'done' as const,
       timestamp: performance.now(),
       output_tokens: tokenCount,
     };

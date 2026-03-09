@@ -1,25 +1,24 @@
-import { join } from "path";
-import { mkdtempSync, rmSync } from "fs";
-import { tmpdir } from "os";
-import { validateManifest, validateResults } from "./schema.ts";
+import { mkdtempSync, rmSync } from 'fs';
+import { tmpdir } from 'os';
+import { join } from 'path';
+
+import { validateManifest, validateResults } from './schema.ts';
 
 export interface ValidationResult {
   valid: boolean;
   errors: string[];
 }
 
-export async function validateBundle(
-  bundlePath: string,
-): Promise<ValidationResult> {
+export async function validateBundle(bundlePath: string): Promise<ValidationResult> {
   const errors: string[] = [];
 
   // Extract to temp directory
-  const tmpDir = mkdtempSync(join(tmpdir(), "whatcanirun-validate-"));
+  const tmpDir = mkdtempSync(join(tmpdir(), 'whatcanirun-validate-'));
 
   try {
-    const proc = Bun.spawn(["unzip", "-o", bundlePath, "-d", tmpDir], {
-      stdout: "ignore",
-      stderr: "pipe",
+    const proc = Bun.spawn(['unzip', '-o', bundlePath, '-d', tmpDir], {
+      stdout: 'ignore',
+      stderr: 'pipe',
     });
     const code = await proc.exited;
     if (code !== 0) {
@@ -30,11 +29,11 @@ export async function validateBundle(
 
     // Check required files
     const requiredFiles = [
-      "manifest.json",
-      "results.json",
-      "sysinfo.txt",
-      "logs/harness.log",
-      "logs/runtime.log",
+      'manifest.json',
+      'results.json',
+      'sysinfo.txt',
+      'logs/harness.log',
+      'logs/runtime.log',
     ];
 
     for (const file of requiredFiles) {
@@ -51,9 +50,7 @@ export async function validateBundle(
     // Validate manifest
     let manifest: unknown;
     try {
-      manifest = JSON.parse(
-        await Bun.file(join(tmpDir, "manifest.json")).text(),
-      );
+      manifest = JSON.parse(await Bun.file(join(tmpDir, 'manifest.json')).text());
     } catch (e) {
       errors.push(`Invalid manifest.json: ${e}`);
       return { valid: false, errors };
@@ -63,7 +60,7 @@ export async function validateBundle(
     // Validate results
     let results: unknown;
     try {
-      results = JSON.parse(await Bun.file(join(tmpDir, "results.json")).text());
+      results = JSON.parse(await Bun.file(join(tmpDir, 'results.json')).text());
     } catch (e) {
       errors.push(`Invalid results.json: ${e}`);
       return { valid: false, errors };
@@ -75,16 +72,14 @@ export async function validateBundle(
     const r = results as Record<string, unknown>;
     if (m.canonical === true && Array.isArray(r.trials)) {
       if (r.trials.length < 5) {
-        errors.push(
-          `Canonical run requires >= 5 trials, got ${r.trials.length}`,
-        );
+        errors.push(`Canonical run requires >= 5 trials, got ${r.trials.length}`);
       }
     }
 
     // Check artifact hash presence
     const model = m.model as Record<string, unknown> | undefined;
     if (!model?.artifact_sha256) {
-      errors.push("Missing model artifact_sha256");
+      errors.push('Missing model artifact_sha256');
     }
 
     return { valid: errors.length === 0, errors };

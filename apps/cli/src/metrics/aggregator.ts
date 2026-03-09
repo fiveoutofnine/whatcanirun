@@ -1,4 +1,4 @@
-import type { TrialResult } from "./collector.ts";
+import type { TrialResult } from './collector.ts';
 
 export interface AggregateMetrics {
   ttft_p50_ms: number;
@@ -33,10 +33,8 @@ export function computeAggregates(trials: TrialResult[]): AggregateMetrics {
   return {
     ttft_p50_ms: Math.round(percentile(ttfts, 50) * 10) / 10,
     ttft_p95_ms: Math.round(percentile(ttfts, 95) * 10) / 10,
-    decode_tps_mean:
-      Math.round(mean(passed.map((t) => t.decode_tps)) * 10) / 10,
-    weighted_tps_mean:
-      Math.round(mean(passed.map((t) => t.weighted_tps)) * 10) / 10,
+    decode_tps_mean: Math.round(mean(passed.map((t) => t.decode_tps)) * 10) / 10,
+    weighted_tps_mean: Math.round(mean(passed.map((t) => t.weighted_tps)) * 10) / 10,
     idle_rss_mb: passed.length > 0 ? passed[0]!.idle_rss_mb : 0,
     peak_rss_mb: Math.max(...trials.map((t) => t.peak_rss_mb), 0),
     trials_passed: passed.length,
