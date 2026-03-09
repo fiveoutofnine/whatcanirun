@@ -30,7 +30,7 @@ const eslintConfig = defineConfig([
     },
   },
   {
-    files: ['**/types.{ts,tsx}'],
+    files: ['**/types.{ts,tsx}', '**/schema.ts'],
     rules: {
       'no-unused-vars': 'off',
     },
