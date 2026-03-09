@@ -1,5 +1,3 @@
-import { $ } from "bun";
-
 export interface DeviceInfo {
   cpu_model: string;
   gpu_model: string;

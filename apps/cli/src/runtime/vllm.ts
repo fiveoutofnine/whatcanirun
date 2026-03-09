@@ -25,7 +25,9 @@ export class VllmAdapter implements RuntimeAdapter {
     }
   }
 
-  async *generate(opts: GenerateOpts): AsyncGenerator<TokenEvent, void, unknown> {
+  async *generate(
+    opts: GenerateOpts,
+  ): AsyncGenerator<TokenEvent, void, unknown> {
     // vLLM uses an OpenAI-compatible API
     // Assumes a vllm server is running (vllm serve <model>)
     const body = {

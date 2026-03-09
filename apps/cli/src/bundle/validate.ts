@@ -63,9 +63,7 @@ export async function validateBundle(
     // Validate results
     let results: unknown;
     try {
-      results = JSON.parse(
-        await Bun.file(join(tmpDir, "results.json")).text(),
-      );
+      results = JSON.parse(await Bun.file(join(tmpDir, "results.json")).text());
     } catch (e) {
       errors.push(`Invalid results.json: ${e}`);
       return { valid: false, errors };

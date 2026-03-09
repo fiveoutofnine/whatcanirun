@@ -1,4 +1,4 @@
-import type { RuntimeAdapter, GenerateOpts, TokenEvent } from "../runtime/types.ts";
+import type { RuntimeAdapter, GenerateOpts } from "../runtime/types.ts";
 import { MemoryTracker } from "./memory.ts";
 
 export interface TrialResult {
@@ -54,7 +54,7 @@ export async function runTrial(
           break;
       }
     }
-  } catch (err) {
+  } catch {
     exitStatus = 1;
   } finally {
     memTracker.stopTracking();

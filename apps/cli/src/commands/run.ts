@@ -83,7 +83,9 @@ export const runCommand = defineCommand({
     const scenarioId = args.scenario as string;
 
     // Validate scenario
-    if (!VALID_SCENARIOS.includes(scenarioId as (typeof VALID_SCENARIOS)[number])) {
+    if (
+      !VALID_SCENARIOS.includes(scenarioId as (typeof VALID_SCENARIOS)[number])
+    ) {
       log.error(
         `Invalid scenario '${scenarioId}'. Valid: ${VALID_SCENARIOS.join(", ")}`,
       );
@@ -95,8 +97,8 @@ export const runCommand = defineCommand({
     let modelPath: string;
     try {
       modelPath = await resolveModel(args.model as string);
-    } catch (e: any) {
-      log.error(e.message);
+    } catch (e: unknown) {
+      log.error(e instanceof Error ? e.message : String(e));
       process.exit(1);
     }
     harnessLog.append(`Model resolved: ${modelPath}`);
@@ -117,8 +119,8 @@ export const runCommand = defineCommand({
     let adapter;
     try {
       adapter = resolveRuntime(args.runtime as string);
-    } catch (e: any) {
-      log.error(e.message);
+    } catch (e: unknown) {
+      log.error(e instanceof Error ? e.message : String(e));
       process.exit(1);
     }
 
@@ -165,9 +167,16 @@ export const runCommand = defineCommand({
       for (let i = 0; i < numWarmups; i++) {
         harnessLog.append(`Warmup ${i + 1}/${numWarmups}`);
         try {
-          await runTrial(adapter, generateOpts, scenario.input_tokens, memTracker);
-        } catch (e: any) {
-          harnessLog.append(`Warmup ${i + 1} error: ${e.message}`);
+          await runTrial(
+            adapter,
+            generateOpts,
+            scenario.input_tokens,
+            memTracker,
+          );
+        } catch (e: unknown) {
+          harnessLog.append(
+            `Warmup ${i + 1} error: ${e instanceof Error ? e.message : String(e)}`,
+          );
         }
         process.stdout.write(".");
       }
@@ -190,9 +199,10 @@ export const runCommand = defineCommand({
         harnessLog.append(
           `Trial ${i + 1}: ttft=${result.ttft_ms}ms decode_tps=${result.decode_tps}`,
         );
-      } catch (e: any) {
-        harnessLog.append(`Trial ${i + 1} error: ${e.message}`);
-        runtimeLog.append(`Trial ${i + 1} error: ${e.message}`);
+      } catch (e: unknown) {
+        const msg = e instanceof Error ? e.message : String(e);
+        harnessLog.append(`Trial ${i + 1} error: ${msg}`);
+        runtimeLog.append(`Trial ${i + 1} error: ${msg}`);
         trials.push({
           input_tokens: scenario.input_tokens,
           output_tokens: 0,
@@ -266,8 +276,10 @@ export const runCommand = defineCommand({
         console.log(result.run_url);
         log.blank();
         log.label("Status", result.status);
-      } catch (e: any) {
-        log.error(`Upload failed: ${e.message}`);
+      } catch (e: unknown) {
+        log.error(
+          `Upload failed: ${e instanceof Error ? e.message : String(e)}`,
+        );
         log.info("Bundle is saved locally. You can submit later with:");
         log.info(`  whatcanirun submit ${bundlePath}`);
       }

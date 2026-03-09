@@ -59,7 +59,12 @@ export function inferFormat(modelPath: string): string {
 }
 
 async function loadModelAliases(): Promise<Record<string, string>> {
-  const configPath = resolve(homedir(), ".config", "whatcanirun", "models.toml");
+  const configPath = resolve(
+    homedir(),
+    ".config",
+    "whatcanirun",
+    "models.toml",
+  );
   if (!existsSync(configPath)) return {};
 
   try {

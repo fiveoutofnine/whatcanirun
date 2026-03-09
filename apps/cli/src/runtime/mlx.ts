@@ -27,7 +27,9 @@ export class MlxAdapter implements RuntimeAdapter {
     }
   }
 
-  async *generate(opts: GenerateOpts): AsyncGenerator<TokenEvent, void, unknown> {
+  async *generate(
+    opts: GenerateOpts,
+  ): AsyncGenerator<TokenEvent, void, unknown> {
     // Write prompt and config to temp files to avoid shell escaping issues
     const tmpDir = mkdtempSync(join(tmpdir(), "whatcanirun-mlx-"));
     const configPath = join(tmpDir, "config.json");

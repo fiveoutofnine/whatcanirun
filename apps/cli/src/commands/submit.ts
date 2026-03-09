@@ -46,8 +46,8 @@ export const submitCommand = defineCommand({
       console.log(result.run_url);
       log.blank();
       log.label("Status", result.status);
-    } catch (e: any) {
-      log.error(`Upload failed: ${e.message}`);
+    } catch (e: unknown) {
+      log.error(`Upload failed: ${e instanceof Error ? e.message : String(e)}`);
       process.exit(1);
     }
   },

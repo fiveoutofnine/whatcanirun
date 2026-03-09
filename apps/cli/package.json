@@ -11,7 +11,10 @@
     "dev": "bun run src/cli.ts",
     "build": "bun build src/cli.ts --outdir dist --target bun",
     "build:bin": "bun build src/cli.ts --compile --outfile dist/whatcanirun",
-    "test": "bun test"
+    "test": "bun test",
+    "lint": "eslint",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "citty": "^0.1.6",
@@ -19,6 +22,9 @@
   },
   "devDependencies": {
     "@types/bun": "^1.3.2",
+    "eslint": "^9",
+    "prettier": "^3",
+    "typescript-eslint": "^8",
     "typescript": "^5"
   },
   "files": [

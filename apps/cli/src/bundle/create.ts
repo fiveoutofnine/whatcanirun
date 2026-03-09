@@ -8,7 +8,11 @@ import type { TrialResult } from "../metrics/collector.ts";
 import type { AggregateMetrics } from "../metrics/aggregator.ts";
 import type { ScenarioDefinition } from "../scenarios/types.ts";
 import { formatSysinfo } from "../device/detect.ts";
-import { generateBundleId, formatTimestamp, bundleFilename } from "../utils/id.ts";
+import {
+  generateBundleId,
+  formatTimestamp,
+  bundleFilename,
+} from "../utils/id.ts";
 
 export interface BundleOpts {
   outputDir: string;
