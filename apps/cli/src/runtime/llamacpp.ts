@@ -65,8 +65,7 @@ export class LlamaCppAdapter implements RuntimeAdapter {
       String(opts.temperature),
       '--top-p',
       String(opts.topP),
-      '--log-disable',
-      '-no-display-prompt',
+      '--no-display-prompt',
     ];
 
     if (opts.runtimeFlags) {
@@ -78,6 +77,9 @@ export class LlamaCppAdapter implements RuntimeAdapter {
       stderr: 'pipe',
     });
     this.pid = proc.pid;
+
+    // Collect stderr in the background to avoid pipe buffer deadlocks
+    const stderrPromise = new Response(proc.stderr).text();
 
     const decoder = new TextDecoder();
     const reader = proc.stdout.getReader();
@@ -100,8 +102,21 @@ export class LlamaCppAdapter implements RuntimeAdapter {
       }
     } finally {
       reader.releaseLock();
-      await proc.exited;
-      rmSync(tmpDir, { recursive: true, force: true });
+    }
+
+    const [stderrText, exitCode] = await Promise.all([stderrPromise, proc.exited]);
+    rmSync(tmpDir, { recursive: true, force: true });
+
+    if (exitCode !== 0) {
+      const lines = stderrText.trim().split('\n');
+      const errorLine =
+        lines.find((l) => /error/i.test(l)) || lines.pop() || `exit code ${exitCode}`;
+      yield {
+        type: 'error' as const,
+        message: errorLine,
+        timestamp: performance.now(),
+      };
+      return;
     }
 
     yield {

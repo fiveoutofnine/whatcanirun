@@ -25,16 +25,20 @@ export async function runTrial(
   let tLastToken = tStart;
   let outputTokens = 0;
   let exitStatus = 0;
-
-  const pid = adapter.getProcessId();
-  if (pid) {
-    memTracker.startTracking(pid);
-  }
+  let trackingStarted = false;
 
   try {
     const gen = adapter.generate(opts);
 
     for await (const event of gen) {
+      if (!trackingStarted) {
+        const pid = adapter.getProcessId();
+        if (pid) {
+          memTracker.startTracking(pid);
+        }
+        trackingStarted = true;
+      }
+
       switch (event.type) {
         case 'token':
           if (tFirstToken === null) {
@@ -44,17 +48,17 @@ export async function runTrial(
           outputTokens++;
           break;
         case 'done':
-          tLastToken = performance.now();
           if (event.output_tokens > 0) {
             outputTokens = event.output_tokens;
           }
           break;
         case 'error':
-          exitStatus = 1;
+          throw new Error(event.message);
           break;
       }
     }
-  } catch {
+  } catch (e) {
+    if (e instanceof Error) throw e;
     exitStatus = 1;
   } finally {
     memTracker.stopTracking();

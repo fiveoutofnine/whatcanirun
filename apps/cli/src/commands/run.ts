@@ -60,10 +60,10 @@ export const runCommand = defineCommand({
       type: 'string',
       description: 'Optional user note',
     },
-    'no-submit': {
+    submit: {
       type: 'boolean',
-      description: 'Run benchmark but do not upload',
-      default: false,
+      description: 'Upload results after benchmark (use --no-submit to skip)',
+      default: true,
     },
     output: {
       type: 'string',
@@ -105,6 +105,16 @@ export const runCommand = defineCommand({
     if (args.format) {
       modelInfo.format = args.format as string;
     }
+
+    // Display model info
+    log.label('Model', modelInfo.display_name);
+    if (modelInfo.parameters) {
+      log.label('Parameters', modelInfo.parameters);
+    }
+    if (modelInfo.quant || args.quant) {
+      log.label('Quant', (args.quant as string) ?? modelInfo.quant!);
+    }
+    log.label('Format', modelInfo.format);
 
     // Detect device
     harnessLog.append('Detecting device...');
@@ -164,7 +174,14 @@ export const runCommand = defineCommand({
         try {
           await runTrial(adapter, generateOpts, scenario.input_tokens, memTracker);
         } catch (e: unknown) {
-          harnessLog.append(`Warmup ${i + 1} error: ${e instanceof Error ? e.message : String(e)}`);
+          const msg = e instanceof Error ? e.message : String(e);
+          harnessLog.append(`Warmup ${i + 1} error: ${msg}`);
+          console.log();
+          log.error(`Warmup failed: ${msg}`);
+          if (i === 0) {
+            log.error('First warmup failed — aborting benchmark.');
+            process.exit(1);
+          }
         }
         process.stdout.write('.');
       }
@@ -186,6 +203,12 @@ export const runCommand = defineCommand({
         const msg = e instanceof Error ? e.message : String(e);
         harnessLog.append(`Trial ${i + 1} error: ${msg}`);
         runtimeLog.append(`Trial ${i + 1} error: ${msg}`);
+        console.log();
+        log.error(`Trial ${i + 1} failed: ${msg}`);
+        if (i === 0) {
+          log.error('First trial failed — aborting benchmark.');
+          process.exit(1);
+        }
         trials.push({
           input_tokens: scenario.input_tokens,
           output_tokens: 0,
@@ -214,40 +237,40 @@ export const runCommand = defineCommand({
     log.label('Peak RAM', `${aggregate.peak_rss_mb / 1024} GB`);
     log.blank();
 
-    // Create bundle
-    const bundlePath = await createBundle({
-      outputDir: args.output as string,
-      device,
-      runtimeName: adapter.name,
-      runtimeInfo,
-      model: modelInfo,
-      scenario,
-      trials,
-      aggregate,
-      canonical,
-      harnessLog: harnessLog.toString(),
-      runtimeLog: runtimeLog.toString(),
-      quant: (args.quant as string | undefined) ?? modelInfo.quant,
-      notes: args.notes as string | undefined,
-      nonce: args.nonce as string | undefined,
-      runtimeFlags: args['runtime-flags'] as string | undefined,
-    });
+    // Create bundle and upload
+    if (args.submit) {
+      const bundlePath = await createBundle({
+        outputDir: args.output as string,
+        device,
+        runtimeName: adapter.name,
+        runtimeInfo,
+        model: modelInfo,
+        scenario,
+        trials,
+        aggregate,
+        canonical,
+        harnessLog: harnessLog.toString(),
+        runtimeLog: runtimeLog.toString(),
+        quant: (args.quant as string | undefined) ?? modelInfo.quant,
+        notes: args.notes as string | undefined,
+        nonce: args.nonce as string | undefined,
+        runtimeFlags: args['runtime-flags'] as string | undefined,
+      });
 
-    log.header('Bundle created:');
-    console.log(bundlePath);
-    log.blank();
+      log.header('Bundle created:');
+      console.log(bundlePath);
+      log.blank();
 
-    // Validate bundle
-    const validation = await validateBundle(bundlePath);
-    if (!validation.valid) {
-      log.warn('Bundle validation issues:');
-      for (const err of validation.errors) {
-        log.warn(`  ${err}`);
+      // Validate bundle
+      const validation = await validateBundle(bundlePath);
+      if (!validation.valid) {
+        log.warn('Bundle validation issues:');
+        for (const err of validation.errors) {
+          log.warn(`  ${err}`);
+        }
       }
-    }
 
-    // Upload
-    if (!args['no-submit']) {
+      // Upload
       log.info('Uploading...');
       log.blank();
       try {
