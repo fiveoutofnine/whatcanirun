@@ -1,50 +1,12 @@
-import type { AggregateMetrics } from '../metrics/aggregator.ts';
-import type { TrialResult } from '../metrics/collector.ts';
-
-export interface Manifest {
-  schema_version: string;
-  bundle_id: string;
-  created_at: string;
-  task: string;
-  scenario_id: string;
-  canonical: boolean;
-  harness: {
-    version: string;
-    git_sha: string;
-  };
-  device: {
-    cpu: string;
-    gpu: string;
-    ram_gb: number;
-    os_name: string;
-    os_version: string;
-  };
-  runtime: {
-    name: string;
-    version: string;
-    build_flags?: string;
-  };
-  model: {
-    display_name: string;
-    format: string;
-    artifact_sha256: string;
-    tokenizer_sha256?: string;
-    source?: string;
-    file_size_bytes?: number;
-    parameters?: string;
-    quant?: string;
-    architecture?: string;
-  };
-  quant: {
-    name: string | null;
-  };
-  notes?: string;
-  nonce?: string;
-}
-
-export interface Results {
-  trials: TrialResult[];
-  aggregate: AggregateMetrics;
+export interface AggregateMetrics {
+  ttft_p50_ms: number;
+  ttft_p95_ms: number;
+  decode_tps_mean: number;
+  weighted_tps_mean: number;
+  idle_rss_mb: number;
+  peak_rss_mb: number;
+  trials_passed: number;
+  trials_total: number;
 }
 
 export function validateManifest(manifest: unknown): string[] {
@@ -110,6 +72,30 @@ export function validateResults(results: unknown): string[] {
         errors.push(`Trial ${i}: missing field '${field}'`);
       }
     }
+  }
+
+  return errors;
+}
+
+export function validatePlausibility(aggregate: AggregateMetrics): string[] {
+  const errors: string[] = [];
+
+  if (aggregate.decode_tps_mean <= 0 || aggregate.decode_tps_mean >= 10000) {
+    errors.push(
+      `decode_tps_mean out of range: ${aggregate.decode_tps_mean} (expected 0 < x < 10000)`,
+    );
+  }
+
+  if (aggregate.ttft_p50_ms <= 0) {
+    errors.push(`ttft_p50_ms must be positive: ${aggregate.ttft_p50_ms}`);
+  }
+
+  if (aggregate.trials_passed < 1) {
+    errors.push(`trials_passed must be >= 1: ${aggregate.trials_passed}`);
+  }
+
+  if (aggregate.trials_total > 20) {
+    errors.push(`trials_total must be <= 20: ${aggregate.trials_total}`);
   }
 
   return errors;

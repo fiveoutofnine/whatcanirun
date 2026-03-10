@@ -12,6 +12,7 @@
     "@neondatabase/serverless": "^1.0.2",
     "better-auth": "^1.5.4",
     "drizzle-orm": "^0.45.1",
+    "fflate": "^0.8.2",
     "next": "16.1.6",
     "react": "19.2.3",
     "react-dom": "19.2.3"

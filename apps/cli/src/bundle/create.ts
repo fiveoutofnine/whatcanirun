@@ -66,6 +66,10 @@ export async function createBundle(opts: BundleOpts): Promise<string> {
       display_name: opts.model.display_name,
       format: opts.model.format,
       artifact_sha256: opts.model.artifact_sha256,
+      file_size_bytes: opts.model.file_size_bytes,
+      parameters: opts.model.parameters,
+      quant: opts.model.quant ?? undefined,
+      architecture: opts.model.architecture,
     },
     quant: {
       name: opts.quant ?? opts.model.quant,

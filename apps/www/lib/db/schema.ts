@@ -1,4 +1,16 @@
-import { boolean, pgEnum, pgTable, text, timestamp } from 'drizzle-orm/pg-core';
+import { relations } from 'drizzle-orm';
+import {
+  boolean,
+  index,
+  integer,
+  jsonb,
+  pgEnum,
+  pgTable,
+  real,
+  text,
+  timestamp,
+  uniqueIndex,
+} from 'drizzle-orm/pg-core';
 
 import { enumToPgEnum } from '@/lib/utils';
 
@@ -14,12 +26,30 @@ export enum UserRole {
 
 export const userRoleEnum = pgEnum('role', enumToPgEnum(UserRole));
 
+export enum RunStatus {
+  PENDING = 'pending',
+  VERIFIED = 'verified',
+  FLAGGED = 'flagged',
+  REJECTED = 'rejected',
+}
+
+export const runStatusEnum = pgEnum('run_status', enumToPgEnum(RunStatus));
+
+export enum ScenarioId {
+  CHAT_SHORT_V1 = 'chat_short_v1',
+  CHAT_LONG_V1 = 'chat_long_v1',
+}
+
+export const scenarioIdEnum = pgEnum('scenario_id', enumToPgEnum(ScenarioId));
+
 // -----------------------------------------------------------------------------
 // Auth
 // -----------------------------------------------------------------------------
 
 export const users = pgTable('users', {
-  id: text('id').primaryKey(),
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => `user_${crypto.randomUUID()}`),
   name: text('name').notNull(),
   role: userRoleEnum('role').notNull().default(UserRole.USER),
   email: text('email').notNull().unique(),
@@ -70,11 +100,139 @@ export const verifications = pgTable('verifications', {
 });
 
 // -----------------------------------------------------------------------------
+// Devices
+// -----------------------------------------------------------------------------
+
+export const devices = pgTable(
+  'devices',
+  {
+    id: text('id')
+      .primaryKey()
+      .$defaultFn(() => `dev_${crypto.randomUUID()}`),
+    cpu: text('cpu').notNull(),
+    gpu: text('gpu').notNull(),
+    ramGb: integer('ram_gb').notNull(),
+    osName: text('os_name').notNull(),
+    osVersion: text('os_version').notNull(),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex('devices_dedup_idx').on(t.cpu, t.gpu, t.ramGb, t.osName, t.osVersion)],
+);
+
+// -----------------------------------------------------------------------------
+// Models
+// -----------------------------------------------------------------------------
+
+export const models = pgTable('models', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => `mod_${crypto.randomUUID()}`),
+  displayName: text('display_name').notNull(),
+  format: text('format').notNull(),
+  artifactSha256: text('artifact_sha256').notNull().unique(),
+  tokenizerSha256: text('tokenizer_sha256'),
+  source: text('source'),
+  fileSizeBytes: integer('file_size_bytes'),
+  parameters: text('parameters'),
+  quant: text('quant'),
+  architecture: text('architecture'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+});
+
+// -----------------------------------------------------------------------------
+// Nonces
+// -----------------------------------------------------------------------------
+
+export const nonces = pgTable('nonces', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => `nonce_${crypto.randomUUID()}`),
+  expiresAt: timestamp('expires_at').notNull(),
+  consumedAt: timestamp('consumed_at'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+});
+
+// -----------------------------------------------------------------------------
+// Runs
+// -----------------------------------------------------------------------------
+
+export const runs = pgTable(
+  'runs',
+  {
+    id: text('id')
+      .primaryKey()
+      .$defaultFn(() => `run_${crypto.randomUUID()}`),
+    userId: text('user_id').references(() => users.id),
+    deviceId: text('device_id')
+      .notNull()
+      .references(() => devices.id),
+    modelId: text('model_id')
+      .notNull()
+      .references(() => models.id),
+    bundleId: text('bundle_id').notNull().unique(),
+    scenarioId: scenarioIdEnum('scenario_id').notNull(),
+    schemaVersion: text('schema_version').notNull(),
+    status: runStatusEnum('status').notNull().default(RunStatus.VERIFIED),
+    task: text('task').notNull(),
+    canonical: boolean('canonical').notNull(),
+    notes: text('notes'),
+    nonceVerified: boolean('nonce_verified').notNull().default(false),
+    runtimeName: text('runtime_name').notNull(),
+    runtimeVersion: text('runtime_version').notNull(),
+    runtimeBuildFlags: text('runtime_build_flags'),
+    harnessVersion: text('harness_version').notNull(),
+    harnessGitSha: text('harness_git_sha').notNull(),
+    contextLength: integer('context_length'),
+    promptTokens: integer('prompt_tokens'),
+    completionTokens: integer('completion_tokens'),
+    ipHash: text('ip_hash'),
+    ttftP50Ms: real('ttft_p50_ms').notNull(),
+    ttftP95Ms: real('ttft_p95_ms').notNull(),
+    decodeTpsMean: real('decode_tps_mean').notNull(),
+    weightedTpsMean: real('weighted_tps_mean').notNull(),
+    idleRssMb: real('idle_rss_mb').notNull(),
+    peakRssMb: real('peak_rss_mb').notNull(),
+    trialsPassed: integer('trials_passed').notNull(),
+    trialsTotal: integer('trials_total').notNull(),
+    trials: jsonb('trials').notNull(),
+    bundleUrl: text('bundle_url'),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+    updatedAt: timestamp('updated_at')
+      .notNull()
+      .defaultNow()
+      .$onUpdate(() => new Date()),
+  },
+  (t) => [
+    index('runs_leaderboard_idx').on(t.modelId, t.scenarioId, t.status, t.decodeTpsMean),
+    index('runs_device_idx').on(t.deviceId, t.scenarioId),
+    index('runs_user_idx').on(t.userId),
+  ],
+);
+
+// -----------------------------------------------------------------------------
 // Relations
 // -----------------------------------------------------------------------------
+
+export const devicesRelations = relations(devices, ({ many }) => ({
+  runs: many(runs),
+}));
+
+export const modelsRelations = relations(models, ({ many }) => ({
+  runs: many(runs),
+}));
+
+export const runsRelations = relations(runs, ({ one }) => ({
+  device: one(devices, { fields: [runs.deviceId], references: [devices.id] }),
+  model: one(models, { fields: [runs.modelId], references: [models.id] }),
+  user: one(users, { fields: [runs.userId], references: [users.id] }),
+}));
 
 // -----------------------------------------------------------------------------
 // Types
 // -----------------------------------------------------------------------------
 
 export type User = typeof users.$inferSelect;
+export type Device = typeof devices.$inferSelect;
+export type Model = typeof models.$inferSelect;
+export type Nonce = typeof nonces.$inferSelect;
+export type Run = typeof runs.$inferSelect;

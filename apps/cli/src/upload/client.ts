@@ -1,21 +1,45 @@
+import { readFileSync } from 'node:fs';
+
 export interface UploadResult {
   run_id: string;
   status: string;
   run_url: string;
 }
 
+const API_BASE = process.env.WCIR_API_URL || 'https://whatcani.run';
+
+async function fetchNonce(): Promise<string> {
+  const res = await fetch(`${API_BASE}/api/v0/nonce`);
+  if (!res.ok) {
+    throw new Error(`Failed to fetch nonce: ${res.status} ${res.statusText}`);
+  }
+  const data = (await res.json()) as { nonce: string };
+  return data.nonce;
+}
+
 export async function uploadBundle(bundlePath: string): Promise<UploadResult> {
-  // TODO: Implement real upload when backend is ready
-  // POST /api/v0/runs with multipart/form-data containing the bundle zip
+  // 1. Fetch a fresh nonce
+  const nonce = await fetchNonce();
 
-  const bundleId = bundlePath.split('/').pop()?.replace('.zip', '').split('_').pop();
+  // 2. Read the bundle zip
+  const zipBytes = readFileSync(bundlePath);
+  const blob = new Blob([zipBytes], { type: 'application/zip' });
 
-  console.log('[stub] Upload endpoint not yet configured.');
-  console.log(`[stub] Bundle would be uploaded: ${bundlePath}`);
+  // 3. Build multipart form
+  const form = new FormData();
+  form.append('bundle', blob, bundlePath.split('/').pop() || 'bundle.zip');
+  form.append('nonce', nonce);
 
-  return {
-    run_id: `r_${bundleId}`,
-    status: 'Community',
-    run_url: `https://whatcani.run/runs/r_${bundleId}`,
-  };
+  // 4. Submit
+  const res = await fetch(`${API_BASE}/api/v0/runs`, {
+    method: 'POST',
+    body: form,
+  });
+
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(`Upload failed (${res.status}): ${body}`);
+  }
+
+  return (await res.json()) as UploadResult;
 }

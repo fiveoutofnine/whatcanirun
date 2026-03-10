@@ -9,6 +9,9 @@ export interface ModelInfo {
   format: string;
   quant: string | null;
   artifact_sha256: string;
+  file_size_bytes?: number;
+  parameters?: string;
+  architecture?: string;
 }
 
 const QUANT_PATTERNS = [
@@ -109,15 +112,34 @@ export async function inspectModel(modelPath: string): Promise<ModelInfo> {
   const quant = inferQuant(name);
 
   let sha256 = '';
+  let fileSizeBytes: number | undefined;
+  let parameters: string | undefined;
+  let architecture: string | undefined;
+
   try {
     const stat = statSync(modelPath);
     if (stat.isFile()) {
       sha256 = await computeSha256(modelPath);
+      fileSizeBytes = stat.size;
     } else {
       // For directories, hash the config file if it exists
       const configPath = resolve(modelPath, 'config.json');
       if (existsSync(configPath)) {
         sha256 = await computeSha256(configPath);
+      }
+    }
+  } catch {}
+
+  // Try to read architecture and parameters from config.json
+  try {
+    const configPath = statSync(modelPath).isDirectory()
+      ? resolve(modelPath, 'config.json')
+      : resolve(modelPath, '..', 'config.json');
+    if (existsSync(configPath)) {
+      const config = JSON.parse(readFileSync(configPath, 'utf-8'));
+      architecture = config.model_type || config.architectures?.[0];
+      if (config.num_parameters) {
+        parameters = formatParamCount(config.num_parameters);
       }
     }
   } catch {}
@@ -128,5 +150,14 @@ export async function inspectModel(modelPath: string): Promise<ModelInfo> {
     format,
     quant,
     artifact_sha256: sha256,
+    file_size_bytes: fileSizeBytes,
+    parameters,
+    architecture,
   };
+}
+
+function formatParamCount(n: number): string {
+  if (n >= 1e9) return `${(n / 1e9).toFixed(1)}B`;
+  if (n >= 1e6) return `${(n / 1e6).toFixed(0)}M`;
+  return `${n}`;
 }
