@@ -5,6 +5,11 @@ import tseslint from 'typescript-eslint';
 const eslintConfig = defineConfig([
   ...tseslint.configs.recommended,
   {
+    languageOptions: {
+      parserOptions: {
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
     plugins: {
       prettier,
     },
