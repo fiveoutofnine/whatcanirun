@@ -1,5 +1,5 @@
-import type { AggregateMetrics } from '../metrics/aggregator.ts';
-import type { TrialResult } from '../metrics/collector.ts';
+import type { AggregateMetrics } from '../metrics/aggregator';
+import type { TrialResult } from '../metrics/collector';
 
 export interface Manifest {
   schema_version: string;

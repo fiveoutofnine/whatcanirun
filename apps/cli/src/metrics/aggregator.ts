@@ -1,4 +1,8 @@
-import type { TrialResult } from './collector.ts';
+import type { TrialResult } from './collector';
+
+// -----------------------------------------------------------------------------
+// Types
+// -----------------------------------------------------------------------------
 
 export interface AggregateMetrics {
   ttft_p50_ms: number;
@@ -11,20 +15,9 @@ export interface AggregateMetrics {
   trials_total: number;
 }
 
-function percentile(sorted: number[], p: number): number {
-  if (sorted.length === 0) return 0;
-  const index = (p / 100) * (sorted.length - 1);
-  const lower = Math.floor(index);
-  const upper = Math.ceil(index);
-  if (lower === upper) return sorted[lower]!;
-  const weight = index - lower;
-  return sorted[lower]! * (1 - weight) + sorted[upper]! * weight;
-}
-
-function mean(values: number[]): number {
-  if (values.length === 0) return 0;
-  return values.reduce((a, b) => a + b, 0) / values.length;
-}
+// -----------------------------------------------------------------------------
+// Function
+// -----------------------------------------------------------------------------
 
 export function computeAggregates(trials: TrialResult[]): AggregateMetrics {
   const passed = trials.filter((t) => t.exit_status === 0);
@@ -40,4 +33,25 @@ export function computeAggregates(trials: TrialResult[]): AggregateMetrics {
     trials_passed: passed.length,
     trials_total: trials.length,
   };
+}
+
+// -----------------------------------------------------------------------------
+// Helpers
+// -----------------------------------------------------------------------------
+
+function percentile(sorted: number[], p: number): number {
+  if (sorted.length === 0) return 0;
+  const index = (p / 100) * (sorted.length - 1);
+  const lower = Math.floor(index);
+  const upper = Math.ceil(index);
+  if (lower === upper) return sorted[lower]!;
+  const weight = index - lower;
+
+  return sorted[lower]! * (1 - weight) + sorted[upper]! * weight;
+}
+
+function mean(values: number[]): number {
+  if (values.length === 0) return 0;
+
+  return values.reduce((a, b) => a + b, 0) / values.length;
 }

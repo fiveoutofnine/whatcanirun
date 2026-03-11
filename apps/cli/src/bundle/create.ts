@@ -1,15 +1,15 @@
 import { existsSync, mkdirSync } from 'fs';
 import { join, resolve } from 'path';
 
-import type { DeviceInfo } from '../device/detect.ts';
-import { formatSysinfo } from '../device/detect.ts';
-import type { AggregateMetrics } from '../metrics/aggregator.ts';
-import type { TrialResult } from '../metrics/collector.ts';
-import type { ModelInfo } from '../model/resolve.ts';
-import type { RuntimeInfo } from '../runtime/types.ts';
-import type { ScenarioDefinition } from '../scenarios/types.ts';
-import { bundleFilename, formatTimestamp, generateBundleId } from '../utils/id.ts';
-import type { Manifest, Results } from './schema.ts';
+import type { DeviceInfo } from '../device/detect';
+import { formatSysinfo } from '../device/detect';
+import type { AggregateMetrics } from '../metrics/aggregator';
+import type { TrialResult } from '../metrics/collector';
+import type { ModelInfo } from '../model/resolve';
+import type { RuntimeInfo } from '../runtime/types';
+import type { ScenarioDefinition } from '../scenarios/types';
+import { bundleFilename, formatTimestamp, generateBundleId } from '../utils/id';
+import type { Manifest, Results } from './schema';
 
 export interface BundleOpts {
   outputDir: string;

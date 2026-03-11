@@ -1,9 +1,9 @@
 import { defineCommand } from 'citty';
 
-import { detectDevice } from '../device/detect.ts';
-import { inspectModel, resolveModel } from '../model/resolve.ts';
-import { resolveRuntime } from '../runtime/resolve.ts';
-import * as log from '../utils/log.ts';
+import { detectDevice } from '../device/detect';
+import { inspectModel, resolveModel } from '../model/resolve';
+import { resolveRuntime } from '../runtime/resolve';
+import * as log from '../utils/log';
 
 const command = defineCommand({
   meta: {

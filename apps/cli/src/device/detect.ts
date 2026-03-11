@@ -1,3 +1,7 @@
+// -----------------------------------------------------------------------------
+// Types
+// -----------------------------------------------------------------------------
+
 export interface DeviceInfo {
   cpu_model: string;
   gpu_model: string;
@@ -6,6 +10,32 @@ export interface DeviceInfo {
   os_version: string;
   hostname: string;
 }
+
+// -----------------------------------------------------------------------------
+// Functions
+// -----------------------------------------------------------------------------
+
+export function formatSysinfo(device: DeviceInfo): string {
+  const lines = [
+    `uname: ${process.platform} ${process.arch}`,
+    `cpu: ${device.cpu_model}`,
+    `gpu: ${device.gpu_model}`,
+    `ram: ${device.ram_gb} GB`,
+    `os: ${device.os_name} ${device.os_version}`,
+    `hostname: ${device.hostname}`,
+  ];
+  return lines.join('\n');
+}
+
+export async function detectDevice(): Promise<DeviceInfo> {
+  if (process.platform === 'darwin') return detectMacOS();
+  if (process.platform === 'linux') return detectLinux();
+  throw new Error(`Unsupported platform: ${process.platform}`);
+}
+
+// -----------------------------------------------------------------------------
+// Helpers
+// -----------------------------------------------------------------------------
 
 async function exec(cmd: string[]): Promise<string> {
   try {
@@ -65,26 +95,4 @@ async function detectLinux(): Promise<DeviceInfo> {
     os_version: osVersionMatch?.[1] || 'Unknown',
     hostname: hostname || 'Unknown',
   };
-}
-
-export async function detectDevice(): Promise<DeviceInfo> {
-  if (process.platform === 'darwin') {
-    return detectMacOS();
-  }
-  if (process.platform === 'linux') {
-    return detectLinux();
-  }
-  throw new Error(`Unsupported platform: ${process.platform}`);
-}
-
-export function formatSysinfo(device: DeviceInfo): string {
-  const lines = [
-    `uname: ${process.platform} ${process.arch}`,
-    `cpu: ${device.cpu_model}`,
-    `gpu: ${device.gpu_model}`,
-    `ram: ${device.ram_gb} GB`,
-    `os: ${device.os_name} ${device.os_version}`,
-    `hostname: ${device.hostname}`,
-  ];
-  return lines.join('\n');
 }

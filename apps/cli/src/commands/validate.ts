@@ -1,8 +1,8 @@
 import { defineCommand } from 'citty';
 import { existsSync } from 'fs';
 
-import { validateBundle } from '../bundle/validate.ts';
-import * as log from '../utils/log.ts';
+import { validateBundle } from '../bundle/validate';
+import * as log from '../utils/log';
 
 const command = defineCommand({
   meta: {

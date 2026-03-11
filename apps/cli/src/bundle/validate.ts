@@ -2,7 +2,7 @@ import { mkdtempSync, rmSync } from 'fs';
 import { tmpdir } from 'os';
 import { join } from 'path';
 
-import { validateManifest, validateResults } from './schema.ts';
+import { validateManifest, validateResults } from './schema';
 
 export interface ValidationResult {
   valid: boolean;

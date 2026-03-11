@@ -1,17 +1,17 @@
 import { defineCommand } from 'citty';
 
-import { createBundle } from '../bundle/create.ts';
-import { validateBundle } from '../bundle/validate.ts';
-import { detectDevice } from '../device/detect.ts';
-import { computeAggregates } from '../metrics/aggregator.ts';
-import { runTrial, type TrialProgress } from '../metrics/collector.ts';
-import { MemoryTracker } from '../metrics/memory.ts';
-import { inspectModel, resolveModel } from '../model/resolve.ts';
-import { resolveRuntime } from '../runtime/resolve.ts';
-import { getScenario, VALID_SCENARIOS } from '../scenarios/registry.ts';
-import { uploadBundle } from '../upload/client.ts';
-import { LogCollector } from '../utils/log.ts';
-import * as log from '../utils/log.ts';
+import { createBundle } from '../bundle/create';
+import { validateBundle } from '../bundle/validate';
+import { detectDevice } from '../device/detect';
+import { computeAggregates } from '../metrics/aggregator';
+import { runTrial, type TrialProgress } from '../metrics/collector';
+import { MemoryTracker } from '../metrics/memory';
+import { inspectModel, resolveModel } from '../model/resolve';
+import { resolveRuntime } from '../runtime/resolve';
+import { getScenario, VALID_SCENARIOS } from '../scenarios/registry';
+import { uploadBundle } from '../upload/client';
+import { LogCollector } from '../utils/log';
+import * as log from '../utils/log';
 
 const command = defineCommand({
   meta: {

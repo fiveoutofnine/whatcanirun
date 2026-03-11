@@ -1,5 +1,5 @@
-import type { GenerateOpts, RuntimeAdapter } from '../runtime/types.ts';
-import { MemoryTracker } from './memory.ts';
+import type { GenerateOpts, RuntimeAdapter } from '../runtime/types';
+import { MemoryTracker } from './memory';
 
 export interface TrialResult {
   input_tokens: number;
