@@ -229,6 +229,9 @@ Temporary Items
 # Task runner cache
 .task/
 
+# Python virtual environments
+.venvs/
+
 # Editor/IDE configs
 .claude
 .vscode
