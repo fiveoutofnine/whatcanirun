@@ -5,7 +5,7 @@ import { validateBundle } from '../bundle/validate.ts';
 import { uploadBundle } from '../upload/client.ts';
 import * as log from '../utils/log.ts';
 
-export const submitCommand = defineCommand({
+const command = defineCommand({
   meta: {
     name: 'submit',
     description: 'Upload an existing bundle',
@@ -53,3 +53,5 @@ export const submitCommand = defineCommand({
     }
   },
 });
+
+export default command;

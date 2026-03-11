@@ -5,7 +5,7 @@ import { inspectModel, resolveModel } from '../model/resolve.ts';
 import { resolveRuntime } from '../runtime/resolve.ts';
 import * as log from '../utils/log.ts';
 
-export const showCommand = defineCommand({
+const command = defineCommand({
   meta: {
     name: 'show',
     description: 'Display detected device, runtime, or model information',
@@ -63,3 +63,5 @@ export const showCommand = defineCommand({
     }
   },
 });
+
+export default command;

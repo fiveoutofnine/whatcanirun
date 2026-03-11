@@ -1,6 +1,6 @@
 import { defineCommand } from 'citty';
 
-export const versionCommand = defineCommand({
+const command = defineCommand({
   meta: {
     name: 'version',
     description: 'Print version information',
@@ -10,3 +10,5 @@ export const versionCommand = defineCommand({
     console.log('harness schema v1');
   },
 });
+
+export default command;

@@ -13,7 +13,7 @@ import { uploadBundle } from '../upload/client.ts';
 import { LogCollector } from '../utils/log.ts';
 import * as log from '../utils/log.ts';
 
-export const runCommand = defineCommand({
+const command = defineCommand({
   meta: {
     name: 'run',
     description: 'Run a benchmark and optionally submit results',
@@ -333,3 +333,5 @@ export const runCommand = defineCommand({
     }
   },
 });
+
+export default command;

@@ -4,7 +4,7 @@ import { existsSync } from 'fs';
 import { validateBundle } from '../bundle/validate.ts';
 import * as log from '../utils/log.ts';
 
-export const validateCommand = defineCommand({
+const command = defineCommand({
   meta: {
     name: 'validate',
     description: 'Validate a bundle locally',
@@ -38,3 +38,5 @@ export const validateCommand = defineCommand({
     }
   },
 });
+
+export default command;
