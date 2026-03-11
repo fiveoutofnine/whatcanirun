@@ -163,6 +163,7 @@ export const runCommand = defineCommand({
       modelPath,
       prompt: scenario.prompt,
       maxTokens: scenario.output_tokens,
+      inputTokens: scenario.input_tokens,
       temperature: scenario.temperature,
       topP: scenario.top_p,
       runtimeFlags: args['runtime-flags'] as string | undefined,

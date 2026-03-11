@@ -13,6 +13,7 @@ export interface GenerateOpts {
   modelPath: string;
   prompt: string;
   maxTokens: number;
+  inputTokens: number;
   temperature: number;
   topP: number;
   runtimeFlags?: string;

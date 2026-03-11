@@ -55,6 +55,9 @@ export class LlamaCppAdapter implements RuntimeAdapter {
     await Bun.write(promptPath, opts.prompt);
 
     const bin = await this.findBinary();
+    // Context size: input + output + headroom to avoid reallocation
+    const ctxSize = opts.inputTokens + opts.maxTokens + 256;
+
     const args = [
       '-m',
       opts.modelPath,
@@ -62,6 +65,8 @@ export class LlamaCppAdapter implements RuntimeAdapter {
       promptPath,
       '-n',
       String(opts.maxTokens),
+      '-c',
+      String(ctxSize),
       '--temp',
       String(opts.temperature),
       '--top-p',
