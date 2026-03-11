@@ -14,11 +14,20 @@ export interface TrialResult {
   exit_status: number;
 }
 
+export interface TrialProgress {
+  output_tokens: number;
+  ttft_ms: number | null;
+  decode_tps: number;
+  elapsed_ms: number;
+}
+
 export async function runTrial(
   adapter: RuntimeAdapter,
   opts: GenerateOpts,
   inputTokens: number,
-  memTracker: MemoryTracker
+  memTracker: MemoryTracker,
+  onProgress?: (progress: TrialProgress) => void,
+  onStatus?: (message: string) => void
 ): Promise<TrialResult> {
   const tStart = performance.now();
   let tFirstToken: number | null = null;
@@ -46,11 +55,25 @@ export async function runTrial(
           }
           tLastToken = performance.now();
           outputTokens++;
+          if (onProgress) {
+            const now = performance.now();
+            const decodeMs = tFirstToken ? now - tFirstToken : 0;
+            onProgress({
+              output_tokens: outputTokens,
+              ttft_ms: tFirstToken ? Math.round((tFirstToken - tStart) * 100) / 100 : null,
+              decode_tps:
+                decodeMs > 0 ? Math.round((outputTokens / (decodeMs / 1000)) * 10) / 10 : 0,
+              elapsed_ms: Math.round(now - tStart),
+            });
+          }
           break;
         case 'done':
           if (event.output_tokens > 0) {
             outputTokens = event.output_tokens;
           }
+          break;
+        case 'status':
+          if (onStatus) onStatus(event.message);
           break;
         case 'error':
           throw new Error(event.message);

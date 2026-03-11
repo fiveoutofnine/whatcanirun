@@ -4,7 +4,7 @@ import { createBundle } from '../bundle/create.ts';
 import { validateBundle } from '../bundle/validate.ts';
 import { detectDevice } from '../device/detect.ts';
 import { computeAggregates } from '../metrics/aggregator.ts';
-import { runTrial } from '../metrics/collector.ts';
+import { runTrial, type TrialProgress } from '../metrics/collector.ts';
 import { MemoryTracker } from '../metrics/memory.ts';
 import { inspectModel, resolveModel } from '../model/resolve.ts';
 import { resolveRuntime } from '../runtime/resolve.ts';
@@ -33,14 +33,6 @@ export const runCommand = defineCommand({
       type: 'string',
       description: 'Benchmark scenario (chat_short_v1, chat_long_v1)',
       default: 'chat_short_v1',
-    },
-    quant: {
-      type: 'string',
-      description: 'Quantization label (e.g. q4_k_m, fp16)',
-    },
-    format: {
-      type: 'string',
-      description: 'Model file format (gguf, mlx, safetensors)',
     },
     trials: {
       type: 'string',
@@ -102,19 +94,16 @@ export const runCommand = defineCommand({
 
     // Inspect model
     const modelInfo = await inspectModel(modelPath);
-    if (args.format) {
-      modelInfo.format = args.format as string;
-    }
 
     // Display model info
     log.label('Model', modelInfo.display_name);
     if (modelInfo.parameters) {
       log.label('Parameters', modelInfo.parameters);
     }
-    if (modelInfo.quant || args.quant) {
-      log.label('Quant', (args.quant as string) ?? modelInfo.quant!);
-    }
     log.label('Format', modelInfo.format);
+    if (modelInfo.quant) {
+      log.label('Quant', modelInfo.quant);
+    }
 
     // Detect device
     harnessLog.append('Detecting device...');
@@ -136,6 +125,21 @@ export const runCommand = defineCommand({
       log.error(
         `Runtime '${args.runtime}' is not available. Make sure it is installed and on PATH.`
       );
+      const installHints: Record<string, string[]> = {
+        'llama.cpp': [
+          'Install via Homebrew:  brew install llama.cpp',
+          'Or build from source:  https://github.com/ggerganov/llama.cpp#build',
+        ],
+        mlx: ['Install via pip:  pip install mlx-lm'],
+        vllm: ['Install via pip:  pip install vllm'],
+      };
+      const hints = installHints[args.runtime as string];
+      if (hints) {
+        log.blank();
+        for (const hint of hints) {
+          log.info(hint);
+        }
+      }
       process.exit(1);
     }
     log.label('Runtime', `${adapter.name} ${runtimeInfo.version}`);
@@ -166,44 +170,79 @@ export const runCommand = defineCommand({
 
     const memTracker = new MemoryTracker();
 
+    const columns = process.stdout.columns || 80;
+
+    function writeStatus(prefix: string, message: string) {
+      const line = `  ${prefix}  ${message}`;
+      process.stdout.write(`\r\x1b[K${line.slice(0, columns)}`);
+    }
+
+    function writeProgress(phase: string, index: number, total: number, progress: TrialProgress) {
+      const ttft = progress.ttft_ms !== null ? `${progress.ttft_ms}ms` : '—';
+      const tps = progress.decode_tps > 0 ? `${progress.decode_tps} tok/s` : '—';
+      const tokens = `${progress.output_tokens} tokens`;
+      writeStatus(`${phase} ${index}/${total}`, `${tokens}  TTFT ${ttft}  Decode ${tps}`);
+    }
+
     // Warmup runs
     if (numWarmups > 0) {
       log.info(`Running ${numWarmups} warmup(s)...`);
       for (let i = 0; i < numWarmups; i++) {
-        harnessLog.append(`Warmup ${i + 1}/${numWarmups}`);
+        const prefix = `Warmup ${i + 1}/${numWarmups}`;
+        harnessLog.append(prefix);
+        writeStatus(prefix, 'Starting...');
         try {
-          await runTrial(adapter, generateOpts, scenario.input_tokens, memTracker);
+          await runTrial(
+            adapter,
+            generateOpts,
+            scenario.input_tokens,
+            memTracker,
+            (p) => writeProgress('Warmup', i + 1, numWarmups, p),
+            (msg) => writeStatus(prefix, msg)
+          );
+          process.stdout.write('\r\x1b[K');
         } catch (e: unknown) {
+          process.stdout.write('\r\x1b[K');
           const msg = e instanceof Error ? e.message : String(e);
           harnessLog.append(`Warmup ${i + 1} error: ${msg}`);
-          console.log();
           log.error(`Warmup failed: ${msg}`);
           if (i === 0) {
             log.error('First warmup failed — aborting benchmark.');
             process.exit(1);
           }
         }
-        process.stdout.write('.');
       }
-      console.log();
     }
 
     // Measured trials
     log.info('Running benchmark...');
     const trials = [];
     for (let i = 0; i < numTrials; i++) {
-      harnessLog.append(`Trial ${i + 1}/${numTrials}`);
+      const prefix = `Trial ${i + 1}/${numTrials}`;
+      harnessLog.append(prefix);
+      writeStatus(prefix, 'Starting...');
       try {
-        const result = await runTrial(adapter, generateOpts, scenario.input_tokens, memTracker);
+        const result = await runTrial(
+          adapter,
+          generateOpts,
+          scenario.input_tokens,
+          memTracker,
+          (p) => writeProgress('Trial', i + 1, numTrials, p),
+          (msg) => writeStatus(prefix, msg)
+        );
+        process.stdout.write('\r\x1b[K');
+        log.info(
+          `  Trial ${i + 1}/${numTrials}  ${result.output_tokens} tokens  TTFT ${result.ttft_ms}ms  Decode ${result.decode_tps} tok/s`
+        );
         trials.push(result);
         harnessLog.append(
           `Trial ${i + 1}: ttft=${result.ttft_ms}ms decode_tps=${result.decode_tps}`
         );
       } catch (e: unknown) {
+        process.stdout.write('\r\x1b[K');
         const msg = e instanceof Error ? e.message : String(e);
         harnessLog.append(`Trial ${i + 1} error: ${msg}`);
         runtimeLog.append(`Trial ${i + 1} error: ${msg}`);
-        console.log();
         log.error(`Trial ${i + 1} failed: ${msg}`);
         if (i === 0) {
           log.error('First trial failed — aborting benchmark.');
@@ -222,9 +261,7 @@ export const runCommand = defineCommand({
           exit_status: 1,
         });
       }
-      process.stdout.write('.');
     }
-    console.log();
     log.blank();
 
     // Compute aggregates
@@ -251,7 +288,7 @@ export const runCommand = defineCommand({
         canonical,
         harnessLog: harnessLog.toString(),
         runtimeLog: runtimeLog.toString(),
-        quant: (args.quant as string | undefined) ?? modelInfo.quant,
+        quant: modelInfo.quant,
         notes: args.notes as string | undefined,
         nonce: args.nonce as string | undefined,
         runtimeFlags: args['runtime-flags'] as string | undefined,

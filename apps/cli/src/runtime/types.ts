@@ -6,7 +6,8 @@ export interface RuntimeInfo {
 export type TokenEvent =
   | { type: 'token'; text: string; timestamp: number }
   | { type: 'done'; timestamp: number; output_tokens: number }
-  | { type: 'error'; message: string; timestamp: number };
+  | { type: 'error'; message: string; timestamp: number }
+  | { type: 'status'; message: string; timestamp: number };
 
 export interface GenerateOpts {
   modelPath: string;
