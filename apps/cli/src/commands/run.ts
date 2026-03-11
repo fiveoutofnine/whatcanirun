@@ -222,6 +222,7 @@ export const runCommand = defineCommand({
       const prefix = `Trial ${i + 1}/${numTrials}`;
       harnessLog.append(prefix);
       writeStatus(prefix, 'Starting...');
+      memTracker.resetPeak();
       try {
         const result = await runTrial(
           adapter,

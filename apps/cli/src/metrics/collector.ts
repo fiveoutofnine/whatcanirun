@@ -35,6 +35,7 @@ export async function runTrial(
   let outputTokens = 0;
   let exitStatus = 0;
   let trackingStarted = false;
+  let promptEvalMs: number | null = null;
 
   try {
     const gen = adapter.generate(opts);
@@ -58,11 +59,12 @@ export async function runTrial(
           if (onProgress) {
             const now = performance.now();
             const decodeMs = tFirstToken ? now - tFirstToken : 0;
+            const decodeTokens = Math.max(outputTokens - 1, 0);
             onProgress({
               output_tokens: outputTokens,
               ttft_ms: tFirstToken ? Math.round((tFirstToken - tStart) * 100) / 100 : null,
               decode_tps:
-                decodeMs > 0 ? Math.round((outputTokens / (decodeMs / 1000)) * 10) / 10 : 0,
+                decodeMs > 0 ? Math.round((decodeTokens / (decodeMs / 1000)) * 10) / 10 : 0,
               elapsed_ms: Math.round(now - tStart),
             });
           }
@@ -72,9 +74,16 @@ export async function runTrial(
             outputTokens = event.output_tokens;
           }
           break;
-        case 'status':
-          if (onStatus) onStatus(event.message);
+        case 'status': {
+          // Check for runtime-reported prompt eval time
+          const peMatch = event.message.match(/^__prompt_eval_ms:([\d.]+)$/);
+          if (peMatch) {
+            promptEvalMs = parseFloat(peMatch[1]!);
+          } else if (onStatus) {
+            onStatus(event.message);
+          }
           break;
+        }
         case 'error':
           throw new Error(event.message);
           break;
@@ -92,10 +101,14 @@ export async function runTrial(
     tFirstToken = tLastToken;
   }
 
-  const ttftMs = tFirstToken - tStart;
+  // Use runtime-reported prompt eval time if available (excludes model loading),
+  // otherwise fall back to wall-clock TTFT (includes model loading overhead).
+  const ttftMs = promptEvalMs ?? tFirstToken - tStart;
   const totalMs = tLastToken - tStart;
   const decodeMs = tLastToken - tFirstToken;
-  const decodeTps = decodeMs > 0 ? outputTokens / (decodeMs / 1000) : 0;
+  // First token is from prefill, not decode — subtract 1 from output tokens
+  const decodeTokens = Math.max(outputTokens - 1, 0);
+  const decodeTps = decodeMs > 0 ? decodeTokens / (decodeMs / 1000) : 0;
   const weightedTps = totalMs > 0 ? (inputTokens + outputTokens) / (totalMs / 1000) : 0;
 
   return {

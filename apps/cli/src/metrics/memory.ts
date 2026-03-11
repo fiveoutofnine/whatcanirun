@@ -25,6 +25,10 @@ export class MemoryTracker {
     this.idleMb = await getProcessRSS(pid);
   }
 
+  resetPeak(): void {
+    this.peakMb = 0;
+  }
+
   startTracking(pid: number, intervalMs = 100): void {
     this.interval = setInterval(async () => {
       const rss = await getProcessRSS(pid);

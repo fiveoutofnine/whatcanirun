@@ -106,7 +106,9 @@ export class LlamaCppAdapter implements RuntimeAdapter {
       });
     }
 
-    // Read stderr line-by-line for status updates during model loading
+    // Read stderr line-by-line for status updates and perf stats
+    let promptEvalMs: number | null = null;
+    let evalTokens: number | null = null;
     const readStderr = async () => {
       const decoder = new TextDecoder();
       const reader = proc.stderr.getReader();
@@ -122,6 +124,19 @@ export class LlamaCppAdapter implements RuntimeAdapter {
             const trimmed = line.trim();
             if (trimmed) {
               stderrLines.push(trimmed);
+
+              // Parse llama.cpp perf stats for accurate timing
+              const promptMatch = trimmed.match(
+                /prompt eval time\s*=\s*([\d.]+)\s*ms\s*\/\s*(\d+)\s*tokens/
+              );
+              if (promptMatch) {
+                promptEvalMs = parseFloat(promptMatch[1]!);
+              }
+              const evalMatch = trimmed.match(/eval time\s*=\s*([\d.]+)\s*ms\s*\/\s*(\d+)\s*runs/);
+              if (evalMatch) {
+                evalTokens = parseInt(evalMatch[2]!, 10);
+              }
+
               push({
                 type: 'status' as const,
                 message: trimmed,
@@ -136,7 +151,6 @@ export class LlamaCppAdapter implements RuntimeAdapter {
       } finally {
         reader.releaseLock();
         stderrDone = true;
-        // Wake up consumer in case it's waiting
         if (resolve) {
           resolve();
           resolve = null;
@@ -144,8 +158,8 @@ export class LlamaCppAdapter implements RuntimeAdapter {
       }
     };
 
-    // Read stdout for tokens
-    let tokenCount = 0;
+    // Read stdout for tokens (chunk count used as fallback only)
+    let chunkCount = 0;
     const readStdout = async () => {
       const decoder = new TextDecoder();
       const reader = proc.stdout.getReader();
@@ -155,7 +169,7 @@ export class LlamaCppAdapter implements RuntimeAdapter {
           if (done) break;
           const text = decoder.decode(value, { stream: true });
           if (!text) continue;
-          tokenCount++;
+          chunkCount++;
           push({
             type: 'token' as const,
             text,
@@ -202,10 +216,22 @@ export class LlamaCppAdapter implements RuntimeAdapter {
       return;
     }
 
+    // Prefer llama.cpp's own perf stats for accurate token count
+    const outputTokens = evalTokens ?? chunkCount;
+
+    // Emit prompt eval time if available so collector can use it
+    if (promptEvalMs !== null) {
+      yield {
+        type: 'status' as const,
+        message: `__prompt_eval_ms:${promptEvalMs}`,
+        timestamp: performance.now(),
+      };
+    }
+
     yield {
       type: 'done' as const,
       timestamp: performance.now(),
-      output_tokens: tokenCount,
+      output_tokens: outputTokens,
     };
   }
 
