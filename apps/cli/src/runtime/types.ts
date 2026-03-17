@@ -1,27 +1,35 @@
 export interface RuntimeInfo {
+  name: string;
   version: string;
   build_flags?: string;
 }
 
-export type TokenEvent =
-  | { type: 'token'; text: string; timestamp: number }
-  | { type: 'done'; timestamp: number; output_tokens: number }
-  | { type: 'error'; message: string; timestamp: number }
-  | { type: 'status'; message: string; timestamp: number };
+export interface BenchTrial {
+  promptTps: number;
+  generationTps: number;
+  peakMemoryGb: number;
+}
 
-export interface GenerateOpts {
-  modelPath: string;
-  prompt: string;
-  maxTokens: number;
-  inputTokens: number;
-  temperature: number;
-  topP: number;
-  runtimeFlags?: string;
+export interface BenchResult {
+  promptTokens: number;
+  completionTokens: number;
+  trials: BenchTrial[];
+  averages: {
+    promptTps: number;
+    generationTps: number;
+    peakMemoryGb: number;
+  };
+}
+
+export interface BenchOpts {
+  model: string;
+  promptTokens: number;
+  genTokens: number;
+  numTrials: number;
 }
 
 export interface RuntimeAdapter {
   name: string;
   detect(): Promise<RuntimeInfo | null>;
-  generate(opts: GenerateOpts): AsyncGenerator<TokenEvent, void, unknown>;
-  getProcessId(): number | null;
+  benchmark(opts: BenchOpts): Promise<BenchResult>;
 }

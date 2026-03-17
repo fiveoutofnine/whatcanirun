@@ -1,12 +1,7 @@
-import { mkdtempSync, rmSync } from 'fs';
-import { tmpdir } from 'os';
-import { join } from 'path';
-
-import type { GenerateOpts, RuntimeAdapter, RuntimeInfo, TokenEvent } from './types.ts';
+import type { BenchOpts, BenchResult, BenchTrial, RuntimeAdapter, RuntimeInfo } from './types.ts';
 
 export class MlxAdapter implements RuntimeAdapter {
-  name = 'mlx';
-  private pid: number | null = null;
+  name = 'mlx_lm';
 
   async detect(): Promise<RuntimeInfo | null> {
     try {
@@ -17,103 +12,95 @@ export class MlxAdapter implements RuntimeAdapter {
       const version = (await new Response(proc.stdout).text()).trim();
       const code = await proc.exited;
       if (code !== 0 || !version) return null;
-      return { version };
+      return { name: this.name, version };
     } catch {
       return null;
     }
   }
 
-  async *generate(opts: GenerateOpts): AsyncGenerator<TokenEvent, void, unknown> {
-    // Write prompt and config to temp files to avoid shell escaping issues
-    const tmpDir = mkdtempSync(join(tmpdir(), 'whatcanirun-mlx-'));
-    const configPath = join(tmpDir, 'config.json');
-    const scriptPath = join(tmpDir, 'run.py');
+  async benchmark(opts: BenchOpts): Promise<BenchResult> {
+    const args = [
+      '-m',
+      'mlx_lm.benchmark',
+      '--model',
+      opts.model,
+      '--prompt-tokens',
+      String(opts.promptTokens),
+      '--generation-tokens',
+      String(opts.genTokens),
+      '--num-trials',
+      String(opts.numTrials),
+    ];
 
-    const config = {
-      model_path: opts.modelPath,
-      prompt: opts.prompt,
-      max_tokens: opts.maxTokens,
-      temperature: opts.temperature,
-      top_p: opts.topP,
-    };
-
-    await Bun.write(configPath, JSON.stringify(config));
-
-    const script = `
-import sys, time, json
-
-with open(${JSON.stringify(configPath)}) as f:
-    config = json.load(f)
-
-from mlx_lm import load, generate
-from mlx_lm.utils import stream_generate
-
-model, tokenizer = load(config["model_path"])
-
-first_token = True
-token_count = 0
-
-for response in stream_generate(
-    model, tokenizer,
-    prompt=config["prompt"],
-    max_tokens=config["max_tokens"],
-    temp=config["temperature"],
-    top_p=config["top_p"],
-):
-    now = time.time() * 1000
-    text = response.text if hasattr(response, 'text') else str(response)
-    token_count += 1
-    event = {"type": "token", "text": text, "timestamp": now}
-    print(json.dumps(event), flush=True)
-
-done_event = {"type": "done", "timestamp": time.time() * 1000, "output_tokens": token_count}
-print(json.dumps(done_event), flush=True)
-`;
-
-    await Bun.write(scriptPath, script);
-
-    const proc = Bun.spawn(['python3', scriptPath], {
+    const proc = Bun.spawn(['python3', ...args], {
       stdout: 'pipe',
       stderr: 'pipe',
     });
-    this.pid = proc.pid;
 
-    const decoder = new TextDecoder();
-    const reader = proc.stdout.getReader();
-    let buffer = '';
+    const stdout = await new Response(proc.stdout).text();
+    const stderr = await new Response(proc.stderr).text();
+    const code = await proc.exited;
 
-    try {
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split('\n');
-        buffer = lines.pop() || '';
-
-        for (const line of lines) {
-          if (!line.trim()) continue;
-          try {
-            const event = JSON.parse(line) as TokenEvent;
-            yield event;
-          } catch {}
-        }
-      }
-
-      if (buffer.trim()) {
-        try {
-          const event = JSON.parse(buffer) as TokenEvent;
-          yield event;
-        } catch {}
-      }
-    } finally {
-      reader.releaseLock();
-      await proc.exited;
-      rmSync(tmpDir, { recursive: true, force: true });
+    if (code !== 0) {
+      const errMsg = stderr.trim() || stdout.trim() || `exit code ${code}`;
+      throw new Error(`mlx_lm.benchmark failed: ${errMsg}`);
     }
+
+    return this.parseOutput(stdout, opts.promptTokens, opts.genTokens);
   }
 
-  getProcessId(): number | null {
-    return this.pid;
+  /**
+   * Parse mlx_lm.benchmark stdout. Expected format:
+   *   Running warmup..
+   *   Timing with prompt_tokens=64, generation_tokens=32, batch_size=1.
+   *   Trial 1:  prompt_tps=1334.858, generation_tps=282.768, peak_memory=0.429
+   *   Trial 2:  prompt_tps=1259.967, generation_tps=252.029, peak_memory=0.429
+   *   Averages: prompt_tps=1297.412, generation_tps=267.399, peak_memory=0.429
+   */
+  private parseOutput(stdout: string, promptTokens: number, genTokens: number): BenchResult {
+    const lines = stdout.split('\n');
+    const trials: BenchTrial[] = [];
+    let averages: BenchResult['averages'] | null = null;
+
+    const metricsPattern = /prompt_tps=([\d.]+),\s*generation_tps=([\d.]+),\s*peak_memory=([\d.]+)/;
+
+    for (const line of lines) {
+      const match = line.match(metricsPattern);
+      if (!match) continue;
+
+      const parsed = {
+        promptTps: parseFloat(match[1]!),
+        generationTps: parseFloat(match[2]!),
+        peakMemoryGb: parseFloat(match[3]!),
+      };
+
+      if (line.startsWith('Averages:')) {
+        averages = parsed;
+      } else if (/^\s*Trial\s+\d+:/.test(line)) {
+        trials.push(parsed);
+      }
+    }
+
+    if (trials.length === 0) {
+      throw new Error(
+        `Could not parse benchmark output. Raw output:\n${stdout}\nPlease file an issue.`
+      );
+    }
+
+    // If no averages line, compute from trials
+    if (!averages) {
+      averages = {
+        promptTps: trials.reduce((s, t) => s + t.promptTps, 0) / trials.length,
+        generationTps: trials.reduce((s, t) => s + t.generationTps, 0) / trials.length,
+        peakMemoryGb: Math.max(...trials.map((t) => t.peakMemoryGb)),
+      };
+    }
+
+    return {
+      promptTokens,
+      completionTokens: genTokens,
+      trials,
+      averages,
+    };
   }
 }

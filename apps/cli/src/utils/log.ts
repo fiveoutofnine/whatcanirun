@@ -33,15 +33,3 @@ export function label(key: string, value: string) {
 export function blank() {
   console.log();
 }
-
-export class LogCollector {
-  private lines: string[] = [];
-
-  append(line: string) {
-    this.lines.push(`[${new Date().toISOString()}] ${line}`);
-  }
-
-  toString() {
-    return this.lines.join('\n');
-  }
-}

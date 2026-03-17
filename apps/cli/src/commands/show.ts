@@ -43,16 +43,16 @@ const command = defineCommand({
           log.error(`Runtime '${name}' not found or not available`);
           process.exit(1);
         }
-        console.log(JSON.stringify({ name: adapter.name, ...info }, null, 2));
+        console.log(JSON.stringify(info, null, 2));
         break;
       }
       case 'model': {
-        const path = args.value as string | undefined;
-        if (!path) {
-          log.error('Usage: whatcanirun show model <path>');
+        const ref = args.value as string | undefined;
+        if (!ref) {
+          log.error('Usage: whatcanirun show model <path-or-repo-id>');
           process.exit(1);
         }
-        const resolved = await resolveModel(path);
+        const resolved = await resolveModel(ref);
         const info = await inspectModel(resolved);
         console.log(JSON.stringify(info, null, 2));
         break;

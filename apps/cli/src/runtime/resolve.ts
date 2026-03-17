@@ -1,12 +1,10 @@
 import { LlamaCppAdapter } from './llamacpp.ts';
 import { MlxAdapter } from './mlx.ts';
 import type { RuntimeAdapter } from './types.ts';
-import { VllmAdapter } from './vllm.ts';
 
 const RUNTIMES: Record<string, () => RuntimeAdapter> = {
-  mlx: () => new MlxAdapter(),
+  mlx_lm: () => new MlxAdapter(),
   'llama.cpp': () => new LlamaCppAdapter(),
-  vllm: () => new VllmAdapter(),
 };
 
 export function resolveRuntime(name: string): RuntimeAdapter {

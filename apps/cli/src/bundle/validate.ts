@@ -28,13 +28,7 @@ export async function validateBundle(bundlePath: string): Promise<ValidationResu
     }
 
     // Check required files
-    const requiredFiles = [
-      'manifest.json',
-      'results.json',
-      'sysinfo.txt',
-      'logs/harness.log',
-      'logs/runtime.log',
-    ];
+    const requiredFiles = ['manifest.json', 'results.json', 'sysinfo.txt'];
 
     for (const file of requiredFiles) {
       const f = Bun.file(join(tmpDir, file));
@@ -67,16 +61,8 @@ export async function validateBundle(bundlePath: string): Promise<ValidationResu
     }
     errors.push(...validateResults(results));
 
-    // Check trial count for canonical
-    const m = manifest as Record<string, unknown>;
-    const r = results as Record<string, unknown>;
-    if (m.canonical === true && Array.isArray(r.trials)) {
-      if (r.trials.length < 5) {
-        errors.push(`Canonical run requires >= 5 trials, got ${r.trials.length}`);
-      }
-    }
-
     // Check artifact hash presence
+    const m = manifest as Record<string, unknown>;
     const model = m.model as Record<string, unknown> | undefined;
     if (!model?.artifact_sha256) {
       errors.push('Missing model artifact_sha256');

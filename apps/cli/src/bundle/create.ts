@@ -3,30 +3,27 @@ import { join, resolve } from 'path';
 
 import type { DeviceInfo } from '../device/detect';
 import { formatSysinfo } from '../device/detect';
-import type { AggregateMetrics } from '../metrics/aggregator';
-import type { TrialResult } from '../metrics/collector';
 import type { ModelInfo } from '../model/resolve';
-import type { RuntimeInfo } from '../runtime/types';
-import type { ScenarioDefinition } from '../scenarios/types';
+import type { BenchResult, RuntimeInfo } from '../runtime/types';
 import { bundleFilename, formatTimestamp, generateBundleId } from '../utils/id';
 import type { Manifest, Results } from './schema';
+
+export interface DerivedMetrics {
+  ttftP50Ms: number;
+  ttftP95Ms: number;
+  decodeTpsMean: number;
+  weightedTpsMean: number;
+  peakRssMb: number;
+}
 
 export interface BundleOpts {
   outputDir: string;
   device: DeviceInfo;
-  runtimeName: string;
   runtimeInfo: RuntimeInfo;
   model: ModelInfo;
-  scenario: ScenarioDefinition;
-  trials: TrialResult[];
-  aggregate: AggregateMetrics;
-  canonical: boolean;
-  harnessLog: string;
-  runtimeLog: string;
-  quant?: string | null;
+  bench: BenchResult;
+  metrics: DerivedMetrics;
   notes?: string;
-  nonce?: string;
-  runtimeFlags?: string;
 }
 
 export async function createBundle(opts: BundleOpts): Promise<string> {
@@ -40,12 +37,9 @@ export async function createBundle(opts: BundleOpts): Promise<string> {
   }
 
   const manifest: Manifest = {
-    schema_version: 'v1',
+    schema_version: '1.0.0',
     bundle_id: bundleId,
     created_at: now.toISOString(),
-    task: 'llm.generate.v1',
-    scenario_id: opts.scenario.id,
-    canonical: opts.canonical,
     harness: {
       version: '0.1.0',
       git_sha: await getGitSha(),
@@ -58,7 +52,7 @@ export async function createBundle(opts: BundleOpts): Promise<string> {
       os_version: opts.device.os_version,
     },
     runtime: {
-      name: opts.runtimeName,
+      name: opts.runtimeInfo.name,
       version: opts.runtimeInfo.version,
       build_flags: opts.runtimeInfo.build_flags,
     },
@@ -66,21 +60,26 @@ export async function createBundle(opts: BundleOpts): Promise<string> {
       display_name: opts.model.display_name,
       format: opts.model.format,
       artifact_sha256: opts.model.artifact_sha256,
+      source: opts.model.source,
       file_size_bytes: opts.model.file_size_bytes,
       parameters: opts.model.parameters,
       quant: opts.model.quant ?? undefined,
       architecture: opts.model.architecture,
     },
-    quant: {
-      name: opts.quant ?? opts.model.quant,
+    bench: {
+      promptTokens: opts.bench.promptTokens,
+      completionTokens: opts.bench.completionTokens,
+      trialsTotal: opts.bench.trials.length,
+      trialsPassed: opts.bench.trials.length,
+      averages: opts.bench.averages,
     },
+    metrics: opts.metrics,
     notes: opts.notes,
-    nonce: opts.nonce,
   };
 
   const results: Results = {
-    trials: opts.trials,
-    aggregate: opts.aggregate,
+    trials: opts.bench.trials,
+    averages: opts.bench.averages,
   };
 
   const sysinfo = formatSysinfo(opts.device);
@@ -88,20 +87,16 @@ export async function createBundle(opts: BundleOpts): Promise<string> {
   // Create a temporary directory for bundle contents
   const tmpDir = join(opts.outputDir, `.tmp_${bundleId}`);
   mkdirSync(tmpDir, { recursive: true });
-  mkdirSync(join(tmpDir, 'logs'), { recursive: true });
 
   // Write files with deterministic formatting
   await Bun.write(join(tmpDir, 'manifest.json'), JSON.stringify(manifest, null, 2) + '\n');
   await Bun.write(join(tmpDir, 'results.json'), JSON.stringify(results, null, 2) + '\n');
   await Bun.write(join(tmpDir, 'sysinfo.txt'), sysinfo + '\n');
-  await Bun.write(join(tmpDir, 'logs', 'harness.log'), opts.harnessLog);
-  await Bun.write(join(tmpDir, 'logs', 'runtime.log'), opts.runtimeLog);
 
   // Create deterministic zip using system zip command
-  // -rX: recurse + no extra attributes for determinism
   const outputPath = resolve(opts.outputDir, filename);
   const zipProc = Bun.spawn(
-    ['zip', '-rX', outputPath, 'manifest.json', 'results.json', 'sysinfo.txt', 'logs/'],
+    ['zip', '-rX', outputPath, 'manifest.json', 'results.json', 'sysinfo.txt'],
     {
       cwd: tmpDir,
       stdout: 'ignore',
