@@ -7,7 +7,24 @@ import type { BenchOpts, BenchResult, BenchTrial, RuntimeAdapter, RuntimeInfo } 
 export class MlxAdapter implements RuntimeAdapter {
   name = 'mlx_lm';
 
+  private useCli = false;
+
   async detect(): Promise<RuntimeInfo | null> {
+    // Try the standalone CLI first (e.g. Homebrew install).
+    try {
+      const proc = Bun.spawn(['mlx_lm', '--version'], {
+        stdout: 'pipe',
+        stderr: 'ignore',
+      });
+      const version = (await new Response(proc.stdout).text()).trim();
+      const code = await proc.exited;
+      if (code === 0 && version) {
+        this.useCli = true;
+        return { name: this.name, version };
+      }
+    } catch {}
+
+    // Fall back to Python module.
     try {
       const proc = Bun.spawn(['python3', '-c', 'import mlx_lm; print(mlx_lm.__version__)'], {
         stdout: 'pipe',
@@ -23,9 +40,7 @@ export class MlxAdapter implements RuntimeAdapter {
   }
 
   async benchmark(opts: BenchOpts): Promise<BenchResult> {
-    const args = [
-      '-m',
-      'mlx_lm.benchmark',
+    const benchArgs = [
       '--model',
       opts.model,
       '--prompt-tokens',
@@ -36,7 +51,11 @@ export class MlxAdapter implements RuntimeAdapter {
       String(opts.numTrials),
     ];
 
-    const proc = Bun.spawn(['python3', ...args], {
+    const cmd = this.useCli
+      ? ['mlx_lm', 'benchmark', ...benchArgs]
+      : ['python3', '-m', 'mlx_lm.benchmark', ...benchArgs];
+
+    const proc = Bun.spawn(cmd, {
       stdout: 'pipe',
       stderr: 'pipe',
     });

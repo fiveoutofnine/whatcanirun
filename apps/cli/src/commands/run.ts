@@ -131,6 +131,12 @@ const command = defineCommand({
       process.exit(1);
     }
 
+    // Re-inspect model after benchmark so HF cache is populated on first run.
+    if (!modelInfo.artifact_sha256) {
+      const updated = await inspectModel(modelRef);
+      Object.assign(modelInfo, updated);
+    }
+
     // Compute derived metrics.
     const metrics = computeMetrics(bench);
 
