@@ -88,25 +88,32 @@ export class Spinner {
     }
   }
 
-  private renderBar(): string {
-    if (this.total <= 0) return '';
+  private render() {
+    const f = SPINNER_FRAMES[this.frame % SPINNER_FRAMES.length];
+
+    if (this.total <= 0) {
+      process.stderr.write(`\r\x1b[K${DIM}${f} ${this.text}${RESET}`);
+      this.frame++;
+      return;
+    }
+
+    const pulse = Math.sin(this.frame * 0.15) * 0.5 + 0.5; // 0..1
+    const bright = Math.round(138 + pulse * 117); // 138..255
+    const pulseColor = `\x1b[38;2;${bright};${bright};${bright}m`;
+
+    // Progress bar with pulsing filled portion.
     const width = 20;
     const filled = Math.round((this.current / this.total) * width);
     const empty = width - filled;
-    return ` ${'█'.repeat(filled)}${'░'.repeat(empty)} ${this.current}/${this.total}`;
-  }
+    const bar = ` ${pulseColor}${'█'.repeat(filled)}${RESET}${DIM}${'░'.repeat(empty)}${RESET}`;
 
-  private render() {
-    const f = SPINNER_FRAMES[this.frame % SPINNER_FRAMES.length];
-    const bar = this.renderBar();
-    let detail = '';
-    if (this.detail) {
-      // Pulse the detail text using a sine wave mapped to ANSI brightness.
-      const pulse = Math.sin(this.frame * 0.15) * 0.5 + 0.5; // 0..1
-      const brightness = Math.round(138 + pulse * 117); // 138..255
-      detail = `  \x1b[38;2;${brightness};${brightness};${brightness}m${this.detail}${RESET}`;
-    }
-    process.stderr.write(`\r\x1b[K${DIM}${f} ${this.text}${bar}${RESET}${detail}`);
+    // N pulses, /total is dim.
+    const counter = ` ${pulseColor}${this.current}${RESET}${DIM}/${this.total}${RESET}`;
+
+    // Detail pulses.
+    const detail = this.detail ? `  ${pulseColor}${this.detail}${RESET}` : '';
+
+    process.stderr.write(`\r\x1b[K${DIM}${f} ${this.text}${RESET}${bar}${counter}${detail}`);
     this.frame++;
   }
 }
