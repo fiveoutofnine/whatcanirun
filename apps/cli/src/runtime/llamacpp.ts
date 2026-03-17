@@ -1,5 +1,9 @@
 import type { BenchOpts, BenchResult, BenchTrial, RuntimeAdapter, RuntimeInfo } from './types.ts';
 
+// -----------------------------------------------------------------------------
+// Types
+// -----------------------------------------------------------------------------
+
 interface LlamaBenchEntry {
   build_commit: string;
   build_number: number;
@@ -14,6 +18,10 @@ interface LlamaBenchEntry {
   samples_ts: number[];
   [key: string]: unknown;
 }
+
+// -----------------------------------------------------------------------------
+// Adapter
+// -----------------------------------------------------------------------------
 
 export class LlamaCppAdapter implements RuntimeAdapter {
   name = 'llama.cpp';

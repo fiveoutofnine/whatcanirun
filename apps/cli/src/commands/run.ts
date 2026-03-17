@@ -9,6 +9,10 @@ import type { BenchResult } from '../runtime/types';
 import { uploadBundle } from '../upload/client';
 import * as log from '../utils/log';
 
+// -----------------------------------------------------------------------------
+// Helpers
+// -----------------------------------------------------------------------------
+
 /** Nearest-rank percentile on a sorted-ascending array. */
 function nearestRankPercentile(sorted: number[], p: number): number {
   const rank = Math.ceil((p / 100) * sorted.length) - 1;
@@ -47,6 +51,10 @@ function computeMetrics(bench: BenchResult): DerivedMetrics {
 
   return { ttftP50Ms, ttftP95Ms, decodeTpsMean, weightedTpsMean, peakRssMb };
 }
+
+// -----------------------------------------------------------------------------
+// Command
+// -----------------------------------------------------------------------------
 
 const command = defineCommand({
   meta: {

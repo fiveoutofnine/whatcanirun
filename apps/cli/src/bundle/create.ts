@@ -8,6 +8,10 @@ import type { BenchResult, RuntimeInfo } from '../runtime/types';
 import { bundleFilename, formatTimestamp, generateBundleId } from '../utils/id';
 import type { Manifest, Results } from './schema';
 
+// -----------------------------------------------------------------------------
+// Types
+// -----------------------------------------------------------------------------
+
 export interface DerivedMetrics {
   ttftP50Ms: number;
   ttftP95Ms: number;
@@ -25,6 +29,10 @@ export interface BundleOpts {
   metrics: DerivedMetrics;
   notes?: string;
 }
+
+// -----------------------------------------------------------------------------
+// Function
+// -----------------------------------------------------------------------------
 
 export async function createBundle(opts: BundleOpts): Promise<string> {
   const bundleId = generateBundleId();
@@ -114,6 +122,10 @@ export async function createBundle(opts: BundleOpts): Promise<string> {
 
   return outputPath;
 }
+
+// -----------------------------------------------------------------------------
+// Helpers
+// -----------------------------------------------------------------------------
 
 async function getGitSha(): Promise<string> {
   try {

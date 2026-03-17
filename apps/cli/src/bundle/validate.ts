@@ -4,10 +4,18 @@ import { join } from 'path';
 
 import { validateManifest, validateResults } from './schema';
 
+// -----------------------------------------------------------------------------
+// Types
+// -----------------------------------------------------------------------------
+
 export interface ValidationResult {
   valid: boolean;
   errors: string[];
 }
+
+// -----------------------------------------------------------------------------
+// Function
+// -----------------------------------------------------------------------------
 
 export async function validateBundle(bundlePath: string): Promise<ValidationResult> {
   const errors: string[] = [];

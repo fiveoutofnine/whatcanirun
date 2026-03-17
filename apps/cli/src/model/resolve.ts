@@ -3,6 +3,10 @@ import { existsSync, readdirSync, readFileSync, statSync } from 'fs';
 import { homedir } from 'os';
 import { basename, extname, join, resolve } from 'path';
 
+// -----------------------------------------------------------------------------
+// Types
+// -----------------------------------------------------------------------------
+
 export interface ModelInfo {
   display_name: string;
   path: string;
@@ -14,6 +18,10 @@ export interface ModelInfo {
   parameters?: string;
   architecture?: string;
 }
+
+// -----------------------------------------------------------------------------
+// Constants
+// -----------------------------------------------------------------------------
 
 const QUANT_PATTERNS = [
   /\b(q2_k)\b/i,
@@ -37,6 +45,10 @@ const QUANT_PATTERNS = [
 ];
 
 const MLX_BIT_PATTERNS = [/(\d+)[\s-]*bit/i];
+
+// -----------------------------------------------------------------------------
+// Functions
+// -----------------------------------------------------------------------------
 
 export function inferQuant(name: string): string | null {
   // Try GGUF-style quant patterns first
@@ -70,6 +82,10 @@ export function inferFormat(modelPath: string): string {
 
   return 'unknown';
 }
+
+// -----------------------------------------------------------------------------
+// Helpers
+// -----------------------------------------------------------------------------
 
 /**
  * Check if a string looks like a HuggingFace repo ID (e.g. "mlx-community/Qwen3.5-0.8B-4bit").

@@ -1,5 +1,9 @@
 import { randomBytes } from 'crypto';
 
+// -----------------------------------------------------------------------------
+// Functions
+// -----------------------------------------------------------------------------
+
 export function generateBundleId(): string {
   return randomBytes(3).toString('hex');
 }

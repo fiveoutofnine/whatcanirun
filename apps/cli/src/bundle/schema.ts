@@ -1,5 +1,9 @@
 import type { BenchResult } from '../runtime/types';
 
+// -----------------------------------------------------------------------------
+// Types
+// -----------------------------------------------------------------------------
+
 export interface Manifest {
   schema_version: string;
   bundle_id: string;
@@ -55,6 +59,10 @@ export interface Results {
   trials: BenchResult['trials'];
   averages: BenchResult['averages'];
 }
+
+// -----------------------------------------------------------------------------
+// Validators
+// -----------------------------------------------------------------------------
 
 export function validateManifest(manifest: unknown): string[] {
   const errors: string[] = [];

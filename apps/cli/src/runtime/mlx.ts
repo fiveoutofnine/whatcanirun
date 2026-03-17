@@ -1,5 +1,9 @@
 import type { BenchOpts, BenchResult, BenchTrial, RuntimeAdapter, RuntimeInfo } from './types.ts';
 
+// -----------------------------------------------------------------------------
+// Adapter
+// -----------------------------------------------------------------------------
+
 export class MlxAdapter implements RuntimeAdapter {
   name = 'mlx_lm';
 
