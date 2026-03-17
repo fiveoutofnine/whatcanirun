@@ -5,7 +5,7 @@ import type { DeviceInfo } from '../device/detect';
 import { formatSysinfo } from '../device/detect';
 import type { ModelInfo } from '../model/resolve';
 import type { BenchResult, RuntimeInfo } from '../runtime/types';
-import { bundleFilename, formatTimestamp, generateBundleId } from '../utils/id';
+import { bundleFilename, generateBundleId } from '../utils/id';
 import type { Manifest, Results } from './schema';
 
 // -----------------------------------------------------------------------------
@@ -35,10 +35,12 @@ export interface BundleOpts {
 // -----------------------------------------------------------------------------
 
 export async function createBundle(opts: BundleOpts): Promise<string> {
-  const bundleId = generateBundleId();
+  const bundleId = generateBundleId({
+    runtime: opts.runtimeInfo.name,
+    model: opts.model.display_name,
+  });
   const now = new Date();
-  const timestamp = formatTimestamp(now);
-  const filename = bundleFilename(timestamp, bundleId);
+  const filename = bundleFilename(bundleId);
 
   if (!existsSync(opts.outputDir)) {
     mkdirSync(opts.outputDir, { recursive: true });

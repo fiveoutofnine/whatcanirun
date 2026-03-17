@@ -1,7 +1,7 @@
 import { defineCommand } from 'citty';
-import { existsSync } from 'fs';
 
 import { validateBundle } from '../bundle/validate';
+import { resolveBundlePath } from '../utils/id';
 import * as log from '../utils/log';
 
 const command = defineCommand({
@@ -12,17 +12,12 @@ const command = defineCommand({
   args: {
     bundle: {
       type: 'positional',
-      description: 'Path to bundle zip file',
+      description: 'Bundle ID or path to zip file',
       required: true,
     },
   },
   async run({ args }) {
-    const bundlePath = args.bundle as string;
-
-    if (!existsSync(bundlePath)) {
-      log.error(`Bundle not found: ${bundlePath}`);
-      process.exit(1);
-    }
+    const bundlePath = resolveBundlePath(args.bundle as string);
 
     log.info(`Validating: ${bundlePath}`);
     const result = await validateBundle(bundlePath);

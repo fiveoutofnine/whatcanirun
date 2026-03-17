@@ -1,6 +1,4 @@
 import { defineCommand } from 'citty';
-import { homedir } from 'os';
-import { join } from 'path';
 
 import { createBundle, type DerivedMetrics } from '../bundle/create';
 import { validateBundle } from '../bundle/validate';
@@ -9,6 +7,7 @@ import { findHfCachePath, inspectModel, isHuggingFaceRepoId, resolveModel } from
 import { resolveRuntime } from '../runtime/resolve';
 import type { BenchResult } from '../runtime/types';
 import { uploadBundle } from '../upload/client';
+import { DEFAULT_BUNDLES_DIR } from '../utils/id';
 import * as log from '../utils/log';
 import { Spinner } from '../utils/log';
 
@@ -55,14 +54,14 @@ const command = defineCommand({
     },
     output: {
       type: 'string',
-      description: 'Bundle output directory (default: ~/.wcir/bundles)',
+      description: 'Bundle output directory (default: ~/.whatcanirun/bundles)',
     },
   },
   async run({ args }) {
     const promptTokens = parseInt((args['prompt-tokens'] as string) || '4096', 10);
     const genTokens = parseInt((args['gen-tokens'] as string) || '1024', 10);
     const numTrials = parseInt((args.trials as string) || '10', 10);
-    const outputDir = (args.output as string) || join(homedir(), '.wcir', 'bundles');
+    const outputDir = (args.output as string) || DEFAULT_BUNDLES_DIR;
 
     // Resolve runtime.
     let adapter;
