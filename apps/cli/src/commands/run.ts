@@ -76,11 +76,11 @@ const command = defineCommand({
     const runtimeInfo = await adapter.detect();
     if (!runtimeInfo) {
       log.error(
-        `Runtime '${args.runtime}' is not available. Make sure it is installed and on PATH.`
+        `Runtime \`${args.runtime}\` is not available. Make sure it is installed and on \`PATH\`.`
       );
       const installHints: Record<string, string> = {
-        mlx_lm: 'Install with: pip install mlx-lm',
-        'llama.cpp': 'Install with: brew install llama.cpp',
+        mlx_lm: 'Install with: \`pip install mlx-lm\`.',
+        'llama.cpp': 'Install with: \`brew install llama.cpp\`.',
       };
       const hint = installHints[args.runtime as string];
       if (hint) {

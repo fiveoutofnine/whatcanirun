@@ -58,7 +58,7 @@ const command = defineCommand({
         break;
       }
       default:
-        log.error(`Unknown target '${target}'. Use: device, runtime, or model`);
+        log.error(`Unknown target \`${target}\`. Use: device, runtime, or model`);
         process.exit(1);
     }
   },
