@@ -1,4 +1,6 @@
 import { defineCommand } from 'citty';
+import { homedir } from 'os';
+import { join } from 'path';
 
 import { createBundle, type DerivedMetrics } from '../bundle/create';
 import { validateBundle } from '../bundle/validate';
@@ -99,7 +101,7 @@ const command = defineCommand({
     output: {
       type: 'string',
       description: 'Bundle output directory',
-      default: './bundles',
+      default: join(homedir(), '.wcir', 'bundles'),
     },
   },
   async run({ args }) {

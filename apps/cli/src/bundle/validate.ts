@@ -20,7 +20,7 @@ export interface ValidationResult {
 export async function validateBundle(bundlePath: string): Promise<ValidationResult> {
   const errors: string[] = [];
 
-  // Extract to temp directory
+  // Extract to temp directory.
   const tmpDir = mkdtempSync(join(tmpdir(), 'whatcanirun-validate-'));
 
   try {
@@ -35,7 +35,7 @@ export async function validateBundle(bundlePath: string): Promise<ValidationResu
       return { valid: false, errors };
     }
 
-    // Check required files
+    // Check required files.
     const requiredFiles = ['manifest.json', 'results.json', 'sysinfo.txt'];
 
     for (const file of requiredFiles) {
@@ -49,7 +49,7 @@ export async function validateBundle(bundlePath: string): Promise<ValidationResu
       return { valid: false, errors };
     }
 
-    // Validate manifest
+    // Validate manifest.
     let manifest: unknown;
     try {
       manifest = JSON.parse(await Bun.file(join(tmpDir, 'manifest.json')).text());

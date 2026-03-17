@@ -94,12 +94,12 @@ export function validateResults(results: unknown): string[] {
   const r = results as Record<string, unknown>;
 
   if (!Array.isArray(r.trials)) {
-    errors.push("Missing or invalid 'trials' array");
+    errors.push('Missing or invalid `trials` array.');
     return errors;
   }
 
   if (!r.averages || typeof r.averages !== 'object') {
-    errors.push("Missing or invalid 'averages' object");
+    errors.push('Missing or invalid `averages` object.');
   }
 
   for (let i = 0; i < r.trials.length; i++) {
@@ -107,7 +107,7 @@ export function validateResults(results: unknown): string[] {
     const requiredFields = ['promptTps', 'generationTps', 'peakMemoryGb'];
     for (const field of requiredFields) {
       if (!(field in trial)) {
-        errors.push(`Trial ${i}: missing field '${field}'`);
+        errors.push(`Trial ${i}: missing field \`${field}\`.`);
       }
     }
   }

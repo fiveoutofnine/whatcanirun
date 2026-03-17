@@ -92,16 +92,16 @@ export async function createBundle(opts: BundleOpts): Promise<string> {
 
   const sysinfo = formatSysinfo(opts.device);
 
-  // Create a temporary directory for bundle contents
+  // Create a temporary directory for bundle contents.
   const tmpDir = join(opts.outputDir, `.tmp_${bundleId}`);
   mkdirSync(tmpDir, { recursive: true });
 
-  // Write files with deterministic formatting
+  // Write files with deterministic formatting.
   await Bun.write(join(tmpDir, 'manifest.json'), JSON.stringify(manifest, null, 2) + '\n');
   await Bun.write(join(tmpDir, 'results.json'), JSON.stringify(results, null, 2) + '\n');
   await Bun.write(join(tmpDir, 'sysinfo.txt'), sysinfo + '\n');
 
-  // Create deterministic zip using system zip command
+  // Create deterministic zip using system zip command.
   const outputPath = resolve(opts.outputDir, filename);
   const zipProc = Bun.spawn(
     ['zip', '-rX', outputPath, 'manifest.json', 'results.json', 'sysinfo.txt'],
@@ -113,7 +113,7 @@ export async function createBundle(opts: BundleOpts): Promise<string> {
   );
   await zipProc.exited;
 
-  // Clean up temp dir
+  // Clean up temp dir.
   const rmProc = Bun.spawn(['rm', '-rf', tmpDir], {
     stdout: 'ignore',
     stderr: 'ignore',
