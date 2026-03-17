@@ -58,11 +58,64 @@ export class MlxAdapter implements RuntimeAdapter {
     const proc = Bun.spawn(cmd, {
       stdout: 'pipe',
       stderr: 'pipe',
+      env: { ...process.env, PYTHONUNBUFFERED: '1' },
     });
 
-    const stdout = await new Response(proc.stdout).text();
-    const stderr = await new Response(proc.stderr).text();
+    // Stream both stdout and stderr concurrently for progress reporting.
+    const stdoutChunks: string[] = [];
+    const stderrChunks: string[] = [];
+
+    const streamStdout = (async () => {
+      let buffer = '';
+      const decoder = new TextDecoder();
+      for await (const chunk of proc.stdout) {
+        const text = decoder.decode(chunk, { stream: true });
+        stdoutChunks.push(text);
+        buffer += text;
+
+        const lines = buffer.split('\n');
+        buffer = lines.pop()!;
+        for (const line of lines) {
+          if (/warmup/i.test(line)) {
+            opts.onProgress?.('Warming up...');
+          } else {
+            const trialMatch = line.match(/^\s*Trial\s+(\d+):/);
+            if (trialMatch) {
+              opts.onProgress?.(`Trial ${trialMatch[1]}/${opts.numTrials}`);
+            }
+          }
+        }
+      }
+      if (buffer) stdoutChunks.push('');
+    })();
+
+    const streamStderr = (async () => {
+      const decoder = new TextDecoder();
+      for await (const chunk of proc.stderr) {
+        const text = decoder.decode(chunk, { stream: true });
+        stderrChunks.push(text);
+
+        // HF download progress uses \r for progress bars.
+        const segments = text.split(/[\r\n]/);
+        for (const seg of segments) {
+          if (/Fetching|Downloading|downloading/i.test(seg)) {
+            // Extract percentage if present (e.g. "Downloading: 45%").
+            const pctMatch = seg.match(/(\d+)%/);
+            if (pctMatch) {
+              opts.onProgress?.(`Downloading model... ${pctMatch[1]}%`);
+            } else {
+              opts.onProgress?.('Downloading model...');
+            }
+          }
+        }
+      }
+    })();
+
+    await Promise.all([streamStdout, streamStderr]);
     const code = await proc.exited;
+
+    const stdout = stdoutChunks.join('');
+    const stderr = stderrChunks.join('');
 
     if (code !== 0) {
       const errMsg = stderr.trim() || stdout.trim() || `exit code ${code}`;

@@ -30,6 +30,7 @@ export interface BenchOpts {
   promptTokens: number;
   genTokens: number;
   numTrials: number;
+  onProgress?: (msg: string) => void;
 }
 
 export interface RuntimeAdapter {

@@ -90,7 +90,7 @@ export function inferFormat(modelPath: string): string {
 /**
  * Check if a string looks like a HuggingFace repo ID (e.g. "mlx-community/Qwen3.5-0.8B-4bit").
  */
-function isHuggingFaceRepoId(ref: string): boolean {
+export function isHuggingFaceRepoId(ref: string): boolean {
   return /^[\w.-]+\/[\w.-]+$/.test(ref) && !ref.startsWith('/') && !ref.startsWith('.');
 }
 
@@ -98,7 +98,7 @@ function isHuggingFaceRepoId(ref: string): boolean {
  * Find the HF cache directory for a given repo ID.
  * Returns the latest snapshot path, or null if not cached.
  */
-function findHfCachePath(repoId: string): string | null {
+export function findHfCachePath(repoId: string): string | null {
   const [org, name] = repoId.split('/');
   const cacheDir = join(homedir(), '.cache', 'huggingface', 'hub', `models--${org}--${name}`);
   const snapshotsDir = join(cacheDir, 'snapshots');

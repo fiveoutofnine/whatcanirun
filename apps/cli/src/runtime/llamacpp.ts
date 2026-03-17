@@ -79,8 +79,31 @@ export class LlamaCppAdapter implements RuntimeAdapter {
       stderr: 'pipe',
     });
 
+    // Stream stderr to report trial progress.
+    const stderrChunks: string[] = [];
+    let buffer = '';
+    const decoder = new TextDecoder();
+    let trialsSeen = 0;
+    // llama-bench runs prompt and generation separately, each with numTrials.
+    const totalTrials = opts.numTrials * 2;
+
+    for await (const chunk of proc.stderr) {
+      const text = decoder.decode(chunk, { stream: true });
+      stderrChunks.push(text);
+      buffer += text;
+
+      const lines = buffer.split('\n');
+      buffer = lines.pop()!;
+      for (const line of lines) {
+        if (/^\s*\|/.test(line) && /\d/.test(line)) {
+          trialsSeen++;
+          opts.onProgress?.(`Trial ${trialsSeen}/${totalTrials}`);
+        }
+      }
+    }
+
     const stdout = await new Response(proc.stdout).text();
-    const stderr = await new Response(proc.stderr).text();
+    const stderr = stderrChunks.join('') + buffer;
     const code = await proc.exited;
 
     if (code !== 0) {

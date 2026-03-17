@@ -5,11 +5,12 @@ import { join } from 'path';
 import { createBundle, type DerivedMetrics } from '../bundle/create';
 import { validateBundle } from '../bundle/validate';
 import { detectDevice } from '../device/detect';
-import { inspectModel, resolveModel } from '../model/resolve';
+import { findHfCachePath, inspectModel, isHuggingFaceRepoId, resolveModel } from '../model/resolve';
 import { resolveRuntime } from '../runtime/resolve';
 import type { BenchResult } from '../runtime/types';
 import { uploadBundle } from '../upload/client';
 import * as log from '../utils/log';
+import { Spinner } from '../utils/log';
 
 // -----------------------------------------------------------------------------
 // Command
@@ -117,7 +118,9 @@ const command = defineCommand({
     log.blank();
 
     // Run benchmark.
-    log.info('Running benchmark...');
+    const isCached = isHuggingFaceRepoId(modelRef) && findHfCachePath(modelRef) !== null;
+    const initialMsg = isCached ? 'Loading model from cache...' : 'Downloading model...';
+    const spinner = new Spinner(initialMsg).start();
     let bench: BenchResult;
     try {
       bench = await adapter.benchmark({
@@ -125,8 +128,11 @@ const command = defineCommand({
         promptTokens,
         genTokens,
         numTrials,
+        onProgress: (msg) => spinner.update(msg),
       });
+      spinner.stop('Benchmark complete.');
     } catch (e: unknown) {
+      spinner.stop();
       log.error(e instanceof Error ? e.message : String(e));
       process.exit(1);
     }
