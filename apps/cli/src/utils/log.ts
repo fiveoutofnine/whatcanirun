@@ -101,14 +101,16 @@ export class Spinner {
     const bright = Math.round(138 + pulse * 117); // 138..255
     const pulseColor = `\x1b[38;2;${bright};${bright};${bright}m`;
 
-    // Progress bar with pulsing filled portion.
+    const WHITE = '\x1b[97m';
+
+    // Progress bar: filled is white, empty is dim.
     const width = 20;
     const filled = Math.round((this.current / this.total) * width);
     const empty = width - filled;
-    const bar = ` ${pulseColor}${'█'.repeat(filled)}${RESET}${DIM}${'░'.repeat(empty)}${RESET}`;
+    const bar = ` ${WHITE}${'█'.repeat(filled)}${RESET}${DIM}${'░'.repeat(empty)}${RESET}`;
 
-    // N pulses, /total is dim.
-    const counter = ` ${pulseColor}${this.current}${RESET}${DIM}/${this.total}${RESET}`;
+    // Counter: N is white, /total is dim.
+    const counter = ` ${WHITE}${this.current}${RESET}${DIM}/${this.total}${RESET}`;
 
     // Detail pulses.
     const detail = this.detail ? `  ${pulseColor}${this.detail}${RESET}` : '';
