@@ -99,8 +99,14 @@ export class Spinner {
   private render() {
     const f = SPINNER_FRAMES[this.frame % SPINNER_FRAMES.length];
     const bar = this.renderBar();
-    const detail = this.detail ? `  ${this.detail}` : '';
-    process.stderr.write(`\r\x1b[K${DIM}${f} ${this.text}${bar}${detail}${RESET}`);
+    let detail = '';
+    if (this.detail) {
+      // Pulse the detail text using a sine wave mapped to ANSI brightness.
+      const pulse = Math.sin(this.frame * 0.15) * 0.5 + 0.5; // 0..1
+      const brightness = Math.round(138 + pulse * 117); // 138..255
+      detail = `  \x1b[38;2;${brightness};${brightness};${brightness}m${this.detail}${RESET}`;
+    }
+    process.stderr.write(`\r\x1b[K${DIM}${f} ${this.text}${bar}${RESET}${detail}`);
     this.frame++;
   }
 }
