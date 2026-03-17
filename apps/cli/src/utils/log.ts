@@ -52,6 +52,9 @@ export class Spinner {
   private frame = 0;
   private interval: ReturnType<typeof setInterval> | null = null;
   private text: string;
+  private total = 0;
+  private current = 0;
+  private detail = '';
 
   constructor(text: string) {
     this.text = text;
@@ -67,6 +70,16 @@ export class Spinner {
     this.text = text;
   }
 
+  setTotal(total: number) {
+    this.total = total;
+    this.current = 0;
+  }
+
+  tick(detail?: string) {
+    this.current = Math.min(this.current + 1, this.total);
+    if (detail) this.detail = detail;
+  }
+
   stop(finalText?: string) {
     if (this.interval) clearInterval(this.interval);
     process.stderr.write('\r\x1b[K');
@@ -75,9 +88,19 @@ export class Spinner {
     }
   }
 
+  private renderBar(): string {
+    if (this.total <= 0) return '';
+    const width = 20;
+    const filled = Math.round((this.current / this.total) * width);
+    const empty = width - filled;
+    return ` ${'█'.repeat(filled)}${'░'.repeat(empty)} ${this.current}/${this.total}`;
+  }
+
   private render() {
     const f = SPINNER_FRAMES[this.frame % SPINNER_FRAMES.length];
-    process.stderr.write(`\r\x1b[K${DIM}${f} ${this.text}${RESET}`);
+    const bar = this.renderBar();
+    const detail = this.detail ? `  ${this.detail}` : '';
+    process.stderr.write(`\r\x1b[K${DIM}${f} ${this.text}${bar}${detail}${RESET}`);
     this.frame++;
   }
 }

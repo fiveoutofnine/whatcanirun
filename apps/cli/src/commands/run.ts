@@ -122,13 +122,28 @@ const command = defineCommand({
     const initialMsg = isCached ? 'Loading model from cache...' : 'Downloading model...';
     const spinner = new Spinner(initialMsg).start();
     let bench: BenchResult;
+    let trialsStarted = false;
     try {
       bench = await adapter.benchmark({
         model: modelRef,
         promptTokens,
         genTokens,
         numTrials,
-        onProgress: (msg) => spinner.update(msg),
+        onProgress: (msg) => {
+          const trialMatch = msg.match(/^Trial (\d+)\/(\d+)/);
+          if (trialMatch) {
+            const total = parseInt(trialMatch[2]!, 10);
+            if (!trialsStarted) {
+              trialsStarted = true;
+              spinner.setTotal(total);
+              spinner.update('Running trials');
+            }
+            const tpsMatch = msg.match(/— (.+)$/);
+            spinner.tick(tpsMatch?.[1]);
+          } else {
+            spinner.update(msg);
+          }
+        },
       });
       spinner.stop('Benchmark complete.');
     } catch (e: unknown) {
