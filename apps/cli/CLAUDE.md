@@ -50,20 +50,13 @@ src/
 │   ├── schema.ts          # Manifest/Results types and validators
 │   └── validate.ts        # Validate existing bundles
 ├── device/detect.ts       # macOS/Linux hardware detection
-├── metrics/               # Benchmark measurement
-│   ├── collector.ts       # Per-trial token streaming and timing
-│   ├── aggregator.ts      # p50/p95/mean across trials
-│   └── memory.ts          # RSS memory tracking
 ├── model/resolve.ts       # Model path resolution and inspection
 ├── runtime/               # Runtime adapters
-│   ├── types.ts           # RuntimeAdapter interface, TokenEvent, GenerateOpts
+│   ├── types.ts           # RuntimeAdapter, BenchOpts, BenchResult interfaces
 │   ├── resolve.ts         # Runtime name → adapter mapping
 │   ├── llamacpp.ts        # llama.cpp adapter
-│   ├── mlx.ts             # MLX adapter
-│   └── vllm.ts            # vLLM adapter
-├── scenarios/             # Benchmark scenarios
-│   ├── types.ts           # ScenarioDefinition interface
-│   └── registry.ts        # Scenario loading from fixtures
+│   └── mlx.ts             # MLX adapter
+├── scenarios/prompts/     # Benchmark prompt templates
 ├── upload/client.ts       # API upload client
 └── utils/
     ├── id.ts              # Bundle ID generation
