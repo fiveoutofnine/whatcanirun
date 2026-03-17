@@ -81,7 +81,9 @@ export class MlxAdapter implements RuntimeAdapter {
           } else {
             const trialMatch = line.match(/^\s*Trial\s+(\d+):/);
             if (trialMatch) {
-              opts.onProgress?.(`Trial ${trialMatch[1]}/${opts.numTrials}`);
+              const tpsMatch = line.match(/generation_tps=([\d.]+)/);
+              const tps = tpsMatch ? ` — ${parseFloat(tpsMatch[1]!).toFixed(1)} tok/s` : '';
+              opts.onProgress?.(`Trial ${trialMatch[1]}/${opts.numTrials}${tps}`);
             }
           }
         }

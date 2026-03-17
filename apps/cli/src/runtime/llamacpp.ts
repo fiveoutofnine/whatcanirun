@@ -97,7 +97,13 @@ export class LlamaCppAdapter implements RuntimeAdapter {
       for (const line of lines) {
         if (/^\s*\|/.test(line) && /\d/.test(line)) {
           trialsSeen++;
-          opts.onProgress?.(`Trial ${trialsSeen}/${totalTrials}`);
+          // Last pipe-delimited field is tok/s.
+          const fields = line.split('|').filter((f) => f.trim());
+          const tpsField = fields[fields.length - 1]?.trim();
+          const tps = tpsField && /^[\d.]+$/.test(tpsField) ? ` — ${parseFloat(tpsField).toFixed(1)} tok/s` : '';
+          const phase = trialsSeen <= opts.numTrials ? 'prefill' : 'decode';
+          const trialNum = trialsSeen <= opts.numTrials ? trialsSeen : trialsSeen - opts.numTrials;
+          opts.onProgress?.(`${phase} ${trialNum}/${opts.numTrials}${tps}`);
         }
       }
     }
