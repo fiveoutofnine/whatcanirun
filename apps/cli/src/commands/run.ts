@@ -42,7 +42,7 @@ const command = defineCommand({
     },
     trials: {
       type: 'string',
-      description: 'Number of trials (default: 5)',
+      description: 'Number of trials (default: 10)',
     },
     notes: {
       type: 'string',
@@ -61,7 +61,7 @@ const command = defineCommand({
   async run({ args }) {
     const promptTokens = parseInt((args['prompt-tokens'] as string) || '4096', 10);
     const genTokens = parseInt((args['gen-tokens'] as string) || '1024', 10);
-    const numTrials = parseInt((args.trials as string) || '5', 10);
+    const numTrials = parseInt((args.trials as string) || '10', 10);
     const outputDir = (args.output as string) || join(homedir(), '.wcir', 'bundles');
 
     // Resolve runtime.
