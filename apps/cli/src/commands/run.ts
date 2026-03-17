@@ -9,17 +9,27 @@ import type { BenchResult } from '../runtime/types';
 import { uploadBundle } from '../upload/client';
 import * as log from '../utils/log';
 
+/** Nearest-rank percentile on a sorted-ascending array. */
+function nearestRankPercentile(sorted: number[], p: number): number {
+  const rank = Math.ceil((p / 100) * sorted.length) - 1;
+  return sorted[Math.max(0, rank)]!;
+}
+
 function computeMetrics(bench: BenchResult): DerivedMetrics {
   const { promptTokens, completionTokens, trials, averages } = bench;
 
-  // TTFT estimated from prefill throughput: prompt_tokens / prompt_tps (in seconds) * 1000
-  const ttftP50Ms =
-    averages.promptTps > 0 ? Math.round((promptTokens / averages.promptTps) * 1000 * 100) / 100 : 0;
+  // Sort prompt TPS ascending (low TPS = high latency)
+  const sortedPromptTps = trials.map((t) => t.promptTps).sort((a, b) => a - b);
 
-  // P95: use worst-case trial's prompt_tps
-  const worstPromptTps = Math.min(...trials.map((t) => t.promptTps));
+  // TTFT estimated from prefill throughput: prompt_tokens / prompt_tps * 1000
+  const p50PromptTps = nearestRankPercentile(sortedPromptTps, 50);
+  const ttftP50Ms =
+    p50PromptTps > 0 ? Math.round((promptTokens / p50PromptTps) * 1000 * 100) / 100 : 0;
+
+  // p5 of prompt TPS = p95 of TTFT latency
+  const p5PromptTps = nearestRankPercentile(sortedPromptTps, 5);
   const ttftP95Ms =
-    worstPromptTps > 0 ? Math.round((promptTokens / worstPromptTps) * 1000 * 100) / 100 : 0;
+    p5PromptTps > 0 ? Math.round((promptTokens / p5PromptTps) * 1000 * 100) / 100 : 0;
 
   const decodeTpsMean = Math.round(averages.generationTps * 10) / 10;
 
