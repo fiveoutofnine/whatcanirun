@@ -99,6 +99,21 @@ export const verifications = pgTable('verifications', {
   updatedAt: timestamp('updated_at'),
 });
 
+export const apiTokens = pgTable('api_tokens', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => `tok_${crypto.randomUUID()}`),
+  userId: text('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  tokenHash: text('token_hash').unique(),
+  name: text('name').notNull(),
+  code: text('code').unique(),
+  codeExpiresAt: timestamp('code_expires_at'),
+  lastUsedAt: timestamp('last_used_at'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+});
+
 // -----------------------------------------------------------------------------
 // Devices
 // -----------------------------------------------------------------------------
@@ -126,7 +141,7 @@ export const devices = pgTable(
 export const models = pgTable('models', {
   id: text('id')
     .primaryKey()
-    .$defaultFn(() => `mod_${crypto.randomUUID()}`),
+    .$defaultFn(() => `model_${crypto.randomUUID()}`),
   displayName: text('display_name').notNull(),
   format: text('format').notNull(),
   artifactSha256: text('artifact_sha256').notNull().unique(),
@@ -232,6 +247,7 @@ export const runsRelations = relations(runs, ({ one }) => ({
 // -----------------------------------------------------------------------------
 
 export type User = typeof users.$inferSelect;
+export type ApiToken = typeof apiTokens.$inferSelect;
 export type Device = typeof devices.$inferSelect;
 export type Model = typeof models.$inferSelect;
 export type Nonce = typeof nonces.$inferSelect;

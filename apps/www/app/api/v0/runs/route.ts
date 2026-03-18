@@ -1,9 +1,10 @@
-import { and, asc, count, desc, eq, isNull, SQL } from 'drizzle-orm';
-import { unzipSync } from 'fflate';
 import { NextRequest, NextResponse } from 'next/server';
 
+import { and, asc, count, desc, eq, isNull, SQL } from 'drizzle-orm';
+import { unzipSync } from 'fflate';
+
 import { db } from '@/lib/db';
-import { devices, models, nonces, runs, RunStatus, ScenarioId } from '@/lib/db/schema';
+import { apiTokens, devices, models, nonces, runs, RunStatus, ScenarioId } from '@/lib/db/schema';
 import {
   AggregateMetrics,
   validateManifest,
@@ -63,6 +64,28 @@ interface ResultsData {
 }
 
 export async function POST(request: NextRequest) {
+  // 0. Authenticate via bearer token
+  let userId: string | null = null;
+  const authHeader = request.headers.get('authorization');
+  if (authHeader?.startsWith('Bearer ')) {
+    const raw = authHeader.slice(7);
+    const tokenHash = await sha256(raw);
+    const [apiToken] = await db
+      .select({ userId: apiTokens.userId, id: apiTokens.id })
+      .from(apiTokens)
+      .where(eq(apiTokens.tokenHash, tokenHash))
+      .limit(1);
+
+    if (apiToken) {
+      userId = apiToken.userId;
+      // Update last-used timestamp (fire-and-forget).
+      db.update(apiTokens)
+        .set({ lastUsedAt: new Date() })
+        .where(eq(apiTokens.id, apiToken.id))
+        .then(() => {});
+    }
+  }
+
   // 1. Parse multipart form
   const formData = await request.formData();
   const bundleFile = formData.get('bundle');
@@ -94,7 +117,10 @@ export async function POST(request: NextRequest) {
 
   const manifestErrors = validateManifest(manifest);
   if (manifestErrors.length > 0) {
-    return NextResponse.json({ error: 'Invalid manifest', details: manifestErrors }, { status: 400 });
+    return NextResponse.json(
+      { error: 'Invalid manifest', details: manifestErrors },
+      { status: 400 },
+    );
   }
 
   // 4. Extract and validate results.json
@@ -227,6 +253,7 @@ export async function POST(request: NextRequest) {
       task: manifest.task,
       canonical: manifest.canonical,
       notes: manifest.notes,
+      userId,
       deviceId: device!.id,
       modelId: model!.id,
       nonceVerified,
@@ -339,4 +366,15 @@ export async function GET(request: NextRequest) {
   ]);
 
   return NextResponse.json({ runs: runRows, total: totalRow!.count });
+}
+
+// -----------------------------------------------------------------------------
+// Helpers
+// -----------------------------------------------------------------------------
+
+async function sha256(input: string): Promise<string> {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(input));
+  return Array.from(new Uint8Array(buf))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
 }

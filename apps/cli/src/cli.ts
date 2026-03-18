@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 import { defineCommand, runMain } from 'citty';
 
-import { run, show, submit, validate, version } from './commands';
+import { auth, run, show, submit, validate, version } from './commands';
 
 const main = defineCommand({
   meta: {
@@ -10,10 +10,11 @@ const main = defineCommand({
     description: 'Standardized local LLM inference benchmarks',
   },
   subCommands: {
+    auth,
     run,
+    show,
     submit,
     validate,
-    show,
     version,
   },
 });

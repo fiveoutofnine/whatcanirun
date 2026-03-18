@@ -1,5 +1,7 @@
 import { readFileSync } from 'node:fs';
 
+import { getToken } from '../auth/token';
+
 // -----------------------------------------------------------------------------
 // Types
 // -----------------------------------------------------------------------------
@@ -43,8 +45,15 @@ export async function uploadBundle(bundlePath: string): Promise<UploadResult> {
   form.append('nonce', nonce);
 
   // 4. Submit
+  const headers: Record<string, string> = {};
+  const token = getToken();
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
   const res = await fetch(`${API_BASE}/api/v0/runs`, {
     method: 'POST',
+    headers,
     body: form,
   });
 

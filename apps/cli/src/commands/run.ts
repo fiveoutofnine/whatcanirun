@@ -1,6 +1,7 @@
 import { defineCommand } from 'citty';
 import { basename } from 'path';
 
+import { getAuth } from '../auth/token';
 import { createBundle, type DerivedMetrics } from '../bundle/create';
 import { validateBundle } from '../bundle/validate';
 import { detectDevice } from '../device/detect';
@@ -59,6 +60,11 @@ const command = defineCommand({
     },
   },
   async run({ args }) {
+    if (args.submit && !getAuth()) {
+      log.error('Not logged in. Run `whatcanirun auth login` first.');
+      process.exit(1);
+    }
+
     const promptTokens = parseInt((args['prompt-tokens'] as string) || '4096', 10);
     const genTokens = parseInt((args['gen-tokens'] as string) || '1024', 10);
     const numTrials = parseInt((args.trials as string) || '10', 10);

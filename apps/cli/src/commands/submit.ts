@@ -1,5 +1,6 @@
 import { defineCommand } from 'citty';
 
+import { getAuth } from '../auth/token';
 import { validateBundle } from '../bundle/validate';
 import { uploadBundle } from '../upload/client';
 import { resolveBundlePath } from '../utils/id';
@@ -18,6 +19,11 @@ const command = defineCommand({
     },
   },
   async run({ args }) {
+    if (!getAuth()) {
+      log.error('Not logged in. Run `whatcanirun auth login` first.');
+      process.exit(1);
+    }
+
     const bundlePath = resolveBundlePath(args.bundle as string);
 
     // Validate first
