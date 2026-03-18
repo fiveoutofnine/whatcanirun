@@ -13,7 +13,7 @@ export type ExternalLink = {
 /**
  * Type for a page slug on [**whatcani.run**](https://whatcani.run).
  */
-export type PageSlug = '/' | '/about' | '/admin' | '/dashboard';
+export type PageSlug = '/' | '/about' | '/admin';
 
 /**
  * Type for an external page linked on [**whatcani.run**](https://whatcani.run),
@@ -21,8 +21,8 @@ export type PageSlug = '/' | '/about' | '/admin' | '/dashboard';
  * component).
  */
 export type PageExternalLink =
-  | 'https://x.com/fiveoutofnine'
-  | 'https://discord.com/invite/4fQR5tnG4a';
+  | 'https://github.com/fiveoutofnine/whatcanirun'
+  | 'https://x.com/fiveoutofnine';
 
 /**
  * Type for a page on [**whatcani.run**](https://whatcani.run), intended to be

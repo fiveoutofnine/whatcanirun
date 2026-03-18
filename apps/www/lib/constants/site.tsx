@@ -1,4 +1,4 @@
-import { ChartArea, FileText, Home, Lock } from 'lucide-react';
+import { FileText, Home, Lock } from 'lucide-react';
 
 import type { Page } from '@/lib/types/site';
 
@@ -9,7 +9,6 @@ import LogoIcon from '@/components/common/logo-icon';
  */
 export const NAVBAR_PAGES: Page[] = [
   { name: 'Home', slug: '/', icon: <Home /> },
-  { name: 'Dashboard', slug: '/dashboard', icon: <ChartArea /> },
   { name: 'About', slug: '/about', icon: <FileText /> },
 ];
 
@@ -24,5 +23,10 @@ export const ADMIN_PAGES: Page[] = [{ name: 'Admin', slug: '/admin', icon: <Lock
  * navigation bar.
  */
 export const EXTERNAL_PAGES: Page[] = [
+  {
+    name: 'GitHub',
+    slug: 'https://github.com/fiveoutofnine/whatcanirun',
+    icon: <LogoIcon.GitHub />,
+  },
   { name: 'Twitter', slug: 'https://x.com/fiveoutofnine', icon: <LogoIcon.X /> },
 ];
