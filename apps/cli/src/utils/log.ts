@@ -38,6 +38,10 @@ export function label(key: string, value: string) {
   console.log(`${CYAN}${key}:${RESET} ${value}`);
 }
 
+export function bundleSaved(path: string) {
+  console.log(`${DIM}Bundle saved to${RESET} ${CYAN}${path}${RESET}`);
+}
+
 export function blank() {
   console.log();
 }

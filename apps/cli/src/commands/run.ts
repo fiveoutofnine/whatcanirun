@@ -1,4 +1,5 @@
 import { defineCommand } from 'citty';
+import { basename } from 'path';
 
 import { createBundle, type DerivedMetrics } from '../bundle/create';
 import { validateBundle } from '../bundle/validate';
@@ -193,7 +194,9 @@ const command = defineCommand({
       }
     }
 
-    log.info(`Bundle saved to ${bundlePath}`);
+    const bundleId = basename(bundlePath, '.zip');
+    log.bundleSaved(bundlePath);
+    log.info(`Submit it via \`whatcanirun submit ${bundleId}\``);
 
     // Upload.
     if (args.submit) {
