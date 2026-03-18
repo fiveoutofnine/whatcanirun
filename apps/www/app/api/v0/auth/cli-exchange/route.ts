@@ -19,12 +19,7 @@ export async function POST(request: NextRequest) {
   const [row] = await db
     .update(apiTokens)
     .set({ code: null, codeExpiresAt: null, tokenHash })
-    .where(
-      and(
-        eq(apiTokens.code, body.code),
-        gt(apiTokens.codeExpiresAt, new Date()),
-      ),
-    )
+    .where(and(eq(apiTokens.code, body.code), gt(apiTokens.codeExpiresAt, new Date())))
     .returning({ userId: apiTokens.userId });
 
   if (!row) {
