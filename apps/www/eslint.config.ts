@@ -31,7 +31,7 @@ const eslintConfig = defineConfig([
     },
   },
   {
-    files: ['**/*.{ts,mts,cts,tsx}'],
+    files: ['**/*.{ts,mts,cts,tsx,cjs}'],
     rules: {
       'no-undef': 'off',
     },
@@ -43,6 +43,14 @@ const eslintConfig = defineConfig([
     },
   },
   prettier,
+  {
+    files: ['**/*.cjs'],
+    rules: {
+      'no-require-imports': 'off',
+      '@typescript-eslint/no-require-imports': 'off',
+      'no-var-requires': 'off',
+    },
+  },
 ]);
 
 export default eslintConfig;

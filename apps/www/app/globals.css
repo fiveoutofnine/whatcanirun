@@ -1,26 +1,102 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+html,
+body,
+main {
+  @apply scroll-pt-[7.25rem] bg-gray-1 text-gray-12 md:scroll-pt-[8.25rem];
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+* {
+  @apply selection:bg-[#FF00FF] selection:text-white;
+  box-sizing: border-box;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+a {
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-9;
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-9;
+}
+
+@layer utilities {
+  .min-h-screen {
+    min-height: 100dvh;
+  }
+  .h-screen {
+    height: 100dvh;
+  }
+  .max-h-competition-screen {
+    max-height: calc(100dvh - 6.75rem);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* For WebKit-based browsers (Chrome, Safari, and Opera) */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* For IE, Edge and Firefox */
+.hide-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.recharts-cartesian-grid-horizontal > line {
+  @apply stroke-gray-6;
+}
+
+.recharts-cartesian-grid-vertical > line {
+  @apply stroke-gray-6;
+}
+
+.recharts-text {
+  user-select: none;
+  font-weight: 400;
+}
+
+.recharts-tooltip-cursor {
+  @apply stroke-gray-9;
+}
+
+.recharts-tooltip-wrapper:focus {
+  outline: none;
+}
+
+.recharts-cross {
+  @apply z-50 stroke-gray-9;
+}
+
+.recharts-cartesian-axis-tick-value {
+  @apply fill-gray-11;
+}
+
+.recharts-surface:focus {
+  outline: none;
+}
+
+.scroll-overflow-indicators {
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 1.5rem,
+    black calc(100% - 1.5rem),
+    transparent
+  );
+}
+
+@media (max-width: 768px) {
+  .scroll-overflow-indicators {
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 1rem,
+      black calc(100% - 1rem),
+      transparent
+    );
+  }
 }
