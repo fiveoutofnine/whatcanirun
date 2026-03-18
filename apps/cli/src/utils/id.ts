@@ -81,4 +81,3 @@ export function resolveBundlePath(bundleArg: string): string {
   log.error(`Bundle not found: ${bundleArg}`);
   process.exit(1);
 }
-

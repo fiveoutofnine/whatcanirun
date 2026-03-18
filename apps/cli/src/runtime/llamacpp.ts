@@ -100,7 +100,10 @@ export class LlamaCppAdapter implements RuntimeAdapter {
           // Last pipe-delimited field is tok/s.
           const fields = line.split('|').filter((f) => f.trim());
           const tpsField = fields[fields.length - 1]?.trim();
-          const tps = tpsField && /^[\d.]+$/.test(tpsField) ? ` — ${parseFloat(tpsField).toFixed(1)} tok/s` : '';
+          const tps =
+            tpsField && /^[\d.]+$/.test(tpsField)
+              ? ` — ${parseFloat(tpsField).toFixed(1)} tok/s`
+              : '';
           opts.onProgress?.(`Trial ${trialsSeen}/${totalTrials}${tps}`);
         }
       }
