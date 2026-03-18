@@ -1,7 +1,6 @@
 import Link, { type LinkProps } from 'next/link';
 
 import clsx from 'clsx';
-import { Box } from 'lucide-react';
 import { twMerge } from 'tailwind-merge';
 
 // -----------------------------------------------------------------------------
@@ -28,9 +27,6 @@ const Logo: React.FC<LogoProps> = ({ className, ...rest }) => {
       href="/"
       {...rest}
     >
-      <span className="flex size-5 items-center justify-center">
-        <Box />
-      </span>
       <span>whatcani.run</span>
     </Link>
   );
