@@ -1,8 +1,9 @@
+import type { DerivedMetrics } from '@whatcanirun/shared';
 import { defineCommand } from 'citty';
 import { basename } from 'path';
 
 import { getAuth } from '../auth/token';
-import { createBundle, type DerivedMetrics } from '../bundle/create';
+import { createBundle } from '../bundle/create';
 import { validateBundle } from '../bundle/validate';
 import { detectDevice } from '../device/detect';
 import { findHfCachePath, inspectModel, isHuggingFaceRepoId, resolveModel } from '../model/resolve';

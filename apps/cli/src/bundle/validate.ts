@@ -1,8 +1,7 @@
+import { validateManifest, validateResults } from '@whatcanirun/shared';
 import { mkdtempSync, rmSync } from 'fs';
 import { tmpdir } from 'os';
 import { join } from 'path';
-
-import { validateManifest, validateResults } from './schema';
 
 // -----------------------------------------------------------------------------
 // Types

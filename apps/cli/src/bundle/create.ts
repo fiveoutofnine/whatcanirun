@@ -1,9 +1,10 @@
-import type {
-  AggregateMetrics,
-  DerivedMetrics,
-  Manifest,
-  Results,
-  ResultTrial,
+import {
+  type AggregateMetrics,
+  type DerivedMetrics,
+  type Manifest,
+  type Results,
+  type ResultTrial,
+  SCHEMA_VERSION,
 } from '@whatcanirun/shared';
 import { existsSync, mkdirSync } from 'fs';
 import { join, resolve } from 'path';
@@ -17,8 +18,6 @@ import { bundleFilename, generateBundleId } from '../utils/id';
 // -----------------------------------------------------------------------------
 // Types
 // -----------------------------------------------------------------------------
-
-export type { DerivedMetrics };
 
 export interface BundleOpts {
   outputDir: string;
@@ -47,7 +46,7 @@ export async function createBundle(opts: BundleOpts): Promise<string> {
   }
 
   const manifest: Manifest = {
-    schema_version: '0.1.0',
+    schema_version: SCHEMA_VERSION,
     bundle_id: bundleId,
     created_at: now.toISOString(),
     canonical: false,

@@ -1,7 +1,5 @@
 import type { AggregateMetrics } from '@whatcanirun/shared';
 
-export { validateManifest, validateResults } from '@whatcanirun/shared';
-
 export function validatePlausibility(aggregate: AggregateMetrics): string[] {
   const errors: string[] = [];
 
