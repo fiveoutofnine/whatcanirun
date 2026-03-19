@@ -142,7 +142,6 @@ export const models = pgTable('models', {
   displayName: text('display_name').notNull(),
   format: text('format').notNull(),
   artifactSha256: text('artifact_sha256').notNull().unique(),
-  tokenizerSha256: text('tokenizer_sha256'),
   source: text('source'),
   fileSizeBytes: integer('file_size_bytes'),
   parameters: text('parameters'),
