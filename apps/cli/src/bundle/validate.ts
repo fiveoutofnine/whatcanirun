@@ -73,7 +73,7 @@ export async function validateBundle(bundlePath: string): Promise<ValidationResu
     const m = manifest as Record<string, unknown>;
     const model = m.model as Record<string, unknown> | undefined;
     if (!model?.artifact_sha256) {
-      errors.push('Missing model artifact_sha256');
+      errors.push('Missing model `artifact_sha256`.');
     }
 
     return { valid: errors.length === 0, errors };
