@@ -22,29 +22,21 @@ const API_BASE = process.env.WCIR_API_URL || 'https://whatcani.run';
 // Functions
 // -----------------------------------------------------------------------------
 
-async function fetchNonce(): Promise<string> {
-  const res = await fetch(`${API_BASE}/api/v0/nonce`);
-  if (!res.ok) {
-    throw new Error(`Failed to fetch nonce: ${res.status} ${res.statusText}`);
-  }
-  const data = (await res.json()) as { nonce: string };
-  return data.nonce;
-}
-
 export async function uploadBundle(bundlePath: string): Promise<UploadResult> {
-  // 1. Fetch a fresh nonce
-  const nonce = await fetchNonce();
-
-  // 2. Read the bundle zip
+  // 1. Read the bundle zip and compute its SHA-256
   const zipBytes = readFileSync(bundlePath);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', zipBytes);
+  const bundleSha256 = Array.from(new Uint8Array(hashBuffer))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
   const blob = new Blob([zipBytes], { type: 'application/zip' });
 
-  // 3. Build multipart form
+  // 2. Build multipart form
   const form = new FormData();
   form.append('bundle', blob, bundlePath.split('/').pop() || 'bundle.zip');
-  form.append('nonce', nonce);
+  form.append('bundle_sha256', bundleSha256);
 
-  // 4. Submit
+  // 3. Submit
   const headers: Record<string, string> = {};
   const token = getToken();
   if (token) {

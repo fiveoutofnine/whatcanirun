@@ -15,6 +15,13 @@
       "when": 1773868684371,
       "tag": "0001_minor_george_stacy",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1773941592898,
+      "tag": "0002_fancy_senator_kelly",
+      "breakpoints": true
     }
   ]
 }
