@@ -23,26 +23,27 @@ const MAX_TEXT_LENGTH = 1_000;
 // -----------------------------------------------------------------------------
 
 export async function POST(request: NextRequest) {
-  // Authenticate via bearer token.
-  let userId: string | null = null;
+  // Authenticate via bearer token (required).
   const authHeader = request.headers.get('authorization');
-  if (authHeader?.startsWith('Bearer ')) {
-    const raw = authHeader.slice(7);
-    const tokenHash = await sha256(raw);
-    const [apiToken] = await db
-      .select({ userId: apiTokens.userId, id: apiTokens.id })
-      .from(apiTokens)
-      .where(eq(apiTokens.tokenHash, tokenHash))
-      .limit(1);
-
-    if (!apiToken) {
-      return NextResponse.json({ error: 'Invalid or expired token.' }, { status: 401 });
-    }
-
-    userId = apiToken.userId;
-    // Update last-used timestamp (fire-and-forget).
-    await db.update(apiTokens).set({ lastUsedAt: new Date() }).where(eq(apiTokens.id, apiToken.id));
+  if (!authHeader?.startsWith('Bearer ')) {
+    return NextResponse.json({ error: 'Missing bearer token.' }, { status: 401 });
   }
+
+  const raw = authHeader.slice(7);
+  const tokenHash = await sha256(raw);
+  const [apiToken] = await db
+    .select({ userId: apiTokens.userId, id: apiTokens.id })
+    .from(apiTokens)
+    .where(eq(apiTokens.tokenHash, tokenHash))
+    .limit(1);
+
+  if (!apiToken) {
+    return NextResponse.json({ error: 'Invalid or expired token.' }, { status: 401 });
+  }
+
+  const userId = apiToken.userId;
+  // Update last-used timestamp.
+  await db.update(apiTokens).set({ lastUsedAt: new Date() }).where(eq(apiTokens.id, apiToken.id));
 
   // Parse multipart form.
   const formData = await request.formData();
