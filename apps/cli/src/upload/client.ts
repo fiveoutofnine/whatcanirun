@@ -36,16 +36,14 @@ export async function uploadBundle(bundlePath: string): Promise<UploadResult> {
   form.append('bundle', blob, bundlePath.split('/').pop() || 'bundle.zip');
   form.append('bundle_sha256', bundleSha256);
 
-  // 3. Submit
-  const headers: Record<string, string> = {};
   const token = getToken();
   if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
+    form.append('token', token);
   }
 
+  // 3. Submit
   const res = await fetch(`${API_BASE}/api/v0/runs`, {
     method: 'POST',
-    headers,
     body: form,
   });
 

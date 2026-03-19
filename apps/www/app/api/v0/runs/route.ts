@@ -23,14 +23,24 @@ const MAX_TEXT_LENGTH = 1_000;
 // -----------------------------------------------------------------------------
 
 export async function POST(request: NextRequest) {
-  // Authenticate via bearer token (required).
-  const authHeader = request.headers.get('authorization');
-  if (!authHeader?.startsWith('Bearer ')) {
-    return NextResponse.json({ error: 'Missing bearer token.' }, { status: 401 });
+  // Parse multipart form.
+  const formData = await request.formData();
+  const bundleFile = formData.get('bundle');
+  if (!(bundleFile instanceof File)) {
+    return NextResponse.json({ error: 'Missing bundle zip file.' }, { status: 400 });
   }
 
-  const raw = authHeader.slice(7);
-  const tokenHash = await sha256(raw);
+  // Authenticate via token in form data (preferred) or Authorization header (fallback).
+  const rawToken =
+    (formData.get('token') as string | null) ??
+    (request.headers.get('authorization')?.startsWith('Bearer ')
+      ? request.headers.get('authorization')!.slice(7)
+      : null);
+  if (!rawToken) {
+    return NextResponse.json({ error: 'Missing authentication token.' }, { status: 401 });
+  }
+
+  const tokenHash = await sha256(rawToken);
   const [apiToken] = await db
     .select({ userId: apiTokens.userId, id: apiTokens.id })
     .from(apiTokens)
@@ -44,13 +54,6 @@ export async function POST(request: NextRequest) {
   const userId = apiToken.userId;
   // Update last-used timestamp.
   await db.update(apiTokens).set({ lastUsedAt: new Date() }).where(eq(apiTokens.id, apiToken.id));
-
-  // Parse multipart form.
-  const formData = await request.formData();
-  const bundleFile = formData.get('bundle');
-  if (!(bundleFile instanceof File)) {
-    return NextResponse.json({ error: 'Missing bundle zip file.' }, { status: 400 });
-  }
 
   // Unzip in memory (with size limits).
   const zipBuffer = new Uint8Array(await bundleFile.arrayBuffer());
