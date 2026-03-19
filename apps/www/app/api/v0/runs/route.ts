@@ -5,6 +5,7 @@ import { unzipSync } from 'fflate';
 
 import { db } from '@/lib/db';
 import { apiTokens, devices, models, runs, RunStatus, ScenarioId } from '@/lib/db/schema';
+import { sha256 } from '@/lib/utils';
 import {
   AggregateMetrics,
   validateManifest,
@@ -366,15 +367,4 @@ export async function GET(request: NextRequest) {
   ]);
 
   return NextResponse.json({ runs: runRows, total: totalRow!.count });
-}
-
-// -----------------------------------------------------------------------------
-// Helpers
-// -----------------------------------------------------------------------------
-
-async function sha256(input: string): Promise<string> {
-  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(input));
-  return Array.from(new Uint8Array(buf))
-    .map((b) => b.toString(16).padStart(2, '0'))
-    .join('');
 }

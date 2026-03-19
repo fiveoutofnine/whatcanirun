@@ -4,6 +4,7 @@ import { and, eq, gt } from 'drizzle-orm';
 
 import { db } from '@/lib/db';
 import { apiTokens, users } from '@/lib/db/schema';
+import { sha256 } from '@/lib/utils';
 
 export async function POST(request: NextRequest) {
   const body = (await request.json()) as { code?: string };
@@ -41,11 +42,4 @@ export async function POST(request: NextRequest) {
     token: rawToken,
     user: { id: user.id, name: user.name, email: user.email },
   });
-}
-
-async function sha256(input: string): Promise<string> {
-  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(input));
-  return Array.from(new Uint8Array(buf))
-    .map((b) => b.toString(16).padStart(2, '0'))
-    .join('');
 }
