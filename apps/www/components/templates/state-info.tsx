@@ -9,7 +9,7 @@ import { twMerge } from 'tailwind-merge';
 type StateInfoProps = StateInfoVariantProps & {
   className?: string;
   title: string | number;
-  description: string | number;
+  description: React.ReactNode;
   icon: React.ReactNode;
   children?: React.ReactNode;
 };

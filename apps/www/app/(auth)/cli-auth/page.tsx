@@ -4,25 +4,33 @@ import { redirect } from 'next/navigation';
 import { createCliCode } from './actions';
 
 import { auth } from '@/lib/auth';
+import { cliAuthSearchParamsSchema } from '@/lib/schemas/auth';
+
+import ErrorLayout from '@/components/layouts/error';
+import { Code } from '@/components/templates/mdx';
 
 export default async function Page({
   searchParams,
 }: {
   searchParams: Promise<{ port?: string; state?: string }>;
 }) {
-  const { port, state } = await searchParams;
-
-  // Validate required params.
-  if (!port || !state || !/^\d+$/.test(port)) {
+  const result = cliAuthSearchParamsSchema.safeParse(await searchParams);
+  if (!result.success) {
     return (
-      <div className="flex w-full max-w-sm flex-col animate-in fade-in zoom-in-95">
-        <h2 className="mb-2 text-2xl font-medium tracking-tight text-gray-12">Invalid request</h2>
-        <p className="text-gray-11">
-          This page should be opened by the CLI. Run <code>whatcanirun auth login</code>.
-        </p>
-      </div>
+      <ErrorLayout
+        statusCode={400}
+        title="Invalid request"
+        message={
+          <span>
+            This page should be opened by the CLI. Run{' '}
+            <Code className="select-all">wcir auth login</Code>.
+          </span>
+        }
+      />
     );
   }
+
+  const { port, state } = result.data;
 
   // Redirect to `/login` if the user isn't logged in.
   const session = await auth.api.getSession({ headers: await headers() });

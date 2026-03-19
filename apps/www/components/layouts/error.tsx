@@ -10,7 +10,7 @@ import { Button } from '@/components/ui';
 type ErrorLayoutProps = {
   statusCode?: number;
   title?: string;
-  message?: string;
+  message?: React.ReactNode;
   children?: React.ReactNode;
 };
 
