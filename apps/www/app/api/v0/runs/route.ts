@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import type { Manifest, Results } from '@whatcanirun/shared';
 import { validateManifest, validateResults } from '@whatcanirun/shared';
-import { and, asc, count, desc, eq, SQL } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { unzipSync } from 'fflate';
 
 import { db } from '@/lib/db';
@@ -16,7 +16,7 @@ import { validatePlausibility } from '@/lib/validators/bundle';
 
 const MAX_ZIP_BYTES = 5 * 1024 * 1024; // 5 MB compressed
 const MAX_UNZIPPED_BYTES = 20 * 1024 * 1024; // 20 MB decompressed
-const MAX_TEXT_LENGTH = 1000;
+const MAX_TEXT_LENGTH = 1_000;
 
 // -----------------------------------------------------------------------------
 // POST
@@ -280,91 +280,6 @@ export async function POST(request: NextRequest) {
     },
     { status: 201 },
   );
-}
-
-// -----------------------------------------------------------------------------
-// GET
-// -----------------------------------------------------------------------------
-
-const SORT_COLUMNS = {
-  decode_tps_mean: runs.decodeTpsMean,
-  ttft_p50_ms: runs.ttftP50Ms,
-  weighted_tps_mean: runs.weightedTpsMean,
-  created_at: runs.createdAt,
-} as const;
-
-export async function GET(request: NextRequest) {
-  const params = request.nextUrl.searchParams;
-
-  const modelId = params.get('model_id');
-  const deviceId = params.get('device_id');
-  const runtimeName = params.get('runtime_name');
-  const status = params.has('status') ? params.get('status') : RunStatus.VERIFIED;
-  const sortKey = params.get('sort') || 'decode_tps_mean';
-  const order = params.get('order') === 'asc' ? 'asc' : 'desc';
-  const limit = Math.min(parseInt(params.get('limit') || '50', 10) || 50, 100);
-  const offset = parseInt(params.get('offset') || '0', 10) || 0;
-
-  if (!(sortKey in SORT_COLUMNS)) {
-    return NextResponse.json(
-      {
-        error: `Invalid sort key: ${sortKey}. Valid keys: ${Object.keys(SORT_COLUMNS).join(', ')}`,
-      },
-      { status: 400 },
-    );
-  }
-
-  const conditions: SQL[] = [];
-  if (modelId) conditions.push(eq(runs.modelId, modelId));
-  if (deviceId) conditions.push(eq(runs.deviceId, deviceId));
-  if (runtimeName) conditions.push(eq(runs.runtimeName, runtimeName));
-  if (status) conditions.push(eq(runs.status, status as RunStatus));
-
-  const where = conditions.length > 0 ? and(...conditions) : undefined;
-  const sortCol = SORT_COLUMNS[sortKey as keyof typeof SORT_COLUMNS];
-  const orderFn = order === 'asc' ? asc : desc;
-
-  const [runRows, [totalRow]] = await Promise.all([
-    db
-      .select({
-        id: runs.id,
-        bundleId: runs.bundleId,
-        schemaVersion: runs.schemaVersion,
-        status: runs.status,
-        canonical: runs.canonical,
-        notes: runs.notes,
-        deviceId: runs.deviceId,
-        modelId: runs.modelId,
-        userId: runs.userId,
-        runtimeName: runs.runtimeName,
-        runtimeVersion: runs.runtimeVersion,
-        runtimeBuildFlags: runs.runtimeBuildFlags,
-        harnessVersion: runs.harnessVersion,
-        harnessGitSha: runs.harnessGitSha,
-        contextLength: runs.contextLength,
-        promptTokens: runs.promptTokens,
-        completionTokens: runs.completionTokens,
-        ttftP50Ms: runs.ttftP50Ms,
-        ttftP95Ms: runs.ttftP95Ms,
-        decodeTpsMean: runs.decodeTpsMean,
-        weightedTpsMean: runs.weightedTpsMean,
-        idleRssMb: runs.idleRssMb,
-        peakRssMb: runs.peakRssMb,
-        trialsPassed: runs.trialsPassed,
-        trialsTotal: runs.trialsTotal,
-        bundleUrl: runs.bundleUrl,
-        createdAt: runs.createdAt,
-        updatedAt: runs.updatedAt,
-      })
-      .from(runs)
-      .where(where)
-      .orderBy(orderFn(sortCol))
-      .limit(limit)
-      .offset(offset),
-    db.select({ count: count() }).from(runs).where(where),
-  ]);
-
-  return NextResponse.json({ runs: runRows, total: totalRow!.count });
 }
 
 // -----------------------------------------------------------------------------
