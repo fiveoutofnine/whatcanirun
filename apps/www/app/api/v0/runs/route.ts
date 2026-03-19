@@ -14,8 +14,8 @@ import { validatePlausibility } from '@/lib/validators/bundle';
 // Constants
 // -----------------------------------------------------------------------------
 
-const MAX_ZIP_BYTES = 5 * 1024 * 1024; // 5 MB compressed
-const MAX_UNZIPPED_BYTES = 20 * 1024 * 1024; // 20 MB decompressed
+const MAX_ZIP_BYTES = 5 * 1024; // 5 KB compressed
+const MAX_UNZIPPED_BYTES = 50 * 1024; // 50 KB decompressed
 const MAX_TEXT_LENGTH = 1_000;
 
 // -----------------------------------------------------------------------------
