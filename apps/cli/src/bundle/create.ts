@@ -1,3 +1,10 @@
+import type {
+  AggregateMetrics,
+  DerivedMetrics,
+  Manifest,
+  Results,
+  ResultTrial,
+} from '@whatcanirun/shared';
 import { existsSync, mkdirSync } from 'fs';
 import { join, resolve } from 'path';
 
@@ -6,19 +13,12 @@ import { formatSysinfo } from '../device/detect';
 import type { ModelInfo } from '../model/resolve';
 import type { BenchResult, RuntimeInfo } from '../runtime/types';
 import { bundleFilename, generateBundleId } from '../utils/id';
-import type { AggregateMetrics, Manifest, Results, ResultTrial } from './schema';
 
 // -----------------------------------------------------------------------------
 // Types
 // -----------------------------------------------------------------------------
 
-export interface DerivedMetrics {
-  ttftP50Ms: number;
-  ttftP95Ms: number;
-  decodeTpsMean: number;
-  weightedTpsMean: number;
-  peakRssMb: number;
-}
+export type { DerivedMetrics };
 
 export interface BundleOpts {
   outputDir: string;
@@ -27,7 +27,6 @@ export interface BundleOpts {
   model: ModelInfo;
   bench: BenchResult;
   metrics: DerivedMetrics;
-  scenarioId: string;
   notes?: string;
 }
 
@@ -51,8 +50,6 @@ export async function createBundle(opts: BundleOpts): Promise<string> {
     schema_version: '0.1.0',
     bundle_id: bundleId,
     created_at: now.toISOString(),
-    task: 'llm.generate.v1',
-    scenario_id: opts.scenarioId,
     canonical: false,
     harness: {
       version: '0.1.0',

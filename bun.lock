@@ -20,6 +20,7 @@
         "wcir": "./src/cli.ts",
       },
       "dependencies": {
+        "@whatcanirun/shared": "workspace:*",
         "citty": "^0.1.6",
         "smol-toml": "^1.3.1",
       },
@@ -51,6 +52,7 @@
         "@radix-ui/react-tooltip": "^1.2.8",
         "@radix-ui/react-visually-hidden": "^1.2.4",
         "@vercel/analytics": "^2.0.1",
+        "@whatcanirun/shared": "workspace:*",
         "better-auth": "^1.5.4",
         "boring-avatars": "^2.0.4",
         "cmdk": "^1.1.1",
@@ -97,6 +99,10 @@
         "windy-radix-palette": "^2.0.0-beta.7",
         "windy-radix-typography": "^1.0.0-beta.0",
       },
+    },
+    "packages/shared": {
+      "name": "@whatcanirun/shared",
+      "version": "0.1.0",
     },
   },
   "trustedDependencies": [
@@ -575,6 +581,8 @@
     "@vercel/analytics": ["@vercel/analytics@2.0.1", "", { "peerDependencies": { "@remix-run/react": "^2", "@sveltejs/kit": "^1 || ^2", "next": ">= 13", "nuxt": ">= 3", "react": "^18 || ^19 || ^19.0.0-rc", "svelte": ">= 4", "vue": "^3", "vue-router": "^4" }, "optionalPeers": ["@remix-run/react", "@sveltejs/kit", "next", "nuxt", "react", "svelte", "vue", "vue-router"] }, "sha512-MTQG6V9qQrt1tsDeF+2Uoo5aPjqbVPys1xvnIftXSJYG2SrwXRHnqEvVoYID7BTruDz4lCd2Z7rM1BdkUehk2g=="],
 
     "@whatcanirun/cli": ["@whatcanirun/cli@workspace:apps/cli"],
+
+    "@whatcanirun/shared": ["@whatcanirun/shared@workspace:packages/shared"],
 
     "@whatcanirun/www": ["@whatcanirun/www@workspace:apps/www"],
 

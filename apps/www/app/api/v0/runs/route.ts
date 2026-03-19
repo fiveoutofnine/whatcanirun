@@ -1,67 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+import type { Manifest, Results } from '@whatcanirun/shared';
+import { validateManifest, validateResults } from '@whatcanirun/shared';
 import { and, asc, count, desc, eq, SQL } from 'drizzle-orm';
 import { unzipSync } from 'fflate';
 
 import { db } from '@/lib/db';
-import { apiTokens, devices, models, runs, RunStatus, ScenarioId } from '@/lib/db/schema';
+import { apiTokens, devices, models, runs, RunStatus } from '@/lib/db/schema';
 import { sha256 } from '@/lib/utils';
-import {
-  AggregateMetrics,
-  validateManifest,
-  validatePlausibility,
-  validateResults,
-} from '@/lib/validators/bundle';
+import { validatePlausibility } from '@/lib/validators/bundle';
 
 // -----------------------------------------------------------------------------
 // POST /api/v0/runs — submit a benchmark bundle
 // -----------------------------------------------------------------------------
-
-interface ManifestDevice {
-  cpu: string;
-  gpu: string;
-  ram_gb: number;
-  os_name: string;
-  os_version: string;
-}
-
-interface ManifestRuntime {
-  name: string;
-  version: string;
-  build_flags?: string;
-}
-
-interface ManifestModel {
-  display_name: string;
-  format: string;
-  artifact_sha256: string;
-  tokenizer_sha256?: string;
-  source?: string;
-  file_size_bytes?: number;
-  parameters?: string;
-  quant?: string;
-  architecture?: string;
-}
-
-interface ManifestData {
-  schema_version: string;
-  bundle_id: string;
-  task: string;
-  scenario_id: string;
-  canonical: boolean;
-  harness: { version: string; git_sha: string };
-  device: ManifestDevice;
-  runtime: ManifestRuntime;
-  model: ManifestModel;
-  quant: { name: string | null };
-  context_length?: number;
-  notes?: string;
-}
-
-interface ResultsData {
-  trials: unknown[];
-  aggregate: AggregateMetrics;
-}
 
 export async function POST(request: NextRequest) {
   // 0. Authenticate via bearer token
@@ -108,7 +59,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Missing manifest.json in bundle' }, { status: 400 });
   }
 
-  let manifest: ManifestData;
+  let manifest: Manifest;
   try {
     manifest = JSON.parse(new TextDecoder().decode(manifestBytes));
   } catch {
@@ -129,7 +80,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Missing results.json in bundle' }, { status: 400 });
   }
 
-  let results: ResultsData;
+  let results: Results;
   try {
     results = JSON.parse(new TextDecoder().decode(resultsBytes));
   } catch {
@@ -208,7 +159,6 @@ export async function POST(request: NextRequest) {
       displayName: mod.display_name,
       format: mod.format,
       artifactSha256: mod.artifact_sha256,
-      tokenizerSha256: mod.tokenizer_sha256,
       source: mod.source,
       fileSizeBytes: mod.file_size_bytes,
       parameters: mod.parameters,
@@ -220,7 +170,6 @@ export async function POST(request: NextRequest) {
       set: {
         displayName: mod.display_name,
         format: mod.format,
-        tokenizerSha256: mod.tokenizer_sha256,
         source: mod.source,
         fileSizeBytes: mod.file_size_bytes,
         parameters: mod.parameters,
@@ -231,7 +180,7 @@ export async function POST(request: NextRequest) {
     .returning({ id: models.id });
 
   // 9. Compute aggregated token counts from trials
-  const trials = results.trials as Array<{ input_tokens?: number; output_tokens?: number }>;
+  const trials = results.trials;
   const promptTokens = trials.reduce((sum, t) => sum + (t.input_tokens ?? 0), 0);
   const completionTokens = trials.reduce((sum, t) => sum + (t.output_tokens ?? 0), 0);
 
@@ -250,8 +199,6 @@ export async function POST(request: NextRequest) {
       bundleId: manifest.bundle_id,
       schemaVersion: manifest.schema_version,
       status: RunStatus.VERIFIED,
-      scenarioId: manifest.scenario_id as ScenarioId,
-      task: manifest.task,
       canonical: manifest.canonical,
       notes: manifest.notes,
       userId,
@@ -305,7 +252,6 @@ export async function GET(request: NextRequest) {
 
   const modelId = params.get('model_id');
   const deviceId = params.get('device_id');
-  const scenarioId = params.get('scenario_id');
   const runtimeName = params.get('runtime_name');
   const status = params.get('status') || RunStatus.VERIFIED;
   const sortKey = (params.get('sort') || 'decode_tps_mean') as keyof typeof SORT_COLUMNS;
@@ -316,7 +262,6 @@ export async function GET(request: NextRequest) {
   const conditions: SQL[] = [];
   if (modelId) conditions.push(eq(runs.modelId, modelId));
   if (deviceId) conditions.push(eq(runs.deviceId, deviceId));
-  if (scenarioId) conditions.push(eq(runs.scenarioId, scenarioId as ScenarioId));
   if (runtimeName) conditions.push(eq(runs.runtimeName, runtimeName));
   if (status) conditions.push(eq(runs.status, status as RunStatus));
 
@@ -331,8 +276,6 @@ export async function GET(request: NextRequest) {
         bundleId: runs.bundleId,
         schemaVersion: runs.schemaVersion,
         status: runs.status,
-        scenarioId: runs.scenarioId,
-        task: runs.task,
         canonical: runs.canonical,
         notes: runs.notes,
         deviceId: runs.deviceId,

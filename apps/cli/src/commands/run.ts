@@ -37,10 +37,6 @@ const command = defineCommand({
       type: 'string',
       description: 'Prompt token count (default: 4096)',
     },
-    scenario: {
-      type: 'string',
-      description: 'Scenario ID (default: chat_short_v1)',
-    },
     'gen-tokens': {
       type: 'string',
       description: 'Generation token count (default: 1024)',
@@ -76,12 +72,6 @@ const command = defineCommand({
     const genTokens = parsePositiveInt((args['gen-tokens'] as string) || '1024', 'gen-tokens');
     const numTrials = parsePositiveInt((args.trials as string) || '10', 'trials');
     const outputDir = (args.output as string) || DEFAULT_BUNDLES_DIR;
-    const scenarioId = (args.scenario as string) || 'chat_short_v1';
-    const validScenarios = ['chat_short_v1', 'chat_long_v1'];
-    if (!validScenarios.includes(scenarioId)) {
-      log.error(`Invalid scenario: ${scenarioId}. Valid: ${validScenarios.join(', ')}`);
-      process.exit(1);
-    }
 
     // Resolve runtime.
     let adapter;
@@ -207,7 +197,6 @@ const command = defineCommand({
       model: modelInfo,
       bench,
       metrics,
-      scenarioId,
       notes: args.notes as string | undefined,
     });
 

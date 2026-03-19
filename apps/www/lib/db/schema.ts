@@ -35,13 +35,6 @@ export enum RunStatus {
 
 export const runStatusEnum = pgEnum('run_status', enumToPgEnum(RunStatus));
 
-export enum ScenarioId {
-  CHAT_SHORT_V1 = 'chat_short_v1',
-  CHAT_LONG_V1 = 'chat_long_v1',
-}
-
-export const scenarioIdEnum = pgEnum('scenario_id', enumToPgEnum(ScenarioId));
-
 // -----------------------------------------------------------------------------
 // Auth
 // -----------------------------------------------------------------------------
@@ -176,10 +169,8 @@ export const runs = pgTable(
       .notNull()
       .references(() => models.id),
     bundleId: text('bundle_id').notNull().unique(),
-    scenarioId: scenarioIdEnum('scenario_id').notNull(),
     schemaVersion: text('schema_version').notNull(),
     status: runStatusEnum('status').notNull().default(RunStatus.VERIFIED),
-    task: text('task').notNull(),
     canonical: boolean('canonical').notNull(),
     notes: text('notes'),
     bundleSha256: text('bundle_sha256').notNull().unique(),
@@ -209,8 +200,8 @@ export const runs = pgTable(
       .$onUpdate(() => new Date()),
   },
   (t) => [
-    index('runs_leaderboard_idx').on(t.modelId, t.scenarioId, t.status, t.decodeTpsMean),
-    index('runs_device_idx').on(t.deviceId, t.scenarioId),
+    index('runs_leaderboard_idx').on(t.modelId, t.status, t.decodeTpsMean),
+    index('runs_device_idx').on(t.deviceId),
     index('runs_user_idx').on(t.userId),
   ],
 );
