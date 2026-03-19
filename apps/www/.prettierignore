@@ -1,0 +1,21 @@
+# Dependencies
+node_modules
+pnpm-lock.yaml
+
+# Build outputs
+dist
+build
+target
+src-tauri/target
+
+# IDE
+.vscode
+.idea
+
+# Misc
+*.log
+.DS_Store
+
+# Generated files
+src/routeTree.gen.ts
+src/lib/db/migrations.gen.ts

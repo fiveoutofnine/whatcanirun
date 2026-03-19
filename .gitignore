@@ -7,6 +7,7 @@ node_modules
 out
 dist
 *.tgz
+**/bundles/*
 
 # code coverage
 coverage
@@ -227,3 +228,12 @@ Temporary Items
 
 # Task runner cache
 .task/
+
+# Python virtual environments
+**/venvs/*
+.venvs/
+
+# Editor/IDE configs
+.claude
+.vscode
+.cursor

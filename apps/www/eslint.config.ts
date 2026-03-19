@@ -1,0 +1,56 @@
+import js from '@eslint/js';
+import nextVitals from 'eslint-config-next/core-web-vitals';
+import nextTs from 'eslint-config-next/typescript';
+import prettier from 'eslint-plugin-prettier/recommended';
+import { defineConfig } from 'eslint/config';
+
+const eslintConfig = defineConfig([
+  ...nextVitals,
+  ...nextTs,
+  {
+    languageOptions: {
+      parserOptions: {
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+  },
+  {
+    ignores: ['generated/*'],
+  },
+  {
+    files: ['**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+    plugins: { js },
+    extends: ['js/recommended'],
+    rules: {
+      'linebreak-style': ['error', 'unix'],
+      quotes: ['error', 'single'],
+      semi: ['error', 'always'],
+      'comma-dangle': [2, 'always-multiline'],
+      'react/react-in-jsx-scope': 'off',
+      indent: 'off',
+    },
+  },
+  {
+    files: ['**/*.{ts,mts,cts,tsx,cjs}'],
+    rules: {
+      'no-undef': 'off',
+    },
+  },
+  {
+    files: ['**/types.{ts,tsx}', '**/schema.ts'],
+    rules: {
+      'no-unused-vars': 'off',
+    },
+  },
+  prettier,
+  {
+    files: ['**/*.cjs'],
+    rules: {
+      'no-require-imports': 'off',
+      '@typescript-eslint/no-require-imports': 'off',
+      'no-var-requires': 'off',
+    },
+  },
+]);
+
+export default eslintConfig;
