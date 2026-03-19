@@ -130,7 +130,7 @@ export async function POST(request: NextRequest) {
   }
 
   // Deduplicate by bundle content hash (computed server-side).
-  const bundleSha256 = await sha256(new TextDecoder().decode(zipBuffer));
+  const bundleSha256 = await sha256(zipBuffer);
 
   const [existing] = await db
     .select({ id: runs.id })
