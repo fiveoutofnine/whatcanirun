@@ -39,7 +39,7 @@ export async function createCliCode(userId: string, ttlMs: number): Promise<stri
 
   const code = crypto.randomUUID();
   const codeExpiresAt = new Date(Date.now() + ttlMs);
-  const name = `CLI login on ${new Date().toISOString().slice(0, 10)}`;
+  const name = `CLI login on ${new Date().toISOString()}.`;
 
   await db.insert(apiTokens).values({ name, code, codeExpiresAt, userId });
 
