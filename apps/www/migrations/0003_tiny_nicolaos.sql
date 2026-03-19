@@ -1,0 +1,1 @@
+CREATE INDEX "api_tokens_user_code_idx" ON "api_tokens" USING btree ("user_id","code");

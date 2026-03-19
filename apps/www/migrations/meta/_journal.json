@@ -22,6 +22,13 @@
       "when": 1773941592898,
       "tag": "0002_fancy_senator_kelly",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1773946817125,
+      "tag": "0003_tiny_nicolaos",
+      "breakpoints": true
     }
   ]
 }
