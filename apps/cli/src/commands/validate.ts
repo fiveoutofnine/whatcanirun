@@ -17,7 +17,13 @@ const command = defineCommand({
     },
   },
   async run({ args }) {
-    const bundlePath = resolveBundlePath(args.bundle as string);
+    let bundlePath;
+    try {
+      bundlePath = resolveBundlePath(args.bundle as string);
+    } catch (e: unknown) {
+      log.error(e instanceof Error ? e.message : String(e));
+      process.exit(1);
+    }
 
     log.info(`Validating: ${bundlePath}`);
     const result = await validateBundle(bundlePath);

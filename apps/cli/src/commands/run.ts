@@ -37,6 +37,10 @@ const command = defineCommand({
       type: 'string',
       description: 'Prompt token count (default: 4096)',
     },
+    scenario: {
+      type: 'string',
+      description: 'Scenario ID (default: chat_short_v1)',
+    },
     'gen-tokens': {
       type: 'string',
       description: 'Generation token count (default: 1024)',
@@ -65,10 +69,19 @@ const command = defineCommand({
       process.exit(1);
     }
 
-    const promptTokens = parseInt((args['prompt-tokens'] as string) || '4096', 10);
-    const genTokens = parseInt((args['gen-tokens'] as string) || '1024', 10);
-    const numTrials = parseInt((args.trials as string) || '10', 10);
+    const promptTokens = parsePositiveInt(
+      (args['prompt-tokens'] as string) || '4096',
+      'prompt-tokens'
+    );
+    const genTokens = parsePositiveInt((args['gen-tokens'] as string) || '1024', 'gen-tokens');
+    const numTrials = parsePositiveInt((args.trials as string) || '10', 'trials');
     const outputDir = (args.output as string) || DEFAULT_BUNDLES_DIR;
+    const scenarioId = (args.scenario as string) || 'chat_short_v1';
+    const validScenarios = ['chat_short_v1', 'chat_long_v1'];
+    if (!validScenarios.includes(scenarioId)) {
+      log.error(`Invalid scenario: ${scenarioId}. Valid: ${validScenarios.join(', ')}`);
+      process.exit(1);
+    }
 
     // Resolve runtime.
     let adapter;
@@ -110,7 +123,13 @@ const command = defineCommand({
     const modelInfo = await inspectModel(modelRef);
 
     // Detect device.
-    const device = await detectDevice();
+    let device;
+    try {
+      device = await detectDevice();
+    } catch (e: unknown) {
+      log.error(e instanceof Error ? e.message : String(e));
+      process.exit(1);
+    }
 
     // Display config.
     log.blank();
@@ -188,6 +207,7 @@ const command = defineCommand({
       model: modelInfo,
       bench,
       metrics,
+      scenarioId,
       notes: args.notes as string | undefined,
     });
 
@@ -262,6 +282,15 @@ function computeMetrics(bench: BenchResult): DerivedMetrics {
   const peakRssMb = Math.round(averages.peakMemoryGb * 1024 * 10) / 10;
 
   return { ttftP50Ms, ttftP95Ms, decodeTpsMean, weightedTpsMean, peakRssMb };
+}
+
+function parsePositiveInt(value: string, name: string): number {
+  const n = parseInt(value, 10);
+  if (isNaN(n) || n <= 0) {
+    log.error(`Invalid value for --${name}: "${value}". Expected a positive integer.`);
+    process.exit(1);
+  }
+  return n;
 }
 
 export default command;

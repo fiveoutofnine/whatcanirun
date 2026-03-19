@@ -33,7 +33,11 @@ export function getAuth(): AuthData | null {
     const data = JSON.parse(readFileSync(AUTH_FILE, 'utf-8')) as AuthData;
     if (data.token && data.user?.id) return data;
     return null;
-  } catch {
+  } catch (e: unknown) {
+    console.warn(
+      `Warning: could not parse ${AUTH_FILE}: ${e instanceof Error ? e.message : String(e)}. ` +
+        'Try deleting it and running `whatcanirun auth login` again.'
+    );
     return null;
   }
 }

@@ -24,7 +24,13 @@ const command = defineCommand({
       process.exit(1);
     }
 
-    const bundlePath = resolveBundlePath(args.bundle as string);
+    let bundlePath;
+    try {
+      bundlePath = resolveBundlePath(args.bundle as string);
+    } catch (e: unknown) {
+      log.error(e instanceof Error ? e.message : String(e));
+      process.exit(1);
+    }
 
     // Validate first
     log.info('Validating bundle...');

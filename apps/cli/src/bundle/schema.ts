@@ -1,5 +1,3 @@
-import type { BenchResult } from '../runtime/types';
-
 // -----------------------------------------------------------------------------
 // Types
 // -----------------------------------------------------------------------------
@@ -8,6 +6,9 @@ export interface Manifest {
   schema_version: string;
   bundle_id: string;
   created_at: string;
+  task: string;
+  scenario_id: string;
+  canonical: boolean;
   harness: {
     version: string;
     git_sha: string;
@@ -34,30 +35,35 @@ export interface Manifest {
     quant?: string;
     architecture?: string;
   };
-  bench: {
-    promptTokens: number;
-    completionTokens: number;
-    trialsTotal: number;
-    trialsPassed: number;
-    averages: {
-      promptTps: number;
-      generationTps: number;
-      peakMemoryGb: number;
-    };
-  };
-  metrics: {
-    ttftP50Ms: number;
-    ttftP95Ms: number;
-    decodeTpsMean: number;
-    weightedTpsMean: number;
-    peakRssMb: number;
-  };
+  context_length?: number;
   notes?: string;
 }
 
+export interface ResultTrial {
+  input_tokens: number;
+  output_tokens: number;
+  ttft_ms: number;
+  total_ms: number;
+  decode_tps: number;
+  weighted_tps: number;
+  peak_rss_mb: number;
+  exit_status: string;
+}
+
+export interface AggregateMetrics {
+  ttft_p50_ms: number;
+  ttft_p95_ms: number;
+  decode_tps_mean: number;
+  weighted_tps_mean: number;
+  idle_rss_mb: number;
+  peak_rss_mb: number;
+  trials_passed: number;
+  trials_total: number;
+}
+
 export interface Results {
-  trials: BenchResult['trials'];
-  averages: BenchResult['averages'];
+  trials: ResultTrial[];
+  aggregate: AggregateMetrics;
 }
 
 // -----------------------------------------------------------------------------
@@ -72,18 +78,27 @@ export function validateManifest(manifest: unknown): string[] {
     'schema_version',
     'bundle_id',
     'created_at',
+    'task',
+    'scenario_id',
     'harness',
     'device',
     'runtime',
     'model',
-    'bench',
-    'metrics',
   ];
 
   for (const field of required) {
     if (!(field in m)) {
       errors.push(`Missing required field: ${field}`);
     }
+  }
+
+  if (m.task !== 'llm.generate.v1') {
+    errors.push(`Invalid task: ${m.task}. Expected: llm.generate.v1`);
+  }
+
+  const validScenarios = ['chat_short_v1', 'chat_long_v1'];
+  if (!validScenarios.includes(m.scenario_id as string)) {
+    errors.push(`Invalid scenario_id: ${m.scenario_id}`);
   }
 
   return errors;
@@ -98,13 +113,21 @@ export function validateResults(results: unknown): string[] {
     return errors;
   }
 
-  if (!r.averages || typeof r.averages !== 'object') {
-    errors.push('Missing or invalid `averages` object.');
+  if (!r.aggregate || typeof r.aggregate !== 'object') {
+    errors.push('Missing or invalid `aggregate` object.');
   }
 
   for (let i = 0; i < r.trials.length; i++) {
     const trial = r.trials[i] as Record<string, unknown>;
-    const requiredFields = ['promptTps', 'generationTps', 'peakMemoryGb'];
+    const requiredFields = [
+      'input_tokens',
+      'output_tokens',
+      'ttft_ms',
+      'total_ms',
+      'decode_tps',
+      'weighted_tps',
+      'exit_status',
+    ];
     for (const field of requiredFields) {
       if (!(field in trial)) {
         errors.push(`Trial ${i}: missing field \`${field}\`.`);

@@ -39,11 +39,22 @@ export async function detectDevice(): Promise<DeviceInfo> {
 
 async function exec(cmd: string[]): Promise<string> {
   try {
-    const proc = Bun.spawn(cmd, { stdout: 'pipe', stderr: 'ignore' });
+    const proc = Bun.spawn(cmd, { stdout: 'pipe', stderr: 'pipe' });
     const text = await new Response(proc.stdout).text();
-    await proc.exited;
+    const code = await proc.exited;
+    if (code !== 0) {
+      console.warn(`Warning: \`${cmd.join(' ')}\` exited with code ${code}`);
+      return '';
+    }
     return text.trim();
-  } catch {
+  } catch (e: unknown) {
+    if (e instanceof Error && 'code' in e && (e as NodeJS.ErrnoException).code === 'ENOENT') {
+      console.warn(`Warning: command not found: ${cmd[0]}`);
+    } else {
+      console.warn(
+        `Warning: \`${cmd.join(' ')}\` failed: ${e instanceof Error ? e.message : String(e)}`
+      );
+    }
     return '';
   }
 }

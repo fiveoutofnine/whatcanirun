@@ -77,7 +77,11 @@ export function inferFormat(modelPath: string): string {
     try {
       const config = JSON.parse(readFileSync(configPath, 'utf-8'));
       if (config.model_type) return 'mlx';
-    } catch {}
+    } catch (e: unknown) {
+      console.warn(
+        `Warning: could not parse ${configPath}: ${e instanceof Error ? e.message : String(e)}`
+      );
+    }
   }
 
   return 'unknown';
@@ -149,7 +153,10 @@ async function loadModelAliases(): Promise<Record<string, string>> {
     const { parse } = await import('smol-toml');
     const config = parse(content);
     return (config.models as Record<string, string>) || {};
-  } catch {
+  } catch (e: unknown) {
+    console.warn(
+      `Warning: could not parse ~/.config/whatcanirun/models.toml: ${e instanceof Error ? e.message : String(e)}`
+    );
     return {};
   }
 }
@@ -228,7 +235,11 @@ export async function inspectModel(modelRef: string): Promise<ModelInfo> {
             parameters = formatParamCount(config.num_parameters);
           }
         }
-      } catch {}
+      } catch (e: unknown) {
+        console.warn(
+          `Warning: could not read model config: ${e instanceof Error ? e.message : String(e)}`
+        );
+      }
     }
   } else {
     const resolved = resolve(modelRef);
@@ -244,7 +255,11 @@ export async function inspectModel(modelRef: string): Promise<ModelInfo> {
         sha256 = await computeDirSha256(resolved);
         fileSizeBytes = sumShardSizes(resolved);
       }
-    } catch {}
+    } catch (e: unknown) {
+      console.warn(
+        `Warning: could not compute model hash/size: ${e instanceof Error ? e.message : String(e)}`
+      );
+    }
 
     // Try to read architecture and parameters from config.json
     try {
@@ -259,7 +274,11 @@ export async function inspectModel(modelRef: string): Promise<ModelInfo> {
           parameters = formatParamCount(config.num_parameters);
         }
       }
-    } catch {}
+    } catch (e: unknown) {
+      console.warn(
+        `Warning: could not read model config: ${e instanceof Error ? e.message : String(e)}`
+      );
+    }
   }
 
   return {

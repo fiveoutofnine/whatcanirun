@@ -22,7 +22,13 @@ export class MlxAdapter implements RuntimeAdapter {
         this.useCli = true;
         return { name: this.name, version };
       }
-    } catch {}
+    } catch (e: unknown) {
+      if (!(e instanceof Error && 'code' in e && (e as NodeJS.ErrnoException).code === 'ENOENT')) {
+        console.warn(
+          `Warning: mlx_lm CLI found but failed: ${e instanceof Error ? e.message : String(e)}`
+        );
+      }
+    }
 
     // Fall back to Python module.
     try {

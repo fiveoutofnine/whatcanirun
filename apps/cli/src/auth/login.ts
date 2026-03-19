@@ -67,9 +67,10 @@ export async function loginViaBrowser(): Promise<AuthData> {
     const port = server.port;
     const loginUrl = `${API_BASE}/cli-auth?port=${port}&state=${state}`;
 
-    // Open browser.
+    // Open browser (await to prevent zombie process).
     const cmd = process.platform === 'darwin' ? 'open' : 'xdg-open';
-    Bun.spawn([cmd, loginUrl], { stdout: 'ignore', stderr: 'ignore' });
+    const browserProc = Bun.spawn([cmd, loginUrl], { stdout: 'ignore', stderr: 'ignore' });
+    browserProc.exited.catch(() => {});
 
     console.log(`If the browser didn't open, visit: ${loginUrl}`);
 
@@ -103,10 +104,20 @@ async function exchangeCode(code: string): Promise<AuthData> {
   return (await res.json()) as AuthData;
 }
 
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
 function page(title: string, message: string): string {
+  const t = escapeHtml(title);
+  const m = escapeHtml(message);
   return `<!DOCTYPE html>
 <html>
-<head><title>${title}</title>
+<head><title>${t}</title>
 <style>
   body { font-family: system-ui, sans-serif; display: flex; justify-content: center;
          align-items: center; min-height: 100vh; margin: 0; background: #0a0a0a; color: #fafafa; }
@@ -115,6 +126,6 @@ function page(title: string, message: string): string {
   p { color: #a1a1aa; }
 </style>
 </head>
-<body><div class="card"><h1>${title}</h1><p>${message}</p></div></body>
+<body><div class="card"><h1>${t}</h1><p>${m}</p></div></body>
 </html>`;
 }

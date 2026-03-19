@@ -53,8 +53,8 @@ export async function validateBundle(bundlePath: string): Promise<ValidationResu
     let manifest: unknown;
     try {
       manifest = JSON.parse(await Bun.file(join(tmpDir, 'manifest.json')).text());
-    } catch (e) {
-      errors.push(`Invalid manifest.json: ${e}`);
+    } catch (e: unknown) {
+      errors.push(`Invalid manifest.json: ${e instanceof Error ? e.message : String(e)}`);
       return { valid: false, errors };
     }
     errors.push(...validateManifest(manifest));
@@ -63,8 +63,8 @@ export async function validateBundle(bundlePath: string): Promise<ValidationResu
     let results: unknown;
     try {
       results = JSON.parse(await Bun.file(join(tmpDir, 'results.json')).text());
-    } catch (e) {
-      errors.push(`Invalid results.json: ${e}`);
+    } catch (e: unknown) {
+      errors.push(`Invalid results.json: ${e instanceof Error ? e.message : String(e)}`);
       return { valid: false, errors };
     }
     errors.push(...validateResults(results));

@@ -6,7 +6,7 @@ import { formatSysinfo } from '../device/detect';
 import type { ModelInfo } from '../model/resolve';
 import type { BenchResult, RuntimeInfo } from '../runtime/types';
 import { bundleFilename, generateBundleId } from '../utils/id';
-import type { Manifest, Results } from './schema';
+import type { AggregateMetrics, Manifest, Results, ResultTrial } from './schema';
 
 // -----------------------------------------------------------------------------
 // Types
@@ -27,6 +27,7 @@ export interface BundleOpts {
   model: ModelInfo;
   bench: BenchResult;
   metrics: DerivedMetrics;
+  scenarioId: string;
   notes?: string;
 }
 
@@ -47,9 +48,12 @@ export async function createBundle(opts: BundleOpts): Promise<string> {
   }
 
   const manifest: Manifest = {
-    schema_version: '1.0.0',
+    schema_version: '0.1.0',
     bundle_id: bundleId,
     created_at: now.toISOString(),
+    task: 'llm.generate.v1',
+    scenario_id: opts.scenarioId,
+    canonical: false,
     harness: {
       version: '0.1.0',
       git_sha: await getGitSha(),
@@ -76,21 +80,37 @@ export async function createBundle(opts: BundleOpts): Promise<string> {
       quant: opts.model.quant ?? undefined,
       architecture: opts.model.architecture,
     },
-    bench: {
-      promptTokens: opts.bench.promptTokens,
-      completionTokens: opts.bench.completionTokens,
-      trialsTotal: opts.bench.trials.length,
-      trialsPassed: opts.bench.trials.length,
-      averages: opts.bench.averages,
-    },
-    metrics: opts.metrics,
+    context_length: opts.bench.promptTokens + opts.bench.completionTokens,
     notes: opts.notes,
   };
 
-  const results: Results = {
-    trials: opts.bench.trials,
-    averages: opts.bench.averages,
+  const trials: ResultTrial[] = opts.bench.trials.map((t) => ({
+    input_tokens: opts.bench.promptTokens,
+    output_tokens: opts.bench.completionTokens,
+    ttft_ms: t.promptTps > 0 ? (opts.bench.promptTokens / t.promptTps) * 1000 : 0,
+    total_ms: 0,
+    decode_tps: t.generationTps,
+    weighted_tps:
+      opts.bench.promptTokens + opts.bench.completionTokens > 0
+        ? (opts.bench.promptTokens * t.promptTps + opts.bench.completionTokens * t.generationTps) /
+          (opts.bench.promptTokens + opts.bench.completionTokens)
+        : 0,
+    peak_rss_mb: Math.round(t.peakMemoryGb * 1024 * 10) / 10,
+    exit_status: 'ok',
+  }));
+
+  const aggregate: AggregateMetrics = {
+    ttft_p50_ms: opts.metrics.ttftP50Ms,
+    ttft_p95_ms: opts.metrics.ttftP95Ms,
+    decode_tps_mean: opts.metrics.decodeTpsMean,
+    weighted_tps_mean: opts.metrics.weightedTpsMean,
+    idle_rss_mb: 0,
+    peak_rss_mb: opts.metrics.peakRssMb,
+    trials_passed: opts.bench.trials.length,
+    trials_total: opts.bench.trials.length,
   };
+
+  const results: Results = { trials, aggregate };
 
   const sysinfo = formatSysinfo(opts.device);
 
@@ -110,10 +130,14 @@ export async function createBundle(opts: BundleOpts): Promise<string> {
     {
       cwd: tmpDir,
       stdout: 'ignore',
-      stderr: 'ignore',
+      stderr: 'pipe',
     }
   );
-  await zipProc.exited;
+  const zipCode = await zipProc.exited;
+  if (zipCode !== 0) {
+    const stderr = await new Response(zipProc.stderr).text();
+    throw new Error(`Failed to create bundle zip: ${stderr.trim() || `exit code ${zipCode}`}`);
+  }
 
   // Clean up temp dir.
   const rmProc = Bun.spawn(['rm', '-rf', tmpDir], {

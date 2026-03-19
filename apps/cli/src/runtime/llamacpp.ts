@@ -53,7 +53,13 @@ export class LlamaCppAdapter implements RuntimeAdapter {
         const version =
           fallbackMatch?.[1] || fallbackMatch?.[2] || fallbackMatch?.[3] || output.slice(0, 50);
         return { name: this.name, version };
-      } catch {
+      } catch (e: unknown) {
+        if (e instanceof Error && 'code' in e && (e as NodeJS.ErrnoException).code === 'ENOENT') {
+          continue;
+        }
+        console.warn(
+          `Warning: failed to run ${bin}: ${e instanceof Error ? e.message : String(e)}`
+        );
         continue;
       }
     }
@@ -79,38 +85,48 @@ export class LlamaCppAdapter implements RuntimeAdapter {
       stderr: 'pipe',
     });
 
-    // Stream stderr to report trial progress.
+    // Stream both stdout and stderr concurrently to avoid pipe buffer deadlock.
+    const stdoutChunks: string[] = [];
     const stderrChunks: string[] = [];
-    let buffer = '';
-    const decoder = new TextDecoder();
     let trialsSeen = 0;
-    // llama-bench runs prompt and generation separately, each with numTrials.
     const totalTrials = opts.numTrials * 2;
 
-    for await (const chunk of proc.stderr) {
-      const text = decoder.decode(chunk, { stream: true });
-      stderrChunks.push(text);
-      buffer += text;
+    const streamStdout = (async () => {
+      const decoder = new TextDecoder();
+      for await (const chunk of proc.stdout) {
+        stdoutChunks.push(decoder.decode(chunk, { stream: true }));
+      }
+    })();
 
-      const lines = buffer.split('\n');
-      buffer = lines.pop()!;
-      for (const line of lines) {
-        if (/^\s*\|/.test(line) && /\d/.test(line)) {
-          trialsSeen++;
-          // Last pipe-delimited field is tok/s.
-          const fields = line.split('|').filter((f) => f.trim());
-          const tpsField = fields[fields.length - 1]?.trim();
-          const tps =
-            tpsField && /^[\d.]+$/.test(tpsField)
-              ? ` — ${parseFloat(tpsField).toFixed(1)} tok/s`
-              : '';
-          opts.onProgress?.(`Trial ${trialsSeen}/${totalTrials}${tps}`);
+    const streamStderr = (async () => {
+      let buffer = '';
+      const decoder = new TextDecoder();
+      for await (const chunk of proc.stderr) {
+        const text = decoder.decode(chunk, { stream: true });
+        stderrChunks.push(text);
+        buffer += text;
+
+        const lines = buffer.split('\n');
+        buffer = lines.pop()!;
+        for (const line of lines) {
+          if (/^\s*\|/.test(line) && /\d/.test(line)) {
+            trialsSeen++;
+            const fields = line.split('|').filter((f) => f.trim());
+            const tpsField = fields[fields.length - 1]?.trim();
+            const tps =
+              tpsField && /^[\d.]+$/.test(tpsField)
+                ? ` — ${parseFloat(tpsField).toFixed(1)} tok/s`
+                : '';
+            opts.onProgress?.(`Trial ${trialsSeen}/${totalTrials}${tps}`);
+          }
         }
       }
-    }
+      if (buffer) stderrChunks.push(buffer);
+    })();
 
-    const stdout = await new Response(proc.stdout).text();
-    const stderr = stderrChunks.join('') + buffer;
+    await Promise.all([streamStdout, streamStderr]);
+    const stdout = stdoutChunks.join('');
+    const stderr = stderrChunks.join('');
     const code = await proc.exited;
 
     if (code !== 0) {

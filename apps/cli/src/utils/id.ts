@@ -3,8 +3,6 @@ import { existsSync, readdirSync } from 'fs';
 import { homedir } from 'os';
 import { join } from 'path';
 
-import * as log from './log';
-
 // -----------------------------------------------------------------------------
 // Constants
 // -----------------------------------------------------------------------------
@@ -70,14 +68,10 @@ export function resolveBundlePath(bundleArg: string): string {
       return join(DEFAULT_BUNDLES_DIR, matches[0]!);
     }
     if (matches.length > 1) {
-      log.error(`Multiple bundles match "${bundleArg}":`);
-      for (const m of matches) {
-        log.info(`  ${m.replace(/\.zip$/, '')}`);
-      }
-      process.exit(1);
+      const names = matches.map((m) => m.replace(/\.zip$/, '')).join(', ');
+      throw new Error(`Multiple bundles match "${bundleArg}": ${names}`);
     }
   }
 
-  log.error(`Bundle not found: ${bundleArg}`);
-  process.exit(1);
+  throw new Error(`Bundle not found: ${bundleArg}`);
 }
