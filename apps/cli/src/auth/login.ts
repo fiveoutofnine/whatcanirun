@@ -71,6 +71,8 @@ export async function loginViaBrowser(): Promise<AuthData> {
     const cmd = process.platform === 'darwin' ? 'open' : 'xdg-open';
     Bun.spawn([cmd, loginUrl], { stdout: 'ignore', stderr: 'ignore' });
 
+    console.log(`If the browser didn't open, visit: ${loginUrl}`);
+
     // Timeout after 5 minutes.
     setTimeout(
       () => {
