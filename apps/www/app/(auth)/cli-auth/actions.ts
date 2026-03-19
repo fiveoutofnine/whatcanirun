@@ -34,7 +34,7 @@ export async function createCliCode(userId: string, ttlMs: number): Promise<stri
     .where(and(eq(apiTokens.userId, userId), isNotNull(apiTokens.code)));
 
   if (pending.length >= MAX_PENDING_CODES) {
-    throw new Error('Too many pending login codes. Please try again later.');
+    throw new Error('Too many pending login codes. Please try again in 5 minutes.');
   }
 
   const code = crypto.randomUUID();
