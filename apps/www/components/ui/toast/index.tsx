@@ -87,6 +87,7 @@ const toast: ToastFactoryProps & ToastFactoryComposition = ({
 const ToastCloseButton: React.FC<ToastCloseButtonProps> = ({ id, intent }) => {
   const [mounted, setMounted] = useState<boolean>(false);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMounted(true), []);
 
   const isTouchScreen = mounted ? /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) : false;

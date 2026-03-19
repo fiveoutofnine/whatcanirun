@@ -15,6 +15,7 @@ const CodeBlockActions: React.FC<CodeBlockActionsProps> = ({ code, switcher, inH
   const [copied, setCopied] = useState<boolean>(false);
   const [mounted, setMounted] = useState<boolean>(false);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMounted(true), []);
 
   const isTouchScreen = mounted ? /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) : false;
