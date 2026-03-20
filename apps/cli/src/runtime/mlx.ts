@@ -106,14 +106,14 @@ export class MlxAdapter implements RuntimeAdapter {
         // HF download progress uses \r for progress bars.
         const segments = text.split(/[\r\n]/);
         for (const seg of segments) {
-          if (/Fetching|Downloading|downloading/i.test(seg)) {
-            // Extract percentage if present (e.g. "Downloading: 45%").
-            const pctMatch = seg.match(/(\d+)%/);
-            if (pctMatch) {
-              opts.onProgress?.(`Downloading model... ${pctMatch[1]}%`);
-            } else {
-              opts.onProgress?.('Downloading model...');
-            }
+          // Overall file-count progress: "Fetching N files: XX%|..."
+          const fetchMatch = seg.match(/Fetching\s+\d+\s+files?.*?(\d+)%/i);
+          if (fetchMatch) {
+            opts.onProgress?.(`Downloading model... ${fetchMatch[1]}%`);
+          } else if (/Downloading|downloading/i.test(seg)) {
+            // Per-file download — signal activity but don't extract percentage
+            // to avoid overriding the overall Fetching progress.
+            opts.onProgress?.('Downloading model...');
           }
         }
       }
@@ -126,6 +126,29 @@ export class MlxAdapter implements RuntimeAdapter {
     const stderr = stderrChunks.join('');
 
     if (code !== 0) {
+      const output = stderr + stdout;
+
+      if (/RepositoryNotFoundError|404 Client Error.*Repository Not Found/i.test(output)) {
+        throw new Error(
+          `Model not found: '${opts.model}'. Check the HuggingFace repo ID and try again.`
+        );
+      }
+      if (/EntryNotFoundError/i.test(output)) {
+        throw new Error(
+          `Model files not found in '${opts.model}'. The repository may not contain a compatible model.`
+        );
+      }
+      if (/GatedRepoError|Access to model .* is restricted/i.test(output)) {
+        throw new Error(
+          `Access to '${opts.model}' is restricted. Accept the model's terms at https://huggingface.co/${opts.model} and set a HF token.`
+        );
+      }
+      if (/RevisionNotFoundError/i.test(output)) {
+        throw new Error(
+          `Revision not found for '${opts.model}'. The repository may have been updated or removed.`
+        );
+      }
+
       const errMsg = stderr.trim() || stdout.trim() || `exit code ${code}`;
       throw new Error(`mlx_lm.benchmark failed: ${errMsg}`);
     }

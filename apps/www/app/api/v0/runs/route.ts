@@ -30,30 +30,31 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Missing bundle zip file.' }, { status: 400 });
   }
 
-  // Authenticate via token in form data (preferred) or Authorization header (fallback).
+  // Authenticate via token in form data (preferred) or Authorization header
+  // (fallback). Note: token is optional; `userId` will be null.
   const rawToken =
     (formData.get('token') as string | null) ??
     (request.headers.get('authorization')?.startsWith('Bearer ')
       ? request.headers.get('authorization')!.slice(7)
       : null);
-  if (!rawToken) {
-    return NextResponse.json({ error: 'Missing authentication token.' }, { status: 401 });
+
+  let userId: string | null = null;
+  if (rawToken) {
+    const tokenHash = await sha256(rawToken);
+    const [apiToken] = await db
+      .select({ userId: apiTokens.userId, id: apiTokens.id })
+      .from(apiTokens)
+      .where(eq(apiTokens.tokenHash, tokenHash))
+      .limit(1);
+
+    if (!apiToken) {
+      return NextResponse.json({ error: 'Invalid or expired token.' }, { status: 401 });
+    }
+
+    userId = apiToken.userId;
+    // Update last-used timestamp.
+    await db.update(apiTokens).set({ lastUsedAt: new Date() }).where(eq(apiTokens.id, apiToken.id));
   }
-
-  const tokenHash = await sha256(rawToken);
-  const [apiToken] = await db
-    .select({ userId: apiTokens.userId, id: apiTokens.id })
-    .from(apiTokens)
-    .where(eq(apiTokens.tokenHash, tokenHash))
-    .limit(1);
-
-  if (!apiToken) {
-    return NextResponse.json({ error: 'Invalid or expired token.' }, { status: 401 });
-  }
-
-  const userId = apiToken.userId;
-  // Update last-used timestamp.
-  await db.update(apiTokens).set({ lastUsedAt: new Date() }).where(eq(apiTokens.id, apiToken.id));
 
   // Unzip in memory (with size limits).
   const zipBuffer = new Uint8Array(await bundleFile.arrayBuffer());
@@ -279,7 +280,7 @@ export async function POST(request: NextRequest) {
     {
       run_id: run.id,
       status: RunStatus.VERIFIED,
-      run_url: `/runs/${run.id}`,
+      run_url: `${process.env.NEXT_PUBLIC_BASE_URL ?? 'https://whatcani.run'}/run/${run.id}`,
     },
     { status: 201 },
   );

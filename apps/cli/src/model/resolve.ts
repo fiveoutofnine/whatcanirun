@@ -95,7 +95,12 @@ export function inferFormat(modelPath: string): string {
  * Check if a string looks like a HuggingFace repo ID (e.g. "mlx-community/Qwen3.5-0.8B-4bit").
  */
 export function isHuggingFaceRepoId(ref: string): boolean {
-  return /^[\w.-]+\/[\w.-]+$/.test(ref) && !ref.startsWith('/') && !ref.startsWith('.');
+  return (
+    /^[\w.-]+\/[\w.-]+$/.test(ref) &&
+    !ref.startsWith('/') &&
+    !ref.startsWith('.') &&
+    !ref.startsWith('~')
+  );
 }
 
 /**

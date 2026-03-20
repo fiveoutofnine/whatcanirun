@@ -1,91 +1,94 @@
-# @whatcanirun/cli
+# whatcanirun
 
-Standardized local LLM inference benchmarks.
+Standardized local LLM inference benchmarks. Run a model, measure performance, and submit results to [**whatcani.run**](https://whatcani.run).
+
+## Quick start
+
+```bash
+# Run a benchmark and submit results
+bunx whatcanirun run --model mlx-community/Qwen3.5-0.8B-MLX-8bit --runtime mlx_lm --submit
+```
 
 ## Install
 
 ```bash
-bun install
+# npm
+npm install -g whatcanirun
+
+# bun
+bun install -g whatcanirun
 ```
+
+The alias `wcir` is available after installing.
 
 ## Usage
 
+To run and submit benchmarks, use the `run` command:
+
 ```bash
 # Run a benchmark
-whatcanirun run --model ./models/llama-3.2-1b.gguf --runtime llama.cpp
+wcir run --model $MODEL_PATH_OR_HF_REPO --runtime $RUNTIME
 
-# Run with options
-whatcanirun run \
-  --model ./models/llama-3.2-1b.gguf \
-  --runtime llama.cpp \
-  --scenario chat_long_v1 \
-  --quant q4_k_m \
-  --trials 10 \
-  --warmups 3
+# Run and submit results
+wcir run --model $MODEL_PATH_OR_HF_REPO --runtime $RUNTIME --submit
 
-# Run without uploading
-whatcanirun run --model ./model.gguf --runtime mlx --no-submit
+# Customize benchmark parameters
+wcir run \
+  --model $MODEL_PATH_OR_HF_REPO \
+  --runtime $RUNTIME \
+  --prompt-tokens 2048 \
+  --gen-tokens 512 \
+  --trials 5 \
+  --notes "optional notes attached to the run" \
+  --submit
+```
 
-# Upload a previously saved bundle
-whatcanirun submit ./bundles/bundle-abc123.zip
+> [!NOTE]
+> `MODEL_PATH_OR_HF_REPO` MUST be a path to a GGUF file if `runtime` is `llama.cpp`.
+
+`run` saves bundles to `~/.whatcanirun/bundles/*` in case you want to inspect them or validate/submit them later via `validate`/`submit`, respectively. You may also specify the output directory with the `--output` flag:
+
+```bash
+# Submit a previously saved bundle
+wcir submit $BUNDLE_PATH_OR_BUNDLE_ID
 
 # Validate a bundle
-whatcanirun validate ./bundles/bundle-abc123.zip
-
-# Inspect device, runtime, or model
-whatcanirun show device
-whatcanirun show runtime llama.cpp
-whatcanirun show model ./models/llama-3.2-1b.gguf
+wcir validate $BUNDLE_PATH_OR_BUNDLE_ID
 ```
 
-The short alias `wcir` is also available.
+> [!NOTE]
+> Note that only bundle IDs  will only be searched in the `~/.whatcanirun/bundles/*` directory.
 
-## Supported Runtimes
-
-| Runtime    | Flag         |
-| ---------- | ------------ |
-| llama.cpp  | `llama.cpp`  |
-| MLX        | `mlx`        |
-| vLLM       | `vllm`       |
-
-## Scenarios
-
-| ID               | Description              |
-| ---------------- | ------------------------ |
-| `chat_short_v1`  | Short chat completion    |
-| `chat_long_v1`   | Long chat completion     |
-
-## Canonical Runs
-
-A run is considered **canonical** when all of these hold:
-
-- `batch_size = 1`
-- `temperature = 0`
-- `top_p = 1`
-- `trials >= 5`
-- `warmups >= 2`
-
-## Build
+The CLI also comes with a utility command `show` to inspect your device, runtime, or model:
 
 ```bash
-# Bundle for Bun
-bun run build
-
-# Compile to standalone binary
-bun run build:bin
+# Inspect device, runtime, or model info
+wcir show device
+wcir show runtime $RUNTIME
+wcir show model $MODEL_PATH
 ```
 
-## Lint & Format
+## Authentication (optional)
+
+Authentication is optional. Without it, runs are submitted anonymously. If you want to link runs to your account, login via the `auth` command:
 
 ```bash
-bun run lint
-bunx prettier --check .
-bunx prettier --write .
+wcir auth login
 ```
+
+## Supported runtimes
+
+| Runtime   | Flag        |
+| --------- | ----------- |
+| MLX       | `mlx_lm`    |
+| llama.cpp | `llama.cpp` |
 
 ## Development
 
 ```bash
-bun run dev          # Runs src/cli.ts directly
+bun run dev          # Run src/cli.ts directly
+bun run build        # Bundle to dist/cli.js
+bun run build:bin    # Compile to standalone binary
 bun test             # Run tests
+bun run lint         # Lint
 ```

@@ -2,6 +2,7 @@ import { defineCommand } from 'citty';
 
 import { loginViaBrowser } from '../auth/login';
 import { clearAuth, getAuth } from '../auth/token';
+import { binName } from '../utils/bin';
 import * as log from '../utils/log';
 
 const login = defineCommand({
@@ -13,7 +14,7 @@ const login = defineCommand({
     const existing = getAuth();
     if (existing) {
       log.info(`Already logged in as ${existing.user.name} (${existing.user.email}).`);
-      log.info('Run `whatcanirun auth logout` first to switch accounts.');
+      log.info(`Run \`${binName()} auth logout\` first to switch accounts.`);
       return;
     }
 
@@ -55,7 +56,7 @@ const status = defineCommand({
     if (auth) {
       log.label('Logged in as', `${auth.user.name} (${auth.user.email})`);
     } else {
-      log.info('Not logged in. Run `whatcanirun auth login` to authenticate.');
+      log.info(`Not logged in. Run \`${binName()} auth login\` to authenticate.`);
     }
   },
 });

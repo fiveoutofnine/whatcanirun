@@ -13,23 +13,21 @@
       },
     },
     "apps/cli": {
-      "name": "@whatcanirun/cli",
-      "version": "0.1.0",
+      "name": "whatcanirun",
+      "version": "0.1.4",
       "bin": {
-        "whatcanirun": "./src/cli.ts",
-        "wcir": "./src/cli.ts",
-      },
-      "dependencies": {
-        "@whatcanirun/shared": "workspace:*",
-        "citty": "^0.1.6",
-        "smol-toml": "^1.3.1",
+        "whatcanirun": "./dist/cli.js",
+        "wcir": "./dist/cli.js",
       },
       "devDependencies": {
         "@trivago/prettier-plugin-sort-imports": "^6.0.2",
         "@types/bun": "^1.3.2",
+        "@whatcanirun/shared": "workspace:*",
+        "citty": "^0.1.6",
         "eslint": "^9",
         "eslint-plugin-prettier": "^5.5.5",
         "prettier": "^3",
+        "smol-toml": "^1.3.1",
         "typescript": "^5",
         "typescript-eslint": "^8",
       },
@@ -579,8 +577,6 @@
     "@unrs/resolver-binding-win32-x64-msvc": ["@unrs/resolver-binding-win32-x64-msvc@1.11.1", "", { "os": "win32", "cpu": "x64" }, "sha512-lrW200hZdbfRtztbygyaq/6jP6AKE8qQN2KvPcJ+x7wiD038YtnYtZ82IMNJ69GJibV7bwL3y9FgK+5w/pYt6g=="],
 
     "@vercel/analytics": ["@vercel/analytics@2.0.1", "", { "peerDependencies": { "@remix-run/react": "^2", "@sveltejs/kit": "^1 || ^2", "next": ">= 13", "nuxt": ">= 3", "react": "^18 || ^19 || ^19.0.0-rc", "svelte": ">= 4", "vue": "^3", "vue-router": "^4" }, "optionalPeers": ["@remix-run/react", "@sveltejs/kit", "next", "nuxt", "react", "svelte", "vue", "vue-router"] }, "sha512-MTQG6V9qQrt1tsDeF+2Uoo5aPjqbVPys1xvnIftXSJYG2SrwXRHnqEvVoYID7BTruDz4lCd2Z7rM1BdkUehk2g=="],
-
-    "@whatcanirun/cli": ["@whatcanirun/cli@workspace:apps/cli"],
 
     "@whatcanirun/shared": ["@whatcanirun/shared@workspace:packages/shared"],
 
@@ -1403,6 +1399,8 @@
     "vaul": ["vaul@1.1.2", "", { "dependencies": { "@radix-ui/react-dialog": "^1.1.1" }, "peerDependencies": { "react": "^16.8 || ^17.0 || ^18.0 || ^19.0.0 || ^19.0.0-rc", "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0.0 || ^19.0.0-rc" } }, "sha512-ZFkClGpWyI2WUQjdLJ/BaGuV6AVQiJ3uELGk3OYtP+B6yCO7Cmn9vPFXVJkRaGkOJu3m8bQMgtyzNHixULceQA=="],
 
     "webidl-conversions": ["webidl-conversions@7.0.0", "", {}, "sha512-VwddBukDzu71offAQR975unBIGqfKZpM+8ZX6ySk8nYhVoo5CYaZyzt3YBvYtRtO+aoGlqxPg/B87NGVZ/fu6g=="],
+
+    "whatcanirun": ["whatcanirun@workspace:apps/cli"],
 
     "whatwg-url": ["whatwg-url@14.2.0", "", { "dependencies": { "tr46": "^5.1.0", "webidl-conversions": "^7.0.0" } }, "sha512-De72GdQZzNTUBBChsXueQUnPKDkg/5A5zp7pFDuQAj5UFoENpiACU0wlCvzpAGnTkj++ihpKwKyYewn/XNUbKw=="],
 

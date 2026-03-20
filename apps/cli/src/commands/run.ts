@@ -2,7 +2,6 @@ import type { DerivedMetrics } from '@whatcanirun/shared';
 import { defineCommand } from 'citty';
 import { basename } from 'path';
 
-import { getAuth } from '../auth/token';
 import { createBundle } from '../bundle/create';
 import { validateBundle } from '../bundle/validate';
 import { detectDevice } from '../device/detect';
@@ -10,6 +9,7 @@ import { findHfCachePath, inspectModel, isHuggingFaceRepoId, resolveModel } from
 import { resolveRuntime } from '../runtime/resolve';
 import type { BenchResult } from '../runtime/types';
 import { uploadBundle } from '../upload/client';
+import { binName } from '../utils/bin';
 import { DEFAULT_BUNDLES_DIR } from '../utils/id';
 import * as log from '../utils/log';
 import { Spinner } from '../utils/log';
@@ -61,11 +61,6 @@ const command = defineCommand({
     },
   },
   async run({ args }) {
-    if (args.submit && !getAuth()) {
-      log.error('Not logged in. Run `whatcanirun auth login` first.');
-      process.exit(1);
-    }
-
     const promptTokens = parsePositiveInt(
       (args['prompt-tokens'] as string) || '4096',
       'prompt-tokens'
@@ -90,8 +85,8 @@ const command = defineCommand({
         `Runtime \`${args.runtime}\` is not available. Make sure it is installed and on \`PATH\`.`
       );
       const installHints: Record<string, string> = {
-        mlx_lm: 'Install with: \`pip install mlx-lm\`.',
-        'llama.cpp': 'Install with: \`brew install llama.cpp\`.',
+        mlx_lm: 'Install with: `brew install mlx-lm` or `pip install mlx-lm`.',
+        'llama.cpp': 'Install with: `brew install llama.cpp`.',
       };
       const hint = installHints[args.runtime as string];
       if (hint) {
@@ -130,15 +125,18 @@ const command = defineCommand({
     if (modelInfo.quant) log.label('Quant', modelInfo.quant);
     log.label('Device', `${device.cpu_model} (${device.ram_gb}GB)`);
     log.label('Runtime', `${runtimeInfo.name} ${runtimeInfo.version}`);
-    log.label('Config', `pp=${promptTokens} tg=${genTokens} trials=${numTrials}`);
+    log.label('Config', `pp=${promptTokens}, tg=${genTokens}, trials=${numTrials}`);
     log.blank();
 
     // Run benchmark.
-    const isCached = isHuggingFaceRepoId(modelRef) && findHfCachePath(modelRef) !== null;
+    const isLocal = !isHuggingFaceRepoId(modelRef);
+    const isCached = isLocal || findHfCachePath(modelRef) !== null;
     const initialMsg = isCached ? 'Loading model from cache...' : 'Downloading model...';
     const spinner = new Spinner(initialMsg).start();
     let bench: BenchResult;
     let trialsStarted = false;
+    let lastTrial = 0;
+    let downloadBarStarted = false;
     try {
       bench = await adapter.benchmark({
         model: modelRef,
@@ -148,15 +146,32 @@ const command = defineCommand({
         onProgress: (msg) => {
           const trialMatch = msg.match(/^Trial (\d+)\/(\d+)/);
           if (trialMatch) {
+            const trial = parseInt(trialMatch[1]!, 10);
             const total = parseInt(trialMatch[2]!, 10);
             if (!trialsStarted) {
               trialsStarted = true;
               spinner.setTotal(total);
+              spinner.setDetail('');
               spinner.update('Running trials');
             }
-            const tpsMatch = msg.match(/— (.+)$/);
-            spinner.tick(tpsMatch?.[1]);
+            if (trial > lastTrial) {
+              lastTrial = trial;
+              spinner.tick();
+            }
+          } else if (/Downloading model/i.test(msg)) {
+            if (!downloadBarStarted) {
+              downloadBarStarted = true;
+              spinner.setTotal(100);
+              spinner.update('Downloading model');
+            }
+            const pctMatch = msg.match(/(\d+)%/);
+            if (pctMatch) {
+              spinner.setCurrent(parseInt(pctMatch[1]!, 10));
+              spinner.setDetail(`${pctMatch[1]}%`);
+            }
           } else {
+            // Non-download phase (e.g. Warming up) — reset to simple spinner.
+            spinner.setTotal(0);
             spinner.update(msg);
           }
         },
@@ -212,7 +227,7 @@ const command = defineCommand({
 
     const bundleId = basename(bundlePath, '.zip');
     log.bundleSaved(bundlePath);
-    log.info(`Submit it via \`whatcanirun submit ${bundleId}\``);
+    log.info(`Submit it via \`${binName()} submit ${bundleId}\``);
 
     // Upload.
     if (args.submit) {
@@ -228,7 +243,7 @@ const command = defineCommand({
       } catch (e: unknown) {
         log.error(`Upload failed: ${e instanceof Error ? e.message : String(e)}`);
         log.info('Bundle is saved locally. You can submit later with:');
-        log.info(`  whatcanirun submit ${bundlePath}`);
+        log.info(`  ${binName()} submit ${bundlePath}`);
       }
     }
   },

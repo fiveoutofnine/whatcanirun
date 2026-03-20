@@ -10,8 +10,7 @@ const command = defineCommand({
   run() {
     log.blank();
     log.header('whatcanirun');
-    log.label('Version', '0.1.0');
-    log.label('Schema', 'v1');
+    log.label('Version', '0.1.4');
     log.blank();
   },
 });
