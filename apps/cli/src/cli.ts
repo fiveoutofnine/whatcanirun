@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 import { defineCommand, runMain } from 'citty';
 
-import { auth, run, show, submit, validate, version } from './commands';
+import { auth, run, show, submit, update, validate, version } from './commands';
 
 const main = defineCommand({
   meta: {
@@ -14,6 +14,7 @@ const main = defineCommand({
     run,
     show,
     submit,
+    update,
     validate,
     version,
   },

@@ -1,0 +1,131 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# wcir-up: installer and updater for whatcanirun CLI
+# Usage:
+#   curl -fsSL whatcani.run/install | bash    (first install)
+#   wcir-up                                    (update)
+
+REPO="fiveoutofnine/whatcanirun"
+INSTALL_DIR="${WHATCANIRUN_HOME:-$HOME/.whatcanirun}/bin"
+
+# -----------------------------------------------------------------------------
+# Helpers
+# -----------------------------------------------------------------------------
+
+say() { printf "\033[1m%s\033[0m\n" "$*"; }
+err() { printf "\033[31merror:\033[0m %s\n" "$*" >&2; exit 1; }
+
+detect_platform() {
+  local os arch
+
+  case "$(uname -s)" in
+    Darwin) os="darwin" ;;
+    Linux)  os="linux" ;;
+    *)      err "Unsupported OS: $(uname -s)" ;;
+  esac
+
+  case "$(uname -m)" in
+    x86_64|amd64)  arch="x64" ;;
+    arm64|aarch64) arch="arm64" ;;
+    *)             err "Unsupported architecture: $(uname -m)" ;;
+  esac
+
+  echo "${os}-${arch}"
+}
+
+latest_version() {
+  local url="https://api.github.com/repos/${REPO}/releases/latest"
+
+  if command -v curl &>/dev/null; then
+    curl -fsSL "$url" | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/'
+  elif command -v wget &>/dev/null; then
+    wget -qO- "$url" | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/'
+  else
+    err "curl or wget is required"
+  fi
+}
+
+download() {
+  local url="$1" dest="$2"
+  if command -v curl &>/dev/null; then
+    curl -fsSL "$url" -o "$dest"
+  else
+    wget -qO "$dest" "$url"
+  fi
+}
+
+# -----------------------------------------------------------------------------
+# Main
+# -----------------------------------------------------------------------------
+
+main() {
+  local platform version asset_name download_url tmp
+
+  platform="$(detect_platform)"
+  say "Detected platform: ${platform}"
+
+  say "Fetching latest version..."
+  version="$(latest_version)"
+  if [ -z "$version" ]; then
+    err "Could not determine latest version"
+  fi
+  say "Latest version: ${version}"
+
+  asset_name="whatcanirun-${platform}.tar.gz"
+  download_url="https://github.com/${REPO}/releases/download/${version}/${asset_name}"
+
+  mkdir -p "$INSTALL_DIR"
+
+  tmp="$(mktemp -d)"
+  trap 'rm -rf "$tmp"' EXIT
+
+  say "Downloading ${asset_name}..."
+  download "$download_url" "${tmp}/${asset_name}"
+
+  say "Extracting..."
+  tar -xzf "${tmp}/${asset_name}" -C "$tmp"
+  mv "${tmp}/whatcanirun" "${INSTALL_DIR}/whatcanirun"
+  chmod +x "${INSTALL_DIR}/whatcanirun"
+
+  # Install wcir-up itself if not already present
+  if [ ! -f "${INSTALL_DIR}/wcir-up" ]; then
+    cp "$0" "${INSTALL_DIR}/wcir-up" 2>/dev/null || true
+    chmod +x "${INSTALL_DIR}/wcir-up" 2>/dev/null || true
+  fi
+
+  # Add to PATH if needed
+  ensure_path
+
+  say ""
+  say "whatcanirun ${version} installed to ${INSTALL_DIR}/whatcanirun"
+  say "Run 'whatcanirun --help' to get started"
+  say "Run 'wcir-up' to update"
+}
+
+ensure_path() {
+  local line="export PATH=\"${INSTALL_DIR}:\$PATH\""
+  local updated=false
+
+  # Skip if already on PATH
+  case ":${PATH}:" in
+    *":${INSTALL_DIR}:"*) return ;;
+  esac
+
+  for rc in "$HOME/.zshrc" "$HOME/.bashrc" "$HOME/.bash_profile"; do
+    if [ -f "$rc" ]; then
+      if ! grep -qF "$INSTALL_DIR" "$rc"; then
+        echo "" >> "$rc"
+        echo "# whatcanirun" >> "$rc"
+        echo "$line" >> "$rc"
+        updated=true
+      fi
+    fi
+  done
+
+  if $updated; then
+    say "Added ${INSTALL_DIR} to PATH (restart your shell or run: source ~/.zshrc)"
+  fi
+}
+
+main "$@"
