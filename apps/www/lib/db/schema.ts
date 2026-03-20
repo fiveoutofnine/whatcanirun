@@ -170,7 +170,6 @@ export const runs = pgTable(
     bundleId: text('bundle_id').notNull().unique(),
     schemaVersion: text('schema_version').notNull(),
     status: runStatusEnum('status').notNull().default(RunStatus.VERIFIED),
-    canonical: boolean('canonical').notNull(),
     notes: text('notes'),
     bundleSha256: text('bundle_sha256').notNull().unique(),
     runtimeName: text('runtime_name').notNull(),
@@ -192,7 +191,6 @@ export const runs = pgTable(
     trialsPassed: integer('trials_passed').notNull(),
     trialsTotal: integer('trials_total').notNull(),
     trials: jsonb('trials').notNull(),
-    bundleUrl: text('bundle_url'),
     createdAt: timestamp('created_at').notNull().defaultNow(),
     updatedAt: timestamp('updated_at')
       .notNull()

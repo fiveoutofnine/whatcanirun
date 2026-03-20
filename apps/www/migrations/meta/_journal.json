@@ -50,6 +50,13 @@
       "when": 1773980616569,
       "tag": "0006_productive_butterfly",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1774037100995,
+      "tag": "0007_tan_mastermind",
+      "breakpoints": true
     }
   ]
 }

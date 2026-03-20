@@ -245,7 +245,6 @@ export async function POST(request: NextRequest) {
       bundleId: manifest.bundle_id,
       schemaVersion: manifest.schema_version,
       status: RunStatus.VERIFIED,
-      canonical: false,
       notes: truncate(manifest.notes, 5000),
       userId,
       deviceId: device.id,
