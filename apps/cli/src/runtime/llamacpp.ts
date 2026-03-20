@@ -1,9 +1,33 @@
+import { monitorProcessMemory } from './memory.ts';
 import type { BenchOpts, BenchResult, BenchTrial, RuntimeAdapter, RuntimeInfo } from './types.ts';
+import { LLAMA_CPP_MIN_BUILD, parseLlamaCppBuild, UnsupportedVersionError } from './version.ts';
 
 // -----------------------------------------------------------------------------
 // Types
 // -----------------------------------------------------------------------------
 
+/**
+ * Shape of a single entry in `llama-bench -o json` output.
+ *
+ * llama-bench returns a JSON array with one object per test configuration.
+ * We run two tests: prompt-only (n_prompt>0, n_gen=0) and generation-only
+ * (n_gen>0, n_prompt=0).
+ *
+ * Required fields for our parser:
+ *   n_prompt, n_gen     — identify which test this entry belongs to
+ *   avg_ts, stddev_ts   — aggregate throughput in tokens/sec
+ *   samples_ts          — per-repetition throughput values (one per -r rep)
+ *
+ * Many additional fields are present (build_commit, build_number, cpu_info,
+ * gpu_info, backends, model_*, n_batch, n_ubatch, n_threads, type_k, type_v,
+ * n_gpu_layers, flash_attn, etc.) but are not used by our parser. The
+ * [key: string]: unknown catch-all provides forward compatibility.
+ *
+ * Memory is NOT reported by llama-bench — we poll RSS externally via
+ * monitorProcessMemory().
+ *
+ * Minimum stable version: b${LLAMA_CPP_MIN_BUILD} (for -o json with samples_ts).
+ */
 interface LlamaBenchEntry {
   build_commit: string;
   build_number: number;
@@ -42,18 +66,34 @@ export class LlamaCppAdapter implements RuntimeAdapter {
         const output = stdout || stderr;
         const versionMatch = output.match(/version:\s*(\d+)\s*\((\w+)\)/);
         if (versionMatch) {
+          const buildNum = parseLlamaCppBuild(versionMatch[1]!);
+          if (buildNum !== null && buildNum < LLAMA_CPP_MIN_BUILD) {
+            throw new UnsupportedVersionError(
+              'llama.cpp',
+              `b${buildNum}`,
+              `b${LLAMA_CPP_MIN_BUILD}`
+            );
+          }
           return {
             name: this.name,
             version: `b${versionMatch[1]}`,
             build_flags: 'metal',
+            parsedBuild: buildNum ?? undefined,
           };
         }
 
+        // Fallback: non-standard version format. Warn but allow — may be a
+        // custom build where we can't verify the build number.
         const fallbackMatch = output.match(/version:\s*(\S+)|llama\.cpp\s+(\S+)|build:\s*(\d+)/i);
         const version =
           fallbackMatch?.[1] || fallbackMatch?.[2] || fallbackMatch?.[3] || output.slice(0, 50);
+        console.warn(
+          `Warning: could not parse llama.cpp build number from "${version}". ` +
+            `Version check skipped — output format may not be compatible.`
+        );
         return { name: this.name, version };
       } catch (e: unknown) {
+        if (e instanceof UnsupportedVersionError) throw e;
         if (e instanceof Error && 'code' in e && (e as NodeJS.ErrnoException).code === 'ENOENT') {
           continue;
         }
@@ -79,6 +119,8 @@ export class LlamaCppAdapter implements RuntimeAdapter {
       '-o',
       'json',
       '--progress',
+      // Note: mmap is disabled by default in llama-bench (-mmp defaults to 0),
+      // so RSS already reflects actual memory usage without any extra flags.
     ];
 
     const proc = Bun.spawn(['llama-bench', ...args], {
@@ -86,7 +128,7 @@ export class LlamaCppAdapter implements RuntimeAdapter {
       stderr: 'pipe',
     });
 
-    // Poll process RSS to measure memory usage (llama-bench doesn't report it).
+    // Poll process memory to measure peak and idle usage (llama-bench doesn't report it).
     const memMonitor = monitorProcessMemory(proc.pid);
 
     // Stream both stdout and stderr concurrently to avoid pipe buffer deadlock.
@@ -148,9 +190,19 @@ export class LlamaCppAdapter implements RuntimeAdapter {
   }
 
   /**
-   * Parse llama-bench -o json output.
-   * Returns an array with two entries: one for prompt (n_prompt>0, n_gen==0)
-   * and one for generation (n_gen>0, n_prompt==0).
+   * Parse llama-bench `-o json` output.
+   *
+   * Expected input: a JSON array with two entries:
+   *   - Prompt test:     { n_prompt: >0, n_gen: 0, avg_ts, samples_ts: [...] }
+   *   - Generation test: { n_prompt: 0, n_gen: >0, avg_ts, samples_ts: [...] }
+   *
+   * Per-trial throughput comes from `samples_ts` (one value per `-r` repetition).
+   * Aggregate throughput comes from `avg_ts`.
+   *
+   * Memory is provided by the external RSS monitor, not by llama-bench.
+   *
+   * If parsing fails, error messages reference the minimum supported version
+   * to help users diagnose version-related format mismatches.
    */
   private parseOutput(
     stdout: string,
@@ -163,7 +215,16 @@ export class LlamaCppAdapter implements RuntimeAdapter {
       entries = JSON.parse(stdout);
     } catch {
       throw new Error(
-        `Could not parse llama-bench JSON output. Raw output:\n${stdout}\nPlease file an issue.`
+        `Could not parse llama-bench JSON output. This may indicate a version that does not ` +
+          `support '-o json'. Minimum required: b${LLAMA_CPP_MIN_BUILD}.\n\n` +
+          `Raw output (truncated):\n${stdout.slice(0, 500)}`
+      );
+    }
+
+    if (!Array.isArray(entries) || entries.length === 0) {
+      throw new Error(
+        `llama-bench returned empty or non-array JSON. Expected an array with prompt and ` +
+          `generation entries. Raw output (truncated):\n${stdout.slice(0, 500)}`
       );
     }
 
@@ -173,6 +234,20 @@ export class LlamaCppAdapter implements RuntimeAdapter {
     if (!promptEntry || !genEntry) {
       throw new Error(
         `Expected both prompt and generation entries from llama-bench. Got ${entries.length} entries.`
+      );
+    }
+
+    // Validate required fields exist and have expected types.
+    if (!Array.isArray(promptEntry.samples_ts) || !Array.isArray(genEntry.samples_ts)) {
+      throw new Error(
+        `llama-bench JSON is missing 'samples_ts' arrays. This may indicate an older build. ` +
+          `Minimum required: b${LLAMA_CPP_MIN_BUILD}.`
+      );
+    }
+    if (!isFinite(promptEntry.avg_ts) || !isFinite(genEntry.avg_ts)) {
+      throw new Error(
+        `llama-bench returned non-numeric avg_ts values. ` +
+          `prompt avg_ts=${promptEntry.avg_ts}, gen avg_ts=${genEntry.avg_ts}`
       );
     }
 
@@ -203,58 +278,4 @@ export class LlamaCppAdapter implements RuntimeAdapter {
       },
     };
   }
-}
-
-// -----------------------------------------------------------------------------
-// Memory monitoring
-// -----------------------------------------------------------------------------
-
-/**
- * Poll a subprocess's RSS via `ps` to capture peak and idle memory.
- * "Idle" is approximated as the RSS after model loading stabilizes
- * (the last sample before RSS starts climbing toward peak).
- */
-function monitorProcessMemory(pid: number): { stop: () => { peakMb: number; idleMb: number } } {
-  const samples: number[] = [];
-  let running = true;
-
-  const poll = async () => {
-    while (running) {
-      try {
-        const proc = Bun.spawn(['ps', '-o', 'rss=', '-p', String(pid)], {
-          stdout: 'pipe',
-          stderr: 'ignore',
-        });
-        const text = (await new Response(proc.stdout).text()).trim();
-        await proc.exited;
-        const kb = parseInt(text, 10);
-        if (!isNaN(kb) && kb > 0) {
-          samples.push(kb);
-        }
-      } catch {
-        // Process may have exited.
-      }
-      await Bun.sleep(500);
-    }
-  };
-  poll();
-
-  return {
-    stop() {
-      running = false;
-      if (samples.length === 0) return { peakMb: 0, idleMb: 0 };
-
-      const peakKb = Math.max(...samples);
-      // Idle ≈ the stable RSS after model loading, before inference peak.
-      // Use the median of the first half of samples as a rough approximation.
-      const firstHalf = samples.slice(0, Math.max(1, Math.floor(samples.length / 2)));
-      firstHalf.sort((a, b) => a - b);
-      const idleKb = firstHalf[Math.floor(firstHalf.length / 2)]!;
-
-      return {
-        peakMb: Math.round((peakKb / 1024) * 10) / 10,
-        idleMb: Math.round((idleKb / 1024) * 10) / 10,
-      };
-    },
-  };
 }

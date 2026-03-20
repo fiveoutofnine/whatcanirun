@@ -8,6 +8,7 @@ import { detectDevice } from '../device/detect';
 import { findHfCachePath, inspectModel, isHuggingFaceRepoId, resolveModel } from '../model/resolve';
 import { resolveRuntime } from '../runtime/resolve';
 import type { BenchResult } from '../runtime/types';
+import { UnsupportedVersionError } from '../runtime/version';
 import { uploadBundle } from '../upload/client';
 import { binName } from '../utils/bin';
 import { DEFAULT_BUNDLES_DIR } from '../utils/id';
@@ -79,7 +80,16 @@ const command = defineCommand({
     }
 
     // Detect runtime.
-    const runtimeInfo = await adapter.detect();
+    let runtimeInfo;
+    try {
+      runtimeInfo = await adapter.detect();
+    } catch (e: unknown) {
+      if (e instanceof UnsupportedVersionError) {
+        log.error(e.message);
+        process.exit(1);
+      }
+      throw e;
+    }
     if (!runtimeInfo) {
       log.error(
         `Runtime \`${args.runtime}\` is not available. Make sure it is installed and on \`PATH\`.`

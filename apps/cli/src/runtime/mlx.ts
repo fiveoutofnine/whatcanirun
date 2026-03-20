@@ -1,4 +1,6 @@
+import { monitorProcessMemory } from './memory.ts';
 import type { BenchOpts, BenchResult, BenchTrial, RuntimeAdapter, RuntimeInfo } from './types.ts';
+import { isVersionAtLeast, MLX_LM_MIN_VERSION, UnsupportedVersionError } from './version.ts';
 
 // -----------------------------------------------------------------------------
 // Adapter
@@ -19,10 +21,14 @@ export class MlxAdapter implements RuntimeAdapter {
       const version = (await new Response(proc.stdout).text()).trim();
       const code = await proc.exited;
       if (code === 0 && version) {
+        if (!isVersionAtLeast(version, MLX_LM_MIN_VERSION)) {
+          throw new UnsupportedVersionError('mlx_lm', version, MLX_LM_MIN_VERSION);
+        }
         this.useCli = true;
         return { name: this.name, version };
       }
     } catch (e: unknown) {
+      if (e instanceof UnsupportedVersionError) throw e;
       if (!(e instanceof Error && 'code' in e && (e as NodeJS.ErrnoException).code === 'ENOENT')) {
         console.warn(
           `Warning: mlx_lm CLI found but failed: ${e instanceof Error ? e.message : String(e)}`
@@ -39,8 +45,12 @@ export class MlxAdapter implements RuntimeAdapter {
       const version = (await new Response(proc.stdout).text()).trim();
       const code = await proc.exited;
       if (code !== 0 || !version) return null;
+      if (!isVersionAtLeast(version, MLX_LM_MIN_VERSION)) {
+        throw new UnsupportedVersionError('mlx_lm', version, MLX_LM_MIN_VERSION);
+      }
       return { name: this.name, version };
-    } catch {
+    } catch (e: unknown) {
+      if (e instanceof UnsupportedVersionError) throw e;
       return null;
     }
   }
@@ -66,6 +76,11 @@ export class MlxAdapter implements RuntimeAdapter {
       stderr: 'pipe',
       env: { ...process.env, PYTHONUNBUFFERED: '1' },
     });
+
+    // Poll process RSS for consistent memory measurement across runtimes.
+    // mlx_lm reports `peak_memory` from mx.get_peak_memory() (framework-level),
+    // but we use external RSS polling for cross-runtime parity with llama.cpp.
+    const memMonitor = monitorProcessMemory(proc.pid);
 
     // Stream both stdout and stderr concurrently for progress reporting.
     const stdoutChunks: string[] = [];
@@ -125,6 +140,8 @@ export class MlxAdapter implements RuntimeAdapter {
     const stdout = stdoutChunks.join('');
     const stderr = stderrChunks.join('');
 
+    const mem = memMonitor.stop();
+
     if (code !== 0) {
       const output = stderr + stdout;
 
@@ -153,44 +170,95 @@ export class MlxAdapter implements RuntimeAdapter {
       throw new Error(`mlx_lm.benchmark failed: ${errMsg}`);
     }
 
-    return this.parseOutput(stdout, opts.promptTokens, opts.genTokens);
+    return this.parseOutput(stdout, opts.promptTokens, opts.genTokens, opts.numTrials, mem);
   }
 
   /**
-   * Parse mlx_lm.benchmark stdout. Expected format:
+   * Parse mlx_lm.benchmark stdout.
+   *
+   * Expected format (text, no JSON option available):
+   *
    *   Running warmup..
    *   Timing with prompt_tokens=64, generation_tokens=32, batch_size=1.
    *   Trial 1:  prompt_tps=1334.858, generation_tps=282.768, peak_memory=0.429
    *   Trial 2:  prompt_tps=1259.967, generation_tps=252.029, peak_memory=0.429
    *   Averages: prompt_tps=1297.412, generation_tps=267.399, peak_memory=0.429
+   *
+   * Line types:
+   *   "Trial N:" — per-trial metrics, parsed via metricsPattern regex
+   *   "Averages:" — aggregate metrics (optional; computed from trials if absent)
+   *   "Running warmup.." — progress signal only
+   *   "Timing with ..." — config echo, not parsed
+   *
+   * Fields extracted per line:
+   *   prompt_tps (float, tok/s) — prompt processing throughput
+   *   generation_tps (float, tok/s) — token generation throughput
+   *   peak_memory (float, GB) — framework-level peak from mx.get_peak_memory()
+   *
+   * Note: peak_memory is MLX framework allocation, NOT process RSS. We use
+   * externally-polled RSS (passed via `mem` param) as the canonical memory
+   * metric for cross-runtime parity with llama.cpp.
+   *
+   * Minimum stable version: ${MLX_LM_MIN_VERSION}
    */
-  private parseOutput(stdout: string, promptTokens: number, genTokens: number): BenchResult {
+  private parseOutput(
+    stdout: string,
+    promptTokens: number,
+    genTokens: number,
+    numTrials: number,
+    mem: { peakMb: number; idleMb: number }
+  ): BenchResult {
     const lines = stdout.split('\n');
     const trials: BenchTrial[] = [];
     let averages: BenchResult['averages'] | null = null;
 
     const metricsPattern = /prompt_tps=([\d.]+),\s*generation_tps=([\d.]+),\s*peak_memory=([\d.]+)/;
 
+    const peakMemoryGb = mem.peakMb / 1024;
+    const idleMemoryGb = mem.idleMb / 1024;
+
     for (const line of lines) {
       const match = line.match(metricsPattern);
       if (!match) continue;
 
-      const parsed = {
-        promptTps: parseFloat(match[1]!),
-        generationTps: parseFloat(match[2]!),
-        peakMemoryGb: parseFloat(match[3]!),
-      };
+      const promptTps = parseFloat(match[1]!);
+      const generationTps = parseFloat(match[2]!);
+
+      // Guard against NaN from malformed lines — skip rather than corrupt results.
+      if (!isFinite(promptTps) || !isFinite(generationTps)) {
+        continue;
+      }
 
       if (line.startsWith('Averages:')) {
-        averages = { ...parsed, idleMemoryGb: parsed.peakMemoryGb };
+        averages = {
+          promptTps,
+          generationTps,
+          peakMemoryGb,
+          idleMemoryGb,
+        };
       } else if (/^\s*Trial\s+\d+:/.test(line)) {
-        trials.push(parsed);
+        trials.push({
+          promptTps,
+          generationTps,
+          peakMemoryGb,
+        });
       }
     }
 
     if (trials.length === 0) {
       throw new Error(
-        `Could not parse benchmark output. Raw output:\n${stdout}\nPlease file an issue.`
+        `Could not parse mlx_lm.benchmark output. Expected lines matching:\n` +
+          `  "Trial N: prompt_tps=..., generation_tps=..., peak_memory=..."\n\n` +
+          `Minimum supported version: ${MLX_LM_MIN_VERSION}. ` +
+          `Upgrade with: pip install --upgrade mlx-lm\n\n` +
+          `Raw output (truncated):\n${stdout.slice(0, 500)}`
+      );
+    }
+
+    if (trials.length !== numTrials) {
+      console.warn(
+        `Warning: expected ${numTrials} trials but parsed ${trials.length}. ` +
+          `Results will use the ${trials.length} trials that were parsed.`
       );
     }
 
@@ -199,8 +267,8 @@ export class MlxAdapter implements RuntimeAdapter {
       averages = {
         promptTps: trials.reduce((s, t) => s + t.promptTps, 0) / trials.length,
         generationTps: trials.reduce((s, t) => s + t.generationTps, 0) / trials.length,
-        peakMemoryGb: Math.max(...trials.map((t) => t.peakMemoryGb)),
-        idleMemoryGb: Math.max(...trials.map((t) => t.peakMemoryGb)),
+        peakMemoryGb,
+        idleMemoryGb,
       };
     }
 
