@@ -51,7 +51,7 @@ export async function createBundle(opts: BundleOpts): Promise<string> {
     created_at: now.toISOString(),
     canonical: false,
     harness: {
-      version: '0.1.0',
+      version: '0.1.5',
       git_sha: await getGitSha(),
     },
     device: {
