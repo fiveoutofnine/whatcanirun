@@ -1,3 +1,4 @@
+import { warn } from '../utils/log.ts';
 import { monitorProcessMemory } from './memory.ts';
 import type { BenchOpts, BenchResult, BenchTrial, RuntimeAdapter, RuntimeInfo } from './types.ts';
 import { isVersionAtLeast, MLX_LM_MIN_VERSION, UnsupportedVersionError } from './version.ts';
@@ -30,9 +31,7 @@ export class MlxAdapter implements RuntimeAdapter {
     } catch (e: unknown) {
       if (e instanceof UnsupportedVersionError) throw e;
       if (!(e instanceof Error && 'code' in e && (e as NodeJS.ErrnoException).code === 'ENOENT')) {
-        console.warn(
-          `Warning: mlx_lm CLI found but failed: ${e instanceof Error ? e.message : String(e)}`
-        );
+        warn(`mlx_lm CLI found but failed: ${e instanceof Error ? e.message : String(e)}`);
       }
     }
 
@@ -256,9 +255,8 @@ export class MlxAdapter implements RuntimeAdapter {
     }
 
     if (trials.length !== numTrials) {
-      console.warn(
-        `Warning: expected ${numTrials} trials but parsed ${trials.length}. ` +
-          `Results will use the ${trials.length} trials that were parsed.`
+      warn(
+        `expected ${numTrials} trials but parsed ${trials.length}. Results will use the ${trials.length} trials that were parsed.`
       );
     }
 

@@ -32,10 +32,11 @@ export function monitorProcessMemory(pid: number): {
 } {
   const samples: number[] = [];
   let running = true;
+  const useFootprint = { value: process.platform === 'darwin' };
 
   const poll = async () => {
     while (running) {
-      const kb = await sampleMemoryKb(pid);
+      const kb = await sampleMemoryKb(pid, useFootprint);
       if (kb > 0) {
         samples.push(kb);
       }
@@ -49,7 +50,7 @@ export function monitorProcessMemory(pid: number): {
       running = false;
       if (samples.length === 0) return { peakMb: 0, idleMb: 0 };
 
-      const peakKb = Math.max(...samples);
+      const peakKb = samples.reduce((a, b) => (a > b ? a : b), 0);
 
       // Idle ≈ the stable RSS after model loading, before inference peak.
       // Use the median of the first half of samples as a rough approximation.
@@ -69,18 +70,20 @@ export function monitorProcessMemory(pid: number): {
 // Platform-specific memory sampling
 // ---------------------------------------------------------------------------
 
-/** Whether we've already tried (and failed) to use `footprint`. */
-let footprintFailed = false;
-
 /**
  * Sample the physical memory of a process in KB.
  *
  * On macOS, tries `footprint <pid>` first which reports `phys_footprint`
  * (accurate for unified memory on Apple Silicon). Falls back to `ps -o rss=`.
+ *
+ * The `useFootprint` flag tracks whether `footprint` is available for this
+ * monitor session. It starts as true on macOS and is set to false on the first
+ * failure, avoiding repeated spawn attempts for a missing binary while still
+ * retrying across separate monitorProcessMemory() calls.
  */
-async function sampleMemoryKb(pid: number): Promise<number> {
+async function sampleMemoryKb(pid: number, useFootprint: { value: boolean }): Promise<number> {
   // Try macOS `footprint` command (accurate unified memory measurement).
-  if (process.platform === 'darwin' && !footprintFailed) {
+  if (process.platform === 'darwin' && useFootprint.value) {
     try {
       const proc = Bun.spawn(['footprint', String(pid)], {
         stdout: 'pipe',
@@ -100,8 +103,8 @@ async function sampleMemoryKb(pid: number): Promise<number> {
         }
       }
     } catch {
-      // footprint not available — stop trying.
-      footprintFailed = true;
+      // footprint not available — stop trying for this monitor session.
+      useFootprint.value = false;
     }
   }
 

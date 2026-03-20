@@ -1,3 +1,4 @@
+import { warn } from '../utils/log.ts';
 import { monitorProcessMemory } from './memory.ts';
 import type { BenchOpts, BenchResult, BenchTrial, RuntimeAdapter, RuntimeInfo } from './types.ts';
 import { LLAMA_CPP_MIN_BUILD, parseLlamaCppBuild, UnsupportedVersionError } from './version.ts';
@@ -78,7 +79,6 @@ export class LlamaCppAdapter implements RuntimeAdapter {
             name: this.name,
             version: `b${versionMatch[1]}`,
             build_flags: 'metal',
-            parsedBuild: buildNum ?? undefined,
           };
         }
 
@@ -87,9 +87,8 @@ export class LlamaCppAdapter implements RuntimeAdapter {
         const fallbackMatch = output.match(/version:\s*(\S+)|llama\.cpp\s+(\S+)|build:\s*(\d+)/i);
         const version =
           fallbackMatch?.[1] || fallbackMatch?.[2] || fallbackMatch?.[3] || output.slice(0, 50);
-        console.warn(
-          `Warning: could not parse llama.cpp build number from "${version}". ` +
-            `Version check skipped — output format may not be compatible.`
+        warn(
+          `could not parse llama.cpp build number from "${version}". Version check skipped — output format may not be compatible.`
         );
         return { name: this.name, version };
       } catch (e: unknown) {
@@ -97,9 +96,7 @@ export class LlamaCppAdapter implements RuntimeAdapter {
         if (e instanceof Error && 'code' in e && (e as NodeJS.ErrnoException).code === 'ENOENT') {
           continue;
         }
-        console.warn(
-          `Warning: failed to run ${bin}: ${e instanceof Error ? e.message : String(e)}`
-        );
+        warn(`failed to run ${bin}: ${e instanceof Error ? e.message : String(e)}`);
         continue;
       }
     }

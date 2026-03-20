@@ -6,7 +6,6 @@ export interface RuntimeInfo {
   name: string;
   version: string;
   build_flags?: string;
-  parsedBuild?: number;
 }
 
 export interface BenchTrial {

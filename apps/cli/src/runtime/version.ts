@@ -44,27 +44,38 @@ export function parseLlamaCppBuild(version: string): number | null {
 
 /**
  * Compare two semver-like version strings (e.g. "0.19.0", "0.30.1").
- * Pre-release suffixes like `.dev0`, `rc1` are stripped before comparison.
+ * Pre-release versions (e.g. "0.19.0.dev0", "0.19.0rc1") are considered
+ * less than their release counterpart ("0.19.0.dev0" < "0.19.0").
  * Returns -1 if a < b, 0 if equal, 1 if a > b.
  */
 export function compareSemver(a: string, b: string): number {
-  const parse = (v: string) =>
-    v
-      .replace(/[-+].+$/, '') // strip pre-release/build metadata
+  const preReleasePattern = /[-.]?(dev|alpha|beta|rc)\d*$/i;
+
+  const parse = (v: string) => {
+    const isPreRelease = preReleasePattern.test(v);
+    const parts = v
+      .replace(/[-+].+$/, '') // strip pre-release/build metadata after - or +
       .replace(/[^0-9.]/g, '') // strip non-numeric except dots
       .split('.')
+      .filter((s) => s !== '')
       .map((s) => parseInt(s, 10) || 0);
+    return { parts, isPreRelease };
+  };
 
   const pa = parse(a);
   const pb = parse(b);
-  const len = Math.max(pa.length, pb.length);
+  const len = Math.max(pa.parts.length, pb.parts.length);
 
   for (let i = 0; i < len; i++) {
-    const va = pa[i] ?? 0;
-    const vb = pb[i] ?? 0;
+    const va = pa.parts[i] ?? 0;
+    const vb = pb.parts[i] ?? 0;
     if (va < vb) return -1;
     if (va > vb) return 1;
   }
+
+  // Numeric parts are equal — pre-release is less than release.
+  if (pa.isPreRelease && !pb.isPreRelease) return -1;
+  if (!pa.isPreRelease && pb.isPreRelease) return 1;
   return 0;
 }
 
