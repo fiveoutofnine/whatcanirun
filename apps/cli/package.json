@@ -1,6 +1,6 @@
 {
   "name": "whatcanirun",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "description": "Standardized local LLM inference benchmarks.",
   "bin": {
@@ -29,7 +29,8 @@
     "typescript-eslint": "^8"
   },
   "files": [
-    "dist"
+    "dist",
+    "README.md"
   ],
   "publishConfig": {
     "access": "public"

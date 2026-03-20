@@ -43,7 +43,7 @@ wcir run \
   --submit
 ```
 
-> [!INFO]
+> [!NOTE]
 > `MODEL_PATH_OR_HF_REPO` MUST be a path to a GGUF file if `runtime` is `llama.cpp`.
 
 `run` saves bundles to `~/.whatcanirun/bundles/*` in case you want to inspect them or validate/submit them later via `validate`/`submit`, respectively. You may also specify the output directory with the `--output` flag:
@@ -56,7 +56,7 @@ wcir submit $BUNDLE_PATH_OR_BUNDLE_ID
 wcir validate $BUNDLE_PATH_OR_BUNDLE_ID
 ```
 
-> [!INFO]
+> [!NOTE]
 > Note that only bundle IDs  will only be searched in the `~/.whatcanirun/bundles/*` directory.
 
 The CLI also comes with a utility command `show` to inspect your device, runtime, or model:
