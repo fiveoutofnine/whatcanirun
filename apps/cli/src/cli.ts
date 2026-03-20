@@ -6,7 +6,7 @@ import { auth, run, show, submit, validate, version } from './commands';
 const main = defineCommand({
   meta: {
     name: 'whatcanirun',
-    version: '0.1.5',
+    version: '0.1.6',
     description: 'Standardized local LLM inference benchmarks',
   },
   subCommands: {
