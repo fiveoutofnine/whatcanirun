@@ -84,6 +84,14 @@ export class Spinner {
     if (detail) this.detail = detail;
   }
 
+  setCurrent(n: number) {
+    this.current = Math.min(n, this.total);
+  }
+
+  setDetail(detail: string) {
+    this.detail = detail;
+  }
+
   stop(finalText?: string) {
     if (this.interval) clearInterval(this.interval);
     process.stderr.write('\r\x1b[K');
@@ -106,14 +114,10 @@ export class Spinner {
     const pulseColor = `\x1b[38;2;${bright};${bright};${bright}m`;
 
     const WHITE = '\x1b[97m';
-
-    // Progress bar: filled is white, empty is dim.
     const width = 20;
     const filled = Math.round((this.current / this.total) * width);
     const empty = width - filled;
     const bar = ` ${WHITE}${'█'.repeat(filled)}${RESET}${DIM}${'░'.repeat(empty)}${RESET}`;
-
-    // Counter: N is white, /total is dim.
     const counter = ` ${WHITE}${this.current}${RESET}${DIM}/${this.total}${RESET}`;
 
     // Detail pulses.

@@ -3,13 +3,13 @@ import { defineCommand } from 'citty';
 import { basename } from 'path';
 
 import { createBundle } from '../bundle/create';
-import { binName } from '../utils/bin';
 import { validateBundle } from '../bundle/validate';
 import { detectDevice } from '../device/detect';
 import { findHfCachePath, inspectModel, isHuggingFaceRepoId, resolveModel } from '../model/resolve';
 import { resolveRuntime } from '../runtime/resolve';
 import type { BenchResult } from '../runtime/types';
 import { uploadBundle } from '../upload/client';
+import { binName } from '../utils/bin';
 import { DEFAULT_BUNDLES_DIR } from '../utils/id';
 import * as log from '../utils/log';
 import { Spinner } from '../utils/log';
@@ -125,7 +125,7 @@ const command = defineCommand({
     if (modelInfo.quant) log.label('Quant', modelInfo.quant);
     log.label('Device', `${device.cpu_model} (${device.ram_gb}GB)`);
     log.label('Runtime', `${runtimeInfo.name} ${runtimeInfo.version}`);
-    log.label('Config', `pp=${promptTokens} tg=${genTokens} trials=${numTrials}`);
+    log.label('Config', `pp=${promptTokens}, tg=${genTokens}, trials=${numTrials}`);
     log.blank();
 
     // Run benchmark.
@@ -134,6 +134,7 @@ const command = defineCommand({
     const spinner = new Spinner(initialMsg).start();
     let bench: BenchResult;
     let trialsStarted = false;
+    let downloadBarStarted = false;
     try {
       bench = await adapter.benchmark({
         model: modelRef,
@@ -147,11 +148,25 @@ const command = defineCommand({
             if (!trialsStarted) {
               trialsStarted = true;
               spinner.setTotal(total);
+              spinner.setDetail('');
               spinner.update('Running trials');
             }
             const tpsMatch = msg.match(/— (.+)$/);
             spinner.tick(tpsMatch?.[1]);
+          } else if (/Downloading model/i.test(msg)) {
+            if (!downloadBarStarted) {
+              downloadBarStarted = true;
+              spinner.setTotal(100);
+              spinner.update('Downloading model');
+            }
+            const pctMatch = msg.match(/(\d+)%/);
+            if (pctMatch) {
+              spinner.setCurrent(parseInt(pctMatch[1]!, 10));
+              spinner.setDetail(`${pctMatch[1]}%`);
+            }
           } else {
+            // Non-download phase (e.g. Warming up) — reset to simple spinner.
+            spinner.setTotal(0);
             spinner.update(msg);
           }
         },
