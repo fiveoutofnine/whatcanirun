@@ -2,7 +2,6 @@ import type { DerivedMetrics } from '@whatcanirun/shared';
 import { defineCommand } from 'citty';
 import { basename } from 'path';
 
-import { getAuth } from '../auth/token';
 import { createBundle } from '../bundle/create';
 import { validateBundle } from '../bundle/validate';
 import { detectDevice } from '../device/detect';
@@ -61,11 +60,6 @@ const command = defineCommand({
     },
   },
   async run({ args }) {
-    if (args.submit && !getAuth()) {
-      log.error('Not logged in. Run `whatcanirun auth login` first.');
-      process.exit(1);
-    }
-
     const promptTokens = parsePositiveInt(
       (args['prompt-tokens'] as string) || '4096',
       'prompt-tokens'
