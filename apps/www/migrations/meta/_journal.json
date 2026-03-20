@@ -43,6 +43,13 @@
       "when": 1773955352302,
       "tag": "0005_warm_namorita",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1773980616569,
+      "tag": "0006_productive_butterfly",
+      "breakpoints": true
     }
   ]
 }

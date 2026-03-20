@@ -1,0 +1,1 @@
+ALTER TABLE "runs" ADD COLUMN "prefill_tps_mean" real;

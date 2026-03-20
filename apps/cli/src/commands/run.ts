@@ -197,7 +197,7 @@ const command = defineCommand({
     log.header('Results');
     log.label('TTFT (est) p50/p95', `${metrics.ttftP50Ms} ms / ${metrics.ttftP95Ms} ms`);
     log.label('Decode TPS', `${metrics.decodeTpsMean} tok/s`);
-    log.label('Prefill TPS', `${Math.round(bench.averages.promptTps * 10) / 10} tok/s`);
+    log.label('Prefill TPS', `${metrics.prefillTpsMean} tok/s`);
     log.label('Weighted TPS', `${metrics.weightedTpsMean} tok/s`);
     if (metrics.peakRssMb > 0) {
       log.label('Peak Memory', `${(metrics.peakRssMb / 1024).toFixed(2)} GB`);
@@ -273,6 +273,7 @@ function computeMetrics(bench: BenchResult): DerivedMetrics {
     p5PromptTps > 0 ? Math.round((promptTokens / p5PromptTps) * 1000 * 100) / 100 : 0;
 
   const decodeTpsMean = Math.round(averages.generationTps * 10) / 10;
+  const prefillTpsMean = Math.round(averages.promptTps * 10) / 10;
 
   // Weighted TPS: `(prompt_tokens * prompt_tps + gen_tokens * gen_tps) / (prompt_tokens + gen_tokens)`.
   const weightedTpsMean =
@@ -285,8 +286,17 @@ function computeMetrics(bench: BenchResult): DerivedMetrics {
       : 0;
 
   const peakRssMb = Math.round(averages.peakMemoryGb * 1024 * 10) / 10;
+  const idleRssMb = Math.round(averages.idleMemoryGb * 1024 * 10) / 10;
 
-  return { ttftP50Ms, ttftP95Ms, decodeTpsMean, weightedTpsMean, peakRssMb };
+  return {
+    ttftP50Ms,
+    ttftP95Ms,
+    decodeTpsMean,
+    prefillTpsMean,
+    weightedTpsMean,
+    idleRssMb,
+    peakRssMb,
+  };
 }
 
 function parsePositiveInt(value: string, name: string): number {

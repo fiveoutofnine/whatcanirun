@@ -182,7 +182,7 @@ export class MlxAdapter implements RuntimeAdapter {
       };
 
       if (line.startsWith('Averages:')) {
-        averages = parsed;
+        averages = { ...parsed, idleMemoryGb: parsed.peakMemoryGb };
       } else if (/^\s*Trial\s+\d+:/.test(line)) {
         trials.push(parsed);
       }
@@ -200,6 +200,7 @@ export class MlxAdapter implements RuntimeAdapter {
         promptTps: trials.reduce((s, t) => s + t.promptTps, 0) / trials.length,
         generationTps: trials.reduce((s, t) => s + t.generationTps, 0) / trials.length,
         peakMemoryGb: Math.max(...trials.map((t) => t.peakMemoryGb)),
+        idleMemoryGb: Math.max(...trials.map((t) => t.peakMemoryGb)),
       };
     }
 

@@ -52,6 +52,7 @@ export interface AggregateMetrics {
   ttft_p50_ms: number;
   ttft_p95_ms: number;
   decode_tps_mean: number;
+  prefill_tps_mean: number;
   weighted_tps_mean: number;
   idle_rss_mb: number;
   peak_rss_mb: number;
@@ -68,6 +69,8 @@ export interface DerivedMetrics {
   ttftP50Ms: number;
   ttftP95Ms: number;
   decodeTpsMean: number;
+  prefillTpsMean: number;
   weightedTpsMean: number;
+  idleRssMb: number;
   peakRssMb: number;
 }

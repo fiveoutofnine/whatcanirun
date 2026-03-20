@@ -263,6 +263,7 @@ export async function POST(request: NextRequest) {
       ttftP50Ms: aggregate.ttft_p50_ms,
       ttftP95Ms: aggregate.ttft_p95_ms,
       decodeTpsMean: aggregate.decode_tps_mean,
+      prefillTpsMean: aggregate.prefill_tps_mean,
       weightedTpsMean: aggregate.weighted_tps_mean,
       idleRssMb: aggregate.idle_rss_mb,
       peakRssMb: aggregate.peak_rss_mb,

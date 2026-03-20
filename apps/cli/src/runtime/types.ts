@@ -22,6 +22,7 @@ export interface BenchResult {
     promptTps: number;
     generationTps: number;
     peakMemoryGb: number;
+    idleMemoryGb: number;
   };
 }
 

@@ -185,6 +185,7 @@ export const runs = pgTable(
     ttftP50Ms: real('ttft_p50_ms').notNull(),
     ttftP95Ms: real('ttft_p95_ms').notNull(),
     decodeTpsMean: real('decode_tps_mean').notNull(),
+    prefillTpsMean: real('prefill_tps_mean'),
     weightedTpsMean: real('weighted_tps_mean').notNull(),
     idleRssMb: real('idle_rss_mb').notNull(),
     peakRssMb: real('peak_rss_mb').notNull(),

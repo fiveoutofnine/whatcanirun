@@ -86,6 +86,9 @@ export class LlamaCppAdapter implements RuntimeAdapter {
       stderr: 'pipe',
     });
 
+    // Poll process RSS to measure memory usage (llama-bench doesn't report it).
+    const memMonitor = monitorProcessMemory(proc.pid);
+
     // Stream both stdout and stderr concurrently to avoid pipe buffer deadlock.
     const stdoutChunks: string[] = [];
     const stderrChunks: string[] = [];
@@ -134,12 +137,14 @@ export class LlamaCppAdapter implements RuntimeAdapter {
     const stderr = stderrChunks.join('');
     const code = await proc.exited;
 
+    const mem = memMonitor.stop();
+
     if (code !== 0) {
       const errMsg = stderr.trim() || stdout.trim() || `exit code ${code}`;
       throw new Error(`llama-bench failed: ${errMsg}`);
     }
 
-    return this.parseOutput(stdout, opts.promptTokens, opts.genTokens);
+    return this.parseOutput(stdout, opts.promptTokens, opts.genTokens, mem);
   }
 
   /**
@@ -147,7 +152,12 @@ export class LlamaCppAdapter implements RuntimeAdapter {
    * Returns an array with two entries: one for prompt (n_prompt>0, n_gen==0)
    * and one for generation (n_gen>0, n_prompt==0).
    */
-  private parseOutput(stdout: string, promptTokens: number, genTokens: number): BenchResult {
+  private parseOutput(
+    stdout: string,
+    promptTokens: number,
+    genTokens: number,
+    mem: { peakMb: number; idleMb: number }
+  ): BenchResult {
     let entries: LlamaBenchEntry[];
     try {
       entries = JSON.parse(stdout);
@@ -170,11 +180,14 @@ export class LlamaCppAdapter implements RuntimeAdapter {
     const numTrials = Math.min(promptEntry.samples_ts.length, genEntry.samples_ts.length);
     const trials: BenchTrial[] = [];
 
+    const peakMemoryGb = mem.peakMb / 1024;
+    const idleMemoryGb = mem.idleMb / 1024;
+
     for (let i = 0; i < numTrials; i++) {
       trials.push({
         promptTps: promptEntry.samples_ts[i]!,
         generationTps: genEntry.samples_ts[i]!,
-        peakMemoryGb: 0, // llama-bench doesn't report memory
+        peakMemoryGb,
       });
     }
 
@@ -185,8 +198,63 @@ export class LlamaCppAdapter implements RuntimeAdapter {
       averages: {
         promptTps: promptEntry.avg_ts,
         generationTps: genEntry.avg_ts,
-        peakMemoryGb: 0,
+        peakMemoryGb,
+        idleMemoryGb,
       },
     };
   }
+}
+
+// -----------------------------------------------------------------------------
+// Memory monitoring
+// -----------------------------------------------------------------------------
+
+/**
+ * Poll a subprocess's RSS via `ps` to capture peak and idle memory.
+ * "Idle" is approximated as the RSS after model loading stabilizes
+ * (the last sample before RSS starts climbing toward peak).
+ */
+function monitorProcessMemory(pid: number): { stop: () => { peakMb: number; idleMb: number } } {
+  const samples: number[] = [];
+  let running = true;
+
+  const poll = async () => {
+    while (running) {
+      try {
+        const proc = Bun.spawn(['ps', '-o', 'rss=', '-p', String(pid)], {
+          stdout: 'pipe',
+          stderr: 'ignore',
+        });
+        const text = (await new Response(proc.stdout).text()).trim();
+        await proc.exited;
+        const kb = parseInt(text, 10);
+        if (!isNaN(kb) && kb > 0) {
+          samples.push(kb);
+        }
+      } catch {
+        // Process may have exited.
+      }
+      await Bun.sleep(500);
+    }
+  };
+  poll();
+
+  return {
+    stop() {
+      running = false;
+      if (samples.length === 0) return { peakMb: 0, idleMb: 0 };
+
+      const peakKb = Math.max(...samples);
+      // Idle ≈ the stable RSS after model loading, before inference peak.
+      // Use the median of the first half of samples as a rough approximation.
+      const firstHalf = samples.slice(0, Math.max(1, Math.floor(samples.length / 2)));
+      firstHalf.sort((a, b) => a - b);
+      const idleKb = firstHalf[Math.floor(firstHalf.length / 2)]!;
+
+      return {
+        peakMb: Math.round((peakKb / 1024) * 10) / 10,
+        idleMb: Math.round((idleKb / 1024) * 10) / 10,
+      };
+    },
+  };
 }
