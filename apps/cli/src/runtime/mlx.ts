@@ -98,14 +98,14 @@ export class MlxAdapter implements RuntimeAdapter {
         buffer = lines.pop()!;
         for (const line of lines) {
           if (/warmup/i.test(line)) {
-            if (!inferenceMarked) {
-              memMonitor.markInferenceStart();
-              inferenceMarked = true;
-            }
             opts.onProgress?.('Warming up...');
           } else {
             const trialMatch = line.match(/^\s*Trial\s+(\d+):/);
             if (trialMatch) {
+              if (!inferenceMarked) {
+                memMonitor.markInferenceStart();
+                inferenceMarked = true;
+              }
               const tpsMatch = line.match(/generation_tps=([\d.]+)/);
               const tps = tpsMatch ? ` — ${parseFloat(tpsMatch[1]!).toFixed(1)} tok/s` : '';
               opts.onProgress?.(`Trial ${trialMatch[1]}/${opts.numTrials}${tps}`);
