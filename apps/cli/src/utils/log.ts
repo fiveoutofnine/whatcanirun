@@ -5,10 +5,13 @@
 const RESET = '\x1b[0m';
 const BOLD = '\x1b[1m';
 const DIM = '\x1b[2m';
+const UNDERLINE = '\x1b[4m';
 const GREEN = '\x1b[32m';
 const YELLOW = '\x1b[33m';
 const RED = '\x1b[31m';
 const CYAN = '\x1b[36m';
+
+const HOME = import.meta.env?.HOME || process.env.HOME || '';
 
 // -----------------------------------------------------------------------------
 // Functions
@@ -22,12 +25,22 @@ export function success(msg: string) {
   console.log(`${GREEN}${msg}${RESET}`);
 }
 
+export function cmd(command: string): string {
+  return `${BOLD}${CYAN}${command}${RESET}`;
+}
+
+export function filepath(path: string): string {
+  const uri = `file://${path.startsWith('/') ? path : `/${path}`}`;
+  const display = HOME && path.startsWith(HOME) ? `~${path.slice(HOME.length)}` : path;
+  return `\x1b]8;;${uri}\x07${UNDERLINE}${CYAN}${display}${RESET}\x1b]8;;\x07`;
+}
+
 export function warn(msg: string) {
-  console.error(`${YELLOW}warning:${RESET} ${msg}`);
+  console.error(`${YELLOW}⚠ warning:${RESET} ${msg}`);
 }
 
 export function error(msg: string) {
-  console.error(`${RED}error:${RESET} ${msg}`);
+  console.error(`${RED}✖ error:${RESET} ${msg}`);
 }
 
 export function header(msg: string) {
@@ -39,7 +52,7 @@ export function label(key: string, value: string) {
 }
 
 export function bundleSaved(path: string) {
-  console.log(`${DIM}Bundle saved to${RESET} ${CYAN}${path}${RESET}`);
+  console.log(`${DIM}Bundle saved to${RESET} ${filepath(path)}`);
 }
 
 export function blank() {

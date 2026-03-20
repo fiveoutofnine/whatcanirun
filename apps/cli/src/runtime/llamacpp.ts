@@ -88,7 +88,7 @@ export class LlamaCppAdapter implements RuntimeAdapter {
         const version =
           fallbackMatch?.[1] || fallbackMatch?.[2] || fallbackMatch?.[3] || output.slice(0, 50);
         warn(
-          `could not parse llama.cpp build number from "${version}". Version check skipped — output format may not be compatible.`
+          `Could not parse llama.cpp build number from "${version}". Version check skipped — output format may not be compatible.`
         );
         return { name: this.name, version };
       } catch (e: unknown) {
@@ -96,7 +96,7 @@ export class LlamaCppAdapter implements RuntimeAdapter {
         if (e instanceof Error && 'code' in e && (e as NodeJS.ErrnoException).code === 'ENOENT') {
           continue;
         }
-        warn(`failed to run ${bin}: ${e instanceof Error ? e.message : String(e)}`);
+        warn(`Failed to run ${bin}: ${e instanceof Error ? e.message : String(e)}`);
         continue;
       }
     }

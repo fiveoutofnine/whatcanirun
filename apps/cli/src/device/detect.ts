@@ -1,3 +1,5 @@
+import { cmd as fmtCmd, warn } from '../utils/log';
+
 // -----------------------------------------------------------------------------
 // Types
 // -----------------------------------------------------------------------------
@@ -43,17 +45,15 @@ async function exec(cmd: string[]): Promise<string> {
     const text = await new Response(proc.stdout).text();
     const code = await proc.exited;
     if (code !== 0) {
-      console.warn(`Warning: \`${cmd.join(' ')}\` exited with code ${code}`);
+      warn(`${fmtCmd(cmd.join(' '))} exited with code ${code}.`);
       return '';
     }
     return text.trim();
   } catch (e: unknown) {
     if (e instanceof Error && 'code' in e && (e as NodeJS.ErrnoException).code === 'ENOENT') {
-      console.warn(`Warning: command not found: ${cmd[0]}`);
+      warn(`Command not found: ${fmtCmd(cmd[0]!)}.`);
     } else {
-      console.warn(
-        `Warning: \`${cmd.join(' ')}\` failed: ${e instanceof Error ? e.message : String(e)}`
-      );
+      warn(`${fmtCmd(cmd.join(' '))} failed: ${e instanceof Error ? e.message : String(e)}`);
     }
     return '';
   }

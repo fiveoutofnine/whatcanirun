@@ -261,7 +261,7 @@ export class MlxAdapter implements RuntimeAdapter {
 
     if (trials.length !== numTrials) {
       warn(
-        `expected ${numTrials} trials but parsed ${trials.length}. Results will use the ${trials.length} trials that were parsed.`
+        `Expected ${numTrials} trials but parsed ${trials.length}. Results will use the ${trials.length} trials that were parsed.`
       );
     }
 

@@ -3,6 +3,8 @@ import { existsSync, readdirSync, readFileSync, statSync } from 'fs';
 import { homedir } from 'os';
 import { basename, extname, join, resolve } from 'path';
 
+import { filepath, warn } from '../utils/log';
+
 // -----------------------------------------------------------------------------
 // Types
 // -----------------------------------------------------------------------------
@@ -78,8 +80,8 @@ export function inferFormat(modelPath: string): string {
       const config = JSON.parse(readFileSync(configPath, 'utf-8'));
       if (config.model_type) return 'mlx';
     } catch (e: unknown) {
-      console.warn(
-        `Warning: could not parse ${configPath}: ${e instanceof Error ? e.message : String(e)}`
+      warn(
+        `Could not parse ${filepath(configPath)}: ${e instanceof Error ? e.message : String(e)}`
       );
     }
   }
@@ -159,9 +161,7 @@ async function loadModelAliases(): Promise<Record<string, string>> {
     const config = parse(content);
     return (config.models as Record<string, string>) || {};
   } catch (e: unknown) {
-    console.warn(
-      `Warning: could not parse ~/.config/whatcanirun/models.toml: ${e instanceof Error ? e.message : String(e)}`
-    );
+    warn(`Could not parse ${filepath(configPath)}: ${e instanceof Error ? e.message : String(e)}`);
     return {};
   }
 }
@@ -241,9 +241,7 @@ export async function inspectModel(modelRef: string): Promise<ModelInfo> {
           }
         }
       } catch (e: unknown) {
-        console.warn(
-          `Warning: could not read model config: ${e instanceof Error ? e.message : String(e)}`
-        );
+        warn(`Could not read model config: ${e instanceof Error ? e.message : String(e)}`);
       }
     }
   } else {
@@ -261,9 +259,7 @@ export async function inspectModel(modelRef: string): Promise<ModelInfo> {
         fileSizeBytes = sumShardSizes(resolved);
       }
     } catch (e: unknown) {
-      console.warn(
-        `Warning: could not compute model hash/size: ${e instanceof Error ? e.message : String(e)}`
-      );
+      warn(`Could not compute model hash/size: ${e instanceof Error ? e.message : String(e)}`);
     }
 
     // Try to read architecture and parameters from config.json
@@ -280,9 +276,7 @@ export async function inspectModel(modelRef: string): Promise<ModelInfo> {
         }
       }
     } catch (e: unknown) {
-      console.warn(
-        `Warning: could not read model config: ${e instanceof Error ? e.message : String(e)}`
-      );
+      warn(`Could not read model config: ${e instanceof Error ? e.message : String(e)}`);
     }
   }
 

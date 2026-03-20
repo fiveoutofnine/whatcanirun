@@ -2,6 +2,9 @@ import { existsSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from '
 import { homedir } from 'node:os';
 import { dirname, join } from 'node:path';
 
+import { binName } from '../utils/bin';
+import { cmd, filepath, warn } from '../utils/log';
+
 // -----------------------------------------------------------------------------
 // Types
 // -----------------------------------------------------------------------------
@@ -34,9 +37,9 @@ export function getAuth(): AuthData | null {
     if (data.token && data.user?.id) return data;
     return null;
   } catch (e: unknown) {
-    console.warn(
-      `Warning: could not parse ${AUTH_FILE}: ${e instanceof Error ? e.message : String(e)}. ` +
-        'Try deleting it and running `wcir auth login` again.'
+    warn(
+      `Could not parse ${filepath(AUTH_FILE)}: ${e instanceof Error ? e.message : String(e)}.` +
+        `\n  ↳ Try deleting it and running ${cmd(`${binName()} auth login`)} again.`
     );
     return null;
   }

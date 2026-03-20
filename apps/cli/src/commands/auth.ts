@@ -14,11 +14,11 @@ const login = defineCommand({
     const existing = getAuth();
     if (existing) {
       log.info(`Already logged in as ${existing.user.name} (${existing.user.email}).`);
-      log.info(`Run \`${binName()} auth logout\` first to switch accounts.`);
+      log.info(`Run ${log.cmd(`${binName()} auth logout`)} first to switch accounts.`);
       return;
     }
 
-    log.info('Opening browser to sign in...');
+    log.info('Opening browser to sign in…');
     try {
       const auth = await loginViaBrowser();
       log.blank();
@@ -56,7 +56,7 @@ const status = defineCommand({
     if (auth) {
       log.label('Logged in as', `${auth.user.name} (${auth.user.email})`);
     } else {
-      log.info(`Not logged in. Run \`${binName()} auth login\` to authenticate.`);
+      log.info(`Not logged in. Run ${log.cmd(`${binName()} auth login`)} to authenticate.`);
     }
   },
 });
