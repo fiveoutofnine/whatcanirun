@@ -280,7 +280,7 @@ export async function POST(request: NextRequest) {
     {
       run_id: run.id,
       status: RunStatus.VERIFIED,
-      run_url: `/runs/${run.id}`,
+      run_url: `${process.env.NEXT_PUBLIC_BASE_URL ?? 'https://whatcani.run'}/run/${run.id}`,
     },
     { status: 201 },
   );
