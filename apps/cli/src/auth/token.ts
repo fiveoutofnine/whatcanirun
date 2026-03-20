@@ -36,7 +36,7 @@ export function getAuth(): AuthData | null {
   } catch (e: unknown) {
     console.warn(
       `Warning: could not parse ${AUTH_FILE}: ${e instanceof Error ? e.message : String(e)}. ` +
-        'Try deleting it and running `whatcanirun auth login` again.'
+        'Try deleting it and running `wcir auth login` again.'
     );
     return null;
   }

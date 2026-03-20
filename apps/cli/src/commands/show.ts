@@ -3,6 +3,7 @@ import { defineCommand } from 'citty';
 import { detectDevice } from '../device/detect';
 import { inspectModel, resolveModel } from '../model/resolve';
 import { resolveRuntime } from '../runtime/resolve';
+import { binName } from '../utils/bin';
 import * as log from '../utils/log';
 
 const command = defineCommand({
@@ -34,7 +35,7 @@ const command = defineCommand({
       case 'runtime': {
         const name = args.value as string | undefined;
         if (!name) {
-          log.error('Usage: whatcanirun show runtime <name>');
+          log.error(`Usage: ${binName()} show runtime <name>`);
           process.exit(1);
         }
         const adapter = resolveRuntime(name);
@@ -49,7 +50,7 @@ const command = defineCommand({
       case 'model': {
         const ref = args.value as string | undefined;
         if (!ref) {
-          log.error('Usage: whatcanirun show model <path-or-repo-id>');
+          log.error(`Usage: ${binName()} show model <path-or-repo-id>`);
           process.exit(1);
         }
         const resolved = await resolveModel(ref);

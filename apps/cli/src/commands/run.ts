@@ -3,6 +3,7 @@ import { defineCommand } from 'citty';
 import { basename } from 'path';
 
 import { createBundle } from '../bundle/create';
+import { binName } from '../utils/bin';
 import { validateBundle } from '../bundle/validate';
 import { detectDevice } from '../device/detect';
 import { findHfCachePath, inspectModel, isHuggingFaceRepoId, resolveModel } from '../model/resolve';
@@ -206,7 +207,7 @@ const command = defineCommand({
 
     const bundleId = basename(bundlePath, '.zip');
     log.bundleSaved(bundlePath);
-    log.info(`Submit it via \`whatcanirun submit ${bundleId}\``);
+    log.info(`Submit it via \`${binName()} submit ${bundleId}\``);
 
     // Upload.
     if (args.submit) {
@@ -222,7 +223,7 @@ const command = defineCommand({
       } catch (e: unknown) {
         log.error(`Upload failed: ${e instanceof Error ? e.message : String(e)}`);
         log.info('Bundle is saved locally. You can submit later with:');
-        log.info(`  whatcanirun submit ${bundlePath}`);
+        log.info(`  ${binName()} submit ${bundlePath}`);
       }
     }
   },
