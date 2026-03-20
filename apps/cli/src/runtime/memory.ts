@@ -21,17 +21,24 @@ const POLL_INTERVAL_MS = 500;
 
 /**
  * Start polling a subprocess's memory usage.
+ *
+ * Call `markInferenceStart()` when the process signals that inference is about
+ * to begin (e.g. first progress line). This splits samples into idle (pre-
+ * inference) and active phases.
+ *
  * Call `stop()` when the process exits to get peak and idle measurements.
  *
  * "Peak" is the maximum memory observed across all samples.
- * "Idle" is approximated as the median of the first half of samples —
- * capturing the stable RSS after model loading, before inference peak.
+ * "Idle" is the median of samples collected before `markInferenceStart()`.
+ * Falls back to median of first half if no signal was received.
  */
 export function monitorProcessMemory(pid: number): {
+  markInferenceStart: () => void;
   stop: () => { peakMb: number; idleMb: number };
 } {
   const samples: number[] = [];
   let running = true;
+  let inferenceStartIdx: number | null = null;
   const useFootprint = { value: process.platform === 'darwin' };
 
   const poll = async () => {
@@ -46,17 +53,29 @@ export function monitorProcessMemory(pid: number): {
   poll();
 
   return {
+    markInferenceStart() {
+      if (inferenceStartIdx === null) {
+        inferenceStartIdx = samples.length;
+      }
+    },
+
     stop() {
       running = false;
       if (samples.length === 0) return { peakMb: 0, idleMb: 0 };
 
       const peakKb = samples.reduce((a, b) => (a > b ? a : b), 0);
 
-      // Idle ≈ the stable RSS after model loading, before inference peak.
-      // Use the median of the first half of samples as a rough approximation.
-      const firstHalf = samples.slice(0, Math.max(1, Math.floor(samples.length / 2)));
-      firstHalf.sort((a, b) => a - b);
-      const idleKb = firstHalf[Math.floor(firstHalf.length / 2)]!;
+      // Idle = RSS after model loading, before inference starts.
+      // Use samples collected before markInferenceStart() was called.
+      // Fall back to median of first half if no signal was received.
+      let idleSamples: number[];
+      if (inferenceStartIdx !== null && inferenceStartIdx > 0) {
+        idleSamples = samples.slice(0, inferenceStartIdx);
+      } else {
+        idleSamples = samples.slice(0, Math.max(1, Math.floor(samples.length / 2)));
+      }
+      idleSamples.sort((a, b) => a - b);
+      const idleKb = idleSamples[Math.floor(idleSamples.length / 2)]!;
 
       return {
         peakMb: Math.round((peakKb / 1024) * 10) / 10,

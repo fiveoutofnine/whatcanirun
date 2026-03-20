@@ -6,7 +6,6 @@ export interface Manifest {
   schema_version: string;
   bundle_id: string;
   created_at: string;
-  canonical: boolean;
   harness: {
     version: string;
     git_sha: string;

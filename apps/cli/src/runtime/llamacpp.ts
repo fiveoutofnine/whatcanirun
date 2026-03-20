@@ -141,6 +141,7 @@ export class LlamaCppAdapter implements RuntimeAdapter {
 
     const streamStderr = (async () => {
       let buffer = '';
+      let inferenceMarked = false;
       const decoder = new TextDecoder();
       for await (const chunk of proc.stderr) {
         const text = decoder.decode(chunk, { stream: true });
@@ -156,6 +157,10 @@ export class LlamaCppAdapter implements RuntimeAdapter {
             /benchmark (\d+)\/(\d+):\s+(?:prompt|generation) run (\d+)\/(\d+)/
           );
           if (runMatch) {
+            if (!inferenceMarked) {
+              memMonitor.markInferenceStart();
+              inferenceMarked = true;
+            }
             const bench = parseInt(runMatch[1]!, 10);
             const numBenches = parseInt(runMatch[2]!, 10);
             const runIdx = parseInt(runMatch[3]!, 10);

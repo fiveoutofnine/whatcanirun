@@ -87,6 +87,7 @@ export class MlxAdapter implements RuntimeAdapter {
 
     const streamStdout = (async () => {
       let buffer = '';
+      let inferenceMarked = false;
       const decoder = new TextDecoder();
       for await (const chunk of proc.stdout) {
         const text = decoder.decode(chunk, { stream: true });
@@ -101,6 +102,10 @@ export class MlxAdapter implements RuntimeAdapter {
           } else {
             const trialMatch = line.match(/^\s*Trial\s+(\d+):/);
             if (trialMatch) {
+              if (!inferenceMarked) {
+                memMonitor.markInferenceStart();
+                inferenceMarked = true;
+              }
               const tpsMatch = line.match(/generation_tps=([\d.]+)/);
               const tps = tpsMatch ? ` — ${parseFloat(tpsMatch[1]!).toFixed(1)} tok/s` : '';
               opts.onProgress?.(`Trial ${trialMatch[1]}/${opts.numTrials}${tps}`);
