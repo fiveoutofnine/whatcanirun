@@ -19,10 +19,12 @@ export const LLAMA_CPP_MIN_BUILD = 4000;
 
 /**
  * Minimum mlx_lm version (semver).
- * The benchmark subcommand with the `Trial N: prompt_tps=..., generation_tps=..., peak_memory=...`
- * output format has been stable since at least 0.19.0.
+ * The benchmark subcommand (`mlx_lm.benchmark`) was introduced in v0.27.0
+ * (PR #396, August 2025). The output format (`Trial N: prompt_tps=...,
+ * generation_tps=..., peak_memory=...`) has been stable since that release.
+ * Earlier versions do not have the benchmark module at all.
  */
-export const MLX_LM_MIN_VERSION = '0.19.0';
+export const MLX_LM_MIN_VERSION = '0.27.0';
 
 // ---------------------------------------------------------------------------
 // Version parsing and comparison
