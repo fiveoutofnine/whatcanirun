@@ -2,10 +2,10 @@
   "name": "@whatcanirun/cli",
   "version": "0.1.0",
   "type": "module",
-  "description": "Standardized local LLM inference benchmarks",
+  "description": "Standardized local LLM inference benchmarks.",
   "bin": {
-    "whatcanirun": "./src/cli.ts",
-    "wcir": "./src/cli.ts"
+    "whatcanirun": "./dist/cli.js",
+    "wcir": "./dist/cli.js"
   },
   "scripts": {
     "dev": "bun run src/cli.ts",
@@ -29,7 +29,7 @@
     "typescript-eslint": "^8"
   },
   "files": [
-    "src"
+    "dist"
   ],
   "publishConfig": {
     "access": "public"
