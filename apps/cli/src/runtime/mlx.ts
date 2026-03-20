@@ -87,6 +87,7 @@ export class MlxAdapter implements RuntimeAdapter {
 
     const streamStdout = (async () => {
       let buffer = '';
+      let inferenceMarked = false;
       const decoder = new TextDecoder();
       for await (const chunk of proc.stdout) {
         const text = decoder.decode(chunk, { stream: true });
@@ -97,6 +98,10 @@ export class MlxAdapter implements RuntimeAdapter {
         buffer = lines.pop()!;
         for (const line of lines) {
           if (/warmup/i.test(line)) {
+            if (!inferenceMarked) {
+              memMonitor.markInferenceStart();
+              inferenceMarked = true;
+            }
             opts.onProgress?.('Warming up...');
           } else {
             const trialMatch = line.match(/^\s*Trial\s+(\d+):/);
