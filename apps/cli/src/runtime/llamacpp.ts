@@ -78,6 +78,7 @@ export class LlamaCppAdapter implements RuntimeAdapter {
       String(opts.numTrials),
       '-o',
       'json',
+      '--progress',
     ];
 
     const proc = Bun.spawn(['llama-bench', ...args], {
@@ -88,8 +89,6 @@ export class LlamaCppAdapter implements RuntimeAdapter {
     // Stream both stdout and stderr concurrently to avoid pipe buffer deadlock.
     const stdoutChunks: string[] = [];
     const stderrChunks: string[] = [];
-    let trialsSeen = 0;
-    const totalTrials = opts.numTrials * 2;
 
     const streamStdout = (async () => {
       const decoder = new TextDecoder();
@@ -109,15 +108,21 @@ export class LlamaCppAdapter implements RuntimeAdapter {
         const lines = buffer.split('\n');
         buffer = lines.pop()!;
         for (const line of lines) {
-          if (/^\s*\|/.test(line) && /\d/.test(line)) {
-            trialsSeen++;
-            const fields = line.split('|').filter((f) => f.trim());
-            const tpsField = fields[fields.length - 1]?.trim();
-            const tps =
-              tpsField && /^[\d.]+$/.test(tpsField)
-                ? ` — ${parseFloat(tpsField).toFixed(1)} tok/s`
-                : '';
-            opts.onProgress?.(`Trial ${trialsSeen}/${totalTrials}${tps}`);
+          // --progress lines: "llama-bench: benchmark 1/2: prompt run 2/3"
+          // Emit on both pp and tg for smooth progress, mapped to user-facing trial count.
+          const runMatch = line.match(
+            /benchmark (\d+)\/(\d+):\s+(?:prompt|generation) run (\d+)\/(\d+)/
+          );
+          if (runMatch) {
+            const bench = parseInt(runMatch[1]!, 10);
+            const numBenches = parseInt(runMatch[2]!, 10);
+            const runIdx = parseInt(runMatch[3]!, 10);
+            const runsPerBench = parseInt(runMatch[4]!, 10);
+            const completed = (bench - 1) * runsPerBench + runIdx;
+            const total = numBenches * runsPerBench;
+            // Map internal runs (1..20) to user-facing trials (1..10)
+            const trial = Math.ceil((completed / total) * runsPerBench);
+            opts.onProgress?.(`Trial ${trial}/${runsPerBench}`);
           }
         }
       }

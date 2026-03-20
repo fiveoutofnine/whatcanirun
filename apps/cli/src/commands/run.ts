@@ -85,8 +85,8 @@ const command = defineCommand({
         `Runtime \`${args.runtime}\` is not available. Make sure it is installed and on \`PATH\`.`
       );
       const installHints: Record<string, string> = {
-        mlx_lm: 'Install with: \`pip install mlx-lm\`.',
-        'llama.cpp': 'Install with: \`brew install llama.cpp\`.',
+        mlx_lm: 'Install with: `brew install mlx-lm` or `pip install mlx-lm`.',
+        'llama.cpp': 'Install with: `brew install llama.cpp`.',
       };
       const hint = installHints[args.runtime as string];
       if (hint) {
@@ -129,11 +129,13 @@ const command = defineCommand({
     log.blank();
 
     // Run benchmark.
-    const isCached = isHuggingFaceRepoId(modelRef) && findHfCachePath(modelRef) !== null;
+    const isLocal = !isHuggingFaceRepoId(modelRef);
+    const isCached = isLocal || findHfCachePath(modelRef) !== null;
     const initialMsg = isCached ? 'Loading model from cache...' : 'Downloading model...';
     const spinner = new Spinner(initialMsg).start();
     let bench: BenchResult;
     let trialsStarted = false;
+    let lastTrial = 0;
     let downloadBarStarted = false;
     try {
       bench = await adapter.benchmark({
@@ -144,6 +146,7 @@ const command = defineCommand({
         onProgress: (msg) => {
           const trialMatch = msg.match(/^Trial (\d+)\/(\d+)/);
           if (trialMatch) {
+            const trial = parseInt(trialMatch[1]!, 10);
             const total = parseInt(trialMatch[2]!, 10);
             if (!trialsStarted) {
               trialsStarted = true;
@@ -151,8 +154,10 @@ const command = defineCommand({
               spinner.setDetail('');
               spinner.update('Running trials');
             }
-            const tpsMatch = msg.match(/— (.+)$/);
-            spinner.tick(tpsMatch?.[1]);
+            if (trial > lastTrial) {
+              lastTrial = trial;
+              spinner.tick();
+            }
           } else if (/Downloading model/i.test(msg)) {
             if (!downloadBarStarted) {
               downloadBarStarted = true;
