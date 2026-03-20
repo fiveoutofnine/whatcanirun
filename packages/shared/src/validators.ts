@@ -117,8 +117,11 @@ export function validateResults(results: unknown): string[] {
       'output_tokens',
       'ttft_ms',
       'total_ms',
+      'prefill_tps',
       'decode_tps',
       'weighted_tps',
+      'idle_rss_mb',
+      'peak_rss_mb',
       'exit_status',
     ];
     for (const field of requiredFields) {

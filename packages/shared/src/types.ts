@@ -41,8 +41,10 @@ export interface ResultTrial {
   output_tokens: number;
   ttft_ms: number;
   total_ms: number;
+  prefill_tps: number;
   decode_tps: number;
   weighted_tps: number;
+  idle_rss_mb: number;
   peak_rss_mb: number;
   exit_status: string;
 }

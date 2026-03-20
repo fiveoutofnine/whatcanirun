@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+import { HARNESS_VERSION } from '@whatcanirun/shared';
 import { defineCommand, runMain } from 'citty';
 
 import { auth, run, show, submit, validate, version } from './commands';
@@ -6,7 +7,7 @@ import { auth, run, show, submit, validate, version } from './commands';
 const main = defineCommand({
   meta: {
     name: 'whatcanirun',
-    version: '0.1.6',
+    version: HARNESS_VERSION,
     description: 'Standardized local LLM inference benchmarks',
   },
   subCommands: {

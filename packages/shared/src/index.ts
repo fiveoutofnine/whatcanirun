@@ -1,4 +1,4 @@
-export { SCHEMA_VERSION } from './constants';
+export { HARNESS_VERSION } from './constants';
 export type {
   AggregateMetrics,
   DerivedMetrics,

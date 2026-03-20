@@ -1,10 +1,10 @@
 import {
   type AggregateMetrics,
   type DerivedMetrics,
+  HARNESS_VERSION,
   type Manifest,
   type Results,
   type ResultTrial,
-  SCHEMA_VERSION,
 } from '@whatcanirun/shared';
 import { existsSync, mkdirSync } from 'fs';
 import { join, resolve } from 'path';
@@ -46,11 +46,11 @@ export async function createBundle(opts: BundleOpts): Promise<string> {
   }
 
   const manifest: Manifest = {
-    schema_version: SCHEMA_VERSION,
+    schema_version: HARNESS_VERSION,
     bundle_id: bundleId,
     created_at: now.toISOString(),
     harness: {
-      version: '0.1.6',
+      version: HARNESS_VERSION,
       git_sha: await getGitSha(),
     },
     device: {
@@ -79,22 +79,31 @@ export async function createBundle(opts: BundleOpts): Promise<string> {
     notes: opts.notes,
   };
 
-  const trials: ResultTrial[] = opts.bench.trials.map((t) => ({
-    input_tokens: opts.bench.promptTokens,
-    output_tokens: opts.bench.completionTokens,
-    ttft_ms: t.promptTps > 0 ? (opts.bench.promptTokens / t.promptTps) * 1000 : 0,
-    total_ms:
-      (t.promptTps > 0 ? (opts.bench.promptTokens / t.promptTps) * 1000 : 0) +
-      (t.generationTps > 0 ? (opts.bench.completionTokens / t.generationTps) * 1000 : 0),
-    decode_tps: t.generationTps,
-    weighted_tps:
-      opts.bench.promptTokens + opts.bench.completionTokens > 0
-        ? (opts.bench.promptTokens * t.promptTps + opts.bench.completionTokens * t.generationTps) /
-          (opts.bench.promptTokens + opts.bench.completionTokens)
-        : 0,
-    peak_rss_mb: Math.round(t.peakMemoryGb * 1024 * 10) / 10,
-    exit_status: 'ok',
-  }));
+  const idleRssMb = opts.metrics.idleRssMb;
+
+  const trials: ResultTrial[] = opts.bench.trials.map((t) => {
+    const ttft_ms = t.promptTps > 0 ? (opts.bench.promptTokens / t.promptTps) * 1000 : 0;
+    const decode_ms =
+      t.generationTps > 0 ? (opts.bench.completionTokens / t.generationTps) * 1000 : 0;
+
+    return {
+      input_tokens: opts.bench.promptTokens,
+      output_tokens: opts.bench.completionTokens,
+      ttft_ms,
+      total_ms: ttft_ms + decode_ms,
+      prefill_tps: t.promptTps,
+      decode_tps: t.generationTps,
+      weighted_tps:
+        opts.bench.promptTokens + opts.bench.completionTokens > 0
+          ? (opts.bench.promptTokens * t.promptTps +
+              opts.bench.completionTokens * t.generationTps) /
+            (opts.bench.promptTokens + opts.bench.completionTokens)
+          : 0,
+      idle_rss_mb: idleRssMb,
+      peak_rss_mb: Math.round(t.peakMemoryGb * 1024 * 10) / 10,
+      exit_status: 'ok',
+    };
+  });
 
   const aggregate: AggregateMetrics = {
     ttft_p50_ms: opts.metrics.ttftP50Ms,
