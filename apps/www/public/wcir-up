@@ -6,8 +6,8 @@ set -euo pipefail
 #   curl -fsSL whatcani.run/install | bash    (first install)
 #   wcir-up                                    (update)
 
-REPO="fiveoutofnine/whatcanirun"
 INSTALL_DIR="${WHATCANIRUN_HOME:-$HOME/.whatcanirun}/bin"
+PACKAGE="@whatcanirun/cli"
 
 # -----------------------------------------------------------------------------
 # Helpers
@@ -16,77 +16,32 @@ INSTALL_DIR="${WHATCANIRUN_HOME:-$HOME/.whatcanirun}/bin"
 say() { printf "\033[1m%s\033[0m\n" "$*"; }
 err() { printf "\033[31merror:\033[0m %s\n" "$*" >&2; exit 1; }
 
-detect_platform() {
-  local os arch
-
-  case "$(uname -s)" in
-    Darwin) os="darwin" ;;
-    Linux)  os="linux" ;;
-    *)      err "Unsupported OS: $(uname -s)" ;;
-  esac
-
-  case "$(uname -m)" in
-    x86_64|amd64)  arch="x64" ;;
-    arm64|aarch64) arch="arm64" ;;
-    *)             err "Unsupported architecture: $(uname -m)" ;;
-  esac
-
-  echo "${os}-${arch}"
-}
-
-latest_version() {
-  local url="https://api.github.com/repos/${REPO}/releases/latest"
-
-  if command -v curl &>/dev/null; then
-    curl -fsSL "$url" | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/'
-  elif command -v wget &>/dev/null; then
-    wget -qO- "$url" | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/'
-  else
-    err "curl or wget is required"
-  fi
-}
-
-download() {
-  local url="$1" dest="$2"
-  if command -v curl &>/dev/null; then
-    curl -fsSL "$url" -o "$dest"
-  else
-    wget -qO "$dest" "$url"
-  fi
-}
-
 # -----------------------------------------------------------------------------
 # Main
 # -----------------------------------------------------------------------------
 
 main() {
-  local platform version asset_name download_url tmp
+  local npm_cmd
 
-  platform="$(detect_platform)"
-  say "Detected platform: ${platform}"
-
-  say "Fetching latest version..."
-  version="$(latest_version)"
-  if [ -z "$version" ]; then
-    err "Could not determine latest version"
+  # Find a package manager
+  if command -v bun &>/dev/null; then
+    npm_cmd="bun"
+  elif command -v npm &>/dev/null; then
+    npm_cmd="npm"
+  else
+    err "bun or npm is required. Install bun: https://bun.sh"
   fi
-  say "Latest version: ${version}"
 
-  asset_name="whatcanirun-${platform}.tar.gz"
-  download_url="https://github.com/${REPO}/releases/download/${version}/${asset_name}"
+  say "Using ${npm_cmd} to install ${PACKAGE}..."
 
   mkdir -p "$INSTALL_DIR"
 
-  tmp="$(mktemp -d)"
-  trap 'rm -rf "$tmp"' EXIT
-
-  say "Downloading ${asset_name}..."
-  download "$download_url" "${tmp}/${asset_name}"
-
-  say "Extracting..."
-  tar -xzf "${tmp}/${asset_name}" -C "$tmp"
-  mv "${tmp}/whatcanirun" "${INSTALL_DIR}/whatcanirun"
-  chmod +x "${INSTALL_DIR}/whatcanirun"
+  # Install the package globally into our directory
+  if [ "$npm_cmd" = "bun" ]; then
+    BUN_INSTALL="${WHATCANIRUN_HOME:-$HOME/.whatcanirun}" bun install -g "$PACKAGE"
+  else
+    npm install -g --prefix "${WHATCANIRUN_HOME:-$HOME/.whatcanirun}" "$PACKAGE"
+  fi
 
   # Install wcir-up itself if not already present
   if [ ! -f "${INSTALL_DIR}/wcir-up" ]; then
@@ -94,12 +49,14 @@ main() {
     chmod +x "${INSTALL_DIR}/wcir-up" 2>/dev/null || true
   fi
 
-  # Add to PATH if needed
   ensure_path
 
+  local version
+  version=$("${INSTALL_DIR}/whatcanirun" version 2>/dev/null || echo "unknown")
+
   say ""
-  say "whatcanirun ${version} installed to ${INSTALL_DIR}/whatcanirun"
-  say "Run 'whatcanirun --help' to get started"
+  say "wcir installed to ${INSTALL_DIR}"
+  say "Run 'wcir --help' to get started"
   say "Run 'wcir-up' to update"
 }
 
