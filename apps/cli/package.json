@@ -1,5 +1,5 @@
 {
-  "name": "wcir",
+  "name": "whatcanirun",
   "version": "0.1.0",
   "type": "module",
   "description": "Standardized local LLM inference benchmarks.",

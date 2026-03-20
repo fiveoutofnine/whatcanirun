@@ -1,4 +1,4 @@
-# @whatcanirun/cli
+# whatcanirun
 
 Standardized local LLM inference benchmarks. Run a model, measure performance, and submit results to [**whatcani.run**](https://whatcani.run).
 
@@ -6,17 +6,17 @@ Standardized local LLM inference benchmarks. Run a model, measure performance, a
 
 ```bash
 # Run a benchmark and submit results
-bunx @whatcanirun/cli run --model mlx-community/Qwen3.5-0.8B-MLX-8bit --runtime mlx_lm --submit
+bunx whatcanirun run --model mlx-community/Qwen3.5-0.8B-MLX-8bit --runtime mlx_lm --submit
 ```
 
 ## Install
 
 ```bash
 # npm
-npm install -g @whatcanirun/cli
+npm install -g whatcanirun
 
 # bun
-bun install -g @whatcanirun/cli
+bun install -g whatcanirun
 ```
 
 The alias `wcir` is available after installing.
