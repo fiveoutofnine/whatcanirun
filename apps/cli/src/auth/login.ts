@@ -13,7 +13,7 @@ const API_BASE = process.env.WCIR_API_URL || 'https://whatcani.run';
 // Functions
 // -----------------------------------------------------------------------------
 
-export async function loginViaBrowser(): Promise<AuthData> {
+export async function loginViaBrowser(onReady?: () => void): Promise<AuthData> {
   const state = randomBytes(32).toString('hex');
 
   return new Promise((resolve, reject) => {
@@ -75,6 +75,8 @@ export async function loginViaBrowser(): Promise<AuthData> {
 
     console.log();
     console.log(chalk.white(`If the browser didn't open, visit: ${chalk.underline(loginUrl)}`));
+    console.log();
+    onReady?.();
 
     // Timeout after 5 minutes.
     const timeout = setTimeout(() => {

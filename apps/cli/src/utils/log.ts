@@ -88,7 +88,7 @@ export class Spinner {
       this.interval = null;
     }
     if (finalText) {
-      this.oraSpinner.stopAndPersist({ text: chalk.dim(finalText), symbol: '' });
+      this.oraSpinner.stopAndPersist({ text: finalText, symbol: '' });
     } else {
       this.oraSpinner.stop();
     }

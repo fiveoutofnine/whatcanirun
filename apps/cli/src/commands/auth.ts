@@ -16,7 +16,7 @@ const login = defineCommand({
     if (existing) {
       console.log(
         chalk.white(
-          `Already logged in as ${chalk.bold.cyan(existing.user.name)} (${chalk.underline.cyan(existing.user.email)}).`
+          `Already logged in as ${chalk.bold.blue(existing.user.name)} (${chalk.underline.blue(existing.user.email)}).`
         )
       );
       console.log(
@@ -26,15 +26,16 @@ const login = defineCommand({
     }
 
     console.log(chalk.dim('Opening browser to sign in…'));
+    const spinner = new log.Spinner(chalk.dim('Waiting for sign-in…'));
     try {
-      const auth = await loginViaBrowser();
-      console.log();
-      console.log(
+      const auth = await loginViaBrowser(() => spinner.start());
+      spinner.stop(
         chalk.white(
-          `[${chalk.green('✓')}] Logged in as ${chalk.bold.cyan(auth.user.name)} (${chalk.underline.cyan(auth.user.email)}).`
+          `[${chalk.green('✓')}] Logged in as ${chalk.bold.blue(auth.user.name)} (${chalk.underline.blue(auth.user.email)}).`
         )
       );
     } catch (e: unknown) {
+      spinner.stop();
       log.error(e instanceof Error ? e.message : String(e));
       process.exit(1);
     }
@@ -49,11 +50,12 @@ const logout = defineCommand({
   run() {
     const existing = getAuth();
     if (!existing) {
-      console.log(chalk.dim('Not logged in.'));
+      console.log(chalk.white('Not logged in.'));
+      console.log(chalk.dim(`↳ Run ${chalk.bold.cyan(`${binName()} auth login`)} to login.`));
       return;
     }
     clearAuth();
-    console.log(chalk.green('Logged out.'));
+    console.log(chalk.white(`[${chalk.green('✓')}] Logged out.`));
   },
 });
 
@@ -65,13 +67,14 @@ const status = defineCommand({
   run() {
     const auth = getAuth();
     if (auth) {
-      log.label('Logged in as', `${auth.user.name} (${auth.user.email})`);
-    } else {
       console.log(
-        chalk.dim(
-          `Not logged in. Run ${chalk.bold.cyan(`${binName()} auth login`)} to authenticate.`
+        chalk.white(
+          `Logged in as ${chalk.bold.blue(auth.user.name)} (${chalk.underline.blue(auth.user.email)}).`
         )
       );
+    } else {
+      console.log(chalk.white('Not logged in.'));
+      console.log(chalk.dim(`↳ Run ${chalk.bold.cyan(`${binName()} auth login`)} to login.`));
     }
   },
 });
