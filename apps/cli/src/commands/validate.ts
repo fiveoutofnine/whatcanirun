@@ -26,15 +26,16 @@ const command = defineCommand({
       process.exit(1);
     }
 
-    console.log(chalk.dim(`Validating: ${bundlePath}`));
+    const spinner = new log.Spinner(chalk.dim('Validating bundle…')).start();
     const result = await validateBundle(bundlePath);
 
     if (result.valid) {
-      console.log(chalk.green('Bundle is valid.'));
+      spinner.stop(chalk.white(`[${chalk.green('✓')}] Bundle is valid.`));
     } else {
+      spinner.stop();
       log.error('Bundle validation failed:');
       for (const err of result.errors) {
-        log.error(`  ${err}`);
+        log.error(`↳ ${err}`);
       }
       process.exit(1);
     }
