@@ -25,7 +25,7 @@ const login = defineCommand({
       return;
     }
 
-    console.log(chalk.dim('Opening browser to sign in…'));
+    console.log(chalk.dim('Opening browser to sign in...'));
     try {
       const auth = await loginViaBrowser();
       console.log();
