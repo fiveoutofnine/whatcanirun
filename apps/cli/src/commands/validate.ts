@@ -1,3 +1,4 @@
+import chalk from 'chalk';
 import { defineCommand } from 'citty';
 
 import { validateBundle } from '../bundle/validate';
@@ -25,11 +26,11 @@ const command = defineCommand({
       process.exit(1);
     }
 
-    log.info(`Validating: ${bundlePath}`);
+    console.log(chalk.dim(`Validating: ${bundlePath}`));
     const result = await validateBundle(bundlePath);
 
     if (result.valid) {
-      log.success('Bundle is valid.');
+      console.log(chalk.green('Bundle is valid.'));
     } else {
       log.error('Bundle validation failed:');
       for (const err of result.errors) {

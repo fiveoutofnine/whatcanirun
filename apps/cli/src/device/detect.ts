@@ -1,4 +1,6 @@
-import { cmd as fmtCmd, warn } from '../utils/log';
+import chalk from 'chalk';
+
+import { warn } from '../utils/log';
 
 // -----------------------------------------------------------------------------
 // Types
@@ -45,15 +47,15 @@ async function exec(cmd: string[]): Promise<string> {
     const text = await new Response(proc.stdout).text();
     const code = await proc.exited;
     if (code !== 0) {
-      warn(`${fmtCmd(cmd.join(' '))} exited with code ${code}.`);
+      warn(`${chalk.bold.cyan(cmd.join(' '))} exited with code ${code}.`);
       return '';
     }
     return text.trim();
   } catch (e: unknown) {
     if (e instanceof Error && 'code' in e && (e as NodeJS.ErrnoException).code === 'ENOENT') {
-      warn(`Command not found: ${fmtCmd(cmd[0]!)}.`);
+      warn(`Command not found: ${chalk.bold.cyan(cmd[0]!)}.`);
     } else {
-      warn(`${fmtCmd(cmd.join(' '))} failed: ${e instanceof Error ? e.message : String(e)}`);
+      warn(`${chalk.bold.cyan(cmd.join(' '))} failed: ${e instanceof Error ? e.message : String(e)}`);
     }
     return '';
   }

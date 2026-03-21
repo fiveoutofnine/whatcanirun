@@ -1,15 +1,5 @@
-// -----------------------------------------------------------------------------
-// Constants
-// -----------------------------------------------------------------------------
-
-const RESET = '\x1b[0m';
-const BOLD = '\x1b[1m';
-const DIM = '\x1b[2m';
-const UNDERLINE = '\x1b[4m';
-const GREEN = '\x1b[32m';
-const YELLOW = '\x1b[33m';
-const RED = '\x1b[31m';
-const CYAN = '\x1b[36m';
+import chalk from 'chalk';
+import ora, { type Ora } from 'ora';
 
 const HOME = import.meta.env?.HOME || process.env.HOME || '';
 
@@ -17,108 +7,96 @@ const HOME = import.meta.env?.HOME || process.env.HOME || '';
 // Functions
 // -----------------------------------------------------------------------------
 
-export function info(msg: string) {
-  console.log(`${DIM}${msg}${RESET}`);
-}
-
-export function success(msg: string) {
-  console.log(`${GREEN}${msg}${RESET}`);
-}
-
-export function cmd(command: string): string {
-  return `${BOLD}${CYAN}${command}${RESET}`;
-}
-
 export function filepath(path: string): string {
   const uri = `file://${path.startsWith('/') ? path : `/${path}`}`;
   const display = HOME && path.startsWith(HOME) ? `~${path.slice(HOME.length)}` : path;
-  return `\x1b]8;;${uri}\x07${UNDERLINE}${CYAN}${display}${RESET}\x1b]8;;\x07`;
+  return `\x1b]8;;${uri}\x07${chalk.underline.cyan(display)}\x1b]8;;\x07`;
 }
 
 export function warn(msg: string) {
-  console.error(`${YELLOW}⚠ warning:${RESET} ${msg}`);
+  console.error(chalk.yellow('⚠ warning:') + ' ' + msg);
 }
 
 export function error(msg: string) {
-  console.error(`${RED}✖ error:${RESET} ${msg}`);
-}
-
-export function header(msg: string) {
-  console.log(`${BOLD}${msg}${RESET}`);
+  console.error(chalk.red('✖ error:') + ' ' + msg);
 }
 
 export function label(key: string, value: string) {
-  console.log(`${CYAN}${key}:${RESET} ${value}`);
-}
-
-export function bundleSaved(path: string) {
-  console.log(`${DIM}Bundle saved to${RESET} ${filepath(path)}`);
-}
-
-export function blank() {
-  console.log();
+  console.log(chalk.cyan(key + ':') + ' ' + value);
 }
 
 // -----------------------------------------------------------------------------
 // Spinner
 // -----------------------------------------------------------------------------
 
-const SPINNER_FRAMES = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
-
 export class Spinner {
+  private oraSpinner: Ora;
   private frame = 0;
   private interval: ReturnType<typeof setInterval> | null = null;
-  private text: string;
+  private baseText: string;
   private total = 0;
   private current = 0;
   private detail = '';
 
   constructor(text: string) {
-    this.text = text;
+    this.baseText = text;
+    this.oraSpinner = ora({ text, stream: process.stderr, spinner: 'dots' });
   }
 
   start(): this {
-    this.render();
-    this.interval = setInterval(() => this.render(), 80);
+    this.oraSpinner.start();
     return this;
   }
 
   update(text: string) {
-    this.text = text;
+    this.baseText = text;
+    this.composeText();
   }
 
   setTotal(total: number) {
     this.total = total;
     this.current = 0;
+    // Start the progress bar animation interval
+    if (!this.interval) {
+      this.interval = setInterval(() => {
+        this.frame++;
+        this.composeText();
+      }, 80);
+    }
+    this.composeText();
   }
 
   tick(detail?: string) {
     this.current = Math.min(this.current + 1, this.total);
     if (detail) this.detail = detail;
+    this.composeText();
   }
 
   setCurrent(n: number) {
     this.current = Math.min(n, this.total);
+    this.composeText();
   }
 
   setDetail(detail: string) {
     this.detail = detail;
+    this.composeText();
   }
 
   stop(finalText?: string) {
-    if (this.interval) clearInterval(this.interval);
-    process.stderr.write('\r\x1b[K');
+    if (this.interval) {
+      clearInterval(this.interval);
+      this.interval = null;
+    }
     if (finalText) {
-      console.log(`${DIM}${finalText}${RESET}`);
+      this.oraSpinner.stopAndPersist({ text: chalk.dim(finalText), symbol: '' });
+    } else {
+      this.oraSpinner.stop();
     }
   }
 
-  private render() {
-    const f = SPINNER_FRAMES[this.frame % SPINNER_FRAMES.length];
-
+  private composeText() {
     if (this.total <= 0) {
-      process.stderr.write(`\r\x1b[K${DIM}${f} ${this.text}${RESET}`);
-      this.frame++;
+      this.oraSpinner.text = this.baseText;
       return;
     }
 
@@ -126,17 +104,15 @@ export class Spinner {
     const bright = Math.round(138 + pulse * 117); // 138..255
     const pulseColor = `\x1b[38;2;${bright};${bright};${bright}m`;
 
-    const WHITE = '\x1b[97m';
     const width = 20;
     const filled = Math.round((this.current / this.total) * width);
     const empty = width - filled;
-    const bar = ` ${WHITE}${'█'.repeat(filled)}${RESET}${DIM}${'░'.repeat(empty)}${RESET}`;
-    const counter = ` ${WHITE}${this.current}${RESET}${DIM}/${this.total}${RESET}`;
+    const bar = ` ${chalk.white('█'.repeat(filled))}${chalk.dim('░'.repeat(empty))}`;
+    const counter = ` ${chalk.white(String(this.current))}${chalk.dim('/' + this.total)}`;
 
-    // Detail pulses.
-    const detail = this.detail ? `  ${pulseColor}${this.detail}${RESET}` : '';
+    // Detail pulses with dynamic RGB (keep raw ANSI for per-frame values)
+    const detail = this.detail ? `  ${pulseColor}${this.detail}\x1b[0m` : '';
 
-    process.stderr.write(`\r\x1b[K${DIM}${f} ${this.text}${RESET}${bar}${counter}${detail}`);
-    this.frame++;
+    this.oraSpinner.text = `${this.baseText}${bar}${counter}${detail}`;
   }
 }

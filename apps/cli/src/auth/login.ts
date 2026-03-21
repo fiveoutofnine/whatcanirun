@@ -72,6 +72,7 @@ export async function loginViaBrowser(): Promise<AuthData> {
     const browserProc = Bun.spawn([cmd, loginUrl], { stdout: 'ignore', stderr: 'ignore' });
     browserProc.exited.catch(() => {});
 
+    console.log();
     console.log(`If the browser didn't open, visit: ${loginUrl}`);
 
     // Timeout after 5 minutes.

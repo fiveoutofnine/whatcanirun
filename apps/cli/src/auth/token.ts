@@ -1,9 +1,10 @@
+import chalk from 'chalk';
 import { existsSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { dirname, join } from 'node:path';
 
 import { binName } from '../utils/bin';
-import { cmd, filepath, warn } from '../utils/log';
+import * as log from '../utils/log';
 
 // -----------------------------------------------------------------------------
 // Types
@@ -37,9 +38,9 @@ export function getAuth(): AuthData | null {
     if (data.token && data.user?.id) return data;
     return null;
   } catch (e: unknown) {
-    warn(
-      `Could not parse ${filepath(AUTH_FILE)}: ${e instanceof Error ? e.message : String(e)}.` +
-        `\n  ↳ Try deleting it and running ${cmd(`${binName()} auth login`)} again.`
+    log.warn(
+      `Could not parse ${log.filepath(AUTH_FILE)}: ${e instanceof Error ? e.message : String(e)}.` +
+        `\n  ↳ Try deleting it and running ${chalk.bold.cyan(`${binName()} auth login`)} again.`
     );
     return null;
   }

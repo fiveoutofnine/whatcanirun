@@ -1,4 +1,5 @@
 import type { DerivedMetrics } from '@whatcanirun/shared';
+import chalk from 'chalk';
 import { defineCommand } from 'citty';
 import { basename } from 'path';
 
@@ -100,8 +101,8 @@ const command = defineCommand({
       };
       const hint = installHints[args.runtime as string];
       if (hint) {
-        log.blank();
-        log.info(hint);
+        console.log();
+        console.log(chalk.dim(hint));
       }
       process.exit(1);
     }
@@ -115,7 +116,7 @@ const command = defineCommand({
       process.exit(1);
     }
 
-    log.info('Inspecting model...');
+    console.log(chalk.dim('Inspecting model...'));
     const modelInfo = await inspectModel(modelRef);
 
     // Detect device.
@@ -128,7 +129,7 @@ const command = defineCommand({
     }
 
     // Display config.
-    log.blank();
+    console.log();
     log.label('Model', modelInfo.display_name);
     if (modelInfo.parameters) log.label('Parameters', modelInfo.parameters);
     log.label('Format', modelInfo.format);
@@ -136,7 +137,7 @@ const command = defineCommand({
     log.label('Device', `${device.cpu_model} (${device.ram_gb}GB)`);
     log.label('Runtime', `${runtimeInfo.name} ${runtimeInfo.version}`);
     log.label('Config', `pp=${promptTokens}, tg=${genTokens}, trials=${numTrials}`);
-    log.blank();
+    console.log();
 
     // Run benchmark.
     const isLocal = !isHuggingFaceRepoId(modelRef);
@@ -203,8 +204,8 @@ const command = defineCommand({
     const metrics = computeMetrics(bench);
 
     // Display results.
-    log.blank();
-    log.header('Results');
+    console.log();
+    console.log(chalk.bold('Results'));
     log.label('TTFT (est) p50/p95', `${metrics.ttftP50Ms} ms / ${metrics.ttftP95Ms} ms`);
     log.label('Decode TPS', `${metrics.decodeTpsMean} tok/s`);
     log.label('Prefill TPS', `${metrics.prefillTpsMean} tok/s`);
@@ -213,7 +214,7 @@ const command = defineCommand({
       log.label('Peak Memory', `${(metrics.peakRssMb / 1024).toFixed(2)} GB`);
     }
     log.label('Trials', `${bench.trials.length}/${bench.trials.length} passed`);
-    log.blank();
+    console.log();
 
     // Create bundle.
     const bundlePath = await createBundle({
@@ -236,24 +237,24 @@ const command = defineCommand({
     }
 
     const bundleId = basename(bundlePath, '.zip');
-    log.bundleSaved(bundlePath);
-    log.info(`Submit it via \`${binName()} submit ${bundleId}\``);
+    console.log(chalk.dim('Bundle saved to') + ' ' + log.filepath(bundlePath));
+    console.log(chalk.dim(`Submit it via \`${binName()} submit ${bundleId}\``));
 
     // Upload.
     if (args.submit) {
-      log.blank();
-      log.info('Uploading...');
+      console.log();
+      console.log(chalk.dim('Uploading...'));
       try {
         const result = await uploadBundle(bundlePath);
-        log.blank();
-        log.header('Run created:');
+        console.log();
+        console.log(chalk.bold('Run created:'));
         console.log(result.run_url);
-        log.blank();
+        console.log();
         log.label('Status', result.status);
       } catch (e: unknown) {
         log.error(`Upload failed: ${e instanceof Error ? e.message : String(e)}`);
-        log.info('Bundle is saved locally. You can submit later with:');
-        log.info(`  ${binName()} submit ${bundlePath}`);
+        console.log(chalk.dim('Bundle is saved locally. You can submit later with:'));
+        console.log(chalk.dim(`  ${binName()} submit ${bundlePath}`));
       }
     }
   },

@@ -1,3 +1,4 @@
+import chalk from 'chalk';
 import { defineCommand } from 'citty';
 
 import { validateBundle } from '../bundle/validate';
@@ -27,7 +28,7 @@ const command = defineCommand({
     }
 
     // Validate first
-    log.info('Validating bundle...');
+    console.log(chalk.dim('Validating bundle...'));
     const validation = await validateBundle(bundlePath);
     if (!validation.valid) {
       log.error('Bundle validation failed:');
@@ -36,17 +37,17 @@ const command = defineCommand({
       }
       process.exit(1);
     }
-    log.success('Bundle is valid.');
-    log.blank();
+    console.log(chalk.green('Bundle is valid.'));
+    console.log();
 
     // Upload
-    log.info('Uploading...');
+    console.log(chalk.dim('Uploading...'));
     try {
       const result = await uploadBundle(bundlePath);
-      log.blank();
-      log.header('Run created:');
+      console.log();
+      console.log(chalk.bold('Run created:'));
       console.log(result.run_url);
-      log.blank();
+      console.log();
       log.label('Status', result.status);
     } catch (e: unknown) {
       log.error(`Upload failed: ${e instanceof Error ? e.message : String(e)}`);

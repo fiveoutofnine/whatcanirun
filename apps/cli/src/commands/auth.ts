@@ -1,3 +1,4 @@
+import chalk from 'chalk';
 import { defineCommand } from 'citty';
 
 import { loginViaBrowser } from '../auth/login';
@@ -13,16 +14,22 @@ const login = defineCommand({
   async run() {
     const existing = getAuth();
     if (existing) {
-      log.info(`Already logged in as ${existing.user.name} (${existing.user.email}).`);
-      log.info(`Run ${log.cmd(`${binName()} auth logout`)} first to switch accounts.`);
+      console.log(
+        chalk.dim(
+          `Already logged in as ${chalk.cyan(`${existing.user.name} (${existing.user.email})`)}.`
+        )
+      );
+      console.log(
+        chalk.dim(`Run ${chalk.bold.cyan(`${binName()} auth logout`)} first to switch accounts.`)
+      );
       return;
     }
 
-    log.info('Opening browser to sign in…');
+    console.log(chalk.dim('Opening browser to sign in…'));
     try {
       const auth = await loginViaBrowser();
-      log.blank();
-      log.success(`Logged in as ${auth.user.name} (${auth.user.email}).`);
+      console.log();
+      console.log(chalk.dim(`Logged in as ${auth.user.name} (${auth.user.email}).`));
     } catch (e: unknown) {
       log.error(e instanceof Error ? e.message : String(e));
       process.exit(1);
@@ -38,11 +45,11 @@ const logout = defineCommand({
   run() {
     const existing = getAuth();
     if (!existing) {
-      log.info('Not logged in.');
+      console.log(chalk.dim('Not logged in.'));
       return;
     }
     clearAuth();
-    log.success('Logged out.');
+    console.log(chalk.green('Logged out.'));
   },
 });
 
@@ -56,7 +63,11 @@ const status = defineCommand({
     if (auth) {
       log.label('Logged in as', `${auth.user.name} (${auth.user.email})`);
     } else {
-      log.info(`Not logged in. Run ${log.cmd(`${binName()} auth login`)} to authenticate.`);
+      console.log(
+        chalk.dim(
+          `Not logged in. Run ${chalk.bold.cyan(`${binName()} auth login`)} to authenticate.`
+        )
+      );
     }
   },
 });
