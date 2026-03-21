@@ -45,7 +45,7 @@ const login = defineCommand({
 const logout = defineCommand({
   meta: {
     name: 'logout',
-    description: 'Remove stored credentials',
+    description: 'Log out of whatcani.run',
   },
   run() {
     const existing = getAuth();
@@ -82,7 +82,7 @@ const status = defineCommand({
 const command = defineCommand({
   meta: {
     name: 'auth',
-    description: 'Manage authentication',
+    description: 'Manage authentication with whatcani.run',
   },
   subCommands: {
     login,
