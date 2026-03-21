@@ -1,3 +1,4 @@
+import chalk from 'chalk';
 import { randomBytes } from 'node:crypto';
 
 import { type AuthData, saveAuth } from './token';
@@ -73,7 +74,7 @@ export async function loginViaBrowser(): Promise<AuthData> {
     browserProc.exited.catch(() => {});
 
     console.log();
-    console.log(`If the browser didn't open, visit: ${loginUrl}`);
+    console.log(chalk.white(`If the browser didn't open, visit: ${chalk.underline(loginUrl)}`));
 
     // Timeout after 5 minutes.
     const timeout = setTimeout(() => {

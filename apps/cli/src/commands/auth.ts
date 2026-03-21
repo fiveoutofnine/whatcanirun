@@ -15,21 +15,25 @@ const login = defineCommand({
     const existing = getAuth();
     if (existing) {
       console.log(
-        chalk.dim(
-          `Already logged in as ${chalk.cyan(`${existing.user.name} (${existing.user.email})`)}.`
+        chalk.white(
+          `Already logged in as ${chalk.bold.cyan(existing.user.name)} (${chalk.underline.cyan(existing.user.email)}).`
         )
       );
       console.log(
-        chalk.dim(`Run ${chalk.bold.cyan(`${binName()} auth logout`)} first to switch accounts.`)
+        chalk.dim(`↳ Run ${chalk.bold.cyan(`${binName()} auth logout`)} first to switch accounts.`)
       );
       return;
     }
 
-    console.log(chalk.dim('Opening browser to sign in...'));
+    console.log(chalk.dim('Opening browser to sign in…'));
     try {
       const auth = await loginViaBrowser();
       console.log();
-      console.log(chalk.dim(`Logged in as ${auth.user.name} (${auth.user.email}).`));
+      console.log(
+        chalk.white(
+          `[${chalk.green('✓')}] Logged in as ${chalk.bold.cyan(auth.user.name)} (${chalk.underline.cyan(auth.user.email)}).`
+        )
+      );
     } catch (e: unknown) {
       log.error(e instanceof Error ? e.message : String(e));
       process.exit(1);
