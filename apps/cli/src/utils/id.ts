@@ -1,3 +1,4 @@
+import chalk from 'chalk';
 import { randomBytes } from 'crypto';
 import { existsSync, readdirSync } from 'fs';
 import { homedir } from 'os';
@@ -68,10 +69,10 @@ export function resolveBundlePath(bundleArg: string): string {
       return join(DEFAULT_BUNDLES_DIR, matches[0]!);
     }
     if (matches.length > 1) {
-      const names = matches.map((m) => m.replace(/\.zip$/, '')).join(', ');
-      throw new Error(`Multiple bundles match "${bundleArg}": ${names}`);
+      const names = matches.map((m) => chalk.cyan(m.replace(/\.zip$/, ''))).join(', ');
+      throw new Error(`Multiple bundles match "${chalk.cyan(bundleArg)}": ${names}.`);
     }
   }
 
-  throw new Error(`Bundle not found: ${bundleArg}`);
+  throw new Error(`Bundle ${chalk.cyan(bundleArg)} not found.`);
 }

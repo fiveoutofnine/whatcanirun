@@ -150,7 +150,7 @@ export async function resolveModel(modelRef: string): Promise<string> {
   }
 
   throw new Error(
-    `Model not found: '${modelRef}'. Provide a file path, HuggingFace repo ID, or alias from ${log.filepath(join(homedir(), '.config', 'whatcanirun', 'models.toml'))}.`
+    `Model not found: "${chalk.cyan(modelRef)}". Provide a file path, Hugging Face repo ID, or alias from ${log.filepath(join(homedir(), '.config', 'whatcanirun', 'models.toml'))}.`
   );
 }
 
