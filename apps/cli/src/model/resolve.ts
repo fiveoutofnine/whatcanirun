@@ -1,9 +1,10 @@
+import chalk from 'chalk';
 import { createHash } from 'crypto';
 import { existsSync, readdirSync, readFileSync, statSync } from 'fs';
 import { homedir } from 'os';
 import { basename, extname, join, resolve } from 'path';
 
-import { filepath, warn } from '../utils/log';
+import * as log from '../utils/log';
 
 // -----------------------------------------------------------------------------
 // Types
@@ -73,15 +74,15 @@ export function inferFormat(modelPath: string): string {
   if (ext === '.bin') return 'bin';
   if (ext === '.pt' || ext === '.pth') return 'pytorch';
 
-  // Check if it's an mlx directory
+  // Check if it's an MLX directory.
   const configPath = resolve(modelPath, 'config.json');
   if (existsSync(configPath)) {
     try {
       const config = JSON.parse(readFileSync(configPath, 'utf-8'));
       if (config.model_type) return 'mlx';
     } catch (e: unknown) {
-      warn(
-        `Could not parse ${filepath(configPath)}: ${e instanceof Error ? e.message : String(e)}`
+      log.warn(
+        `Could not parse ${log.filepath(configPath)}: ${e instanceof Error ? e.message : String(e)}`
       );
     }
   }
@@ -143,7 +144,9 @@ export async function resolveModel(modelRef: string): Promise<string> {
   if (aliasPath) {
     const aliasResolved = resolve(aliasPath);
     if (existsSync(aliasResolved)) return aliasResolved;
-    throw new Error(`Model alias '${modelRef}' points to '${aliasPath}' which does not exist`);
+    throw new Error(
+      `Model alias "${chalk.cyan(modelRef)}" points to "${log.filepath(aliasPath)}", which does not exist.`
+    );
   }
 
   throw new Error(
@@ -161,7 +164,9 @@ async function loadModelAliases(): Promise<Record<string, string>> {
     const config = parse(content);
     return (config.models as Record<string, string>) || {};
   } catch (e: unknown) {
-    warn(`Could not parse ${filepath(configPath)}: ${e instanceof Error ? e.message : String(e)}`);
+    log.warn(
+      `Could not parse ${log.filepath(configPath)}: ${e instanceof Error ? e.message : String(e)}`
+    );
     return {};
   }
 }
@@ -241,7 +246,7 @@ export async function inspectModel(modelRef: string): Promise<ModelInfo> {
           }
         }
       } catch (e: unknown) {
-        warn(`Could not read model config: ${e instanceof Error ? e.message : String(e)}`);
+        log.warn(`Could not read model config: ${e instanceof Error ? e.message : String(e)}`);
       }
     }
   } else {
@@ -259,7 +264,7 @@ export async function inspectModel(modelRef: string): Promise<ModelInfo> {
         fileSizeBytes = sumShardSizes(resolved);
       }
     } catch (e: unknown) {
-      warn(`Could not compute model hash/size: ${e instanceof Error ? e.message : String(e)}`);
+      log.warn(`Could not compute model hash/size: ${e instanceof Error ? e.message : String(e)}`);
     }
 
     // Try to read architecture and parameters from config.json
@@ -276,7 +281,7 @@ export async function inspectModel(modelRef: string): Promise<ModelInfo> {
         }
       }
     } catch (e: unknown) {
-      warn(`Could not read model config: ${e instanceof Error ? e.message : String(e)}`);
+      log.warn(`Could not read model config: ${e instanceof Error ? e.message : String(e)}`);
     }
   }
 

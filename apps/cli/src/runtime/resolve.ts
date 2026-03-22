@@ -1,3 +1,5 @@
+import chalk from 'chalk';
+
 import { LlamaCppAdapter } from './llamacpp.ts';
 import { MlxAdapter } from './mlx.ts';
 import type { RuntimeAdapter } from './types.ts';
@@ -19,7 +21,7 @@ export function resolveRuntime(name: string): RuntimeAdapter {
   const factory = RUNTIMES[name];
   if (!factory) {
     const valid = Object.keys(RUNTIMES).join(', ');
-    throw new Error(`Unknown runtime '${name}'. Supported: ${valid}`);
+    throw new Error(`Unknown runtime "${chalk.cyan(name)}". Supported: ${chalk.cyan(valid)}.`);
   }
   return factory();
 }

@@ -38,11 +38,11 @@ const command = defineCommand({
     },
     'prompt-tokens': {
       type: 'string',
-      description: 'Prompt token count (default: 4096)',
+      description: 'Prompt token count (default: 4,096)',
     },
     'gen-tokens': {
       type: 'string',
-      description: 'Generation token count (default: 1024)',
+      description: 'Generation token count (default: 1,024)',
     },
     trials: {
       type: 'string',
@@ -93,16 +93,15 @@ const command = defineCommand({
     }
     if (!runtimeInfo) {
       log.error(
-        `Runtime \`${args.runtime}\` is not available. Make sure it is installed and on \`PATH\`.`
+        `Runtime "${chalk.cyan(args.runtime)}" is not available. Make sure it is installed and on ${chalk.cyan('PATH')}.`
       );
       const installHints: Record<string, string> = {
-        mlx_lm: 'Install with: `brew install mlx-lm` or `pip install mlx-lm`.',
-        'llama.cpp': 'Install with: `brew install llama.cpp`.',
+        mlx_lm: `Install with ${chalk.bold.cyan('brew install mlx-lm')} or ${chalk.bold.cyan('pip install mlx-lm')}.`,
+        'llama.cpp': `Install with ${chalk.bold.cyan('brew install llama.cpp')}.`,
       };
       const hint = installHints[args.runtime as string];
       if (hint) {
-        console.log();
-        console.log(chalk.dim(hint));
+        console.log(chalk.dim(` ↳ ${hint}`));
       }
       process.exit(1);
     }
@@ -116,7 +115,7 @@ const command = defineCommand({
       process.exit(1);
     }
 
-    console.log(chalk.dim('Inspecting model...'));
+    console.log(chalk.dim('Inspecting model…'));
     const modelInfo = await inspectModel(modelRef);
 
     // Detect device.
@@ -313,7 +312,9 @@ function computeMetrics(bench: BenchResult): DerivedMetrics {
 function parsePositiveInt(value: string, name: string): number {
   const n = parseInt(value, 10);
   if (isNaN(n) || n <= 0) {
-    log.error(`Invalid value for --${name}: "${value}". Expected a positive integer.`);
+    log.error(
+      `Invalid value for ${chalk.bold.cyan(`--${name}`)}: "${chalk.cyan(value)}". Expected a positive integer.`
+    );
     process.exit(1);
   }
   return n;
