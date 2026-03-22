@@ -95,7 +95,8 @@ export function inferFormat(modelPath: string): string {
 // -----------------------------------------------------------------------------
 
 /**
- * Check if a string looks like a HuggingFace repo ID (e.g. "mlx-community/Qwen3.5-0.8B-4bit").
+ * Check if a string looks like a Hugging Face repo ID (e.g.
+ * "mlx-community/Qwen3.5-0.8B-4bit").
  */
 export function isHuggingFaceRepoId(ref: string): boolean {
   return (
@@ -135,40 +136,12 @@ export async function resolveModel(modelRef: string): Promise<string> {
   const resolved = resolve(modelRef);
   if (existsSync(resolved)) return resolved;
 
-  // HuggingFace repo ID — return as-is (mlx_lm handles download).
+  // Hugging Face repo ID — return as-is (mlx_lm handles download).
   if (isHuggingFaceRepoId(modelRef)) return modelRef;
 
-  // Try alias
-  const aliases = await loadModelAliases();
-  const aliasPath = aliases[modelRef];
-  if (aliasPath) {
-    const aliasResolved = resolve(aliasPath);
-    if (existsSync(aliasResolved)) return aliasResolved;
-    throw new Error(
-      `Model alias "${chalk.cyan(modelRef)}" points to "${log.filepath(aliasPath)}", which does not exist.`
-    );
-  }
-
   throw new Error(
-    `Model not found: "${chalk.cyan(modelRef)}". Provide a file path, Hugging Face repo ID, or alias from ${log.filepath(join(homedir(), '.config', 'whatcanirun', 'models.toml'))}.`
+    `Model not found: "${chalk.cyan(modelRef)}". Provide a file path or Hugging Face repo ID.`
   );
-}
-
-async function loadModelAliases(): Promise<Record<string, string>> {
-  const configPath = resolve(homedir(), '.config', 'whatcanirun', 'models.toml');
-  if (!existsSync(configPath)) return {};
-
-  try {
-    const content = await Bun.file(configPath).text();
-    const { parse } = await import('smol-toml');
-    const config = parse(content);
-    return (config.models as Record<string, string>) || {};
-  } catch (e: unknown) {
-    log.warn(
-      `Could not parse ${log.filepath(configPath)}: ${e instanceof Error ? e.message : String(e)}`
-    );
-    return {};
-  }
 }
 
 export async function computeSha256(filePath: string): Promise<string> {
