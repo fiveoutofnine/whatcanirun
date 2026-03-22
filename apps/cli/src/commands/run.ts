@@ -214,7 +214,9 @@ const command = defineCommand({
           // Transition from resolve spinner to bench spinner on first non-download message.
           if (!benchSpinner.isRunning() && !/Downloading model/i.test(msg)) {
             stopDownloadPoll();
-            const resolveLabel = isCached ? 'Model loaded from cache.' : 'Model downloaded.';
+            const resolveLabel = isCached
+              ? `${chalk.cyan(modelInfo.display_name)} loaded from disk.`
+              : `${chalk.cyan(modelInfo.display_name)} downloaded.`;
             resolveSpinner.stop(chalk.white(`[${chalk.green('✓')}] ${resolveLabel}`));
             benchSpinner.start();
           }
@@ -244,7 +246,9 @@ const command = defineCommand({
       // If warmup was never reported (edge case), close resolve spinner now.
       if (!benchSpinner.isRunning()) {
         stopDownloadPoll();
-        const resolveLabel = isCached ? 'Model loaded from cache.' : 'Model downloaded.';
+        const resolveLabel = isCached
+          ? `${chalk.cyan(modelInfo.display_name)} loaded from disk.`
+          : `${chalk.cyan(modelInfo.display_name)} downloaded.`;
         resolveSpinner.stop(chalk.white(`[${chalk.green('✓')}] ${resolveLabel}`));
       }
 
