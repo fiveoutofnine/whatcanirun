@@ -27,7 +27,7 @@ const command = defineCommand({
       process.exit(1);
     }
 
-    // Validate bundle first.
+    // Validate bundle.
     const validationSpinner = new log.Spinner(chalk.dim('Validating bundle…')).start();
     const validation = await validateBundle(bundlePath);
     if (!validation.valid) {
@@ -41,7 +41,7 @@ const command = defineCommand({
     }
     validationSpinner.stop(chalk.white(`[${chalk.green('✓')}] Bundle is valid.`));
 
-    // Upload.
+    // Upload bundle.
     const uploadSpinner = new log.Spinner(chalk.dim('Uploading bundle…')).start();
     try {
       const result = await uploadBundle(bundlePath);

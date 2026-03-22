@@ -1,7 +1,6 @@
 import type { DerivedMetrics } from '@whatcanirun/shared';
 import chalk from 'chalk';
 import { defineCommand } from 'citty';
-import { basename } from 'path';
 
 import { createBundle } from '../bundle/create';
 import { validateBundle } from '../bundle/validate';
@@ -115,8 +114,15 @@ const command = defineCommand({
       process.exit(1);
     }
 
-    console.log(chalk.dim('Inspecting model…'));
+    const modelInspectSpinner = new log.Spinner(chalk.dim('Inspecting model…')).start();
     const modelInfo = await inspectModel(modelRef);
+    if (!modelInfo.artifact_sha256) {
+      modelInspectSpinner.stop(
+        chalk.white(`[${chalk.red('✖')}] Model "${chalk.cyan(modelRef)}" not found.`)
+      );
+      process.exit(1);
+    }
+    modelInspectSpinner.stop(chalk.white(`[${chalk.green('✓')}] Model found:`));
 
     // Detect device.
     let device;
@@ -128,14 +134,13 @@ const command = defineCommand({
     }
 
     // Display config.
-    console.log();
-    log.label('Model', modelInfo.display_name);
+    console.log(chalk.dim(`Model ${modelInfo.display_name}`));
     if (modelInfo.parameters) log.label('Parameters', modelInfo.parameters);
-    log.label('Format', modelInfo.format);
+    console.log(chalk.dim(`Format modelInfo.format`));
     if (modelInfo.quant) log.label('Quant', modelInfo.quant);
-    log.label('Device', `${device.cpu_model} (${device.ram_gb}GB)`);
-    log.label('Runtime', `${runtimeInfo.name} ${runtimeInfo.version}`);
-    log.label('Config', `pp=${promptTokens}, tg=${genTokens}, trials=${numTrials}`);
+    console.log(chalk.dim(`Device ${device.cpu_model} (${device.ram_gb}GB)`));
+    console.log(chalk.dim(`Runtime ${runtimeInfo.name} ${runtimeInfo.version}`));
+    console.log(chalk.dim(`Config pp=${promptTokens}, tg=${genTokens}, trials=${numTrials}`));
     console.log();
 
     // Run benchmark.
@@ -226,34 +231,40 @@ const command = defineCommand({
       notes: args.notes as string | undefined,
     });
 
-    // Validate.
+    // Validate bundle.
+    const validationSpinner = new log.Spinner(chalk.dim('Validating bundle…')).start();
     const validation = await validateBundle(bundlePath);
     if (!validation.valid) {
-      log.warn('Bundle validation issues:');
+      validationSpinner.stop(
+        chalk.white(`[${chalk.red('✖')}] ${chalk.bold.red('Bundle validation failed.')}`)
+      );
       for (const err of validation.errors) {
-        log.warn(`  ${err}`);
+        log.error(chalk.dim(err), { prefix: chalk.dim.red(' ↳ ') });
       }
+      process.exit(1);
     }
+    validationSpinner.stop(chalk.white(`[${chalk.green('✓')}] Bundle is valid.`));
+    console.log(chalk.dim(` ↳ Saved to ${log.filepath(bundlePath)}.`));
 
-    const bundleId = basename(bundlePath, '.zip');
-    console.log(chalk.dim('Bundle saved to') + ' ' + log.filepath(bundlePath));
-    console.log(chalk.dim(`Submit it via \`${binName()} submit ${bundleId}\``));
-
-    // Upload.
+    // Upload bundle.
     if (args.submit) {
-      console.log();
-      console.log(chalk.dim('Uploading…'));
+      const uploadSpinner = new log.Spinner(chalk.dim('Uploading bundle…')).start();
       try {
         const result = await uploadBundle(bundlePath);
-        console.log();
-        console.log(chalk.bold('Run created:'));
-        console.log(result.run_url);
-        console.log();
-        log.label('Status', result.status);
+        uploadSpinner.stop(
+          chalk.white(`[${chalk.green('✓')}] Uploaded run: ${chalk.underline(result.run_url)}`)
+        );
       } catch (e: unknown) {
-        log.error(`Upload failed: ${e instanceof Error ? e.message : String(e)}`);
-        console.log(chalk.dim('Bundle is saved locally. You can submit later with:'));
-        console.log(chalk.dim(`  ${binName()} submit ${bundlePath}`));
+        uploadSpinner.stop(chalk.white(`[${chalk.red('✖')}] Run upload failed.`));
+        log.error(chalk.dim(e instanceof Error ? e.message : String(e)), {
+          prefix: chalk.dim.red(' ↳ '),
+        });
+        console.log();
+        console.log(
+          chalk.dim(
+            `You can submit with ${chalk.bold.cyan(`${binName()} submit ${log.filepath(bundlePath)}`)}.`
+          )
+        );
       }
     }
   },
