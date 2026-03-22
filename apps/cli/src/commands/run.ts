@@ -254,7 +254,7 @@ const command = defineCommand({
 
       benchSpinner.stop(
         chalk.white(
-          `[${chalk.green('✓')}] ${bench.trials.length}/${numTrials} trial${numTrials > 1 ? 's' : ''} ran successfully.`
+          `[${chalk.green('✓')}] ${bench.trials.length}/${numTrials} trial${numTrials > 1 ? 's' : ''} ran successfully:`
         )
       );
     } catch (e: unknown) {
@@ -281,17 +281,21 @@ const command = defineCommand({
     const metrics = computeMetrics(bench);
 
     // Display results.
-    console.log();
-    console.log(chalk.bold('Results'));
-    log.label('TTFT (est) p50/p95', `${metrics.ttftP50Ms} ms / ${metrics.ttftP95Ms} ms`);
-    log.label('Decode TPS', `${metrics.decodeTpsMean} tok/s`);
-    log.label('Prefill TPS', `${metrics.prefillTpsMean} tok/s`);
-    log.label('Weighted TPS', `${metrics.weightedTpsMean} tok/s`);
-    if (metrics.peakRssMb > 0) {
-      log.label('Peak Memory', `${(metrics.peakRssMb / 1024).toFixed(2)} GB`);
+    const resultRows: [string, string][] = [
+      ['TTFT p50/p95', `${metrics.ttftP50Ms} ms / ${metrics.ttftP95Ms} ms`],
+      ['Prefill TPS', `${metrics.prefillTpsMean} tok/s`],
+      ['Decode TPS', `${metrics.decodeTpsMean} tok/s`],
+      ...(metrics.idleRssMb > 0
+        ? [['Idle Memory', `${(metrics.idleRssMb / 1_024).toFixed(2)} GB`] as [string, string]]
+        : []),
+      ...(metrics.peakRssMb > 0
+        ? [['Peak Memory', `${(metrics.peakRssMb / 1_024).toFixed(2)} GB`] as [string, string]]
+        : []),
+    ];
+    const maxResultKey = Math.max(...resultRows.map(([k]) => k.length));
+    for (const [key, value] of resultRows) {
+      console.log(chalk.dim(` →  ${key.padEnd(maxResultKey)}  ${chalk.reset.cyan(value)}`));
     }
-    log.label('Trials', `${bench.trials.length}/${numTrials} passed`);
-    console.log();
 
     // Create bundle.
     const bundlePath = await createBundle({

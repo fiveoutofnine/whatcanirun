@@ -21,9 +21,6 @@ export function error(msg: string, options?: { prefix?: string }) {
   console.error(`${chalk.reset(options?.prefix ?? '')}${chalk.red('✖ error:')} ${msg}`);
 }
 
-export function label(key: string, value: string) {
-  console.log(chalk.cyan(key + ':') + ' ' + value);
-}
 
 // -----------------------------------------------------------------------------
 // Spinner
