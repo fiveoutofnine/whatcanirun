@@ -34,7 +34,7 @@ export function formatSysinfo(device: DeviceInfo): string {
 export async function detectDevice(): Promise<DeviceInfo> {
   if (process.platform === 'darwin') return detectMacOS();
   if (process.platform === 'linux') return detectLinux();
-  throw new Error(`Unsupported platform: ${chalk.blue(process.platform)}.`);
+  throw new Error(`Unsupported platform: ${chalk.cyan(process.platform)}.`);
 }
 
 // -----------------------------------------------------------------------------

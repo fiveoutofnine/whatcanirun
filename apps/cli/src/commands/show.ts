@@ -50,7 +50,7 @@ const command = defineCommand({
           const adapter = resolveRuntime(name);
           const info = await adapter.detect();
           if (!info) {
-            log.error(`Runtime "${chalk.blue(name)}" not found or not available.`);
+            log.error(`Runtime "${chalk.cyan(name)}" not found or not available.`);
             process.exit(1);
           }
           console.log(JSON.stringify(info, null, 2));
@@ -72,7 +72,7 @@ const command = defineCommand({
           const resolved = await resolveModel(ref);
           const info = await inspectModel(resolved);
           if (!info.artifact_sha256) {
-            log.error(`Model "${chalk.blue(ref)}" not found.`);
+            log.error(`Model "${chalk.cyan(ref)}" not found.`);
             process.exit(1);
           }
           console.log(JSON.stringify(info, null, 2));

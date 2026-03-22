@@ -77,7 +77,7 @@ const command = defineCommand({
       device = await detectDevice();
       deviceSpinner.stop(
         chalk.white(
-          `[${chalk.green('✓')}] ${chalk.blue(device.os_name)} (${chalk.blue(device.os_version)}) detected.`
+          `[${chalk.green('✓')}] ${chalk.cyan(device.os_name)} (${chalk.cyan(device.os_version)}) detected.`
         )
       );
     } catch (e: unknown) {
