@@ -98,7 +98,7 @@ export class MlxAdapter implements RuntimeAdapter {
         buffer = lines.pop()!;
         for (const line of lines) {
           if (/warmup/i.test(line)) {
-            opts.onProgress?.('Warming up...');
+            opts.onProgress?.('Warming up…');
           } else {
             const trialMatch = line.match(/^\s*Trial\s+(\d+):/);
             if (trialMatch) {

@@ -1,3 +1,5 @@
+import chalk from 'chalk';
+
 /**
  * Shared version utilities for runtime adapters.
  *
@@ -89,8 +91,8 @@ export function isVersionAtLeast(version: string, minimum: string): boolean {
 // ---------------------------------------------------------------------------
 
 const UPGRADE_HINTS: Record<string, string> = {
-  'llama.cpp': 'Upgrade with: brew upgrade llama.cpp',
-  mlx_lm: 'Upgrade with: pip install --upgrade mlx-lm',
+  'llama.cpp': `Upgrade with ${chalk.bold.cyan('brew upgrade llama.cpp')}.`,
+  mlx_lm: `Upgrade with ${chalk.bold.cyan('brew upgrade mlx-lm')} or${chalk.bold.cyan('pip install --upgrade mlx-lm')}.`,
 };
 
 export class UnsupportedVersionError extends Error {
@@ -101,8 +103,8 @@ export class UnsupportedVersionError extends Error {
   constructor(runtime: string, detected: string, minimum: string) {
     const hint = UPGRADE_HINTS[runtime] ?? '';
     super(
-      `Unsupported ${runtime} version: ${detected}. Minimum required: ${minimum}.` +
-        (hint ? `\n${hint}` : '')
+      `Unsupported ${chalk.cyan(runtime)} version: ${detected}. Minimum required: ${minimum}.` +
+        (hint ? `\n↳ ${hint}` : '')
     );
     this.name = 'UnsupportedVersionError';
     this.runtime = runtime;

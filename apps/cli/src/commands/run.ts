@@ -70,6 +70,42 @@ const command = defineCommand({
     const numTrials = parsePositiveInt((args.trials as string) || '10', 'trials');
     const outputDir = (args.output as string) || DEFAULT_BUNDLES_DIR;
 
+    // Detect device.
+    const deviceSpinner = new log.Spinner(chalk.dim('Detecting device…')).start();
+    let device;
+    try {
+      device = await detectDevice();
+      deviceSpinner.stop(
+        chalk.white(
+          `[${chalk.green('✓')}] ${chalk.blue(device.os_name)} (${chalk.blue(device.os_version)}) detected.`
+        )
+      );
+    } catch (e: unknown) {
+      deviceSpinner.stop(
+        chalk.white(`[${chalk.red('✖')}] ${chalk.red(e instanceof Error ? e.message : String(e))}`)
+      );
+      process.exit(1);
+    }
+
+    // Resolve and inspect model.
+    let modelRef: string;
+    try {
+      modelRef = await resolveModel(args.model as string);
+    } catch (e: unknown) {
+      log.error(e instanceof Error ? e.message : String(e));
+      process.exit(1);
+    }
+
+    const modelInspectSpinner = new log.Spinner(chalk.dim('Inspecting model…')).start();
+    const modelInfo = await inspectModel(modelRef);
+    if (!modelInfo.artifact_sha256) {
+      modelInspectSpinner.stop(
+        chalk.white(`[${chalk.red('✖')}] Model "${chalk.cyan(modelRef)}" not found.`)
+      );
+      process.exit(1);
+    }
+    modelInspectSpinner.stop(chalk.white(`[${chalk.green('✓')}] Model found:`));
+
     // Resolve runtime.
     let adapter;
     try {
@@ -102,34 +138,6 @@ const command = defineCommand({
       if (hint) {
         console.log(chalk.dim(` ↳ ${hint}`));
       }
-      process.exit(1);
-    }
-
-    // Resolve and inspect model.
-    let modelRef: string;
-    try {
-      modelRef = await resolveModel(args.model as string);
-    } catch (e: unknown) {
-      log.error(e instanceof Error ? e.message : String(e));
-      process.exit(1);
-    }
-
-    const modelInspectSpinner = new log.Spinner(chalk.dim('Inspecting model…')).start();
-    const modelInfo = await inspectModel(modelRef);
-    if (!modelInfo.artifact_sha256) {
-      modelInspectSpinner.stop(
-        chalk.white(`[${chalk.red('✖')}] Model "${chalk.cyan(modelRef)}" not found.`)
-      );
-      process.exit(1);
-    }
-    modelInspectSpinner.stop(chalk.white(`[${chalk.green('✓')}] Model found:`));
-
-    // Detect device.
-    let device;
-    try {
-      device = await detectDevice();
-    } catch (e: unknown) {
-      log.error(e instanceof Error ? e.message : String(e));
       process.exit(1);
     }
 
