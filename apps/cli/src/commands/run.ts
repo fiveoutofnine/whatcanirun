@@ -80,9 +80,10 @@ const command = defineCommand({
         )
       );
     } catch (e: unknown) {
-      deviceSpinner.stop(
-        chalk.white(`[${chalk.red('✖')}] ${chalk.red(e instanceof Error ? e.message : String(e))}`)
-      );
+      deviceSpinner.stop(chalk.white(`[${chalk.red('✖')}] Device detection failed.`));
+      log.error(chalk.dim(e instanceof Error ? e.message : String(e)), {
+        prefix: chalk.dim.red(' ↳ '),
+      });
       process.exit(1);
     }
 
@@ -113,9 +114,10 @@ const command = defineCommand({
         )
       );
     } catch (e: unknown) {
-      runtimeSpinner.stop(
-        chalk.white(`[${chalk.red('✖')}] ${e instanceof Error ? e.message : String(e)}`)
-      );
+      runtimeSpinner.stop(chalk.white(`[${chalk.red('✖')}] Runtime resolution failed.`));
+      log.error(chalk.dim(e instanceof Error ? e.message : String(e)), {
+        prefix: chalk.dim.red(' ↳ '),
+      });
       process.exit(1);
     }
 
@@ -134,9 +136,10 @@ const command = defineCommand({
       }
       modelInspectSpinner.stop(chalk.white(`[${chalk.green('✓')}] Model found:`));
     } catch (e: unknown) {
-      modelInspectSpinner.stop(
-        chalk.white(`[${chalk.red('✖')}] ${e instanceof Error ? e.message : String(e)}`)
-      );
+      modelInspectSpinner.stop(chalk.white(`[${chalk.red('✖')}] Model not found.`));
+      log.error(chalk.dim(e instanceof Error ? e.message : String(e)), {
+        prefix: chalk.dim.red(' ↳ '),
+      });
       process.exit(1);
     }
 
