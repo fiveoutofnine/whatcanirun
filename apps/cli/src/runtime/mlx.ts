@@ -132,7 +132,7 @@ export class MlxAdapter implements RuntimeAdapter {
           } else if (/Downloading|downloading/i.test(seg)) {
             // Per-file download — signal activity but don't extract percentage
             // to avoid overriding the overall Fetching progress.
-            opts.onProgress?.('Downloading model...');
+            opts.onProgress?.('Downloading model…');
           }
         }
       }
