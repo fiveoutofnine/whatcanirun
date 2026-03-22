@@ -162,7 +162,7 @@ const command = defineCommand({
       console.log(chalk.dim(` →  ${key.padEnd(maxKey)}  ${chalk.reset.white(value)}`));
     }
 
-    // ── Step 4: Resolve model (download or load from cache) ──
+    // Resolve model (download or load from cache).
     const isLocal = !isHuggingFaceRepoId(modelRef);
     const isCached = isLocal || findHfCachePath(modelRef) !== null;
     const resolveMsg = isCached
@@ -170,7 +170,7 @@ const command = defineCommand({
       : chalk.dim('Downloading model…');
     const resolveSpinner = new Spinner(resolveMsg).start();
 
-    // Filesystem-based download progress tracking.
+    // File system-based download progress tracking.
     let downloadPoll: ReturnType<typeof setInterval> | null = null;
     let downloadDone = false;
 
@@ -198,7 +198,7 @@ const command = defineCommand({
       downloadDone = true;
     };
 
-    // ── Step 5: Run benchmark ──
+    // Run benchmark.
     let bench: BenchResult;
     let trialsStarted = false;
     let lastTrial = 0;
@@ -211,7 +211,8 @@ const command = defineCommand({
         genTokens,
         numTrials,
         onProgress: (msg) => {
-          // Transition from resolve spinner to bench spinner on first non-download message.
+          // Transition from resolve spinner to bench spinner on first
+          // non-download message.
           if (!benchSpinner.isRunning() && !/Downloading model/i.test(msg)) {
             stopDownloadPoll();
             const resolveLabel = isCached

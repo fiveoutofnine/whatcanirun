@@ -92,7 +92,7 @@ export function isVersionAtLeast(version: string, minimum: string): boolean {
 
 const UPGRADE_HINTS: Record<string, string> = {
   'llama.cpp': `Upgrade with ${chalk.bold.cyan('brew upgrade llama.cpp')}.`,
-  mlx_lm: `Upgrade with ${chalk.bold.cyan('brew upgrade mlx-lm')} or${chalk.bold.cyan('pip install --upgrade mlx-lm')}.`,
+  mlx_lm: `Upgrade with ${chalk.bold.cyan('brew upgrade mlx-lm')} or ${chalk.bold.cyan('pip install --upgrade mlx-lm')}.`,
 };
 
 export class UnsupportedVersionError extends Error {
