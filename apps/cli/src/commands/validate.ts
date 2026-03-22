@@ -32,10 +32,11 @@ const command = defineCommand({
     if (result.valid) {
       spinner.stop(chalk.white(`[${chalk.green('✓')}] Bundle is valid.`));
     } else {
-      spinner.stop();
-      log.error('Bundle validation failed:');
+      spinner.stop(
+        chalk.white(`[${chalk.red('✖')}] ${chalk.bold.red('Bundle validation failed.')}`)
+      );
       for (const err of result.errors) {
-        log.error(`↳ ${err}`);
+        log.error(chalk.dim(err), { prefix: chalk.dim.red(' ↳ ') });
       }
       process.exit(1);
     }

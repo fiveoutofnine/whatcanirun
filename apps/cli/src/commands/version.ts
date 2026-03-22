@@ -8,7 +8,7 @@ const command = defineCommand({
     description: 'Print version information',
   },
   run() {
-    console.log(`${chalk.bold(HARNESS_VERSION)} (whatcanirun)`);
+    console.log(`${chalk.bold.blue(HARNESS_VERSION)} (whatcanirun)`);
   },
 });
 

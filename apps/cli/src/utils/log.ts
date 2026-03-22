@@ -13,12 +13,12 @@ export function filepath(path: string): string {
   return `\x1b]8;;${uri}\x07${chalk.underline.cyan(display)}\x1b]8;;\x07`;
 }
 
-export function warn(msg: string) {
-  console.error(chalk.yellow('⚠ warning:') + ' ' + msg);
+export function warn(msg: string, options?: { prefix?: string }) {
+  console.warn(`${chalk.reset(options?.prefix ?? '')}${chalk.yellow('⚠ warning:')} ${msg}`);
 }
 
-export function error(msg: string) {
-  console.error(chalk.red('✖ error:') + ' ' + msg);
+export function error(msg: string, options?: { prefix?: string }) {
+  console.error(`${chalk.reset(options?.prefix ?? '')}${chalk.red('✖ error:')} ${msg}`);
 }
 
 export function label(key: string, value: string) {
