@@ -141,7 +141,7 @@ const command = defineCommand({
     // Run benchmark.
     const isLocal = !isHuggingFaceRepoId(modelRef);
     const isCached = isLocal || findHfCachePath(modelRef) !== null;
-    const initialMsg = isCached ? 'Loading model from cache...' : 'Downloading model...';
+    const initialMsg = isCached ? 'Loading model from cache…' : 'Downloading model…';
     const spinner = new Spinner(initialMsg).start();
     let bench: BenchResult;
     let trialsStarted = false;
@@ -242,7 +242,7 @@ const command = defineCommand({
     // Upload.
     if (args.submit) {
       console.log();
-      console.log(chalk.dim('Uploading...'));
+      console.log(chalk.dim('Uploading…'));
       try {
         const result = await uploadBundle(bundlePath);
         console.log();
