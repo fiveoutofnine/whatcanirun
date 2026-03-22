@@ -122,7 +122,7 @@ export function findHfCachePath(repoId: string): string | null {
 
   if (snapshots.length === 0) return null;
 
-  // Return the most recently modified snapshot
+  // Return the most recently modified snapshot.
   return snapshots
     .map((d) => ({ name: d, mtime: statSync(join(snapshotsDir, d)).mtimeMs }))
     .sort((a, b) => b.mtime - a.mtime)
@@ -130,11 +130,11 @@ export function findHfCachePath(repoId: string): string | null {
 }
 
 export async function resolveModel(modelRef: string): Promise<string> {
-  // Direct file path or directory (mlx model dir or gguf file)
+  // Direct file path or directory (mlx model dir or gguf file).
   const resolved = resolve(modelRef);
   if (existsSync(resolved)) return resolved;
 
-  // HuggingFace repo ID — return as-is (mlx_lm handles download)
+  // HuggingFace repo ID — return as-is (mlx_lm handles download).
   if (isHuggingFaceRepoId(modelRef)) return modelRef;
 
   // Try alias

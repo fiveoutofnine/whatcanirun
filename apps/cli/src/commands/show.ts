@@ -36,13 +36,15 @@ const command = defineCommand({
       case 'runtime': {
         const name = args.value as string | undefined;
         if (!name) {
-          log.error(`Usage: ${chalk.bold.cyan(`${binName()} show runtime <name>`)}`);
+          log.error(
+            `Runtime name not specified: ${chalk.bold.cyan(`${binName()} show runtime <name>`)}.`
+          );
           process.exit(1);
         }
         const adapter = resolveRuntime(name);
         const info = await adapter.detect();
         if (!info) {
-          log.error(`Runtime '${name}' not found or not available`);
+          log.error(`Runtime "${chalk.cyan(name)}" not found or not available.`);
           process.exit(1);
         }
         console.log(JSON.stringify(info, null, 2));
@@ -51,16 +53,24 @@ const command = defineCommand({
       case 'model': {
         const ref = args.value as string | undefined;
         if (!ref) {
-          log.error(`Usage: ${chalk.bold.cyan(`${binName()} show model <path-or-repo-id>`)}`);
+          log.error(
+            `Model not specified: ${chalk.bold.cyan(`${binName()} show model <path-or-repo-id>`)}.`
+          );
           process.exit(1);
         }
         const resolved = await resolveModel(ref);
         const info = await inspectModel(resolved);
+        if (!info.artifact_sha256) {
+          log.error(`Model "${chalk.cyan(ref)}" not found.`);
+          process.exit(1);
+        }
         console.log(JSON.stringify(info, null, 2));
         break;
       }
       default:
-        log.error(`Unknown target ${chalk.bold.cyan(target)}. Use: device, runtime, or model`);
+        log.error(
+          `Unknown target "${chalk.cyan(target)}". Use ${chalk.bold.cyan('device')}, ${chalk.bold.cyan('runtime')}, or ${chalk.bold.cyan('model')}`
+        );
         process.exit(1);
     }
   },
