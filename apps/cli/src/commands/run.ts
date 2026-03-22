@@ -254,7 +254,7 @@ const command = defineCommand({
 
       benchSpinner.stop(
         chalk.white(
-          `[${chalk.green('✓')}] ${bench.trials.length}/${numTrials} trials ran successfully.`
+          `[${chalk.green('✓')}] ${bench.trials.length}/${numTrials} trial${numTrials > 1 ? 's' : ''} ran successfully.`
         )
       );
     } catch (e: unknown) {
