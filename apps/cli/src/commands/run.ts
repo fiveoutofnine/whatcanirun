@@ -5,7 +5,14 @@ import { defineCommand } from 'citty';
 import { createBundle } from '../bundle/create';
 import { validateBundle } from '../bundle/validate';
 import { detectDevice } from '../device/detect';
-import { findHfCachePath, inspectModel, isHuggingFaceRepoId, resolveModel } from '../model/resolve';
+import {
+  findHfCachePath,
+  getHfCacheBlobSize,
+  getHfRepoSize,
+  inspectModel,
+  isHuggingFaceRepoId,
+  resolveModel,
+} from '../model/resolve';
 import { resolveRuntime } from '../runtime/resolve';
 import type { BenchResult } from '../runtime/types';
 import { uploadBundle } from '../upload/client';
@@ -128,13 +135,13 @@ const command = defineCommand({
     try {
       modelRef = await resolveModel(args.model as string);
       modelInfo = await inspectModel(modelRef);
-      if (!modelInfo.artifact_sha256) {
+      if (!modelInfo.artifact_sha256 && !isHuggingFaceRepoId(modelRef)) {
         modelInspectSpinner.stop(
           chalk.white(`[${chalk.red('✖')}] Model "${chalk.cyan(modelRef)}" not found.`)
         );
         process.exit(1);
       }
-      modelInspectSpinner.stop(chalk.white(`[${chalk.green('✓')}] Model found:`));
+      modelInspectSpinner.stop(chalk.white(`[${chalk.green('✓')}] Model inspected:`));
     } catch (e: unknown) {
       modelInspectSpinner.stop(chalk.white(`[${chalk.red('✖')}] Model not found.`));
       log.error(chalk.dim(e instanceof Error ? e.message : String(e)), {
@@ -163,7 +170,35 @@ const command = defineCommand({
     let bench: BenchResult;
     let trialsStarted = false;
     let lastTrial = 0;
-    let downloadBarStarted = false;
+
+    // Filesystem-based download progress tracking.
+    let downloadPoll: ReturnType<typeof setInterval> | null = null;
+    let downloadDone = false;
+
+    if (!isCached && isHuggingFaceRepoId(modelRef)) {
+      const initialBlobSize = getHfCacheBlobSize(modelRef);
+      getHfRepoSize(modelRef).then((expectedSize) => {
+        if (!expectedSize || downloadDone) return;
+        spinner.setTotal(100);
+        spinner.update('Downloading model');
+        downloadPoll = setInterval(() => {
+          const currentSize = getHfCacheBlobSize(modelRef);
+          const downloaded = currentSize - initialBlobSize;
+          const pct = Math.min(Math.round((downloaded / expectedSize) * 100), 99);
+          spinner.setCurrent(pct);
+          spinner.setDetail(`${formatBytes(downloaded)} / ${formatBytes(expectedSize)}`);
+        }, 200);
+      });
+    }
+
+    const stopDownloadPoll = () => {
+      if (downloadPoll) {
+        clearInterval(downloadPoll);
+        downloadPoll = null;
+      }
+      downloadDone = true;
+    };
+
     try {
       bench = await adapter.benchmark({
         model: modelRef,
@@ -177,6 +212,7 @@ const command = defineCommand({
             const total = parseInt(trialMatch[2]!, 10);
             if (!trialsStarted) {
               trialsStarted = true;
+              stopDownloadPoll();
               spinner.setTotal(total);
               spinner.setDetail('');
               spinner.update('Running trials');
@@ -186,25 +222,20 @@ const command = defineCommand({
               spinner.tick();
             }
           } else if (/Downloading model/i.test(msg)) {
-            if (!downloadBarStarted) {
-              downloadBarStarted = true;
-              spinner.setTotal(100);
-              spinner.update('Downloading model');
-            }
-            const pctMatch = msg.match(/(\d+)%/);
-            if (pctMatch) {
-              spinner.setCurrent(parseInt(pctMatch[1]!, 10));
-              spinner.setDetail(`${pctMatch[1]}%`);
-            }
+            // Ignore — filesystem polling handles download progress.
+            return;
           } else {
-            // Non-download phase (e.g. Warming up) — reset to simple spinner.
+            // Non-download phase (e.g. Warming up) — download is done.
+            stopDownloadPoll();
             spinner.setTotal(0);
             spinner.update(msg);
           }
         },
       });
+      stopDownloadPoll();
       spinner.stop('Benchmark complete.');
     } catch (e: unknown) {
+      stopDownloadPoll();
       spinner.stop();
       log.error(e instanceof Error ? e.message : String(e));
       process.exit(1);
@@ -330,6 +361,12 @@ function computeMetrics(bench: BenchResult): DerivedMetrics {
     idleRssMb,
     peakRssMb,
   };
+}
+
+function formatBytes(bytes: number): string {
+  if (bytes >= 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024 * 1024)).toFixed(1)} GB`;
+  if (bytes >= 1024 * 1024) return `${Math.round(bytes / (1024 * 1024))} MB`;
+  return `${Math.round(bytes / 1024)} KB`;
 }
 
 function parsePositiveInt(value: string, name: string): number {

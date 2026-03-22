@@ -131,6 +131,50 @@ export function findHfCachePath(repoId: string): string | null {
     .map((d) => join(snapshotsDir, d.name))[0]!;
 }
 
+/**
+ * Fetch expected total file size for an HF repo via the API.
+ */
+export async function getHfRepoSize(repoId: string): Promise<number | null> {
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5000);
+    const resp = await fetch(`https://huggingface.co/api/models/${repoId}`, {
+      signal: controller.signal,
+    });
+    clearTimeout(timeout);
+    if (!resp.ok) return null;
+    const data = (await resp.json()) as { usedStorage?: number };
+    return data.usedStorage && data.usedStorage > 0 ? data.usedStorage : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Sum the size of all blobs (including .incomplete) in the HF cache for a repo.
+ */
+export function getHfCacheBlobSize(repoId: string): number {
+  const [org, name] = repoId.split('/');
+  const blobsDir = join(
+    homedir(),
+    '.cache',
+    'huggingface',
+    'hub',
+    `models--${org}--${name}`,
+    'blobs'
+  );
+  if (!existsSync(blobsDir)) return 0;
+  let total = 0;
+  try {
+    for (const f of readdirSync(blobsDir)) {
+      try {
+        total += statSync(join(blobsDir, f)).size;
+      } catch {}
+    }
+  } catch {}
+  return total;
+}
+
 export async function resolveModel(modelRef: string): Promise<string> {
   // Direct file path or directory (mlx model dir or gguf file).
   const resolved = resolve(modelRef);
