@@ -134,14 +134,19 @@ const command = defineCommand({
     }
 
     // Display config.
-    console.log(chalk.dim(`Model ${modelInfo.display_name}`));
-    if (modelInfo.parameters) log.label('Parameters', modelInfo.parameters);
-    console.log(chalk.dim(`Format modelInfo.format`));
-    if (modelInfo.quant) log.label('Quant', modelInfo.quant);
-    console.log(chalk.dim(`Device ${device.cpu_model} (${device.ram_gb}GB)`));
-    console.log(chalk.dim(`Runtime ${runtimeInfo.name} ${runtimeInfo.version}`));
-    console.log(chalk.dim(`Config pp=${promptTokens}, tg=${genTokens}, trials=${numTrials}`));
-    console.log();
+    const rows: [string, string][] = [
+      ['Model', modelInfo.display_name],
+      ...(modelInfo.parameters ? [['Parameters', modelInfo.parameters] as [string, string]] : []),
+      ['Format', modelInfo.format],
+      ...(modelInfo.quant ? [['Quant', modelInfo.quant] as [string, string]] : []),
+      ['Device', `${device.cpu_model} (${device.ram_gb}GB)`],
+      ['Runtime', `${runtimeInfo.name} ${runtimeInfo.version}`],
+      ['Config', `pp=${promptTokens}, tg=${genTokens}, trials=${numTrials}`],
+    ];
+    const maxKey = Math.max(...rows.map(([k]) => k.length));
+    for (const [key, value] of rows) {
+      console.log(chalk.dim(` → ${key.padEnd(maxKey)}  ${chalk.reset.white(value)}`));
+    }
 
     // Run benchmark.
     const isLocal = !isHuggingFaceRepoId(modelRef);
