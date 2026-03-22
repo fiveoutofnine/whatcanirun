@@ -1,4 +1,5 @@
 import { validateManifest, validateResults } from '@whatcanirun/shared';
+import chalk from 'chalk';
 import { mkdtempSync, rmSync } from 'fs';
 import { tmpdir } from 'os';
 import { join } from 'path';
@@ -30,7 +31,7 @@ export async function validateBundle(bundlePath: string): Promise<ValidationResu
     const code = await proc.exited;
     if (code !== 0) {
       const stderr = await new Response(proc.stderr).text();
-      errors.push(`Failed to extract bundle: ${stderr.trim()}`);
+      errors.push(`Failed to extract bundle: ${stderr.trim()}.`);
       return { valid: false, errors };
     }
 
@@ -40,7 +41,7 @@ export async function validateBundle(bundlePath: string): Promise<ValidationResu
     for (const file of requiredFiles) {
       const f = Bun.file(join(tmpDir, file));
       if (!(await f.exists())) {
-        errors.push(`Missing required file: ${file}`);
+        errors.push(`Missing required file ${chalk.cyan(file)}.`);
       }
     }
 
@@ -53,7 +54,9 @@ export async function validateBundle(bundlePath: string): Promise<ValidationResu
     try {
       manifest = JSON.parse(await Bun.file(join(tmpDir, 'manifest.json')).text());
     } catch (e: unknown) {
-      errors.push(`Invalid manifest.json: ${e instanceof Error ? e.message : String(e)}`);
+      errors.push(
+        `Invalid ${chalk.cyan('manifest.json')}: ${e instanceof Error ? e.message : String(e)}`
+      );
       return { valid: false, errors };
     }
     errors.push(...validateManifest(manifest));
@@ -63,16 +66,18 @@ export async function validateBundle(bundlePath: string): Promise<ValidationResu
     try {
       results = JSON.parse(await Bun.file(join(tmpDir, 'results.json')).text());
     } catch (e: unknown) {
-      errors.push(`Invalid results.json: ${e instanceof Error ? e.message : String(e)}`);
+      errors.push(
+        `Invalid ${chalk.cyan('results.json')}: ${e instanceof Error ? e.message : String(e)}`
+      );
       return { valid: false, errors };
     }
     errors.push(...validateResults(results));
 
-    // Check artifact hash presence
+    // Check artifact hash presence.
     const m = manifest as Record<string, unknown>;
     const model = m.model as Record<string, unknown> | undefined;
     if (!model?.artifact_sha256) {
-      errors.push('Missing model `artifact_sha256`.');
+      errors.push(`Missing model ${chalk.cyan('artifact_sha256')}.`);
     }
 
     return { valid: errors.length === 0, errors };

@@ -54,12 +54,12 @@ const MLX_BIT_PATTERNS = [/(\d+)[\s-]*bit/i];
 // -----------------------------------------------------------------------------
 
 export function inferQuant(name: string): string | null {
-  // Try GGUF-style quant patterns first
+  // Try GGUF-style quant patterns first.
   for (const pattern of QUANT_PATTERNS) {
     const match = name.match(pattern);
     if (match) return match[1]!.toLowerCase();
   }
-  // Try MLX-style bit patterns (e.g. "4bit", "8bit")
+  // Try MLX-style bit patterns (e.g. "4bit", "8bit").
   for (const pattern of MLX_BIT_PATTERNS) {
     const match = name.match(pattern);
     if (match) return `${match[1]}bit`;
@@ -150,7 +150,7 @@ export async function resolveModel(modelRef: string): Promise<string> {
   }
 
   throw new Error(
-    `Model not found: '${modelRef}'. Provide a file path, HuggingFace repo ID, or alias from ~/.config/whatcanirun/models.toml`
+    `Model not found: '${modelRef}'. Provide a file path, HuggingFace repo ID, or alias from ${log.filepath(join(homedir(), '.config', 'whatcanirun', 'models.toml'))}.`
   );
 }
 
@@ -230,7 +230,7 @@ export async function inspectModel(modelRef: string): Promise<ModelInfo> {
     quant = inferQuant(modelRef);
     source = modelRef;
 
-    // Try to get metadata from HF cache
+    // Try to get metadata from HF cache.
     const cachePath = findHfCachePath(modelRef);
     if (cachePath) {
       sha256 = await computeDirSha256(cachePath);
@@ -267,7 +267,7 @@ export async function inspectModel(modelRef: string): Promise<ModelInfo> {
       log.warn(`Could not compute model hash/size: ${e instanceof Error ? e.message : String(e)}`);
     }
 
-    // Try to read architecture and parameters from config.json
+    // Try to read architecture and parameters from `config.json`.
     try {
       const stat = statSync(resolved);
       const configPath = stat.isDirectory()

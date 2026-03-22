@@ -34,7 +34,7 @@ export function formatSysinfo(device: DeviceInfo): string {
 export async function detectDevice(): Promise<DeviceInfo> {
   if (process.platform === 'darwin') return detectMacOS();
   if (process.platform === 'linux') return detectLinux();
-  throw new Error(`Unsupported platform: ${process.platform}`);
+  throw new Error(`Unsupported platform: ${chalk.cyan(process.platform)}`);
 }
 
 // -----------------------------------------------------------------------------
@@ -55,7 +55,9 @@ async function exec(cmd: string[]): Promise<string> {
     if (e instanceof Error && 'code' in e && (e as NodeJS.ErrnoException).code === 'ENOENT') {
       warn(`Command not found: ${chalk.bold.cyan(cmd[0]!)}.`);
     } else {
-      warn(`${chalk.bold.cyan(cmd.join(' '))} failed: ${e instanceof Error ? e.message : String(e)}`);
+      warn(
+        `${chalk.bold.cyan(cmd.join(' '))} failed: ${e instanceof Error ? e.message : String(e)}`
+      );
     }
     return '';
   }
