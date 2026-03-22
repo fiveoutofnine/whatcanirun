@@ -140,7 +140,7 @@ const command = defineCommand({
       ['Format', modelInfo.format],
       ...(modelInfo.quant ? [['Quant', modelInfo.quant] as [string, string]] : []),
       ['Device', `${device.cpu_model} (${device.ram_gb}GB)`],
-      ['Runtime', `${runtimeInfo.name} ${runtimeInfo.version}`],
+      ['Runtime', `${runtimeInfo.name} (${runtimeInfo.version})`],
       ['Config', `pp=${promptTokens}, tg=${genTokens}, trials=${numTrials}`],
     ];
     const maxKey = Math.max(...rows.map(([k]) => k.length));
