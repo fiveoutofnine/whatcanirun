@@ -37,6 +37,7 @@ export class Spinner {
   private total = 0;
   private current = 0;
   private detail = '';
+  private running = false;
 
   constructor(text: string) {
     this.baseText = text;
@@ -44,8 +45,13 @@ export class Spinner {
   }
 
   start(): this {
+    this.running = true;
     this.oraSpinner.start();
     return this;
+  }
+
+  isRunning(): boolean {
+    return this.running;
   }
 
   update(text: string) {
@@ -83,6 +89,7 @@ export class Spinner {
   }
 
   stop(finalText?: string) {
+    this.running = false;
     if (this.interval) {
       clearInterval(this.interval);
       this.interval = null;

@@ -162,14 +162,13 @@ const command = defineCommand({
       console.log(chalk.dim(` →  ${key.padEnd(maxKey)}  ${chalk.reset.white(value)}`));
     }
 
-    // Run benchmark.
+    // ── Step 4: Resolve model (download or load from cache) ──
     const isLocal = !isHuggingFaceRepoId(modelRef);
     const isCached = isLocal || findHfCachePath(modelRef) !== null;
-    const initialMsg = isCached ? 'Loading model from cache…' : 'Downloading model…';
-    const spinner = new Spinner(initialMsg).start();
-    let bench: BenchResult;
-    let trialsStarted = false;
-    let lastTrial = 0;
+    const resolveMsg = isCached
+      ? chalk.dim('Loading model from cache…')
+      : chalk.dim('Downloading model…');
+    const resolveSpinner = new Spinner(resolveMsg).start();
 
     // Filesystem-based download progress tracking.
     let downloadPoll: ReturnType<typeof setInterval> | null = null;
@@ -179,14 +178,14 @@ const command = defineCommand({
       const initialBlobSize = getHfCacheBlobSize(modelRef);
       getHfRepoSize(modelRef).then((expectedSize) => {
         if (!expectedSize || downloadDone) return;
-        spinner.setTotal(100);
-        spinner.update('Downloading model');
+        resolveSpinner.setTotal(100);
+        resolveSpinner.update(chalk.dim('Downloading model'));
         downloadPoll = setInterval(() => {
           const currentSize = getHfCacheBlobSize(modelRef);
           const downloaded = currentSize - initialBlobSize;
           const pct = Math.min(Math.round((downloaded / expectedSize) * 100), 99);
-          spinner.setCurrent(pct);
-          spinner.setDetail(`${formatBytes(downloaded)} / ${formatBytes(expectedSize)}`);
+          resolveSpinner.setCurrent(pct);
+          resolveSpinner.setDetail(`${formatBytes(downloaded)} / ${formatBytes(expectedSize)}`);
         }, 200);
       });
     }
@@ -199,6 +198,12 @@ const command = defineCommand({
       downloadDone = true;
     };
 
+    // ── Step 5: Run benchmark ──
+    let bench: BenchResult;
+    let trialsStarted = false;
+    let lastTrial = 0;
+    const benchSpinner = new Spinner(chalk.dim('Warming up…'));
+
     try {
       bench = await adapter.benchmark({
         model: modelRef,
@@ -206,38 +211,59 @@ const command = defineCommand({
         genTokens,
         numTrials,
         onProgress: (msg) => {
+          // Transition from resolve spinner to bench spinner on first non-download message.
+          if (!benchSpinner.isRunning() && !/Downloading model/i.test(msg)) {
+            stopDownloadPoll();
+            const resolveLabel = isCached ? 'Model loaded from cache.' : 'Model downloaded.';
+            resolveSpinner.stop(chalk.white(`[${chalk.green('✓')}] ${resolveLabel}`));
+            benchSpinner.start();
+          }
+
           const trialMatch = msg.match(/^Trial (\d+)\/(\d+)/);
           if (trialMatch) {
             const trial = parseInt(trialMatch[1]!, 10);
             const total = parseInt(trialMatch[2]!, 10);
             if (!trialsStarted) {
               trialsStarted = true;
-              stopDownloadPoll();
-              spinner.setTotal(total);
-              spinner.setDetail('');
-              spinner.update('Running trials');
+              benchSpinner.setTotal(total);
+              benchSpinner.setDetail('');
+              benchSpinner.update(chalk.dim('Running trials'));
             }
             if (trial > lastTrial) {
               lastTrial = trial;
-              spinner.tick();
+              const tpsMatch = msg.match(/— ([\d.]+ tok\/s)/);
+              if (tpsMatch) benchSpinner.setDetail(tpsMatch[1]!);
+              benchSpinner.tick();
             }
           } else if (/Downloading model/i.test(msg)) {
-            // Ignore — filesystem polling handles download progress.
             return;
-          } else {
-            // Non-download phase (e.g. Warming up) — download is done.
-            stopDownloadPoll();
-            spinner.setTotal(0);
-            spinner.update(msg);
           }
         },
       });
-      stopDownloadPoll();
-      spinner.stop('Benchmark complete.');
+
+      // If warmup was never reported (edge case), close resolve spinner now.
+      if (!benchSpinner.isRunning()) {
+        stopDownloadPoll();
+        const resolveLabel = isCached ? 'Model loaded from cache.' : 'Model downloaded.';
+        resolveSpinner.stop(chalk.white(`[${chalk.green('✓')}] ${resolveLabel}`));
+      }
+
+      benchSpinner.stop(
+        chalk.white(
+          `[${chalk.green('✓')}] ${bench.trials.length}/${numTrials} trials ran successfully.`
+        )
+      );
     } catch (e: unknown) {
       stopDownloadPoll();
-      spinner.stop();
-      log.error(e instanceof Error ? e.message : String(e));
+      // Close whichever spinner is active.
+      if (benchSpinner.isRunning()) {
+        benchSpinner.stop(chalk.white(`[${chalk.red('✖')}] Benchmark failed.`));
+      } else {
+        resolveSpinner.stop(chalk.white(`[${chalk.red('✖')}] Model resolution failed.`));
+      }
+      log.error(chalk.dim(e instanceof Error ? e.message : String(e)), {
+        prefix: chalk.dim.red(' ↳ '),
+      });
       process.exit(1);
     }
 
@@ -260,7 +286,7 @@ const command = defineCommand({
     if (metrics.peakRssMb > 0) {
       log.label('Peak Memory', `${(metrics.peakRssMb / 1024).toFixed(2)} GB`);
     }
-    log.label('Trials', `${bench.trials.length}/${bench.trials.length} passed`);
+    log.label('Trials', `${bench.trials.length}/${numTrials} passed`);
     console.log();
 
     // Create bundle.
