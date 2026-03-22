@@ -6,7 +6,7 @@ import { and, eq } from 'drizzle-orm';
 import { unzipSync } from 'fflate';
 
 import { db } from '@/lib/db';
-import { apiTokens, devices, models, runs, RunStatus } from '@/lib/db/schema';
+import { apiTokens, devices, models, runs, RunStatus, trials } from '@/lib/db/schema';
 import { sha256 } from '@/lib/utils';
 import { validatePlausibility } from '@/lib/validators/bundle';
 
@@ -14,8 +14,8 @@ import { validatePlausibility } from '@/lib/validators/bundle';
 // Constants
 // -----------------------------------------------------------------------------
 
-const MAX_ZIP_BYTES = 5 * 1024; // 5 KB compressed
-const MAX_UNZIPPED_BYTES = 50 * 1024; // 50 KB decompressed
+const MAX_ZIP_BYTES = 5 * 1024; // 5 KB compressed.
+const MAX_UNZIPPED_BYTES = 50 * 1024; // 50 KB decompressed.
 const MAX_TEXT_LENGTH = 1_000;
 
 // -----------------------------------------------------------------------------
@@ -226,9 +226,8 @@ export async function POST(request: NextRequest) {
   }
 
   // Compute aggregated token counts from trials.
-  const trials = results.trials;
-  const promptTokens = trials.reduce((sum, t) => sum + (t.input_tokens ?? 0), 0);
-  const completionTokens = trials.reduce((sum, t) => sum + (t.output_tokens ?? 0), 0);
+  const promptTokens = results.trials.reduce((sum, t) => sum + (t.input_tokens ?? 0), 0);
+  const completionTokens = results.trials.reduce((sum, t) => sum + (t.output_tokens ?? 0), 0);
 
   // Hash client IP for rate-limiting / spam detection.
   const forwarded = request.headers.get('x-forwarded-for');
@@ -268,12 +267,30 @@ export async function POST(request: NextRequest) {
       peakRssMb: aggregate.peak_rss_mb,
       trialsPassed: aggregate.trials_passed,
       trialsTotal: aggregate.trials_total,
-      trials: results.trials,
     })
     .returning({ id: runs.id });
 
   if (!run) {
     return NextResponse.json({ error: 'Failed to insert run.' }, { status: 500 });
+  }
+
+  // Insert individual trial rows.
+  if (results.trials.length > 0) {
+    await db.insert(trials).values(
+      results.trials.map((t, i) => ({
+        runId: run.id,
+        trialIndex: i,
+        inputTokens: t.input_tokens,
+        outputTokens: t.output_tokens,
+        ttftMs: t.ttft_ms,
+        totalMs: t.total_ms,
+        prefillTps: t.prefill_tps ?? 0,
+        decodeTps: t.decode_tps,
+        weightedTps: t.weighted_tps,
+        idleRssMb: t.idle_rss_mb ?? 0,
+        peakRssMb: t.peak_rss_mb,
+      })),
+    );
   }
 
   return NextResponse.json(

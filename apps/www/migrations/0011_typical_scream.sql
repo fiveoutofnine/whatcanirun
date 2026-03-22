@@ -1,0 +1,1 @@
+ALTER TABLE "trials" DROP COLUMN "exit_status";

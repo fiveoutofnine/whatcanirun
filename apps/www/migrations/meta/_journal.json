@@ -64,6 +64,34 @@
       "when": 1774040055962,
       "tag": "0008_short_wilson_fisk",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1774218322808,
+      "tag": "0009_sturdy_true_believers",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1774218397451,
+      "tag": "0010_flowery_johnny_storm",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1774218651033,
+      "tag": "0011_typical_scream",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1774218781811,
+      "tag": "0012_ambiguous_shinobi_shaw",
+      "breakpoints": true
     }
   ]
 }

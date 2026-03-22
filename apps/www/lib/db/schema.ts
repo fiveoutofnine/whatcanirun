@@ -4,7 +4,6 @@ import {
   boolean,
   index,
   integer,
-  jsonb,
   pgEnum,
   pgTable,
   real,
@@ -191,7 +190,6 @@ export const runs = pgTable(
     peakRssMb: real('peak_rss_mb').notNull(),
     trialsPassed: integer('trials_passed').notNull(),
     trialsTotal: integer('trials_total').notNull(),
-    trials: jsonb('trials').notNull(),
     createdAt: timestamp('created_at').notNull().defaultNow(),
     updatedAt: timestamp('updated_at')
       .notNull()
@@ -202,6 +200,34 @@ export const runs = pgTable(
     index('runs_leaderboard_idx').on(t.modelId, t.status, t.decodeTpsMean),
     index('runs_device_idx').on(t.deviceId),
     index('runs_user_idx').on(t.userId),
+  ],
+);
+
+export const trials = pgTable(
+  'trials',
+  {
+    id: text('id')
+      .primaryKey()
+      .$defaultFn(() => `trial_${crypto.randomUUID()}`),
+    runId: text('run_id')
+      .notNull()
+      .references(() => runs.id, { onDelete: 'cascade' }),
+    trialIndex: integer('trial_index').notNull(),
+    inputTokens: integer('input_tokens').notNull(),
+    outputTokens: integer('output_tokens').notNull(),
+    ttftMs: real('ttft_ms').notNull(),
+    totalMs: real('total_ms').notNull(),
+    prefillTps: real('prefill_tps').notNull(),
+    decodeTps: real('decode_tps').notNull(),
+    weightedTps: real('weighted_tps').notNull(),
+    idleRssMb: real('idle_rss_mb').notNull(),
+    peakRssMb: real('peak_rss_mb').notNull(),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+  },
+  (t) => [
+    uniqueIndex('trials_run_trial_idx').on(t.runId, t.trialIndex),
+    index('trials_decode_tps_idx').on(t.decodeTps),
+    index('trials_ttft_idx').on(t.ttftMs),
   ],
 );
 
@@ -217,10 +243,15 @@ export const modelsRelations = relations(models, ({ many }) => ({
   runs: many(runs),
 }));
 
-export const runsRelations = relations(runs, ({ one }) => ({
+export const runsRelations = relations(runs, ({ one, many }) => ({
   device: one(devices, { fields: [runs.deviceId], references: [devices.id] }),
   model: one(models, { fields: [runs.modelId], references: [models.id] }),
   user: one(users, { fields: [runs.userId], references: [users.id] }),
+  trials: many(trials),
+}));
+
+export const trialsRelations = relations(trials, ({ one }) => ({
+  run: one(runs, { fields: [trials.runId], references: [runs.id] }),
 }));
 
 // -----------------------------------------------------------------------------
@@ -232,3 +263,4 @@ export type ApiToken = typeof apiTokens.$inferSelect;
 export type Device = typeof devices.$inferSelect;
 export type Model = typeof models.$inferSelect;
 export type Run = typeof runs.$inferSelect;
+export type Trial = typeof trials.$inferSelect;
