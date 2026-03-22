@@ -8,7 +8,6 @@ import { detectDevice } from '../device/detect';
 import { findHfCachePath, inspectModel, isHuggingFaceRepoId, resolveModel } from '../model/resolve';
 import { resolveRuntime } from '../runtime/resolve';
 import type { BenchResult } from '../runtime/types';
-import { UnsupportedVersionError } from '../runtime/version';
 import { uploadBundle } from '../upload/client';
 import { binName } from '../utils/bin';
 import { DEFAULT_BUNDLES_DIR } from '../utils/id';
@@ -87,57 +86,57 @@ const command = defineCommand({
       process.exit(1);
     }
 
-    // Resolve and inspect model.
-    let modelRef: string;
-    try {
-      modelRef = await resolveModel(args.model as string);
-    } catch (e: unknown) {
-      log.error(e instanceof Error ? e.message : String(e));
-      process.exit(1);
-    }
-
-    const modelInspectSpinner = new log.Spinner(chalk.dim('Inspecting model…')).start();
-    const modelInfo = await inspectModel(modelRef);
-    if (!modelInfo.artifact_sha256) {
-      modelInspectSpinner.stop(
-        chalk.white(`[${chalk.red('✖')}] Model "${chalk.cyan(modelRef)}" not found.`)
-      );
-      process.exit(1);
-    }
-    modelInspectSpinner.stop(chalk.white(`[${chalk.green('✓')}] Model found:`));
-
-    // Resolve runtime.
+    // Resolve and detect runtime.
+    const runtimeSpinner = new log.Spinner(chalk.dim('Detecting runtime…')).start();
     let adapter;
-    try {
-      adapter = resolveRuntime(args.runtime as string);
-    } catch (e: unknown) {
-      log.error(e instanceof Error ? e.message : String(e));
-      process.exit(1);
-    }
-
-    // Detect runtime.
     let runtimeInfo;
     try {
+      adapter = resolveRuntime(args.runtime as string);
       runtimeInfo = await adapter.detect();
-    } catch (e: unknown) {
-      if (e instanceof UnsupportedVersionError) {
-        log.error(e.message);
+      if (!runtimeInfo) {
+        runtimeSpinner.stop(
+          chalk.white(
+            `[${chalk.red('✖')}] Runtime "${chalk.cyan(args.runtime)}" is not available. Make sure it is installed and on ${chalk.cyan('PATH')}.`
+          )
+        );
+        const installHints: Record<string, string> = {
+          mlx_lm: `Install with ${chalk.bold.cyan('brew install mlx-lm')} or ${chalk.bold.cyan('pip install mlx-lm')}.`,
+          'llama.cpp': `Install with ${chalk.bold.cyan('brew install llama.cpp')}.`,
+        };
+        const hint = installHints[args.runtime as string];
+        if (hint) console.log(chalk.dim(` ↳ ${hint}`));
         process.exit(1);
       }
-      throw e;
-    }
-    if (!runtimeInfo) {
-      log.error(
-        `Runtime "${chalk.cyan(args.runtime)}" is not available. Make sure it is installed and on ${chalk.cyan('PATH')}.`
+      runtimeSpinner.stop(
+        chalk.white(
+          `[${chalk.green('✓')}] ${chalk.cyan(runtimeInfo.name)} (${chalk.cyan(runtimeInfo.version)}) detected.`
+        )
       );
-      const installHints: Record<string, string> = {
-        mlx_lm: `Install with ${chalk.bold.cyan('brew install mlx-lm')} or ${chalk.bold.cyan('pip install mlx-lm')}.`,
-        'llama.cpp': `Install with ${chalk.bold.cyan('brew install llama.cpp')}.`,
-      };
-      const hint = installHints[args.runtime as string];
-      if (hint) {
-        console.log(chalk.dim(` ↳ ${hint}`));
+    } catch (e: unknown) {
+      runtimeSpinner.stop(
+        chalk.white(`[${chalk.red('✖')}] ${e instanceof Error ? e.message : String(e)}`)
+      );
+      process.exit(1);
+    }
+
+    // Resolve and inspect model.
+    const modelInspectSpinner = new log.Spinner(chalk.dim('Inspecting model…')).start();
+    let modelRef: string;
+    let modelInfo;
+    try {
+      modelRef = await resolveModel(args.model as string);
+      modelInfo = await inspectModel(modelRef);
+      if (!modelInfo.artifact_sha256) {
+        modelInspectSpinner.stop(
+          chalk.white(`[${chalk.red('✖')}] Model "${chalk.cyan(modelRef)}" not found.`)
+        );
+        process.exit(1);
       }
+      modelInspectSpinner.stop(chalk.white(`[${chalk.green('✓')}] Model found:`));
+    } catch (e: unknown) {
+      modelInspectSpinner.stop(
+        chalk.white(`[${chalk.red('✖')}] ${e instanceof Error ? e.message : String(e)}`)
+      );
       process.exit(1);
     }
 
@@ -147,13 +146,10 @@ const command = defineCommand({
       ...(modelInfo.parameters ? [['Parameters', modelInfo.parameters] as [string, string]] : []),
       ['Format', modelInfo.format],
       ...(modelInfo.quant ? [['Quant', modelInfo.quant] as [string, string]] : []),
-      ['Device', `${device.cpu_model} (${device.ram_gb}GB)`],
-      ['Runtime', `${runtimeInfo.name} (${runtimeInfo.version})`],
-      ['Config', `pp=${promptTokens}, tg=${genTokens}, trials=${numTrials}`],
     ];
     const maxKey = Math.max(...rows.map(([k]) => k.length));
     for (const [key, value] of rows) {
-      console.log(chalk.dim(` → ${key.padEnd(maxKey)}  ${chalk.reset.white(value)}`));
+      console.log(chalk.dim(` →  ${key.padEnd(maxKey)}  ${chalk.reset.white(value)}`));
     }
 
     // Run benchmark.
