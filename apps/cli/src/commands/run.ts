@@ -295,7 +295,7 @@ const command = defineCommand({
     ];
     const maxResultKey = Math.max(...resultRows.map(([k]) => k.length));
     for (const [key, value] of resultRows) {
-      console.log(chalk.dim(` →  ${key.padEnd(maxResultKey)}  ${chalk.reset.cyan(value)}`));
+      console.log(chalk.dim(` →  ${key.padEnd(maxResultKey)}  ${chalk.reset.bold.cyan(value)}`));
     }
 
     // Create bundle.
