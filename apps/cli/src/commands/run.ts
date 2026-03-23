@@ -156,13 +156,7 @@ const command = defineCommand({
     let modelInfoGuessed;
     try {
       modelRef = await resolveModel(args.model as string);
-      modelInfoGuessed = await inferModelFromName(modelRef);
-      if (!modelInfoGuessed.artifact_sha256 && !isHuggingFaceRepoId(modelRef)) {
-        modelInspectSpinner.stop(
-          chalk.white(`[${chalk.red('✖')}] Model "${chalk.cyan(modelRef)}" not found.`)
-        );
-        process.exit(1);
-      }
+      modelInfoGuessed = inferModelFromName(modelRef);
       activeSpinner = null;
       modelInspectSpinner.stop(chalk.white(`[${chalk.green('✓')}] Model inspected:`));
     } catch (e: unknown) {
