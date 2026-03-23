@@ -164,7 +164,7 @@ const command = defineCommand({
         process.exit(1);
       }
       activeSpinner = null;
-      modelInspectSpinner.stop(chalk.white(`[${chalk.green('✓')}] Model inspected (guessed):`));
+      modelInspectSpinner.stop(chalk.white(`[${chalk.green('✓')}] Model inspected:`));
     } catch (e: unknown) {
       modelInspectSpinner.stop(chalk.white(`[${chalk.red('✖')}] Model not found.`));
       log.error(chalk.dim(e instanceof Error ? e.message : String(e)), {
@@ -184,7 +184,9 @@ const command = defineCommand({
     ];
     const maxKey = Math.max(...rows.map(([k]) => k.length));
     for (const [key, value] of rows) {
-      console.log(chalk.dim(` →  ${key.padEnd(maxKey)}  ${chalk.reset.cyan(value)}`));
+      console.log(
+        chalk.dim(` →  ${key.padEnd(maxKey)}  ${chalk.reset.cyan(value)} ${chalk.dim('(guessed)')}`)
+      );
     }
 
     // Resolve model (download or load from cache).
@@ -228,21 +230,6 @@ const command = defineCommand({
     // Re-inspect model now that cache is populated (reads real metadata).
     const modelInfo = await inspectModel(modelRef);
 
-    // Display model info.
-    const modelRows: [string, string][] = [
-      ['Model', modelInfo.display_name],
-      ...(modelInfo.parameters ? [['Parameters', modelInfo.parameters] as [string, string]] : []),
-      ['Format', modelInfo.format],
-      ...(modelInfo.quant ? [['Quant', modelInfo.quant] as [string, string]] : []),
-      ...(modelInfo.architecture
-        ? [['Architecture', modelInfo.architecture] as [string, string]]
-        : []),
-    ];
-    const maxModelKey = Math.max(...modelRows.map(([k]) => k.length));
-    for (const [key, value] of modelRows) {
-      console.log(chalk.dim(` →  ${key.padEnd(maxModelKey)}  ${chalk.reset.cyan(value)}`));
-    }
-
     // Run benchmark.
     let bench: BenchResult;
     let trialsStarted = false;
@@ -265,6 +252,23 @@ const command = defineCommand({
               ? `${chalk.cyan(modelInfo.display_name)} loaded from disk.`
               : `${chalk.cyan(modelInfo.display_name)} downloaded.`;
             resolveSpinner.stop(chalk.white(`[${chalk.green('✓')}] ${resolveLabel}`));
+
+            // Display model info.
+            const modelRows: [string, string][] = [
+              ...(modelInfo.parameters
+                ? [['Parameters', modelInfo.parameters] as [string, string]]
+                : []),
+              ['Format', modelInfo.format],
+              ...(modelInfo.quant ? [['Quant', modelInfo.quant] as [string, string]] : []),
+              ...(modelInfo.architecture
+                ? [['Architecture', modelInfo.architecture] as [string, string]]
+                : []),
+            ];
+            const maxModelKey = Math.max(...modelRows.map(([k]) => k.length));
+            for (const [key, value] of modelRows) {
+              console.log(chalk.dim(` →  ${key.padEnd(maxModelKey)}  ${chalk.reset.cyan(value)}`));
+            }
+
             benchSpinner.start();
             activeSpinner = benchSpinner;
           }
