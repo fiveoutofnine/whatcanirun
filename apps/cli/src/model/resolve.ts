@@ -5,6 +5,7 @@ import { homedir } from 'os';
 import { basename, extname, join, resolve } from 'path';
 
 import * as log from '../utils/log';
+import { readGgufMetadata } from './gguf';
 
 // -----------------------------------------------------------------------------
 // Types
@@ -38,6 +39,8 @@ const QUANT_PATTERNS = [
   /\b(q5_k_[sml])\b/i,
   /\b(q6_k)\b/i,
   /\b(q8_0)\b/i,
+  /\b(q8_k_xl)\b/i,
+  /\b(q8_k)\b/i,
   /\b(fp16)\b/i,
   /\b(fp32)\b/i,
   /\b(bf16)\b/i,
@@ -241,24 +244,87 @@ function sumShardSizes(dirPath: string): number {
     .reduce((sum, f) => sum + statSync(join(dirPath, f)).size, 0);
 }
 
-export async function inspectModel(modelRef: string): Promise<ModelInfo> {
+/**
+ * Extract quantization info from an MLX model's config.json.
+ * Reads top-level `bits` and `mode` from the `quantization` or
+ * `quantization_config` object, ignoring per-layer overrides.
+ */
+export function inferQuantFromMlxConfig(config: Record<string, unknown>): string | null {
+  const qConfig = (config.quantization ?? config.quantization_config) as
+    | Record<string, unknown>
+    | undefined;
+  if (!qConfig || typeof qConfig !== 'object') return null;
+
+  const bits = qConfig.bits as number | undefined;
+  const mode = qConfig.mode as string | undefined;
+  if (bits == null) return null;
+
+  // "affine" is the default MLX quant mode — not meaningful to display.
+  // Distinctive modes like "mxfp4" are used as the quant label.
+  if (mode && mode.toLowerCase() !== 'affine') return mode.toLowerCase();
+  return `${bits}bit`;
+}
+
+/**
+ * Read parameter count from `model.safetensors.index.json` metadata,
+ * falling back to `config.json` `num_parameters`.
+ */
+function readParameters(dirPath: string, config?: Record<string, unknown>): string | null {
+  // Try safetensors index first (most reliable).
+  try {
+    const indexPath = join(dirPath, 'model.safetensors.index.json');
+    if (existsSync(indexPath)) {
+      const index = JSON.parse(readFileSync(indexPath, 'utf-8'));
+      const totalParams = index?.metadata?.total_parameters;
+      if (typeof totalParams === 'number' && totalParams > 0) {
+        return formatParamCount(totalParams);
+      }
+    }
+  } catch {}
+
+  // Fall back to config.json num_parameters.
+  if (config) {
+    const n = config.num_parameters as number | undefined;
+    if (typeof n === 'number' && n > 0) return formatParamCount(n);
+  }
+
+  return null;
+}
+
+/**
+ * Cheap, name-only model info. No file I/O — safe to call before
+ * the model is downloaded or cached.
+ */
+export function inferModelFromName(modelRef: string): ModelInfo {
   const isHfRepo = isHuggingFaceRepoId(modelRef);
   const name = isHfRepo ? modelRef.split('/')[1]! : basename(modelRef);
 
-  let format: string;
-  let quant: string | null;
+  return {
+    display_name: name,
+    path: modelRef,
+    format: isHfRepo ? 'mlx' : inferFormat(resolve(modelRef)),
+    quant: inferQuant(isHfRepo ? modelRef : name),
+    artifact_sha256: '',
+    source: isHfRepo ? modelRef : undefined,
+  };
+}
+
+/**
+ * Full model inspection. Reads config.json, GGUF headers,
+ * safetensors metadata, and computes SHA256. Requires the model
+ * files to be present on disk (downloaded / cached).
+ */
+export async function inspectModel(modelRef: string): Promise<ModelInfo> {
+  const base = inferModelFromName(modelRef);
+  const isHfRepo = isHuggingFaceRepoId(modelRef);
+
+  let { quant } = base;
   let sha256 = '';
   let fileSizeBytes: number | undefined;
   let parameters: string | undefined;
   let architecture: string | undefined;
-  let source: string | undefined;
 
   if (isHfRepo) {
-    format = 'mlx';
-    quant = inferQuant(modelRef);
-    source = modelRef;
-
-    // Try to get metadata from HF cache.
     const cachePath = findHfCachePath(modelRef);
     if (cachePath) {
       sha256 = await computeDirSha256(cachePath);
@@ -268,10 +334,10 @@ export async function inspectModel(modelRef: string): Promise<ModelInfo> {
         const configPath = join(cachePath, 'config.json');
         if (existsSync(configPath)) {
           const config = JSON.parse(readFileSync(configPath, 'utf-8'));
-          architecture = config.model_type || config.architectures?.[0];
-          if (config.num_parameters) {
-            parameters = formatParamCount(config.num_parameters);
-          }
+          architecture =
+            config.model_type || config.architectures?.[0] || config.text_config?.model_type;
+          parameters = readParameters(cachePath, config) ?? undefined;
+          quant = inferQuantFromMlxConfig(config) ?? quant;
         }
       } catch (e: unknown) {
         log.warn(`Could not read model config: ${e instanceof Error ? e.message : String(e)}`);
@@ -279,8 +345,6 @@ export async function inspectModel(modelRef: string): Promise<ModelInfo> {
     }
   } else {
     const resolved = resolve(modelRef);
-    format = inferFormat(resolved);
-    quant = inferQuant(name);
 
     try {
       const stat = statSync(resolved);
@@ -295,31 +359,49 @@ export async function inspectModel(modelRef: string): Promise<ModelInfo> {
       log.warn(`Could not compute model hash/size: ${e instanceof Error ? e.message : String(e)}`);
     }
 
-    // Try to read architecture and parameters from `config.json`.
-    try {
-      const stat = statSync(resolved);
-      const configPath = stat.isDirectory()
-        ? resolve(resolved, 'config.json')
-        : resolve(resolved, '..', 'config.json');
-      if (existsSync(configPath)) {
-        const config = JSON.parse(readFileSync(configPath, 'utf-8'));
-        architecture = config.model_type || config.architectures?.[0];
-        if (config.num_parameters) {
-          parameters = formatParamCount(config.num_parameters);
+    // GGUF: read metadata from binary header.
+    if (base.format === 'gguf') {
+      try {
+        const meta = await readGgufMetadata(resolved);
+        if (meta) {
+          if (meta.architecture) architecture = meta.architecture;
+          if (meta.quant) quant = meta.quant;
+          if (meta.sizeLabel) parameters = meta.sizeLabel;
         }
+      } catch (e: unknown) {
+        log.warn(`Could not read GGUF metadata: ${e instanceof Error ? e.message : String(e)}`);
       }
-    } catch (e: unknown) {
-      log.warn(`Could not read model config: ${e instanceof Error ? e.message : String(e)}`);
+    }
+
+    // Try to read architecture and parameters from `config.json`.
+    if (!architecture || !parameters) {
+      try {
+        const stat = statSync(resolved);
+        const dirPath = stat.isDirectory() ? resolved : resolve(resolved, '..');
+        const configPath = join(dirPath, 'config.json');
+        if (existsSync(configPath)) {
+          const config = JSON.parse(readFileSync(configPath, 'utf-8'));
+          if (!architecture) {
+            architecture =
+              config.model_type || config.architectures?.[0] || config.text_config?.model_type;
+          }
+          if (!parameters) {
+            parameters = readParameters(dirPath, config) ?? undefined;
+          }
+          if (base.format === 'mlx') {
+            quant = inferQuantFromMlxConfig(config) ?? quant;
+          }
+        }
+      } catch (e: unknown) {
+        log.warn(`Could not read model config: ${e instanceof Error ? e.message : String(e)}`);
+      }
     }
   }
 
   return {
-    display_name: name,
-    path: modelRef,
-    format,
+    ...base,
     quant,
     artifact_sha256: sha256,
-    source,
     file_size_bytes: fileSizeBytes,
     parameters,
     architecture,
