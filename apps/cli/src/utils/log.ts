@@ -37,7 +37,15 @@ export class Spinner {
 
   constructor(text: string) {
     this.baseText = text;
-    this.oraSpinner = ora({ text, stream: process.stderr, spinner: 'dots' });
+    const dots = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
+    this.oraSpinner = ora({
+      text,
+      stream: process.stderr,
+      spinner: {
+        interval: 80,
+        frames: dots.map((f) => `${chalk.white('[')}${f}${chalk.white(']')}`),
+      },
+    });
   }
 
   start(): this {
