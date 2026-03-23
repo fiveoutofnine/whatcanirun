@@ -178,7 +178,7 @@ const command = defineCommand({
       const initialBlobSize = getHfCacheBlobSize(modelRef);
       getHfRepoSize(modelRef).then((expectedSize) => {
         if (!expectedSize || downloadDone) return;
-        resolveSpinner.setTotal(100);
+        resolveSpinner.setTotal(100, { percent: true });
         resolveSpinner.update(chalk.dim('Downloading model'));
         downloadPoll = setInterval(() => {
           const currentSize = getHfCacheBlobSize(modelRef);

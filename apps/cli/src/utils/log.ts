@@ -34,6 +34,7 @@ export class Spinner {
   private current = 0;
   private detail = '';
   private running = false;
+  private percent = false;
 
   constructor(text: string) {
     this.baseText = text;
@@ -63,9 +64,10 @@ export class Spinner {
     this.composeText();
   }
 
-  setTotal(total: number) {
+  setTotal(total: number, options?: { percent?: boolean }) {
     this.total = total;
     this.current = 0;
+    this.percent = options?.percent ?? false;
     // Start the progress bar animation interval
     if (!this.interval) {
       this.interval = setInterval(() => {
@@ -119,7 +121,9 @@ export class Spinner {
     const filled = Math.round((this.current / this.total) * width);
     const empty = width - filled;
     const bar = ` ${chalk.white('█'.repeat(filled))}${chalk.dim('░'.repeat(empty))}`;
-    const counter = ` ${chalk.white(String(this.current))}${chalk.dim('/' + this.total)}`;
+    const counter = this.percent
+      ? ` ${chalk.white(String(this.current))}${chalk.dim('/100%')}`
+      : ` ${chalk.white(String(this.current))}${chalk.dim('/' + this.total)}`;
 
     // Detail pulses with dynamic RGB (keep raw ANSI for per-frame values)
     const detail = this.detail ? `  ${pulseColor}${this.detail}\x1b[0m` : '';
