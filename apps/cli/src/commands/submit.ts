@@ -25,7 +25,7 @@ const command = defineCommand({
     const onSigint = () => {
       controller.abort();
       if (activeSpinner?.isRunning()) {
-        activeSpinner.stop(chalk.white(`[${chalk.gray('−')}] Interrupted.`));
+        activeSpinner.stop(chalk.white(`[${chalk.gray('−')}] ${chalk.yellow('Interrupted ⚠')}`));
       }
       console.log();
       process.exit(130);
