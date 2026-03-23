@@ -9,6 +9,7 @@ import {
   findHfCachePath,
   getHfCacheBlobSize,
   getHfRepoSize,
+  inferModelFromName,
   inspectModel,
   isHuggingFaceRepoId,
   resolveModel,
@@ -85,7 +86,7 @@ const command = defineCommand({
       controller.abort();
       downloadPollCleanup?.();
       if (activeSpinner?.isRunning()) {
-        activeSpinner.stop(chalk.white(`[${chalk.gray('−')}] Interrupted.`));
+        activeSpinner.stop(chalk.white(`[${chalk.gray('−')}] ${chalk.yellow('Interrupted ⚠')}`));
       }
       console.log();
       process.exit(130);
@@ -152,16 +153,10 @@ const command = defineCommand({
     const modelInspectSpinner = new log.Spinner(chalk.dim('Inspecting model…')).start();
     activeSpinner = modelInspectSpinner;
     let modelRef: string;
-    let modelInfo;
+    let modelInfoGuessed;
     try {
       modelRef = await resolveModel(args.model as string);
-      modelInfo = await inspectModel(modelRef);
-      if (!modelInfo.artifact_sha256 && !isHuggingFaceRepoId(modelRef)) {
-        modelInspectSpinner.stop(
-          chalk.white(`[${chalk.red('✖')}] Model "${chalk.cyan(modelRef)}" not found.`)
-        );
-        process.exit(1);
-      }
+      modelInfoGuessed = inferModelFromName(modelRef);
       activeSpinner = null;
       modelInspectSpinner.stop(chalk.white(`[${chalk.green('✓')}] Model inspected:`));
     } catch (e: unknown) {
@@ -174,14 +169,18 @@ const command = defineCommand({
 
     // Display config.
     const rows: [string, string][] = [
-      ['Model', modelInfo.display_name],
-      ...(modelInfo.parameters ? [['Parameters', modelInfo.parameters] as [string, string]] : []),
-      ['Format', modelInfo.format],
-      ...(modelInfo.quant ? [['Quant', modelInfo.quant] as [string, string]] : []),
+      ['Model', modelInfoGuessed.display_name],
+      ...(modelInfoGuessed.parameters
+        ? [['Parameters', modelInfoGuessed.parameters] as [string, string]]
+        : []),
+      ['Format', modelInfoGuessed.format],
+      ...(modelInfoGuessed.quant ? [['Quant', modelInfoGuessed.quant] as [string, string]] : []),
     ];
     const maxKey = Math.max(...rows.map(([k]) => k.length));
     for (const [key, value] of rows) {
-      console.log(chalk.dim(` →  ${key.padEnd(maxKey)}  ${chalk.reset.white(value)}`));
+      console.log(
+        chalk.dim(` →  ${key.padEnd(maxKey)}  ${chalk.reset.cyan(value)} ${chalk.dim('(guessed)')}`)
+      );
     }
 
     // Resolve model (download or load from cache).
@@ -222,6 +221,9 @@ const command = defineCommand({
     };
     downloadPollCleanup = stopDownloadPoll;
 
+    // Re-inspect model now that cache is populated (reads real metadata).
+    const modelInfo = await inspectModel(modelRef);
+
     // Run benchmark.
     let bench: BenchResult;
     let trialsStarted = false;
@@ -244,6 +246,23 @@ const command = defineCommand({
               ? `${chalk.cyan(modelInfo.display_name)} loaded from disk.`
               : `${chalk.cyan(modelInfo.display_name)} downloaded.`;
             resolveSpinner.stop(chalk.white(`[${chalk.green('✓')}] ${resolveLabel}`));
+
+            // Display model info.
+            const modelRows: [string, string][] = [
+              ...(modelInfo.parameters
+                ? [['Parameters', modelInfo.parameters] as [string, string]]
+                : []),
+              ['Format', modelInfo.format],
+              ...(modelInfo.quant ? [['Quant', modelInfo.quant] as [string, string]] : []),
+              ...(modelInfo.architecture
+                ? [['Architecture', modelInfo.architecture] as [string, string]]
+                : []),
+            ];
+            const maxModelKey = Math.max(...modelRows.map(([k]) => k.length));
+            for (const [key, value] of modelRows) {
+              console.log(chalk.dim(` →  ${key.padEnd(maxModelKey)}  ${chalk.reset.cyan(value)}`));
+            }
+
             benchSpinner.start();
             activeSpinner = benchSpinner;
           }
@@ -297,12 +316,6 @@ const command = defineCommand({
         prefix: chalk.dim.red(' ↳ '),
       });
       process.exit(1);
-    }
-
-    // Re-inspect model after benchmark so HF cache is populated on first run.
-    if (!modelInfo.artifact_sha256) {
-      const updated = await inspectModel(modelRef);
-      Object.assign(modelInfo, updated);
     }
 
     // Compute derived metrics.
