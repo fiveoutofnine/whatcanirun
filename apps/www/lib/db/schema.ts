@@ -122,9 +122,9 @@ export const devices = pgTable(
       .primaryKey()
       .$defaultFn(() => `dev_${crypto.randomUUID()}`),
     cpu: text('cpu').notNull(),
-    cpuCores: integer('cpu_cores').notNull().default(0),
+    cpuCores: integer('cpu_cores').notNull(),
     gpu: text('gpu').notNull(),
-    gpuCores: integer('gpu_cores').notNull().default(0),
+    gpuCores: integer('gpu_cores').notNull(),
     ramGb: integer('ram_gb').notNull(),
     osName: text('os_name').notNull(),
     osVersion: text('os_version').notNull(),
