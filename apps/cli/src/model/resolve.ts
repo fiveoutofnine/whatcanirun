@@ -275,7 +275,8 @@ function readParameters(dirPath: string, config?: Record<string, unknown>): stri
     const indexPath = join(dirPath, 'model.safetensors.index.json');
     if (existsSync(indexPath)) {
       const index = JSON.parse(readFileSync(indexPath, 'utf-8'));
-      const totalParams = index?.metadata?.total_parameters;
+      const raw = index?.metadata?.total_parameters;
+      const totalParams = typeof raw === 'string' ? Number(raw) : raw;
       if (typeof totalParams === 'number' && totalParams > 0) {
         return formatParamCount(totalParams);
       }
