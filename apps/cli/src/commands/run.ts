@@ -163,7 +163,7 @@ const command = defineCommand({
         process.exit(1);
       }
       activeSpinner = null;
-      modelInspectSpinner.stop(chalk.white(`[${chalk.green('✓')}] Model inspected:`));
+      modelInspectSpinner.stop(chalk.white(`[${chalk.green('✓')}] Model inspected (guessed):`));
     } catch (e: unknown) {
       modelInspectSpinner.stop(chalk.white(`[${chalk.red('✖')}] Model not found.`));
       log.error(chalk.dim(e instanceof Error ? e.message : String(e)), {
@@ -181,7 +181,7 @@ const command = defineCommand({
     ];
     const maxKey = Math.max(...rows.map(([k]) => k.length));
     for (const [key, value] of rows) {
-      console.log(chalk.dim(` →  ${key.padEnd(maxKey)}  ${chalk.reset.white(value)}`));
+      console.log(chalk.dim(` →  ${key.padEnd(maxKey)}  ${chalk.reset.cyan(value)}`));
     }
 
     // Resolve model (download or load from cache).

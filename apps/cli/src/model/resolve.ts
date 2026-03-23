@@ -40,11 +40,22 @@ const QUANT_PATTERNS = [
   /\b(q8_0)\b/i,
   /\b(fp16)\b/i,
   /\b(fp32)\b/i,
+  /\b(bf16)\b/i,
   /\b(f16)\b/i,
   /\b(f32)\b/i,
   /\b(awq)\b/i,
   /\b(gptq)\b/i,
   /\b(bnb)\b/i,
+  /\b(exl2)\b/i,
+  /\b(hqq)\b/i,
+  /\b(aqlm)\b/i,
+  // IQ (imatrix) GGUF quants (e.g. IQ2_XS, IQ3_XXS, IQ4_NL)
+  /\b(iq[1-4]_(?:xxs|xs|[sml]|nl))\b/i,
+  // MLX microscaling formats (e.g. MXFP4, MXFP4-Q8, MXINT8)
+  /\b(mx(?:fp|int)\d+[-_]q\d+)\b/i,
+  /\b(mx(?:fp|int)\d+)\b/i,
+  // Bare quant levels (e.g. Q4, Q8) — checked last as a fallback
+  /[-_](q\d+)\b/i,
 ];
 
 const MLX_BIT_PATTERNS = [/(\d+)[\s-]*bit/i];
