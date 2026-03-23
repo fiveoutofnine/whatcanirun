@@ -76,6 +76,10 @@ export class MlxAdapter implements RuntimeAdapter {
       env: { ...process.env, PYTHONUNBUFFERED: '1' },
     });
 
+    if (opts.signal) {
+      opts.signal.addEventListener('abort', () => proc.kill(), { once: true });
+    }
+
     // Poll process RSS for consistent memory measurement across runtimes.
     // mlx_lm reports `peak_memory` from mx.get_peak_memory() (framework-level),
     // but we use external RSS polling for cross-runtime parity with llama.cpp.

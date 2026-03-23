@@ -22,7 +22,10 @@ const API_BASE = process.env.WCIR_API_URL || 'https://whatcani.run';
 // Functions
 // -----------------------------------------------------------------------------
 
-export async function uploadBundle(bundlePath: string): Promise<UploadResult> {
+export async function uploadBundle(
+  bundlePath: string,
+  options?: { signal?: AbortSignal }
+): Promise<UploadResult> {
   // 1. Read the bundle zip and compute its SHA-256
   const zipBytes = readFileSync(bundlePath);
   const hashBuffer = await crypto.subtle.digest('SHA-256', zipBytes);
@@ -45,6 +48,7 @@ export async function uploadBundle(bundlePath: string): Promise<UploadResult> {
   const res = await fetch(`${API_BASE}/api/v0/runs`, {
     method: 'POST',
     body: form,
+    signal: options?.signal,
   });
 
   if (!res.ok) {

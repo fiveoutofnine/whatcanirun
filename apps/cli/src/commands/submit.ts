@@ -19,6 +19,19 @@ const command = defineCommand({
     },
   },
   async run({ args }) {
+    // Graceful Ctrl+C handling.
+    const controller = new AbortController();
+    let activeSpinner: log.Spinner | null = null;
+    const onSigint = () => {
+      controller.abort();
+      if (activeSpinner?.isRunning()) {
+        activeSpinner.stop(chalk.white(`[${chalk.gray('−')}] Interrupted.`));
+      }
+      console.log();
+      process.exit(130);
+    };
+    process.on('SIGINT', onSigint);
+
     let bundlePath;
     try {
       bundlePath = resolveBundlePath(args.bundle as string);
@@ -29,6 +42,7 @@ const command = defineCommand({
 
     // Validate bundle.
     const validationSpinner = new log.Spinner(chalk.dim('Validating bundle…')).start();
+    activeSpinner = validationSpinner;
     const validation = await validateBundle(bundlePath);
     if (!validation.valid) {
       validationSpinner.stop(
@@ -39,12 +53,14 @@ const command = defineCommand({
       }
       process.exit(1);
     }
+    activeSpinner = null;
     validationSpinner.stop(chalk.white(`[${chalk.green('✓')}] Bundle is valid.`));
 
     // Upload bundle.
     const uploadSpinner = new log.Spinner(chalk.dim('Uploading bundle…')).start();
+    activeSpinner = uploadSpinner;
     try {
-      const result = await uploadBundle(bundlePath);
+      const result = await uploadBundle(bundlePath, { signal: controller.signal });
       uploadSpinner.stop(
         chalk.white(`[${chalk.green('✓')}] Uploaded run: ${chalk.underline(result.run_url)}`)
       );
@@ -55,6 +71,8 @@ const command = defineCommand({
       });
       process.exit(1);
     }
+
+    process.off('SIGINT', onSigint);
   },
 });
 

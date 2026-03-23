@@ -31,6 +31,7 @@ export interface BenchOpts {
   promptTokens: number;
   genTokens: number;
   numTrials: number;
+  signal?: AbortSignal;
   onProgress?: (msg: string) => void;
 }
 

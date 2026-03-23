@@ -42,6 +42,7 @@ export class Spinner {
     this.oraSpinner = ora({
       text,
       stream: process.stderr,
+      discardStdin: false,
       spinner: {
         interval: 80,
         frames: dots.map((f) => `${chalk.white('[')}${f}${chalk.white(']')}`),

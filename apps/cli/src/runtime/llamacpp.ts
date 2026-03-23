@@ -125,6 +125,10 @@ export class LlamaCppAdapter implements RuntimeAdapter {
       stderr: 'pipe',
     });
 
+    if (opts.signal) {
+      opts.signal.addEventListener('abort', () => proc.kill(), { once: true });
+    }
+
     // Poll process memory to measure peak and idle usage (llama-bench doesn't report it).
     const memMonitor = monitorProcessMemory(proc.pid);
 

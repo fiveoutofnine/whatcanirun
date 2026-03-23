@@ -76,11 +76,29 @@ const command = defineCommand({
     const numTrials = parsePositiveInt((args.trials as string) || '10', 'trials');
     const outputDir = (args.output as string) || DEFAULT_BUNDLES_DIR;
 
+    // Graceful Ctrl+C handling.
+    const controller = new AbortController();
+    let activeSpinner: log.Spinner | null = null;
+    let downloadPollCleanup: (() => void) | null = null;
+
+    const onSigint = () => {
+      controller.abort();
+      downloadPollCleanup?.();
+      if (activeSpinner?.isRunning()) {
+        activeSpinner.stop(chalk.white(`[${chalk.gray('−')}] Interrupted.`));
+      }
+      console.log();
+      process.exit(130);
+    };
+    process.on('SIGINT', onSigint);
+
     // Detect device.
     const deviceSpinner = new log.Spinner(chalk.dim('Detecting device…')).start();
+    activeSpinner = deviceSpinner;
     let device;
     try {
       device = await detectDevice();
+      activeSpinner = null;
       deviceSpinner.stop(
         chalk.white(
           `[${chalk.green('✓')}] ${chalk.cyan(device.os_name)} (${chalk.cyan(device.os_version)}) detected.`
@@ -96,6 +114,7 @@ const command = defineCommand({
 
     // Resolve and detect runtime.
     const runtimeSpinner = new log.Spinner(chalk.dim('Detecting runtime…')).start();
+    activeSpinner = runtimeSpinner;
     let adapter;
     let runtimeInfo;
     try {
@@ -115,6 +134,7 @@ const command = defineCommand({
         if (hint) console.log(chalk.dim(` ↳ ${hint}`));
         process.exit(1);
       }
+      activeSpinner = null;
       runtimeSpinner.stop(
         chalk.white(
           `[${chalk.green('✓')}] ${chalk.cyan(runtimeInfo.name)} (${chalk.cyan(runtimeInfo.version)}) detected.`
@@ -130,6 +150,7 @@ const command = defineCommand({
 
     // Resolve and inspect model.
     const modelInspectSpinner = new log.Spinner(chalk.dim('Inspecting model…')).start();
+    activeSpinner = modelInspectSpinner;
     let modelRef: string;
     let modelInfo;
     try {
@@ -141,6 +162,7 @@ const command = defineCommand({
         );
         process.exit(1);
       }
+      activeSpinner = null;
       modelInspectSpinner.stop(chalk.white(`[${chalk.green('✓')}] Model inspected:`));
     } catch (e: unknown) {
       modelInspectSpinner.stop(chalk.white(`[${chalk.red('✖')}] Model not found.`));
@@ -169,6 +191,7 @@ const command = defineCommand({
       ? chalk.dim('Loading model from cache…')
       : chalk.dim('Downloading model…');
     const resolveSpinner = new Spinner(resolveMsg).start();
+    activeSpinner = resolveSpinner;
 
     // File system-based download progress tracking.
     let downloadPoll: ReturnType<typeof setInterval> | null = null;
@@ -197,6 +220,7 @@ const command = defineCommand({
       }
       downloadDone = true;
     };
+    downloadPollCleanup = stopDownloadPoll;
 
     // Run benchmark.
     let bench: BenchResult;
@@ -210,6 +234,7 @@ const command = defineCommand({
         promptTokens,
         genTokens,
         numTrials,
+        signal: controller.signal,
         onProgress: (msg) => {
           // Transition from resolve spinner to bench spinner on first
           // non-download message.
@@ -220,6 +245,7 @@ const command = defineCommand({
               : `${chalk.cyan(modelInfo.display_name)} downloaded.`;
             resolveSpinner.stop(chalk.white(`[${chalk.green('✓')}] ${resolveLabel}`));
             benchSpinner.start();
+            activeSpinner = benchSpinner;
           }
 
           const trialMatch = msg.match(/^Trial (\d+)\/(\d+)/);
@@ -253,6 +279,7 @@ const command = defineCommand({
         resolveSpinner.stop(chalk.white(`[${chalk.green('✓')}] ${resolveLabel}`));
       }
 
+      activeSpinner = null;
       benchSpinner.stop(
         chalk.white(
           `[${chalk.green('✓')}] ${bench.trials.length}/${numTrials} trial${numTrials > 1 ? 's' : ''} ran successfully:`
@@ -311,6 +338,7 @@ const command = defineCommand({
 
     // Validate bundle.
     const validationSpinner = new log.Spinner(chalk.dim('Validating bundle…')).start();
+    activeSpinner = validationSpinner;
     const validation = await validateBundle(bundlePath);
     if (!validation.valid) {
       validationSpinner.stop(
@@ -321,14 +349,16 @@ const command = defineCommand({
       }
       process.exit(1);
     }
+    activeSpinner = null;
     validationSpinner.stop(chalk.white(`[${chalk.green('✓')}] Bundle is valid.`));
     console.log(chalk.dim(` ↳ Saved to ${log.filepath(bundlePath)}.`));
 
     // Upload bundle.
     if (args.submit) {
       const uploadSpinner = new log.Spinner(chalk.dim('Uploading bundle…')).start();
+      activeSpinner = uploadSpinner;
       try {
-        const result = await uploadBundle(bundlePath);
+        const result = await uploadBundle(bundlePath, { signal: controller.signal });
         uploadSpinner.stop(
           chalk.white(`[${chalk.green('✓')}] Uploaded run: ${chalk.underline(result.run_url)}`)
         );
@@ -345,6 +375,8 @@ const command = defineCommand({
         );
       }
     }
+
+    process.off('SIGINT', onSigint);
   },
 });
 
