@@ -21,7 +21,6 @@ export function error(msg: string, options?: { prefix?: string }) {
   console.error(`${chalk.reset(options?.prefix ?? '')}${chalk.red('✖ error:')} ${msg}`);
 }
 
-
 // -----------------------------------------------------------------------------
 // Spinner
 // -----------------------------------------------------------------------------

@@ -122,13 +122,15 @@ export const devices = pgTable(
       .primaryKey()
       .$defaultFn(() => `dev_${crypto.randomUUID()}`),
     cpu: text('cpu').notNull(),
+    cpuCores: integer('cpu_cores').notNull().default(0),
     gpu: text('gpu').notNull(),
+    gpuCores: integer('gpu_cores').notNull().default(0),
     ramGb: integer('ram_gb').notNull(),
     osName: text('os_name').notNull(),
     osVersion: text('os_version').notNull(),
     createdAt: timestamp('created_at').notNull().defaultNow(),
   },
-  (t) => [uniqueIndex('devices_dedup_idx').on(t.cpu, t.gpu, t.ramGb, t.osName, t.osVersion)],
+  (t) => [uniqueIndex('devices_dedup_idx').on(t.cpu, t.cpuCores, t.gpu, t.gpuCores, t.ramGb, t.osName, t.osVersion)],
 );
 
 // -----------------------------------------------------------------------------

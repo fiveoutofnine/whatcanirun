@@ -60,7 +60,9 @@ export function validateManifest(manifest: unknown): string[] {
     errors.push('Missing or invalid `device` (expected object).');
   } else {
     requireString(m.device, 'cpu', '`device.`', errors);
+    requireNumber(m.device, 'cpu_cores', '`device.`', errors);
     requireString(m.device, 'gpu', '`device.`', errors);
+    requireNumber(m.device, 'gpu_cores', '`device.`', errors);
     requireNumber(m.device, 'ram_gb', '`device.`', errors);
     requireString(m.device, 'os_name', '`device.`', errors);
     requireString(m.device, 'os_version', '`device.`', errors);

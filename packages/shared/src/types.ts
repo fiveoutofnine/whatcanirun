@@ -12,7 +12,9 @@ export interface Manifest {
   };
   device: {
     cpu: string;
+    cpu_cores: number;
     gpu: string;
+    gpu_cores: number;
     ram_gb: number;
     os_name: string;
     os_version: string;

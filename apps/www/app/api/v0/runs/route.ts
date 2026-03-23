@@ -155,14 +155,18 @@ export async function POST(request: NextRequest) {
   // Upsert device.
   const dev = manifest.device;
   const devCpu = truncate(dev.cpu)!;
+  const devCpuCores = dev.cpu_cores ?? 0;
   const devGpu = truncate(dev.gpu)!;
+  const devGpuCores = dev.gpu_cores ?? 0;
   const devOsName = truncate(dev.os_name)!;
   const devOsVersion = truncate(dev.os_version)!;
   await db
     .insert(devices)
     .values({
       cpu: devCpu,
+      cpuCores: devCpuCores,
       gpu: devGpu,
+      gpuCores: devGpuCores,
       ramGb: dev.ram_gb,
       osName: devOsName,
       osVersion: devOsVersion,
@@ -175,7 +179,9 @@ export async function POST(request: NextRequest) {
     .where(
       and(
         eq(devices.cpu, devCpu),
+        eq(devices.cpuCores, devCpuCores),
         eq(devices.gpu, devGpu),
+        eq(devices.gpuCores, devGpuCores),
         eq(devices.ramGb, dev.ram_gb),
         eq(devices.osName, devOsName),
         eq(devices.osVersion, devOsVersion),
