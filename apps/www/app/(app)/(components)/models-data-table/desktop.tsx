@@ -5,12 +5,15 @@ import { useMemo } from 'react';
 import type { ModelsDataTableInternalProps } from '.';
 import type { ModelsDataTableValue } from './types';
 import { type ColumnDef, flexRender, useReactTable } from '@tanstack/react-table';
-import { ChevronRight, FileQuestionMark, FileText } from 'lucide-react';
+import { ChevronRight, FileText } from 'lucide-react';
 
-import LogoImg from '@/components/common/logo-img';
 import DataTableSortHeader from '@/components/templates/data-table-sort-header';
 import StateInfo from '@/components/templates/state-info';
-import { DeviceTableCell, ModelTableCell } from '@/components/templates/table-cells';
+import {
+  DeviceTableCell,
+  ModelTableCell,
+  RuntimeTableCell,
+} from '@/components/templates/table-cells';
 import { Button, Table } from '@/components/ui';
 
 const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOptions) => {
@@ -60,40 +63,7 @@ const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOpt
             Runtime
           </DataTableSortHeader>
         ),
-        cell: ({ row }) => (
-          <div className="flex items-center gap-1.5">
-            {row.original.runtimeName === 'llama.cpp' ? (
-              <a
-                className="focus-visible:rounded"
-                href="https://github.com/ggerganov/llama.cpp"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <LogoImg.Ggml
-                  className="border-gray-7 transition-colors hover:border-gray-8"
-                  size={16}
-                />
-              </a>
-            ) : row.original.runtimeName === 'mlx_lm' ? (
-              <a
-                className="focus-visible:rounded"
-                href="https://github.com/ml-explore/mlx-lm"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <LogoImg.Mlx
-                  className="border-gray-7 transition-colors hover:border-gray-8"
-                  size={16}
-                />
-              </a>
-            ) : (
-              <span className="flex size-4 items-center justify-center rounded border border-gray-6 bg-gray-5 text-gray-11">
-                <FileQuestionMark className="size-2.5" />
-              </span>
-            )}
-            <span className="line-clamp-1 leading-4">{row.original.runtimeName}</span>
-          </div>
-        ),
+        cell: ({ row }) => <RuntimeTableCell runtimeName={row.original.runtimeName} />,
       },
       {
         id: 'decode',
@@ -257,12 +227,8 @@ const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOpt
               <Table.Row key={row.id}>
                 {[
                   <ModelTableCell.Skeleton key={0} />,
-                  /* TODO: replace */
                   <DeviceTableCell.Skeleton key={1} />,
-                  <div key={2} className="flex items-center gap-1.5">
-                    <div className="size-4 animate-pulse rounded bg-gray-9" />
-                    <div className="h-[1.125rem] w-16 animate-pulse rounded bg-gray-9" />
-                  </div>,
+                  <RuntimeTableCell.Skeleton key={2} />,
                   <div
                     key={3}
                     className="ml-auto h-[1.125rem] w-20 animate-pulse rounded bg-gray-9"

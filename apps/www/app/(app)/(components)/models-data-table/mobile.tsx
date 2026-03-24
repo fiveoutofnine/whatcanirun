@@ -11,7 +11,7 @@ import { ChevronRight, FileText } from 'lucide-react';
 import DataTableSortHeader from '@/components/templates/data-table-sort-header';
 import Stat from '@/components/templates/stat';
 import StateInfo from '@/components/templates/state-info';
-import { ModelTableCell } from '@/components/templates/table-cells';
+import { ModelTableCell, RuntimeTableCell } from '@/components/templates/table-cells';
 import { Button, IconButton, Table, Tooltip } from '@/components/ui';
 
 const ModelsDataTableMobile: React.FC<ModelsDataTableInternalProps> = (tableOptions) => {
@@ -204,7 +204,7 @@ const ModelsDataTableMobileSubComponent: React.FC<{ data: ModelsDataTableValue }
       </Stat>
       <Stat className="col-span-1">
         <Stat.Name>Runtime</Stat.Name>
-        <Stat.Value>{data.runtimeName}</Stat.Value>
+        <RuntimeTableCell runtimeName={data.runtimeName} />
       </Stat>
       <Stat className="col-span-1">
         <Stat.Name>Prefill</Stat.Name>
