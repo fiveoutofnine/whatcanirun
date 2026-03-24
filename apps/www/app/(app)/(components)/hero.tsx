@@ -13,7 +13,7 @@ const Hero: React.FC = () => {
       </h1>
       <div className="flex gap-2">
         <Button variant="outline" href="/docs">
-          bunx whatcanirun@latest
+          Submit run
         </Button>
         <Button variant="ghost" href="/docs">
           Docs
