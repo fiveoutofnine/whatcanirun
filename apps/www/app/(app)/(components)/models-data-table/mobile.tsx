@@ -8,7 +8,10 @@ import { type ColumnDef, flexRender, useReactTable } from '@tanstack/react-table
 import clsx from 'clsx';
 import { ChevronRight, FileText } from 'lucide-react';
 
+import DataTableSortHeader from '@/components/templates/data-table-sort-header';
+import Stat from '@/components/templates/stat';
 import StateInfo from '@/components/templates/state-info';
+import { ModelTableCell } from '@/components/templates/table-cells';
 import { Button, IconButton, Table, Tooltip } from '@/components/ui';
 
 const ModelsDataTableMobile: React.FC<ModelsDataTableInternalProps> = (tableOptions) => {
@@ -17,23 +20,40 @@ const ModelsDataTableMobile: React.FC<ModelsDataTableInternalProps> = (tableOpti
       {
         id: 'model',
         accessorKey: 'modelDisplayName',
-        header: () => 'Model',
+        header: ({ column }) => (
+          <DataTableSortHeader column={column} lowLabel="A" highLabel="Z">
+            Model
+          </DataTableSortHeader>
+        ),
         cell: ({ row }) => (
-          <div className="flex flex-col">
-            <span className="line-clamp-1 font-medium">{row.original.modelDisplayName}</span>
-            <span className="text-xs text-gray-11">
-              {row.original.modelQuant} · {row.original.runtimeName}
-            </span>
-          </div>
+          <ModelTableCell
+            displayName={row.original.modelDisplayName}
+            quant={row.original.modelQuant}
+            parameters={row.original.modelParameters}
+            architecture={row.original.modelArchitecture}
+          />
         ),
       },
       {
         id: 'decode',
         accessorKey: 'avgDecodeTps',
-        header: () => <div className="text-right">Decode (tok/s)</div>,
+        header: ({ column }) => (
+          <DataTableSortHeader
+            className="ml-auto w-fit"
+            column={column}
+            lowLabel="Slow"
+            highLabel="Fast"
+          >
+            Decode
+          </DataTableSortHeader>
+        ),
         cell: ({ row }) => (
-          <div className="text-right tabular-nums">
-            {Number(row.original.avgDecodeTps).toFixed(1)}
+          <div className="min-w-fit text-nowrap text-right tabular-nums">
+            {Number(row.original.avgDecodeTps).toLocaleString(undefined, {
+              minimumFractionDigits: 1,
+              maximumFractionDigits: 1,
+            })}{' '}
+            <span className="text-gray-11">tok/s</span>
           </div>
         ),
       },
@@ -117,7 +137,12 @@ const ModelsDataTableMobile: React.FC<ModelsDataTableInternalProps> = (tableOpti
             ) : (
               <Table.Row key={row.id}>
                 {[
-                  <div key={0} className="ml-auto w-8">
+                  <ModelTableCell.Skeleton key={0} />,
+                  <div
+                    key={1}
+                    className="ml-auto h-[1.125rem] w-20 animate-pulse rounded bg-gray-9"
+                  />,
+                  <div key={2} className="ml-auto w-8">
                     <IconButton variant="outline" disabled>
                       <ChevronRight />
                     </IconButton>
@@ -161,22 +186,74 @@ const ModelsDataTableMobile: React.FC<ModelsDataTableInternalProps> = (tableOpti
 const ModelsDataTableMobileSubComponent: React.FC<{ data: ModelsDataTableValue }> = ({ data }) => {
   return (
     <div className="grid grid-cols-2 gap-2 p-1">
-      {[
-        { label: 'Device', value: data.deviceCpu ?? data.deviceGpu },
-        { label: 'OS / RAM', value: `${data.deviceOsName} · ${data.deviceRamGb} GB` },
-        { label: 'Format', value: data.modelFormat },
-        { label: 'Params', value: data.modelParameters },
-        { label: 'Prefill (tok/s)', value: Number(data.avgPrefillTps).toFixed(1) },
-        { label: 'TTFT p50 (ms)', value: Number(data.ttftP50Ms).toFixed(0) },
-        { label: 'TTFT p95 (ms)', value: Number(data.ttftP95Ms).toFixed(0) },
-        { label: 'Peak RSS (MB)', value: Number(data.avgPeakRssMb).toFixed(0) },
-        { label: 'Runs', value: data.runCount },
-      ].map(({ label, value }) => (
-        <div key={label} className="flex flex-col items-start gap-0.5">
-          <span className="text-xs leading-4 text-gray-11">{label}</span>
-          <span className="text-sm tabular-nums leading-[1.125rem]">{value}</span>
-        </div>
-      ))}
+      <Stat className="col-span-2">
+        <Stat.Name>Device</Stat.Name>
+        <Stat.Value>{data.deviceCpu ?? data.deviceGpu}</Stat.Value>
+      </Stat>
+      <Stat className="col-span-1">
+        <Stat.Name>CPU/GPU cores</Stat.Name>
+        <Stat.Value className="tabular-nums">
+          {data.deviceCpuCores}
+          <span className="text-gray-11"> / </span>
+          {data.deviceGpuCores}
+        </Stat.Value>
+      </Stat>
+      <Stat className="col-span-1">
+        <Stat.Name>RAM</Stat.Name>
+        <Stat.Value className="tabular-nums">{data.deviceRamGb} GB</Stat.Value>
+      </Stat>
+      <Stat className="col-span-1">
+        <Stat.Name>Runtime</Stat.Name>
+        <Stat.Value>{data.runtimeName}</Stat.Value>
+      </Stat>
+      <Stat className="col-span-1">
+        <Stat.Name>Prefill</Stat.Name>
+        <Stat.Value className="tabular-nums">
+          {Number(data.avgPrefillTps).toLocaleString(undefined, {
+            minimumFractionDigits: 1,
+            maximumFractionDigits: 1,
+          })}{' '}
+          <span className="text-gray-11">tok/s</span>
+        </Stat.Value>
+      </Stat>
+      <Stat className="col-span-1">
+        <Stat.Name>TTFT</Stat.Name>
+        {data.ttftP50Ms < 4_000 ? (
+          <Stat.Value className="tabular-nums">
+            {Number(data.ttftP50Ms).toLocaleString(undefined, {
+              minimumFractionDigits: 1,
+              maximumFractionDigits: 1,
+            })}{' '}
+            <span className="text-gray-11">ms</span>
+          </Stat.Value>
+        ) : (
+          <Stat.Value className="tabular-nums">
+            {Number(data.ttftP50Ms / 1_000).toLocaleString(undefined, {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}{' '}
+            <span className="text-gray-11">sec</span>
+          </Stat.Value>
+        )}
+      </Stat>
+      <Stat className="col-span-1">
+        <Stat.Name>Peak memory</Stat.Name>
+        <Stat.Value className="tabular-nums">
+          {Number(data.avgPeakRssMb / 1024).toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}{' '}
+          <span className="text-gray-11">GB</span>
+        </Stat.Value>
+      </Stat>
+      <Stat className="col-span-1">
+        <Stat.Name>Trials</Stat.Name>
+        <Stat.Value className="tabular-nums">{Number(data.trialCount).toLocaleString()}</Stat.Value>
+      </Stat>
+      <Stat className="col-span-1">
+        <Stat.Name>Runs</Stat.Name>
+        <Stat.Value className="tabular-nums">{Number(data.runCount).toLocaleString()}</Stat.Value>
+      </Stat>
     </div>
   );
 };

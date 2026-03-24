@@ -79,7 +79,7 @@ const DeviceTableCell: React.FC<DeviceTableCellProps> & { Skeleton: React.FC } =
 const DeviceTableCellSkeleton: React.FC = () => {
   return (
     <div className="flex flex-col items-start gap-0.5">
-      <span className="h-[1.125rem] w-28 animate-pulse rounded bg-gray-9" />
+      <span className="h-5 w-28 animate-pulse rounded bg-gray-9" />
       <div className="mt-0 flex h-4 gap-2">
         {[
           { icon: <Cpu />, className: 'w-3' },
