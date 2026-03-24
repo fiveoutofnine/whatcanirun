@@ -2,7 +2,7 @@
 
 import ModelsDataTableDesktop from './desktop';
 import ModelsDataTableMobile from './mobile';
-import type { ModelsDataTableQueryParams, ModelStats } from './types';
+import type { ModelsDataTableQueryParams, ModelsDataTableValue } from './types';
 import {
   getCoreRowModel,
   getExpandedRowModel,
@@ -20,12 +20,12 @@ import DataTablePagination from '@/components/templates/data-table-pagination';
 // -----------------------------------------------------------------------------
 
 export type ModelsDataTableProps = {
-  data: ModelStats[];
+  data: ModelsDataTableValue[];
   total: number;
   queryParams: ModelsDataTableQueryParams;
 };
 
-export type ModelsDataTableInternalProps = Omit<TableOptions<ModelStats>, 'columns'> & {
+export type ModelsDataTableInternalProps = Omit<TableOptions<ModelsDataTableValue>, 'columns'> & {
   total: number;
   isLoading: boolean;
 };

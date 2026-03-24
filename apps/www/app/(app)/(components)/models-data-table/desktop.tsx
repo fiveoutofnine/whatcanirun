@@ -3,7 +3,7 @@
 import { useMemo } from 'react';
 
 import type { ModelsDataTableInternalProps } from '.';
-import type { ModelStats } from './types';
+import type { ModelsDataTableValue } from './types';
 import { type ColumnDef, flexRender, useReactTable } from '@tanstack/react-table';
 import { ChevronRight, FileText } from 'lucide-react';
 
@@ -11,7 +11,7 @@ import StateInfo from '@/components/templates/state-info';
 import { Button, Table } from '@/components/ui';
 
 const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOptions) => {
-  const columns: ColumnDef<ModelStats>[] = useMemo(
+  const columns: ColumnDef<ModelsDataTableValue>[] = useMemo(
     () => [
       {
         id: 'model',

@@ -3,7 +3,7 @@
 import { Fragment, useMemo } from 'react';
 
 import type { ModelsDataTableInternalProps } from '.';
-import type { ModelStats } from './types';
+import type { ModelsDataTableValue } from './types';
 import { type ColumnDef, flexRender, useReactTable } from '@tanstack/react-table';
 import clsx from 'clsx';
 import { ChevronRight, FileText } from 'lucide-react';
@@ -12,7 +12,7 @@ import StateInfo from '@/components/templates/state-info';
 import { Button, IconButton, Table, Tooltip } from '@/components/ui';
 
 const ModelsDataTableMobile: React.FC<ModelsDataTableInternalProps> = (tableOptions) => {
-  const columns: ColumnDef<ModelStats>[] = useMemo(
+  const columns: ColumnDef<ModelsDataTableValue>[] = useMemo(
     () => [
       {
         id: 'model',
@@ -158,7 +158,7 @@ const ModelsDataTableMobile: React.FC<ModelsDataTableInternalProps> = (tableOpti
   );
 };
 
-const ModelsDataTableMobileSubComponent: React.FC<{ data: ModelStats }> = ({ data }) => {
+const ModelsDataTableMobileSubComponent: React.FC<{ data: ModelsDataTableValue }> = ({ data }) => {
   return (
     <div className="grid grid-cols-2 gap-2 p-1">
       {[
