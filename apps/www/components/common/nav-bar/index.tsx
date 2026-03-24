@@ -25,7 +25,12 @@ type NavBarFallbackProps = {
 // -----------------------------------------------------------------------------
 
 const NavBar: React.FC & { Fallback: React.FC<NavBarFallbackProps> } = async () => {
-  const user = (await auth.api.getSession({ headers: await headers() }))?.user;
+  let user: Session['user'] | undefined;
+  try {
+    user = (await auth.api.getSession({ headers: await headers() }))?.user;
+  } catch {
+    // Render as logged out in case of failed database connection.
+  }
 
   return (
     <Fragment>
