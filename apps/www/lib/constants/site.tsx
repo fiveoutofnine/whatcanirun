@@ -9,7 +9,7 @@ import LogoIcon from '@/components/common/logo-icon';
  */
 export const NAVBAR_PAGES: Page[] = [
   { name: 'Home', slug: '/', icon: <Home /> },
-  { name: 'About', slug: '/about', icon: <FileText /> },
+  { name: 'Docs', slug: '/docs', icon: <FileText /> },
 ];
 
 /**

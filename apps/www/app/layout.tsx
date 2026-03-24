@@ -53,7 +53,7 @@ export const metadata: Metadata = {
     description,
     images: [],
     url: 'https://whatcani.run',
-    siteName: 'What Can I Run?',
+    siteName: 'whatcani.run',
     locale: 'en_US',
     type: 'website',
   },
