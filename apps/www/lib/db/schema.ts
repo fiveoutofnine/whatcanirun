@@ -130,7 +130,17 @@ export const devices = pgTable(
     osVersion: text('os_version').notNull(),
     createdAt: timestamp('created_at').notNull().defaultNow(),
   },
-  (t) => [uniqueIndex('devices_dedup_idx').on(t.cpu, t.cpuCores, t.gpu, t.gpuCores, t.ramGb, t.osName, t.osVersion)],
+  (t) => [
+    uniqueIndex('devices_dedup_idx').on(
+      t.cpu,
+      t.cpuCores,
+      t.gpu,
+      t.gpuCores,
+      t.ramGb,
+      t.osName,
+      t.osVersion,
+    ),
+  ],
 );
 
 // -----------------------------------------------------------------------------
