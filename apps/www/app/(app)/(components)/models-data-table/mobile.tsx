@@ -204,7 +204,10 @@ const ModelsDataTableMobileSubComponent: React.FC<{ data: ModelsDataTableValue }
       </Stat>
       <Stat className="col-span-1">
         <Stat.Name>Runtime</Stat.Name>
-        <RuntimeTableCell runtimeName={data.runtimeName} />
+        <RuntimeTableCell
+          className="[&_[runtime-table-cell-icon]]:order-last"
+          runtimeName={data.runtimeName}
+        />
       </Stat>
       <Stat className="col-span-1">
         <Stat.Name>Prefill</Stat.Name>
