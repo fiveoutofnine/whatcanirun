@@ -88,17 +88,17 @@ const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOpt
               {[
                 {
                   icon: <Cpu />,
-                  value: `${row.original.deviceCpuCores}`,
+                  value: Number(row.original.deviceCpuCores).toLocaleString(),
                   content: 'CPU cores',
                 },
                 {
                   icon: <Gpu />,
-                  value: `${row.original.deviceGpuCores}`,
+                  value: Number(row.original.deviceGpuCores).toLocaleString(),
                   content: 'GPU cores',
                 },
                 {
                   icon: <MemoryStick />,
-                  value: `${row.original.deviceRamGb} GB`,
+                  value: `${Number(row.original.deviceRamGb).toLocaleString()} GB`,
                   content: 'RAM',
                 },
               ].map(({ icon, value, content }, index) => {
@@ -148,7 +148,11 @@ const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOpt
         ),
         cell: ({ row }) => (
           <div className="text-right tabular-nums">
-            {Number(row.original.avgDecodeTps).toFixed(1)} <span className="text-gray-11">tps</span>
+            {Number(row.original.avgDecodeTps).toLocaleString(undefined, {
+              minimumFractionDigits: 1,
+              maximumFractionDigits: 1,
+            })}{' '}
+            <span className="text-gray-11">tps</span>
           </div>
         ),
       },
@@ -162,7 +166,10 @@ const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOpt
         ),
         cell: ({ row }) => (
           <div className="text-right tabular-nums">
-            {Number(row.original.avgPrefillTps).toFixed(1)}{' '}
+            {Number(row.original.avgPrefillTps).toLocaleString(undefined, {
+              minimumFractionDigits: 1,
+              maximumFractionDigits: 1,
+            })}{' '}
             <span className="text-gray-11">tps</span>
           </div>
         ),
@@ -173,7 +180,8 @@ const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOpt
         header: () => <div className="text-right">TTFT</div>,
         cell: ({ row }) => (
           <div className="text-right tabular-nums">
-            {Number(row.original.ttftP50Ms).toFixed(0)} <span className="text-gray-11">ms</span>
+            {Number(row.original.ttftP50Ms).toLocaleString(undefined, { maximumFractionDigits: 0 })}{' '}
+            <span className="text-gray-11">ms</span>
           </div>
         ),
       },
@@ -183,7 +191,9 @@ const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOpt
         header: () => <div className="text-right">Memory</div>,
         cell: ({ row }) => (
           <div className="text-right tabular-nums">
-            {Number(row.original.avgPeakRssMb).toFixed(0)}
+            {Number(row.original.avgPeakRssMb).toLocaleString(undefined, {
+              maximumFractionDigits: 0,
+            })}
           </div>
         ),
       },
@@ -191,7 +201,11 @@ const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOpt
         id: 'trials',
         accessorKey: 'trials',
         header: () => <div className="text-right">Trials</div>,
-        cell: ({ row }) => <div className="text-right tabular-nums">{row.original.trialCount}</div>,
+        cell: ({ row }) => (
+          <div className="text-right tabular-nums">
+            {Number(row.original.trialCount).toLocaleString()}
+          </div>
+        ),
       },
     ],
     [],
