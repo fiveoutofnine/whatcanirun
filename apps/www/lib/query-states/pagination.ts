@@ -6,7 +6,7 @@ import { createParser } from 'nuqs/server';
 // Constants
 // -----------------------------------------------------------------------------
 
-const MAX_PAGE_SIZE = 10;
+const MAX_PAGE_SIZE = 25;
 const MIN_PAGE_SIZE = 1;
 
 // -----------------------------------------------------------------------------
@@ -33,7 +33,7 @@ export const createPaginationParser = (totalRows: number) =>
       return `${value.pageIndex},${value.pageSize}`;
     },
   })
-    .withDefault({ pageIndex: 0, pageSize: 10 })
+    .withDefault({ pageIndex: 0, pageSize: 25 })
     .withOptions({ shallow: false });
 
 // -----------------------------------------------------------------------------
