@@ -352,20 +352,40 @@ const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOpt
             ) : (
               <Table.Row key={row.id}>
                 {[
+                  /* TODO: replace */
                   <div
                     key={0}
                     className="ml-auto h-[1.125rem] w-12 animate-pulse rounded bg-gray-9"
                   />,
+                  /* TODO: replace */
                   <div
                     key={1}
                     className="ml-auto h-[1.125rem] w-14 animate-pulse rounded bg-gray-9"
                   />,
+                  <div key={2} className="flex items-center gap-1.5">
+                    <div className="size-4 animate-pulse rounded bg-gray-9" />
+                    <div className="h-[1.125rem] w-16 animate-pulse rounded bg-gray-9" />
+                  </div>,
                   <div
                     key={3}
-                    className="ml-auto h-[1.125rem] w-14 animate-pulse rounded bg-gray-9"
+                    className="ml-auto h-[1.125rem] w-20 animate-pulse rounded bg-gray-9"
                   />,
-                  <div key={4} className="ml-auto h-5 w-24 animate-pulse rounded bg-gray-9" />,
-                  <div key={5} className="ml-auto h-5 w-24 animate-pulse rounded bg-gray-9" />,
+                  <div
+                    key={4}
+                    className="ml-auto h-[1.125rem] w-24 animate-pulse rounded bg-gray-9"
+                  />,
+                  <div
+                    key={5}
+                    className="w-18 ml-auto h-[1.125rem] animate-pulse rounded bg-gray-9"
+                  />,
+                  <div
+                    key={6}
+                    className="ml-auto h-[1.125rem] w-16 animate-pulse rounded bg-gray-9"
+                  />,
+                  <div key={7} className="flex flex-col items-end gap-0.5">
+                    <div className="h-[1.125rem] w-5 animate-pulse rounded bg-gray-9" />
+                    <div className="h-4 w-8 animate-pulse rounded bg-gray-9" />
+                  </div>,
                 ].map((skeleton, i) => (
                   <Table.Cell key={i} className="first:pl-4 last:pr-4 md:first:pl-6 md:last:pr-6">
                     {skeleton}

@@ -56,7 +56,7 @@ const NavBarDesktop: React.FC<NavBarInternalProps> = ({ user, loading = false })
         })}
         <div className="flex-grow" aria-hidden={true} />
         {loading ? (
-          <div className="size-8 animate-bg-pulse rounded-full border border-gray-6 bg-gray-9" />
+          <div className="size-8 animate-pulse rounded-full border border-gray-6 bg-gray-9" />
         ) : user ? (
           <UserDropdown user={user} />
         ) : (

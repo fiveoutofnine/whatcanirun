@@ -40,7 +40,7 @@ const NavBarMobile: React.FC<NavBarInternalProps> = ({ user, loading = false }) 
           asChild={!user}
         >
           {loading ? (
-            <div className="size-8 animate-bg-pulse rounded-full border border-gray-6 bg-gray-5" />
+            <div className="size-8 animate-pulse rounded-full border border-gray-6 bg-gray-5" />
           ) : user ? (
             <UserAvatar className="border-0" image={user.image} name={user.name} size={32} />
           ) : (
