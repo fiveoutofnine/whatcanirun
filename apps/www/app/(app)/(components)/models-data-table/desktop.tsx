@@ -1,12 +1,15 @@
 'use client';
 
-import { useMemo } from 'react';
+import { Fragment, useMemo } from 'react';
 
 import type { ModelsDataTableInternalProps } from '.';
 import type { ModelsDataTableValue } from './types';
 import { type ColumnDef, flexRender, useReactTable } from '@tanstack/react-table';
-import { ChevronRight, FileText } from 'lucide-react';
+import clsx from 'clsx';
+import { ChevronRight, Cpu, FileText, Gpu, HardDrive, Layers, MemoryStick } from 'lucide-react';
 
+import ClickableTooltip from '@/components/templates/clickable-tooltip';
+import DataTableSortHeader from '@/components/templates/data-table-sort-header';
 import StateInfo from '@/components/templates/state-info';
 import { Button, Table } from '@/components/ui';
 
@@ -16,25 +19,62 @@ const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOpt
       {
         id: 'model',
         accessorKey: 'modelDisplayName',
-        header: () => 'Model',
-        cell: ({ row }) => <span className="font-medium">{row.original.modelDisplayName}</span>,
-      },
-      {
-        id: 'format',
-        accessorKey: 'modelFormat',
-        header: () => 'Format',
-      },
-      {
-        id: 'quant',
-        accessorKey: 'modelQuant',
-        header: () => 'Quant',
-      },
-      {
-        id: 'params',
-        accessorKey: 'modelParameters',
-        header: () => <div className="text-right">Params</div>,
+        header: ({ column }) => (
+          <DataTableSortHeader className="w-fit" column={column}>
+            Model
+          </DataTableSortHeader>
+        ),
         cell: ({ row }) => (
-          <div className="text-right tabular-nums">{row.original.modelParameters}</div>
+          <div className="flex flex-col items-start">
+            <span className="line-clamp-1 leading-5">{row.original.modelDisplayName}</span>
+            <div className="mt-0 flex h-4 gap-2">
+              {[
+                {
+                  icon: <Layers />,
+                  value: row.original.modelQuant,
+                  content: 'Quantization',
+                },
+                {
+                  icon: <HardDrive />,
+                  value: row.original.modelParameters,
+                  content: 'Parameters',
+                },
+
+                {
+                  icon: <Cpu />,
+                  value: row.original.modelArchitecture,
+                  content: 'Architecture',
+                },
+              ].map(({ icon, value, content }, index) => {
+                if (!value) return null;
+
+                const Children = (
+                  <div
+                    className={clsx(
+                      'flex w-fit items-center gap-1 whitespace-nowrap text-xs leading-4 text-gray-11',
+                      content
+                        ? 'underline decoration-dotted transition-colors hover:text-gray-12'
+                        : '',
+                    )}
+                    key={index}
+                  >
+                    <span className="flex size-3 items-center justify-center">{icon}</span>
+                    <span>{value}</span>
+                  </div>
+                );
+
+                if (content) {
+                  return (
+                    <ClickableTooltip key={index} content={content}>
+                      {Children}
+                    </ClickableTooltip>
+                  );
+                }
+
+                return <Fragment key={index}>{Children}</Fragment>;
+              })}
+            </div>
+          </div>
         ),
       },
       {
@@ -44,9 +84,52 @@ const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOpt
         cell: ({ row }) => (
           <div className="flex flex-col">
             <span className="line-clamp-1">{row.original.deviceCpu ?? row.original.deviceGpu}</span>
-            <span className="text-xs text-gray-11">
-              {row.original.deviceOsName} · {row.original.deviceRamGb} GB
-            </span>
+            <div className="mt-0 flex h-4 gap-2">
+              {[
+                {
+                  icon: <Cpu />,
+                  value: `${row.original.deviceCpuCores}`,
+                  content: 'CPU cores',
+                },
+                {
+                  icon: <Gpu />,
+                  value: `${row.original.deviceGpuCores}`,
+                  content: 'GPU cores',
+                },
+                {
+                  icon: <MemoryStick />,
+                  value: `${row.original.deviceRamGb} GB`,
+                  content: 'RAM',
+                },
+              ].map(({ icon, value, content }, index) => {
+                if (!value) return null;
+
+                const Children = (
+                  <div
+                    className={clsx(
+                      'flex w-fit items-center gap-1 whitespace-nowrap text-xs leading-4 text-gray-11',
+                      content
+                        ? 'underline decoration-dotted transition-colors hover:text-gray-12'
+                        : '',
+                    )}
+                    key={index}
+                  >
+                    <span className="flex size-3 items-center justify-center">{icon}</span>
+                    <span>{value}</span>
+                  </div>
+                );
+
+                if (content) {
+                  return (
+                    <ClickableTooltip key={index} content={content}>
+                      {Children}
+                    </ClickableTooltip>
+                  );
+                }
+
+                return <Fragment key={index}>{Children}</Fragment>;
+              })}
+            </div>
           </div>
         ),
       },
@@ -58,43 +141,46 @@ const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOpt
       {
         id: 'decode',
         accessorKey: 'avgDecodeTps',
-        header: () => <div className="text-right">Decode (tok/s)</div>,
+        header: ({ column }) => (
+          <DataTableSortHeader className="ml-auto w-fit" column={column}>
+            Decode
+          </DataTableSortHeader>
+        ),
         cell: ({ row }) => (
           <div className="text-right tabular-nums">
-            {Number(row.original.avgDecodeTps).toFixed(1)}
+            {Number(row.original.avgDecodeTps).toFixed(1)} <span className="text-gray-11">tps</span>
           </div>
         ),
       },
       {
         id: 'prefill',
         accessorKey: 'avgPrefillTps',
-        header: () => <div className="text-right">Prefill (tok/s)</div>,
+        header: ({ column }) => (
+          <DataTableSortHeader className="ml-auto w-fit" column={column}>
+            Prefill
+          </DataTableSortHeader>
+        ),
         cell: ({ row }) => (
           <div className="text-right tabular-nums">
-            {Number(row.original.avgPrefillTps).toFixed(1)}
+            {Number(row.original.avgPrefillTps).toFixed(1)}{' '}
+            <span className="text-gray-11">tps</span>
           </div>
         ),
       },
       {
         id: 'ttft_p50',
         accessorKey: 'ttftP50Ms',
-        header: () => <div className="text-right">TTFT p50 (ms)</div>,
+        header: () => <div className="text-right">TTFT</div>,
         cell: ({ row }) => (
-          <div className="text-right tabular-nums">{Number(row.original.ttftP50Ms).toFixed(0)}</div>
-        ),
-      },
-      {
-        id: 'ttft_p95',
-        accessorKey: 'ttftP95Ms',
-        header: () => <div className="text-right">TTFT p95 (ms)</div>,
-        cell: ({ row }) => (
-          <div className="text-right tabular-nums">{Number(row.original.ttftP95Ms).toFixed(0)}</div>
+          <div className="text-right tabular-nums">
+            {Number(row.original.ttftP50Ms).toFixed(0)} <span className="text-gray-11">ms</span>
+          </div>
         ),
       },
       {
         id: 'peak_rss',
         accessorKey: 'avgPeakRssMb',
-        header: () => <div className="text-right">Peak RSS (MB)</div>,
+        header: () => <div className="text-right">Memory</div>,
         cell: ({ row }) => (
           <div className="text-right tabular-nums">
             {Number(row.original.avgPeakRssMb).toFixed(0)}
@@ -102,10 +188,10 @@ const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOpt
         ),
       },
       {
-        id: 'runs',
-        accessorKey: 'runCount',
-        header: () => <div className="text-right">Runs</div>,
-        cell: ({ row }) => <div className="text-right tabular-nums">{row.original.runCount}</div>,
+        id: 'trials',
+        accessorKey: 'trials',
+        header: () => <div className="text-right">Trials</div>,
+        cell: ({ row }) => <div className="text-right tabular-nums">{row.original.trialCount}</div>,
       },
     ],
     [],
