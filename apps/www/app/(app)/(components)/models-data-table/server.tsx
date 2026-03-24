@@ -16,14 +16,12 @@ type ModelsDataTableServerProps = {
 };
 
 // -----------------------------------------------------------------------------
-// Component
+// Cached data fetcher
 // -----------------------------------------------------------------------------
 
-const ModelsDataTableServer: React.FC<ModelsDataTableServerProps> = async ({ searchParams }) => {
+async function fetchData(paginationParam?: string, sortingParam?: string) {
   'use cache';
   cacheLife({ stale: 300, revalidate: 300 });
-
-  const searchParamsValue = await searchParams;
 
   // ---------------------------------------------------------------------------
   // Total
@@ -35,12 +33,10 @@ const ModelsDataTableServer: React.FC<ModelsDataTableServerProps> = async ({ sea
   // Params
   // ---------------------------------------------------------------------------
 
-  const sortingState = createSortingParser.parseServerSide(searchParamsValue.sorting);
+  const sortingState = createSortingParser.parseServerSide(sortingParam);
   const sorting = sortingState.length > 0 ? sortingState[0] : null;
 
-  const { pageSize, pageIndex } = createPaginationParser(total).parseServerSide(
-    searchParamsValue.pagination,
-  );
+  const { pageSize, pageIndex } = createPaginationParser(total).parseServerSide(paginationParam);
 
   // ---------------------------------------------------------------------------
   // Data
@@ -64,9 +60,16 @@ const ModelsDataTableServer: React.FC<ModelsDataTableServerProps> = async ({ sea
     .limit(pageSize)
     .offset(pageIndex * pageSize);
 
-  // ---------------------------------------------------------------------------
-  // Render
-  // ---------------------------------------------------------------------------
+  return { data, total, pageIndex, pageSize, sortingState };
+}
+
+// -----------------------------------------------------------------------------
+// Component
+// -----------------------------------------------------------------------------
+
+const ModelsDataTableServer: React.FC<ModelsDataTableServerProps> = async ({ searchParams }) => {
+  const { pagination, sorting } = await searchParams;
+  const { data, total, pageIndex, pageSize, sortingState } = await fetchData(pagination, sorting);
 
   return (
     <ModelsDataTable

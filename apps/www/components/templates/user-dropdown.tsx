@@ -1,14 +1,10 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-import { Fragment } from 'react';
-
 import UserAvatar from './user-avatar';
 import { LogOut } from 'lucide-react';
 
 import type { Session } from '@/lib/auth';
 import { signOut } from '@/lib/auth/client';
-import { ADMIN_PAGES } from '@/lib/constants/site';
 import { UserRole } from '@/lib/db/schema';
 
 import { Badge, Dropdown } from '@/components/ui';
@@ -26,8 +22,6 @@ type UserDropdownProps = {
 // -----------------------------------------------------------------------------
 
 const UserDropdown: React.FC<UserDropdownProps> = ({ user }) => {
-  const router = useRouter();
-
   return (
     <Dropdown.Root>
       <Dropdown.Trigger className="rounded-full border border-gray-7 transition-colors hover:border-gray-8 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-9">
@@ -60,22 +54,6 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ user }) => {
           </div>
         </Dropdown.Group>
         <Dropdown.Separator />
-        {user.role === UserRole.ADMIN ? (
-          <Fragment>
-            <Dropdown.Group>
-              {ADMIN_PAGES.map((page) => (
-                <Dropdown.Item
-                  key={page.slug}
-                  icon={page.icon}
-                  onClick={() => router.push(page.slug)}
-                >
-                  {page.name}
-                </Dropdown.Item>
-              ))}
-            </Dropdown.Group>
-            <Dropdown.Separator />
-          </Fragment>
-        ) : null}
         <Dropdown.Group>
           <Dropdown.Item
             icon={<LogOut />}

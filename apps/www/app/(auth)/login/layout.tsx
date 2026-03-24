@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { Fragment } from 'react';
+import { Suspense } from 'react';
 
 import { auth } from '@/lib/auth';
 
@@ -18,9 +18,17 @@ export const metadata: Metadata = {
 // Layout
 // -----------------------------------------------------------------------------
 
-export default async function Layout({ children }: { children: React.ReactNode }) {
+export default function Layout({ children }: { children: React.ReactNode }) {
+  return (
+    <Suspense>
+      <AuthGate>{children}</AuthGate>
+    </Suspense>
+  );
+}
+
+async function AuthGate({ children }: { children: React.ReactNode }) {
   const user = (await auth.api.getSession({ headers: await headers() }))?.user;
   if (user) return redirect('/');
 
-  return <Fragment>{children}</Fragment>;
+  return <>{children}</>;
 }

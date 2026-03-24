@@ -1,4 +1,4 @@
-import { FileText, Home, Lock } from 'lucide-react';
+import { FileText, Home } from 'lucide-react';
 
 import type { Page } from '@/lib/types/site';
 
@@ -11,12 +11,6 @@ export const NAVBAR_PAGES: Page[] = [
   { name: 'Home', slug: '/', icon: <Home /> },
   { name: 'Docs', slug: '/docs', icon: <FileText /> },
 ];
-
-/**
- * Admin-only pages displayed on [**whatcani.run**](https://whatcani.run)'s
- * navigation bar.
- */
-export const ADMIN_PAGES: Page[] = [{ name: 'Admin', slug: '/admin', icon: <Lock /> }];
 
 /**
  * External pages displayed on [**whatcani.run**](https://whatcani.run)'s
