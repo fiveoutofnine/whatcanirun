@@ -20,7 +20,7 @@ const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOpt
         id: 'model',
         accessorKey: 'modelDisplayName',
         header: ({ column }) => (
-          <DataTableSortHeader className="w-fit" column={column} lowLabel="A" highLabel="Z">
+          <DataTableSortHeader column={column} lowLabel="A" highLabel="Z">
             Model
           </DataTableSortHeader>
         ),
