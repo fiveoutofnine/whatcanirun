@@ -6,8 +6,18 @@ import type { ModelsDataTableInternalProps } from '.';
 import type { ModelsDataTableValue } from './types';
 import { type ColumnDef, flexRender, useReactTable } from '@tanstack/react-table';
 import clsx from 'clsx';
-import { ChevronRight, Cpu, FileText, Gpu, HardDrive, Layers, MemoryStick } from 'lucide-react';
+import {
+  ChevronRight,
+  Cpu,
+  FileQuestionMark,
+  FileText,
+  Gpu,
+  HardDrive,
+  Layers,
+  MemoryStick,
+} from 'lucide-react';
 
+import LogoImg from '@/components/common/logo-img';
 import ClickableTooltip from '@/components/templates/clickable-tooltip';
 import DataTableSortHeader from '@/components/templates/data-table-sort-header';
 import StateInfo from '@/components/templates/state-info';
@@ -137,6 +147,40 @@ const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOpt
         id: 'runtime',
         accessorKey: 'runtimeName',
         header: () => 'Runtime',
+        cell: ({ row }) => (
+          <div className="flex items-center gap-1.5">
+            {row.original.runtimeName === 'llama.cpp' ? (
+              <a
+                className="focus-visible:rounded"
+                href="https://github.com/ggerganov/llama.cpp"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <LogoImg.Ggml
+                  className="border-gray-7 transition-colors hover:border-gray-8"
+                  size={16}
+                />
+              </a>
+            ) : row.original.runtimeName === 'mlx_lm' ? (
+              <a
+                className="focus-visible:rounded"
+                href="https://github.com/ml-explore/mlx-lm"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <LogoImg.Mlx
+                  className="border-gray-7 transition-colors hover:border-gray-8"
+                  size={16}
+                />
+              </a>
+            ) : (
+              <span className="flex size-4 items-center justify-center rounded border border-gray-6 bg-gray-5 text-gray-11">
+                <FileQuestionMark className="size-2.5" />
+              </span>
+            )}
+            <span className="line-clamp-1 leading-4">{row.original.runtimeName}</span>
+          </div>
+        ),
       },
       {
         id: 'decode',
