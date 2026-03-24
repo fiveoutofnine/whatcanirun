@@ -1,4 +1,4 @@
-import { avg, count, countDistinct, eq, relations, sql } from 'drizzle-orm';
+import { count, countDistinct, eq, relations, sql } from 'drizzle-orm';
 import {
   bigint,
   boolean,
@@ -274,10 +274,10 @@ export const view__model_stats_by_device = pgView('view__model_stats_by_device')
       ttftP95Ms: sql<number>`PERCENTILE_CONT(0.95) WITHIN GROUP (ORDER BY ${trials.ttftMs})`.as(
         'ttft_p95_ms',
       ),
-      avgDecodeTps: avg(trials.decodeTps).as('avg_decode_tps'),
-      avgPrefillTps: avg(trials.prefillTps).as('avg_prefill_tps'),
-      avgIdleRssMb: avg(trials.idleRssMb).as('avg_idle_rss_mb'),
-      avgPeakRssMb: avg(trials.peakRssMb).as('avg_peak_rss_mb'),
+      avgDecodeTps: sql<number>`AVG(${trials.decodeTps})`.as('avg_decode_tps'),
+      avgPrefillTps: sql<number>`AVG(${trials.prefillTps})`.as('avg_prefill_tps'),
+      avgIdleRssMb: sql<number>`AVG(${trials.idleRssMb})`.as('avg_idle_rss_mb'),
+      avgPeakRssMb: sql<number>`AVG(${trials.peakRssMb})`.as('avg_peak_rss_mb'),
     })
     .from(trials)
     .innerJoin(runs, eq(trials.runId, runs.id))
