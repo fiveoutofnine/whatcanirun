@@ -30,7 +30,7 @@ const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOpt
         id: 'model',
         accessorKey: 'modelDisplayName',
         header: ({ column }) => (
-          <DataTableSortHeader className="w-fit" column={column}>
+          <DataTableSortHeader className="w-fit" column={column} lowLabel="A" highLabel="Z">
             Model
           </DataTableSortHeader>
         ),
@@ -147,7 +147,12 @@ const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOpt
         id: 'runtime',
         accessorKey: 'runtimeName',
         header: ({ column }) => (
-          <DataTableSortHeader className="ml-right w-fit" column={column}>
+          <DataTableSortHeader
+            className="ml-right w-fit"
+            column={column}
+            lowLabel="A"
+            highLabel="Z"
+          >
             Runtime
           </DataTableSortHeader>
         ),
@@ -190,7 +195,12 @@ const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOpt
         id: 'decode',
         accessorKey: 'avgDecodeTps',
         header: ({ column }) => (
-          <DataTableSortHeader className="ml-auto w-fit" column={column}>
+          <DataTableSortHeader
+            className="ml-auto w-fit"
+            column={column}
+            lowLabel="Slow"
+            highLabel="Fast"
+          >
             Decode
           </DataTableSortHeader>
         ),
@@ -208,7 +218,12 @@ const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOpt
         id: 'prefill',
         accessorKey: 'avgPrefillTps',
         header: ({ column }) => (
-          <DataTableSortHeader className="ml-auto w-fit" column={column}>
+          <DataTableSortHeader
+            className="ml-auto w-fit"
+            column={column}
+            lowLabel="Slow"
+            highLabel="Fast"
+          >
             Prefill
           </DataTableSortHeader>
         ),
@@ -223,10 +238,15 @@ const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOpt
         ),
       },
       {
-        id: 'ttft_p50',
+        id: 'ttft',
         accessorKey: 'ttftP50Ms',
         header: ({ column }) => (
-          <DataTableSortHeader className="ml-auto w-fit" column={column}>
+          <DataTableSortHeader
+            className="ml-auto w-fit"
+            column={column}
+            lowLabel="Fast"
+            highLabel="Slow"
+          >
             TTFT
           </DataTableSortHeader>
         ),
@@ -249,7 +269,7 @@ const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOpt
           ),
       },
       {
-        id: 'peak_rss',
+        id: 'memory',
         accessorKey: 'avgPeakRssMb',
         header: ({ column }) => (
           <DataTableSortHeader className="ml-auto w-fit" column={column}>

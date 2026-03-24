@@ -50,11 +50,11 @@ const DataTableSortHeader = <TData, TValue>({
         <Dropdown.Content className="[&_[dropdown-item-content]]:mr-1.5" align="start">
           <Dropdown.Item onClick={() => column.toggleSorting(false)} icon={<ArrowUpWideNarrow />}>
             {low.charAt(0).toUpperCase()}
-            {low.slice(1)} to {high}
+            {low.slice(1)} to {high.length > 1 ? high : highLabel}
           </Dropdown.Item>
           <Dropdown.Item onClick={() => column.toggleSorting(true)} icon={<ArrowDownWideNarrow />}>
             {high.charAt(0).toUpperCase()}
-            {high.slice(1)} to {low}
+            {high.slice(1)} to {low.length > 1 ? low : lowLabel}
           </Dropdown.Item>
         </Dropdown.Content>
       </Dropdown.Root>

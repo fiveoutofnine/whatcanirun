@@ -49,10 +49,30 @@ async function fetchData(paginationParam?: string, sortingParam?: string) {
       if (!sorting) return desc(view__model_stats_by_device.avgDecodeTps);
 
       switch (sorting.id) {
-        case 'avgDecodeTps':
+        case 'model':
+          return sorting.desc
+            ? desc(view__model_stats_by_device.modelDisplayName)
+            : asc(view__model_stats_by_device.modelDisplayName);
+        case 'decode':
           return sorting.desc
             ? desc(view__model_stats_by_device.avgDecodeTps)
             : asc(view__model_stats_by_device.avgDecodeTps);
+        case 'prefill':
+          return sorting.desc
+            ? desc(view__model_stats_by_device.avgPrefillTps)
+            : asc(view__model_stats_by_device.avgPrefillTps);
+        case 'ttft':
+          return sorting.desc
+            ? desc(view__model_stats_by_device.ttftP50Ms)
+            : asc(view__model_stats_by_device.ttftP50Ms);
+        case 'memory':
+          return sorting.desc
+            ? desc(view__model_stats_by_device.avgPeakRssMb)
+            : asc(view__model_stats_by_device.avgPeakRssMb);
+        case 'trials':
+          return sorting.desc
+            ? desc(view__model_stats_by_device.trialCount)
+            : asc(view__model_stats_by_device.trialCount);
         default:
           return desc(view__model_stats_by_device.avgDecodeTps);
       }
