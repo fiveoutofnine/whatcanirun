@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 
 import NavBar from '@/components/common/nav-bar';
 import ErrorLayout from '@/components/layouts/error';
@@ -19,7 +20,9 @@ export const metadata: Metadata = {
 export default function NotFound() {
   return (
     <main className="relative flex grow flex-col">
-      <NavBar />
+      <Suspense fallback={<NavBar.Fallback />}>
+        <NavBar />
+      </Suspense>
       <ErrorLayout statusCode={404} />
     </main>
   );
