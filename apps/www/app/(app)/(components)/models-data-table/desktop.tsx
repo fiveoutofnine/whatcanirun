@@ -146,7 +146,11 @@ const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOpt
       {
         id: 'runtime',
         accessorKey: 'runtimeName',
-        header: () => 'Runtime',
+        header: ({ column }) => (
+          <DataTableSortHeader className="ml-right w-fit" column={column}>
+            Runtime
+          </DataTableSortHeader>
+        ),
         cell: ({ row }) => (
           <div className="flex items-center gap-1.5">
             {row.original.runtimeName === 'llama.cpp' ? (
@@ -196,7 +200,7 @@ const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOpt
               minimumFractionDigits: 1,
               maximumFractionDigits: 1,
             })}{' '}
-            <span className="text-gray-11">tps</span>
+            <span className="text-gray-11">tok/s</span>
           </div>
         ),
       },
@@ -214,40 +218,69 @@ const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOpt
               minimumFractionDigits: 1,
               maximumFractionDigits: 1,
             })}{' '}
-            <span className="text-gray-11">tps</span>
+            <span className="text-gray-11">tok/s</span>
           </div>
         ),
       },
       {
         id: 'ttft_p50',
         accessorKey: 'ttftP50Ms',
-        header: () => <div className="text-right">TTFT</div>,
-        cell: ({ row }) => (
-          <div className="text-right tabular-nums">
-            {Number(row.original.ttftP50Ms).toLocaleString(undefined, { maximumFractionDigits: 0 })}{' '}
-            <span className="text-gray-11">ms</span>
-          </div>
+        header: ({ column }) => (
+          <DataTableSortHeader className="ml-auto w-fit" column={column}>
+            TTFT
+          </DataTableSortHeader>
         ),
+        cell: ({ row }) =>
+          row.original.ttftP50Ms < 4_000 ? (
+            <div className="text-right tabular-nums">
+              {Number(row.original.ttftP50Ms).toLocaleString(undefined, {
+                maximumFractionDigits: 0,
+              })}{' '}
+              <span className="text-gray-11">ms</span>
+            </div>
+          ) : (
+            <div className="text-right tabular-nums">
+              {Number(row.original.ttftP50Ms / 1_000).toLocaleString(undefined, {
+                maximumFractionDigits: 2,
+                minimumFractionDigits: 2,
+              })}{' '}
+              <span className="text-gray-11">sec</span>
+            </div>
+          ),
       },
       {
         id: 'peak_rss',
         accessorKey: 'avgPeakRssMb',
-        header: () => <div className="text-right">Memory</div>,
+        header: ({ column }) => (
+          <DataTableSortHeader className="ml-auto w-fit" column={column}>
+            Peak memory
+          </DataTableSortHeader>
+        ),
         cell: ({ row }) => (
           <div className="text-right tabular-nums">
-            {Number(row.original.avgPeakRssMb).toLocaleString(undefined, {
-              maximumFractionDigits: 0,
-            })}
+            {Number(row.original.avgPeakRssMb / 1024).toLocaleString(undefined, {
+              maximumFractionDigits: 2,
+              minimumFractionDigits: 2,
+            })}{' '}
+            <span className="text-gray-11">GB</span>
           </div>
         ),
       },
       {
         id: 'trials',
         accessorKey: 'trials',
-        header: () => <div className="text-right">Trials</div>,
+        header: ({ column }) => (
+          <DataTableSortHeader className="ml-auto w-fit" column={column}>
+            Trials
+          </DataTableSortHeader>
+        ),
         cell: ({ row }) => (
-          <div className="text-right tabular-nums">
-            {Number(row.original.trialCount).toLocaleString()}
+          <div className="flex flex-col items-end text-right tabular-nums">
+            <span className="leading-5">{Number(row.original.trialCount).toLocaleString()}</span>
+            <span className="text-xs leading-4 text-gray-11">
+              {Number(row.original.runCount).toLocaleString()} run
+              {row.original.runCount === 1 ? '' : 's'}
+            </span>
           </div>
         ),
       },
