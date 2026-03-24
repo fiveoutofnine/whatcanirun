@@ -13,13 +13,18 @@ import { auth } from '@/lib/auth';
 
 export type NavBarInternalProps = {
   user?: Session['user'];
+  loading?: boolean;
+};
+
+type NavBarFallbackProps = {
+  children?: React.ReactNode;
 };
 
 // -----------------------------------------------------------------------------
-// Component
+// Components
 // -----------------------------------------------------------------------------
 
-const NavBar: React.FC = async () => {
+const NavBar: React.FC & { Fallback: React.FC<NavBarFallbackProps> } = async () => {
   const user = (await auth.api.getSession({ headers: await headers() }))?.user;
 
   return (
@@ -29,5 +34,20 @@ const NavBar: React.FC = async () => {
     </Fragment>
   );
 };
+
+const NavBarFallback: React.FC<NavBarFallbackProps> = () => {
+  return (
+    <Fragment>
+      <NavBarDesktop loading />
+      <NavBarMobile loading />
+    </Fragment>
+  );
+};
+
+// -----------------------------------------------------------------------------
+// Export
+// -----------------------------------------------------------------------------
+
+NavBar.Fallback = NavBarFallback;
 
 export default NavBar;

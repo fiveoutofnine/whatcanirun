@@ -17,7 +17,7 @@ import Logo from '@/components/common/logo';
 import UserAvatar from '@/components/templates/user-avatar';
 import { Badge, Button, Drawer, IconButton } from '@/components/ui';
 
-const NavBarMobile: React.FC<NavBarInternalProps> = ({ user }) => {
+const NavBarMobile: React.FC<NavBarInternalProps> = ({ user, loading = false }) => {
   const [open, setOpen] = useState<boolean>(false);
   const isSmallScreen = useMediaQuery('(max-width: 768px)'); // `md` breakpoint.
 
@@ -39,7 +39,9 @@ const NavBarMobile: React.FC<NavBarInternalProps> = ({ user }) => {
           }
           asChild={!user}
         >
-          {user ? (
+          {loading ? (
+            <div className="size-8 animate-bg-pulse rounded-full border border-gray-6 bg-gray-5" />
+          ) : user ? (
             <UserAvatar className="border-0" image={user.image} name={user.name} size={32} />
           ) : (
             <IconButton variant="ghost">

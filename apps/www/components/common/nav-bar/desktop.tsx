@@ -12,7 +12,7 @@ import Logo from '@/components/common/logo';
 import UserDropdown from '@/components/templates/user-dropdown';
 import { Button } from '@/components/ui';
 
-const NavBarDesktop: React.FC<NavBarInternalProps> = ({ user }) => {
+const NavBarDesktop: React.FC<NavBarInternalProps> = ({ user, loading = false }) => {
   // Determine which page is selected.
   const pathname = usePathname() ?? '';
   const path = pathname.split('/');
@@ -55,7 +55,9 @@ const NavBarDesktop: React.FC<NavBarInternalProps> = ({ user }) => {
           );
         })}
         <div className="flex-grow" aria-hidden={true} />
-        {user ? (
+        {loading ? (
+          <div className="size-8 animate-bg-pulse rounded-full border border-gray-6 bg-gray-9" />
+        ) : user ? (
           <UserDropdown user={user} />
         ) : (
           <Button variant="solid" intent="white" href={`/login?redirect=${pathname}`}>
