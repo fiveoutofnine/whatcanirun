@@ -1,3 +1,4 @@
+import { cacheLife } from 'next/cache';
 import { Suspense } from 'react';
 
 import Hero from './(components)/hero';
@@ -21,7 +22,12 @@ export default async function Page({
   // Total
   // ---------------------------------------------------------------------------
 
-  const [{ count: total }] = await db.select({ count: count() }).from(view__model_stats_by_device);
+  const [{ count: total }] = await (async () => {
+    'use cache';
+    cacheLife({ stale: 300, revalidate: 300 });
+
+    return await db.select({ count: count() }).from(view__model_stats_by_device);
+  })();
 
   // ---------------------------------------------------------------------------
   // Params
@@ -38,23 +44,28 @@ export default async function Page({
   // Data
   // ---------------------------------------------------------------------------
 
-  const data = await db
-    .select()
-    .from(view__model_stats_by_device)
-    .orderBy(() => {
-      if (!sorting) return desc(view__model_stats_by_device.avgDecodeTps);
+  const data = await (async () => {
+    'use cache';
+    cacheLife({ stale: 300, revalidate: 300 });
 
-      switch (sorting.id) {
-        case 'avgDecodeTps':
-          return sorting.desc
-            ? desc(view__model_stats_by_device.avgDecodeTps)
-            : asc(view__model_stats_by_device.avgDecodeTps);
-        default:
-          return desc(view__model_stats_by_device.avgDecodeTps);
-      }
-    })
-    .limit(pageSize)
-    .offset(pageIndex * pageSize);
+    return await db
+      .select()
+      .from(view__model_stats_by_device)
+      .orderBy(() => {
+        if (!sorting) return desc(view__model_stats_by_device.avgDecodeTps);
+
+        switch (sorting.id) {
+          case 'avgDecodeTps':
+            return sorting.desc
+              ? desc(view__model_stats_by_device.avgDecodeTps)
+              : asc(view__model_stats_by_device.avgDecodeTps);
+          default:
+            return desc(view__model_stats_by_device.avgDecodeTps);
+        }
+      })
+      .limit(pageSize)
+      .offset(pageIndex * pageSize);
+  })();
 
   // ---------------------------------------------------------------------------
   // Render
