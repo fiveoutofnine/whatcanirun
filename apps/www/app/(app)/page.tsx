@@ -1,6 +1,8 @@
 import { cacheLife } from 'next/cache';
+import { Suspense } from 'react';
 
 import Hero from './(components)/hero';
+import ModelsDataTable from './(components)/models-data-table';
 import { desc } from 'drizzle-orm';
 
 import { db } from '@/lib/db';
@@ -21,7 +23,10 @@ export default async function Page() {
   return (
     <ContainerLayout className="flex flex-col space-y-4">
       <Hero />
-      <pre className="w-full">{JSON.stringify(data, null, 2)}</pre>
+      {/* We have fallback as `null` to deal with `Date.now`s. */}
+      <Suspense fallback={null}>
+        <ModelsDataTable data={data} />
+      </Suspense>
     </ContainerLayout>
   );
 }
