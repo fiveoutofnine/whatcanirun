@@ -1,26 +1,16 @@
 'use client';
 
-import { Fragment, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import type { ModelsDataTableInternalProps } from '.';
 import type { ModelsDataTableValue } from './types';
 import { type ColumnDef, flexRender, useReactTable } from '@tanstack/react-table';
-import clsx from 'clsx';
-import {
-  ChevronRight,
-  Cpu,
-  FileQuestionMark,
-  FileText,
-  Gpu,
-  HardDrive,
-  Layers,
-  MemoryStick,
-} from 'lucide-react';
+import { ChevronRight, FileQuestionMark, FileText } from 'lucide-react';
 
 import LogoImg from '@/components/common/logo-img';
-import ClickableTooltip from '@/components/templates/clickable-tooltip';
 import DataTableSortHeader from '@/components/templates/data-table-sort-header';
 import StateInfo from '@/components/templates/state-info';
+import { DeviceTableCell, ModelTableCell } from '@/components/templates/table-cells';
 import { Button, Table } from '@/components/ui';
 
 const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOptions) => {
@@ -35,56 +25,12 @@ const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOpt
           </DataTableSortHeader>
         ),
         cell: ({ row }) => (
-          <div className="flex flex-col items-start">
-            <span className="line-clamp-1 leading-5">{row.original.modelDisplayName}</span>
-            <div className="mt-0 flex h-4 gap-2">
-              {[
-                {
-                  icon: <Layers />,
-                  value: row.original.modelQuant,
-                  content: 'Quantization',
-                },
-                {
-                  icon: <HardDrive />,
-                  value: row.original.modelParameters,
-                  content: 'Parameters',
-                },
-
-                {
-                  icon: <Cpu />,
-                  value: row.original.modelArchitecture,
-                  content: 'Architecture',
-                },
-              ].map(({ icon, value, content }, index) => {
-                if (!value) return null;
-
-                const Children = (
-                  <div
-                    className={clsx(
-                      'flex w-fit items-center gap-1 whitespace-nowrap text-xs leading-4 text-gray-11',
-                      content
-                        ? 'underline decoration-dotted transition-colors hover:text-gray-12'
-                        : '',
-                    )}
-                    key={index}
-                  >
-                    <span className="flex size-3 items-center justify-center">{icon}</span>
-                    <span>{value}</span>
-                  </div>
-                );
-
-                if (content) {
-                  return (
-                    <ClickableTooltip key={index} content={content}>
-                      {Children}
-                    </ClickableTooltip>
-                  );
-                }
-
-                return <Fragment key={index}>{Children}</Fragment>;
-              })}
-            </div>
-          </div>
+          <ModelTableCell
+            displayName={row.original.modelDisplayName}
+            quant={row.original.modelQuant}
+            parameters={row.original.modelParameters}
+            architecture={row.original.modelArchitecture}
+          />
         ),
       },
       {
@@ -92,55 +38,13 @@ const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOpt
         accessorKey: 'deviceCpu',
         header: () => 'Device',
         cell: ({ row }) => (
-          <div className="flex flex-col">
-            <span className="line-clamp-1">{row.original.deviceCpu ?? row.original.deviceGpu}</span>
-            <div className="mt-0 flex h-4 gap-2">
-              {[
-                {
-                  icon: <Cpu />,
-                  value: Number(row.original.deviceCpuCores).toLocaleString(),
-                  content: 'CPU cores',
-                },
-                {
-                  icon: <Gpu />,
-                  value: Number(row.original.deviceGpuCores).toLocaleString(),
-                  content: 'GPU cores',
-                },
-                {
-                  icon: <MemoryStick />,
-                  value: `${Number(row.original.deviceRamGb).toLocaleString()} GB`,
-                  content: 'RAM',
-                },
-              ].map(({ icon, value, content }, index) => {
-                if (!value) return null;
-
-                const Children = (
-                  <div
-                    className={clsx(
-                      'flex w-fit items-center gap-1 whitespace-nowrap text-xs leading-4 text-gray-11',
-                      content
-                        ? 'underline decoration-dotted transition-colors hover:text-gray-12'
-                        : '',
-                    )}
-                    key={index}
-                  >
-                    <span className="flex size-3 items-center justify-center">{icon}</span>
-                    <span>{value}</span>
-                  </div>
-                );
-
-                if (content) {
-                  return (
-                    <ClickableTooltip key={index} content={content}>
-                      {Children}
-                    </ClickableTooltip>
-                  );
-                }
-
-                return <Fragment key={index}>{Children}</Fragment>;
-              })}
-            </div>
-          </div>
+          <DeviceTableCell
+            cpu={row.original.deviceCpu}
+            cpuCores={row.original.deviceCpuCores}
+            gpu={row.original.deviceGpu}
+            gpuCores={row.original.deviceGpuCores}
+            ramGb={row.original.deviceRamGb}
+          />
         ),
       },
       {
@@ -352,16 +256,9 @@ const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOpt
             ) : (
               <Table.Row key={row.id}>
                 {[
+                  <ModelTableCell.Skeleton key={0} />,
                   /* TODO: replace */
-                  <div
-                    key={0}
-                    className="ml-auto h-[1.125rem] w-12 animate-pulse rounded bg-gray-9"
-                  />,
-                  /* TODO: replace */
-                  <div
-                    key={1}
-                    className="ml-auto h-[1.125rem] w-14 animate-pulse rounded bg-gray-9"
-                  />,
+                  <DeviceTableCell.Skeleton key={1} />,
                   <div key={2} className="flex items-center gap-1.5">
                     <div className="size-4 animate-pulse rounded bg-gray-9" />
                     <div className="h-[1.125rem] w-16 animate-pulse rounded bg-gray-9" />
