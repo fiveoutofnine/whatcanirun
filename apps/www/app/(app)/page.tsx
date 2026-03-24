@@ -11,7 +11,7 @@ export default async function Page({
   searchParams: Promise<{ pagination?: string; sorting?: string }>;
 }) {
   return (
-    <ContainerLayout className="flex flex-col space-y-4">
+    <ContainerLayout className="flex flex-col">
       <Hero />
       <Suspense fallback={null}>
         <ModelsDataTableServer searchParams={searchParams} />
