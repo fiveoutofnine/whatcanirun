@@ -4,27 +4,35 @@ import { defineCommand, runMain } from 'citty';
 
 import { auth, run, show, submit, validate, version } from './commands';
 
+const subCommands = {
+  auth,
+  run,
+  show,
+  submit,
+  validate,
+  version,
+};
+
 const main = defineCommand({
   meta: {
     name: 'whatcanirun',
     version: HARNESS_VERSION,
     description: 'Standardized local LLM inference benchmarks',
   },
-  subCommands: {
-    auth,
-    run,
-    show,
-    submit,
-    validate,
-    version,
-  },
+  subCommands,
 });
 
 // Launch interactive mode when no subcommand is provided.
-const subcommands = new Set(['auth', 'run', 'show', 'submit', 'validate', 'version']);
-const hasSubcommand = process.argv.slice(2).some((arg) => subcommands.has(arg));
+const subCommandKeys = new Set(Object.keys(subCommands));
+const hasSubCommand = process.argv.slice(2).some((arg) => subCommandKeys.has(arg));
 
-if (hasSubcommand || process.argv.includes('--help') || process.argv.includes('-h')) {
+if (
+  hasSubCommand ||
+  process.argv.includes('--help') ||
+  process.argv.includes('-h') ||
+  process.argv.includes('--version') ||
+  process.argv.includes('-v')
+) {
   runMain(main);
 } else {
   import('./interactive').then(({ runInteractive }) => runInteractive());
