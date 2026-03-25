@@ -18,7 +18,6 @@ interface FeaturedModel {
   hfRepoId: string;
   hfFileName?: string;
   runtime: 'mlx_lm' | 'llama.cpp';
-  platform: 'darwin' | 'linux';
 }
 
 // -----------------------------------------------------------------------------
@@ -30,60 +29,39 @@ const FALLBACK_MODELS: FeaturedModel[] = [
     displayName: 'Qwen 3.5 0.8B (4-bit)',
     hfRepoId: 'mlx-community/Qwen3.5-0.8B-OptiQ-4bit',
     runtime: 'mlx_lm',
-    platform: 'darwin',
   },
   {
     displayName: 'Qwen 3.5 4B (4-bit)',
     hfRepoId: 'mlx-community/Qwen3.5-4B-MLX-4bit',
     runtime: 'mlx_lm',
-    platform: 'darwin',
   },
   {
     displayName: 'Qwen 3.5 9B (4-bit)',
     hfRepoId: 'mlx-community/Qwen3.5-9B-MLX-4bit',
     runtime: 'mlx_lm',
-    platform: 'darwin',
   },
   {
     displayName: 'Llama 3.1 8B Instruct (4-bit)',
     hfRepoId: 'mlx-community/Meta-Llama-3.1-8B-Instruct-4bit',
     runtime: 'mlx_lm',
-    platform: 'darwin',
   },
   {
     displayName: 'Qwen 3.5 0.8B (Q4_K_M GGUF)',
     hfRepoId: 'unsloth/Qwen3.5-0.8B-GGUF',
     hfFileName: 'Qwen3.5-0.8B-Q4_K_M.gguf',
     runtime: 'llama.cpp',
-    platform: 'darwin',
   },
   {
     displayName: 'Qwen 3.5 4B (Q4_K_M GGUF)',
     hfRepoId: 'unsloth/Qwen3.5-4B-GGUF',
     hfFileName: 'Qwen3.5-4B-Q4_K_M.gguf',
     runtime: 'llama.cpp',
-    platform: 'linux',
-  },
-  {
-    displayName: 'Qwen 3.5 4B (Q4_K_M GGUF)',
-    hfRepoId: 'unsloth/Qwen3.5-4B-GGUF',
-    hfFileName: 'Qwen3.5-4B-Q4_K_M.gguf',
-    runtime: 'llama.cpp',
-    platform: 'darwin',
   },
   {
     displayName: 'Qwen 3.5 9B (Q4_K_M GGUF)',
     hfRepoId: 'unsloth/Qwen3.5-9B-GGUF',
     hfFileName: 'Qwen3.5-9B-Q4_K_M.gguf',
     runtime: 'llama.cpp',
-    platform: 'linux',
-  },
-  {
-    displayName: 'Qwen 3.5 9B (Q4_K_M GGUF)',
-    hfRepoId: 'unsloth/Qwen3.5-9B-GGUF',
-    hfFileName: 'Qwen3.5-9B-Q4_K_M.gguf',
-    runtime: 'llama.cpp',
-    platform: 'darwin',
   },
 ];
 
@@ -208,8 +186,6 @@ async function detectRuntimes(): Promise<DetectedRuntime[]> {
 // -----------------------------------------------------------------------------
 
 export async function runInteractive(): Promise<void> {
-  const platform = process.platform;
-
   // Graceful Ctrl+C handling.
   let activeSpinner: Spinner | null = null;
 
@@ -278,17 +254,13 @@ export async function runInteractive(): Promise<void> {
   const fetchSpinner = new Spinner(chalk.dim('Fetching models…')).start();
   activeSpinner = fetchSpinner;
   const allModels = await fetchFeaturedModels();
-  const models = allModels.filter(
-    (m) => m.runtime === selectedRuntime.name && m.platform === platform
-  );
+  const models = allModels.filter((m) => m.runtime === selectedRuntime.name);
   activeSpinner = null;
   fetchSpinner.stop();
 
   if (models.length === 0) {
     if (runtimes.length > 1) console.log();
-    log.error(
-      `No featured models for ${chalk.cyan(selectedRuntime.name)} on ${chalk.cyan(platform)}.`
-    );
+    log.error(`No featured models for ${chalk.cyan(selectedRuntime.name)}.`);
     console.log(
       chalk.dim(
         `↳ Run a benchmark manually with ${chalk.bold.cyan(`${binName()} run --model <model> --runtime ${selectedRuntime.name}`)}`
