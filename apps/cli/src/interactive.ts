@@ -179,7 +179,10 @@ export async function runInteractive(): Promise<void> {
   console.log();
 
   // Pick model.
-  console.log(chalk.white('Select a model to benchmark:') + chalk.dim('  (↑↓ to move, enter to select, q to quit)'));
+  console.log(
+    chalk.white('Select a model to benchmark:') +
+      chalk.dim('  (↑↓ to move, enter to select, q to quit)')
+  );
   console.log();
 
   const choice = await pick(models.map((m) => m.displayName));
