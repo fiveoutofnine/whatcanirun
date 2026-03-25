@@ -20,9 +20,6 @@ type ModelsDataTableServerProps = {
 // -----------------------------------------------------------------------------
 
 async function fetchData(paginationParam?: string, sortingParam?: string) {
-  'use cache';
-  cacheLife({ stale: 300, revalidate: 300 });
-
   // ---------------------------------------------------------------------------
   // Total
   // ---------------------------------------------------------------------------
@@ -88,6 +85,9 @@ async function fetchData(paginationParam?: string, sortingParam?: string) {
 // -----------------------------------------------------------------------------
 
 const ModelsDataTableServer: React.FC<ModelsDataTableServerProps> = async ({ searchParams }) => {
+  'use cache';
+  cacheLife({ stale: 300, revalidate: 300 });
+
   const { pagination, sorting } = await searchParams;
   const { data, total, pageIndex, pageSize, sortingState } = await fetchData(pagination, sorting);
 

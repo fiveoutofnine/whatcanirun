@@ -4,9 +4,6 @@ import createMDX from '@next/mdx';
 
 const nextConfig: NextConfig = {
   cacheComponents: true,
-  images: {
-    remotePatterns: [{ hostname: 'assets.peval.io' }],
-  },
   pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
   transpilePackages: ['next-mdx-remote'],
   webpack: (config) => {
