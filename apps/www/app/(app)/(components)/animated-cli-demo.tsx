@@ -4,7 +4,7 @@ import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 
 import { Check, Copy, RotateCw } from 'lucide-react';
 
-import { RUN_AND_SUBMIT_COMMAND } from '@/lib/constants/cli';
+import { RUN_AND_SUBMIT_COMMAND, RUN_COMMAND } from '@/lib/constants/cli';
 
 import { Button, IconButton, toast, Tooltip } from '@/components/ui';
 
@@ -456,7 +456,7 @@ const AnimatedCliDemo: React.FC = () => {
 
   const copyCommand = useCallback(() => {
     if (copied) return;
-    navigator.clipboard.writeText(RUN_AND_SUBMIT_COMMAND);
+    navigator.clipboard.writeText(RUN_COMMAND);
     setCopied(true);
     toast({ title: 'Copied command clipboard!', intent: 'success', hasCloseButton: true });
     setTimeout(() => setCopied(false), 3000);
@@ -483,7 +483,7 @@ const AnimatedCliDemo: React.FC = () => {
           }
           onClick={copyCommand}
         >
-          Copy command
+          {RUN_COMMAND}
         </Button>
       </div>
       <div className="relative">

@@ -7,7 +7,7 @@ import type { ModelsDataTableValue } from './types';
 import { type ColumnDef, flexRender, useReactTable } from '@tanstack/react-table';
 import { Check, Copy, FileText } from 'lucide-react';
 
-import { RUN_AND_SUBMIT_COMMAND } from '@/lib/constants/cli';
+import { RUN_COMMAND } from '@/lib/constants/cli';
 
 import DataTableSortHeader from '@/components/templates/data-table-sort-header';
 import StateInfo from '@/components/templates/state-info';
@@ -23,7 +23,7 @@ const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOpt
 
   const copyCommand = useCallback(() => {
     if (copied) return;
-    navigator.clipboard.writeText(RUN_AND_SUBMIT_COMMAND);
+    navigator.clipboard.writeText(RUN_COMMAND);
     setCopied(true);
     toast({ title: 'Copied command clipboard!', intent: 'success', hasCloseButton: true });
     setTimeout(() => setCopied(false), 3000);
@@ -292,7 +292,7 @@ const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOpt
                   }
                   onClick={copyCommand}
                 >
-                  Copy command
+                  {RUN_COMMAND}
                 </Button>
               </StateInfo>
             </Table.Cell>
