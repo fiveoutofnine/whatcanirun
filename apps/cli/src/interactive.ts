@@ -166,64 +166,6 @@ function pick(items: string[], defaultIndex = 0): Promise<number> {
 }
 
 // -----------------------------------------------------------------------------
-// Horizontal yes/no picker (left/right arrow keys)
-// -----------------------------------------------------------------------------
-
-function pickYesNo(defaultYes = true): Promise<boolean | null> {
-  return new Promise((resolve) => {
-    let yes = defaultYes;
-    const { stdin, stdout } = process;
-
-    function render() {
-      stdout.write('\x1b[2K\r');
-      if (yes) {
-        stdout.write(`   ${chalk.cyan('❯ Yes')}  ${chalk.dim('No')}`);
-      } else {
-        stdout.write(`     ${chalk.dim('Yes')}  ${chalk.cyan('❯ No')}`);
-      }
-    }
-
-    function onData(data: Buffer) {
-      const key = data.toString();
-
-      if (key === '\x1b[D' || key === '\x1b[A' || key === 'h' || key === 'k') {
-        yes = true;
-        render();
-        return;
-      }
-      if (key === '\x1b[C' || key === '\x1b[B' || key === 'l' || key === 'j') {
-        yes = false;
-        render();
-        return;
-      }
-      if (key === '\r' || key === '\n') {
-        stdout.write('\n');
-        cleanup();
-        resolve(yes);
-        return;
-      }
-      if (key === '\x03' || key === 'q' || key === '\x1b') {
-        stdout.write('\n');
-        cleanup();
-        resolve(null);
-        return;
-      }
-    }
-
-    function cleanup() {
-      stdin.removeListener('data', onData);
-      if (stdin.isTTY) stdin.setRawMode(false);
-    }
-
-    if (stdin.isTTY) stdin.setRawMode(true);
-    stdin.resume();
-    stdin.on('data', onData);
-
-    render();
-  });
-}
-
-// -----------------------------------------------------------------------------
 // Runtime detection
 // -----------------------------------------------------------------------------
 
@@ -400,12 +342,9 @@ export async function runInteractive(): Promise<void> {
     : '  (anonymous, publicly visible)';
   console.log(chalk.white('Submit results to whatcani.run?') + chalk.dim(submitHint));
 
-  const shouldSubmit = await pickYesNo();
-
-  if (shouldSubmit === null) {
-    console.log();
-    process.exit(0);
-  }
+  const submitChoice = await pick(['Yes, submit', 'No, skip']);
+  if (submitChoice < 0) process.exit(0);
+  const shouldSubmit = submitChoice === 0;
 
   // Resolve model path (download GGUF file if needed).
   let modelRef = selected.hfRepoId;
