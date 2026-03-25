@@ -5,8 +5,7 @@ Standardized local LLM inference benchmarks. Run a model, measure performance, a
 ## Quick start
 
 ```bash
-# Run a benchmark and submit results
-bunx whatcanirun run --model mlx-community/Qwen3.5-0.8B-MLX-8bit --runtime mlx_lm --submit
+bunx whatcanirun@latest
 ```
 
 ## Install
@@ -23,28 +22,31 @@ The alias `wcir` is available after installing.
 
 ## Usage
 
-To run and submit benchmarks, use the `run` command:
+To run and submit benchmarks, use the interactive mode or `run` command:
 
 ```bash
+# Interactive mode
+wcir
+
 # Run a benchmark
-wcir run --model $MODEL_PATH_OR_HF_REPO --runtime $RUNTIME
+wcir run --model $MODEL_PATH_OR_HF_REFERENCE --runtime $RUNTIME
 
 # Run and submit results
-wcir run --model $MODEL_PATH_OR_HF_REPO --runtime $RUNTIME --submit
+wcir run --model $MODEL_PATH_OR_HF_REFERENCE --runtime $RUNTIME --submit
 
 # Customize benchmark parameters
 wcir run \
-  --model $MODEL_PATH_OR_HF_REPO \
+  --model $MODEL_PATH_OR_HF_REFERENCE \
   --runtime $RUNTIME \
-  --prompt-tokens 2048 \
-  --gen-tokens 512 \
+  --prompt-tokens 4096 \
+  --gen-tokens 1024 \
   --trials 5 \
   --notes "optional notes attached to the run" \
   --submit
 ```
 
 > [!NOTE]
-> `MODEL_PATH_OR_HF_REPO` MUST be a path to a GGUF file if `runtime` is `llama.cpp`.
+> If it's not a model path, `MODEL_PATH_OR_HF_REFERENCE` must be in the format `{org}/{repo}` for `mlx_lm` and `{org}/{repo}:{file}.gguf` for `llama.cpp`.
 
 `run` saves bundles to `~/.whatcanirun/bundles/*` in case you want to inspect them or validate/submit them later via `validate`/`submit`, respectively. You may also specify the output directory with the `--output` flag:
 
