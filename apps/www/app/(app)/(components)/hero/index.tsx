@@ -15,8 +15,8 @@ import { Button } from '@/components/ui';
 const Hero: React.FC = async () => {
   return (
     <div className="mb-8 flex flex-col items-center gap-4 md:mb-12 md:flex-row md:gap-16">
-      <div className="flex w-full flex-col gap-3 md:gap-5">
-        <h1 className="text-3xl font-normal leading-snug tracking-tight text-gray-11 md:text-5xl md:leading-[1.167]">
+      <div className="flex w-full flex-col">
+        <h1 className="mb-2 text-3xl font-normal leading-snug tracking-tight text-gray-11 md:mb-4 md:text-5xl md:leading-[1.167]">
           <Logo className="inline select-text text-3xl md:text-5xl" /> on an{' '}
           <span className="font-semibold text-gray-12"> M1 Max</span> with{' '}
           <span className="font-semibold text-gray-12">64 GB RAM</span>?
@@ -24,7 +24,7 @@ const Hero: React.FC = async () => {
         <Suspense fallback={<HeroDescription.Fallback />}>
           <HeroDescription />
         </Suspense>
-        <div className="flex gap-2">
+        <div className="mt-4 flex gap-2 md:mt-6">
           <Button
             variant="primary"
             href="https://github.com/fiveoutofnine/whatcanirun"
