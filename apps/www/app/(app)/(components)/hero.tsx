@@ -1,8 +1,9 @@
+import AnimatedTerminal from './animated-terminal';
 import { ArrowRight } from 'lucide-react';
 
 import Logo from '@/components/common/logo';
 import LogoIcon from '@/components/common/logo-icon';
-import { Button, CodeBlock } from '@/components/ui';
+import { Button } from '@/components/ui';
 
 // -----------------------------------------------------------------------------
 // Component
@@ -17,9 +18,7 @@ const Hero: React.FC = () => {
         <span className="font-semibold text-gray-12">64 GB RAM</span>
         <sup className="text-gray-11">*</sup>?
       </h1>
-      <CodeBlock language="bash" fileName="Submit a run" showLineNumbers={false}>
-        {`bunx whatcanirun@latest run --model mlx-community/Qwen3.5-0.8B-MLX-8bit --runtime mlx_lm --submit`}
-      </CodeBlock>
+      <AnimatedTerminal />
       <div className="flex gap-2">
         <Button
           variant="primary"
