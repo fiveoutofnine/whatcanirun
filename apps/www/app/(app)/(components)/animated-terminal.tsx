@@ -459,7 +459,7 @@ const AnimatedTerminal: React.FC = () => {
   };
 
   return (
-    <div className="overflow-hidden rounded-xl border border-gray-6">
+    <div className="overflow-hidden rounded-xl border border-gray-6 bg-gray-2">
       <div className="flex h-10 items-center justify-between border-b border-gray-6 bg-gray-2 pl-3 pr-2">
         <div className="flex gap-2">
           <span className="size-3 rounded-full bg-[#FF5F57]" />
@@ -478,8 +478,8 @@ const AnimatedTerminal: React.FC = () => {
         </div>
       </div>
       <div
-        className="hide-scrollbar h-[479px] overflow-y-auto overflow-x-hidden p-3 font-mono text-sm leading-relaxed"
-        style={{ backgroundColor: ANSI.bg, color: ANSI.white }}
+        className="hide-scrollbar h-[479px] overflow-x-auto overflow-y-auto whitespace-nowrap bg-gray-2 p-3 font-mono text-sm leading-relaxed"
+        style={{ color: ANSI.white }}
       >
         {/* Command line */}
         <div className="min-w-fit">
