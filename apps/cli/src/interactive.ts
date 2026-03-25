@@ -311,6 +311,9 @@ export async function runInteractive(): Promise<void> {
     : selected.hfRepoId;
 
   // Run benchmark.
+  // Remove our SIGINT handler — executeBenchmark registers its own for cleanup.
+  process.off('SIGINT', onSigint);
+
   console.log();
   console.log(chalk.dim(`Benchmarking ${chalk.reset.bold.cyan(selected.displayName)}…`));
   console.log();
