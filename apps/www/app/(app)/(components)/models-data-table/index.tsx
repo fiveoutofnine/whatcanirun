@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+
 import ModelsDataTableDesktop from './desktop';
 import ModelsDataTableMobile from './mobile';
 import type { ModelsDataTableQueryParams, ModelsDataTableValue } from './types';
@@ -37,12 +39,18 @@ export type ModelsDataTableInternalProps = Omit<TableOptions<ModelsDataTableValu
 const ModelsDataTable: React.FC<ModelsDataTableProps> = ({ data, total, queryParams }) => {
   const [sorting, setSorting] = useSortingQueryState('sorting');
   const [pagination, setPagination] = usePaginationQueryState('pagination', total);
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
 
   const maxPageIndex = Math.ceil(total / Math.max(pagination.pageSize, 1)) - 1;
   const isLoading =
-    queryParams.pagination.pageIndex !== pagination.pageIndex ||
-    queryParams.pagination.pageSize !== pagination.pageSize ||
-    JSON.stringify(queryParams.sorting) !== JSON.stringify(sorting);
+    isHydrated &&
+    (queryParams.pagination.pageIndex !== pagination.pageIndex ||
+      queryParams.pagination.pageSize !== pagination.pageSize ||
+      JSON.stringify(queryParams.sorting) !== JSON.stringify(sorting));
 
   const tableOptions: ModelsDataTableInternalProps = {
     data,
