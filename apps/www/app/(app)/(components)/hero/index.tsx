@@ -1,4 +1,7 @@
-import AnimatedCLIDemo from './animated-cli-demo';
+import { Suspense } from 'react';
+
+import AnimatedCLIDemo from '../animated-cli-demo';
+import HeroDescription from './description';
 import { ArrowRight } from 'lucide-react';
 
 import Logo from '@/components/common/logo';
@@ -9,7 +12,7 @@ import { Button } from '@/components/ui';
 // Component
 // -----------------------------------------------------------------------------
 
-const Hero: React.FC = () => {
+const Hero: React.FC = async () => {
   return (
     <div className="mb-8 flex flex-col items-center gap-4 md:mb-12 md:flex-row md:gap-16">
       <div className="flex w-full flex-col gap-3 md:gap-5">
@@ -18,10 +21,9 @@ const Hero: React.FC = () => {
           <span className="font-semibold text-gray-12"> M1 Max</span> with{' '}
           <span className="font-semibold text-gray-12">64 GB RAM</span>?
         </h1>
-        <span className="text-base leading-relaxed text-gray-11 md:text-lg">
-          Find the best models and how to run them locally, based on real data from 500 tokens
-          across 34 trials from 10 people.
-        </span>
+        <Suspense fallback={<HeroDescription.Fallback />}>
+          <HeroDescription />
+        </Suspense>
         <div className="flex gap-2">
           <Button
             variant="primary"
