@@ -38,7 +38,7 @@ const Hero: React.FC = async () => {
           </Button>
         </div>
       </div>
-      <div className="w-[34rem]:min-w-[32rem] w-full max-w-[32rem]">
+      <div className="w-[34rem]:min-w-[32rem] w-full md:max-w-[32rem]">
         <AnimatedCLIDemo />
       </div>
     </div>

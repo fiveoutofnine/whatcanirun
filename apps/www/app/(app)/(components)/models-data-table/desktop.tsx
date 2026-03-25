@@ -158,7 +158,7 @@ const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOpt
         id: 'memory',
         accessorKey: 'avgPeakRssMb',
         header: ({ column }) => (
-          <DataTableSortHeader className="ml-auto w-fit" column={column}>
+          <DataTableSortHeader className="ml-auto w-fit text-nowrap" column={column}>
             Peak memory
           </DataTableSortHeader>
         ),
