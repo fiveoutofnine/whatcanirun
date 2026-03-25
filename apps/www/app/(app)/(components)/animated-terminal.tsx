@@ -81,7 +81,7 @@ const STEPS: Step[] = [
         <C>macOS</C> (<C>15.6.1</C>) detected.
       </Fragment>
     ),
-    duration: 600,
+    duration: 500,
   },
   {
     type: 'spinner',
@@ -91,13 +91,13 @@ const STEPS: Step[] = [
         <C>mlx_lm</C> (<C>0.31.0</C>) detected.
       </Fragment>
     ),
-    duration: 900,
+    duration: 700,
   },
   {
     type: 'spinner',
     spinnerLabel: 'Inspecting model…',
     label: 'Model inspected:',
-    duration: 1800,
+    duration: 700,
     subItems: [
       { key: 'Model', value: 'Qwen3.5-0.8B-MLX-8bit', annotation: '(guessed)' },
       { key: 'Format', value: 'mlx', annotation: '(guessed)' },
@@ -153,7 +153,15 @@ const STEPS: Step[] = [
     spinnerLabel: 'Uploading bundle…',
     label: (
       <span>
-        Uploaded run: <U>https://whatcani.run/run/run_6bdb71c8-a79f-4f53-9eca-0f9eea78af86</U>
+        Uploaded run:{' '}
+        <a
+          className="cursor-pointer underline hover:opacity-80"
+          href="https://whatcani.run/run/run_6bdb71c8-a79f-4f53-9eca-0f9eea78af86"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <W>https://whatcani.run/run/run_6bdb71c8-a79f-4f53-9eca-0f9eea78af86</W>
+        </a>
       </span>
     ),
     duration: 2200,
@@ -161,9 +169,9 @@ const STEPS: Step[] = [
 ];
 
 // Timing constants
-const CHAR_INTERVAL = 28;
+const CHAR_INTERVAL = 20;
 const SPINNER_INTERVAL = 80;
-const POST_COMMAND_PAUSE = 600;
+const POST_COMMAND_PAUSE = 500;
 const POST_SPINNER_PAUSE = 300;
 const POST_RESULT_PAUSE = 500;
 
@@ -182,7 +190,7 @@ const Arrow = () => <D>{' →  '}</D>;
 const SubItems: React.FC<{ items: SubItem[] }> = ({ items }) => {
   const maxKeyLen = Math.max(...items.map((i) => i.key.length));
   return (
-    <>
+    <Fragment>
       {items.map((item) => (
         <div key={item.key} style={{ whiteSpace: 'pre' }}>
           <Arrow />
@@ -198,7 +206,7 @@ const SubItems: React.FC<{ items: SubItem[] }> = ({ items }) => {
           {item.annotation && <D> {item.annotation}</D>}
         </div>
       ))}
-    </>
+    </Fragment>
   );
 };
 
@@ -218,7 +226,6 @@ const AnimatedTerminal: React.FC = () => {
   const [isComplete, setIsComplete] = useState<boolean>(false);
 
   // Refs.
-  const bodyRef = useRef<HTMLDivElement>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const prefersReducedMotion = useRef(false);
@@ -242,13 +249,6 @@ const AnimatedTerminal: React.FC = () => {
     timerRef.current = null;
     intervalRef.current = null;
   }, []);
-
-  // Auto-scroll.
-  useEffect(() => {
-    if (bodyRef.current) {
-      bodyRef.current.scrollTop = bodyRef.current.scrollHeight;
-    }
-  }, [typedChars, currentStep, stepPhase, progressCount, completedUpTo]);
 
   // Phase 1: Typing animation.
   useEffect(() => {
@@ -412,7 +412,9 @@ const AnimatedTerminal: React.FC = () => {
     if (step.type === 'spinner' && stepPhase === 'spinning') {
       return (
         <div>
-          <span style={{ color: ANSI.cyan }}>[{BRAILLE_FRAMES[spinnerFrame]}]</span>{' '}
+          <span style={{ color: ANSI.white }}>
+            [<span style={{ color: ANSI.cyan }}>{BRAILLE_FRAMES[spinnerFrame]}</span>]
+          </span>{' '}
           <D>{step.spinnerLabel}</D>
         </div>
       );
@@ -421,7 +423,9 @@ const AnimatedTerminal: React.FC = () => {
       if (progressCount === 0) {
         return (
           <div>
-            <span style={{ color: ANSI.cyan }}>[{BRAILLE_FRAMES[spinnerFrame]}]</span>{' '}
+            <span style={{ color: ANSI.white }}>
+              [<span style={{ color: ANSI.cyan }}>{BRAILLE_FRAMES[spinnerFrame]}</span>]
+            </span>{' '}
             <D>{step.spinnerLabel}</D>
           </div>
         );
@@ -432,9 +436,11 @@ const AnimatedTerminal: React.FC = () => {
       const currentTps = (175.5 + (Math.random() - 0.5) * 10).toFixed(1);
       return (
         <div style={{ whiteSpace: 'pre' }}>
-          <span style={{ color: ANSI.cyan }}>[{BRAILLE_FRAMES[spinnerFrame]}]</span>{' '}
+          <span style={{ color: ANSI.white }}>
+            [<span style={{ color: ANSI.cyan }}>{BRAILLE_FRAMES[spinnerFrame]}</span>]
+          </span>{' '}
           <D>Running trials </D>
-          <span style={{ color: ANSI.cyan, display: 'inline' }}>{filledBar}</span>
+          <span style={{ color: ANSI.white, display: 'inline' }}>{filledBar}</span>
           <span style={{ color: ANSI.bar, display: 'inline' }}>{emptyBar}</span>
           <W>
             {' '}
@@ -470,15 +476,14 @@ const AnimatedTerminal: React.FC = () => {
         </div>
       </div>
       <div
-        ref={bodyRef}
-        className="hide-scrollbar h-[487px] overflow-y-auto overflow-x-hidden p-4 font-mono text-sm leading-relaxed"
+        className="hide-scrollbar h-[479px] overflow-y-auto overflow-x-hidden p-3 font-mono text-sm leading-relaxed"
         style={{ backgroundColor: ANSI.bg, color: ANSI.white }}
       >
         {/* Command line */}
-        <div className="whitespace-pre-wrap break-all">
+        <div className="min-w-fit">
           <span style={{ color: ANSI.fg }}>~ $ </span>
           <W>{COMMAND.slice(0, typedChars)}</W>
-          {!isTypingDone && <span style={{ color: ANSI.white }}>▌</span>}
+          {!isTypingDone ? <span style={{ color: ANSI.white }}>▌</span> : null}
         </div>
         {/* Completed steps */}
         {STEPS.slice(0, completedUpTo + 1).map((step, i) => renderCompletedStep(step, i))}
