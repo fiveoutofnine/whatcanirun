@@ -397,7 +397,9 @@ const AnimatedTerminal: React.FC = () => {
             <Checkmark /> <W>{step.label}</W>
           </div>
           {step.subItems && <SubItems items={step.subItems} />}
-          {'hookLine' in step && step.hookLine && <div>{step.hookLine}</div>}
+          {'hookLine' in step && step.hookLine && (
+            <div style={{ whiteSpace: 'pre' }}>{step.hookLine}</div>
+          )}
         </div>
       );
     }
