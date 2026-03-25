@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Suspense } from 'react';
+import { Fragment } from 'react';
 
 // -----------------------------------------------------------------------------
 // Metadata
@@ -15,5 +15,5 @@ export const metadata: Metadata = {
 // -----------------------------------------------------------------------------
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  return <Suspense>{children}</Suspense>;
+  return <Fragment>{children}</Fragment>;
 }
