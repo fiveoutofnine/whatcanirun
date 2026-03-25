@@ -96,13 +96,8 @@ const STEPS: Step[] = [
   {
     type: 'spinner',
     spinnerLabel: 'Inspecting model…',
-    label: 'Model inspected:',
+    label: 'Model inspected.',
     duration: 700,
-    subItems: [
-      { key: 'Model', value: 'Qwen3.5-0.8B-MLX-8bit', annotation: '(guessed)' },
-      { key: 'Format', value: 'mlx', annotation: '(guessed)' },
-      { key: 'Quant', value: '8bit', annotation: '(guessed)' },
-    ],
   },
   {
     type: 'spinner',
@@ -214,7 +209,7 @@ const SubItems: React.FC<{ items: SubItem[] }> = ({ items }) => {
 // Component
 // -----------------------------------------------------------------------------
 
-const AnimatedTerminal: React.FC = () => {
+const AnimatedCliDemo: React.FC = () => {
   // State
   const [typedChars, setTypedChars] = useState<number>(0);
   const [isTypingDone, setIsTypingDone] = useState<boolean>(false);
@@ -459,8 +454,8 @@ const AnimatedTerminal: React.FC = () => {
   };
 
   return (
-    <div className="overflow-hidden rounded-xl border border-gray-6 bg-gray-2">
-      <div className="flex h-10 items-center justify-between border-b border-gray-6 bg-gray-2 pl-3 pr-2">
+    <div className="overflow-hidden rounded-xl border border-gray-6 bg-gray-2 shadow-lg">
+      <div className="flex h-9 items-center justify-between border-b border-gray-6 bg-gray-1 pl-3 pr-1.5">
         <div className="flex gap-2">
           <span className="size-3 rounded-full bg-[#FF5F57]" />
           <span className="size-3 rounded-full bg-[#FFBD2E]" />
@@ -478,7 +473,7 @@ const AnimatedTerminal: React.FC = () => {
         </div>
       </div>
       <div
-        className="hide-scrollbar h-[479px] overflow-x-auto overflow-y-auto whitespace-nowrap bg-gray-2 p-3 font-mono text-sm leading-relaxed"
+        className="hide-scrollbar h-[355.5px] overflow-x-auto overflow-y-auto whitespace-nowrap bg-gray-2 p-3 font-mono text-[12px] leading-relaxed"
         style={{ color: ANSI.white }}
       >
         {/* Command line */}
@@ -499,4 +494,4 @@ const AnimatedTerminal: React.FC = () => {
   );
 };
 
-export default AnimatedTerminal;
+export default AnimatedCliDemo;
