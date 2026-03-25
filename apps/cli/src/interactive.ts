@@ -3,6 +3,7 @@ import chalk from 'chalk';
 import { getAuth } from './auth/token';
 import { executeBenchmark } from './commands/run';
 import { uploadBundle } from './upload/client';
+import { binName } from './utils/bin';
 import * as log from './utils/log';
 import { Spinner } from './utils/log';
 
@@ -96,12 +97,10 @@ function pick(items: string[], defaultIndex = 0): Promise<number> {
       }
       for (let i = 0; i < items.length; i++) {
         const label = items[i]!;
-        const isDefault = i === defaultIndex;
-        const tag = isDefault ? chalk.dim(' (default)') : '';
         if (i === cursor) {
-          stdout.write(`\x1b[2K ${chalk.cyan('❯')} ${chalk.bold.cyan(label)}${tag}\n`);
+          stdout.write(`\x1b[2K ${chalk.cyan('❯')} ${chalk.cyan(label)}\n`);
         } else {
-          stdout.write(`\x1b[2K   ${chalk.dim(label)}${tag}\n`);
+          stdout.write(`\x1b[2K   ${chalk.dim(label)}\n`);
         }
       }
       renderCount++;
@@ -154,36 +153,32 @@ function pick(items: string[], defaultIndex = 0): Promise<number> {
 export async function runInteractive(): Promise<void> {
   const platform = process.platform;
   const runtime = platform === 'darwin' ? 'mlx_lm' : 'llama.cpp';
-  const platformLabel = platform === 'darwin' ? 'macOS (MLX)' : 'Linux (CUDA)';
 
   // Fetch and filter models for this platform.
   const allModels = await fetchFeaturedModels();
   const models = allModels.filter((m) => m.platform === platform);
 
   if (models.length === 0) {
-    log.error(`No featured models available for ${chalk.cyan(platform)}.`);
+    log.error(`No featured models to choose from for ${chalk.cyan(platform)}.`);
     console.log(
       chalk.dim(
-        `Run a benchmark directly with: ${chalk.bold.cyan('whatcanirun run --model <model> --runtime <runtime>')}`
+        ` ↳ Run a benchmark manually with ${chalk.bold.cyan(`${binName()} run --model <model> --runtime <runtime>`)}`
       )
     );
     process.exit(1);
   }
 
-  // Header.
-  console.log();
-  console.log(chalk.bold('whatcanirun') + chalk.dim(' — interactive mode'));
-  console.log();
-  console.log(chalk.dim(`Platform:  ${chalk.reset.cyan(platformLabel)}`));
-  console.log(chalk.dim(`Runtime:   ${chalk.reset.cyan(runtime)}`));
-  console.log();
+  console.log(
+    chalk.white(
+      `[${chalk.cyan('❈')}] Detected platform ${chalk.cyan(platform)} using ${chalk.cyan(runtime)} runtime.`
+    )
+  );
 
   // Pick model.
   console.log(
     chalk.white('Select a model to benchmark:') +
-      chalk.dim('  (↑↓ to move, enter to select, q to quit)')
+      chalk.dim('  (↑/↓ to move · enter to select · q to quit)')
   );
-  console.log();
 
   const choice = await pick(models.map((m) => m.displayName));
 
