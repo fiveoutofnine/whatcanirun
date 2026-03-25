@@ -43,43 +43,48 @@ export default async function Page({
   // Data
   // ---------------------------------------------------------------------------
 
-  const data = await db
-    .select()
-    .from(view__model_stats_by_device)
-    .orderBy(() => {
-      if (!sorting) return desc(view__model_stats_by_device.avgDecodeTps);
+  const data = await cache(
+    async () =>
+      await db
+        .select()
+        .from(view__model_stats_by_device)
+        .orderBy(() => {
+          if (!sorting) return desc(view__model_stats_by_device.avgDecodeTps);
 
-      switch (sorting.id) {
-        case 'model':
-          return sorting.desc
-            ? desc(view__model_stats_by_device.modelDisplayName)
-            : asc(view__model_stats_by_device.modelDisplayName);
-        case 'decode':
-          return sorting.desc
-            ? desc(view__model_stats_by_device.avgDecodeTps)
-            : asc(view__model_stats_by_device.avgDecodeTps);
-        case 'prefill':
-          return sorting.desc
-            ? desc(view__model_stats_by_device.avgPrefillTps)
-            : asc(view__model_stats_by_device.avgPrefillTps);
-        case 'ttft':
-          return sorting.desc
-            ? desc(view__model_stats_by_device.ttftP50Ms)
-            : asc(view__model_stats_by_device.ttftP50Ms);
-        case 'memory':
-          return sorting.desc
-            ? desc(view__model_stats_by_device.avgPeakRssMb)
-            : asc(view__model_stats_by_device.avgPeakRssMb);
-        case 'trials':
-          return sorting.desc
-            ? desc(view__model_stats_by_device.trialCount)
-            : asc(view__model_stats_by_device.trialCount);
-        default:
-          return desc(view__model_stats_by_device.avgDecodeTps);
-      }
-    })
-    .limit(pageSize)
-    .offset(pageIndex * pageSize);
+          switch (sorting.id) {
+            case 'model':
+              return sorting.desc
+                ? desc(view__model_stats_by_device.modelDisplayName)
+                : asc(view__model_stats_by_device.modelDisplayName);
+            case 'decode':
+              return sorting.desc
+                ? desc(view__model_stats_by_device.avgDecodeTps)
+                : asc(view__model_stats_by_device.avgDecodeTps);
+            case 'prefill':
+              return sorting.desc
+                ? desc(view__model_stats_by_device.avgPrefillTps)
+                : asc(view__model_stats_by_device.avgPrefillTps);
+            case 'ttft':
+              return sorting.desc
+                ? desc(view__model_stats_by_device.ttftP50Ms)
+                : asc(view__model_stats_by_device.ttftP50Ms);
+            case 'memory':
+              return sorting.desc
+                ? desc(view__model_stats_by_device.avgPeakRssMb)
+                : asc(view__model_stats_by_device.avgPeakRssMb);
+            case 'trials':
+              return sorting.desc
+                ? desc(view__model_stats_by_device.trialCount)
+                : asc(view__model_stats_by_device.trialCount);
+            default:
+              return desc(view__model_stats_by_device.avgDecodeTps);
+          }
+        })
+        .limit(pageSize)
+        .offset(pageIndex * pageSize),
+    [`models-data-table-${pageIndex}-${pageSize}-${JSON.stringify(sorting)}`],
+    { tags: [], revalidate: 600 },
+  )();
 
   return (
     <ContainerLayout className="flex flex-col">
