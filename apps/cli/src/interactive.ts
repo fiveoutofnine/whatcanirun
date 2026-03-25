@@ -315,7 +315,14 @@ export async function runInteractive(): Promise<void> {
   process.off('SIGINT', onSigint);
 
   console.log();
-  console.log(chalk.dim(`Benchmarking ${chalk.reset.bold.cyan(selected.displayName)}…`));
+  console.log(
+    chalk.dim(
+      'Benchmarking ' +
+        chalk.reset.cyan(selected.displayName) +
+        chalk.dim(' with ' + chalk.reset.cyan(selected.runtime)) +
+        chalk.dim('.')
+    )
+  );
   console.log();
 
   try {

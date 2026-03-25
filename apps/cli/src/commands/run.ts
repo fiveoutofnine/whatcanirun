@@ -53,7 +53,9 @@ export async function executeBenchmark(opts: BenchmarkOpts): Promise<string> {
   let activeSpinner: log.Spinner | null = null;
   let downloadPollCleanup: (() => void) | null = null;
 
+  let interrupted = false;
   const onSigint = () => {
+    interrupted = true;
     controller.abort();
     downloadPollCleanup?.();
     if (activeSpinner?.isRunning()) {
@@ -77,10 +79,12 @@ export async function executeBenchmark(opts: BenchmarkOpts): Promise<string> {
         )
       );
     } catch (e: unknown) {
-      deviceSpinner.stop(chalk.white(`[${chalk.red('✖')}] Device detection failed.`));
-      log.error(chalk.dim(e instanceof Error ? e.message : String(e)), {
-        prefix: chalk.dim.red(' ↳ '),
-      });
+      if (!interrupted) {
+        deviceSpinner.stop(chalk.white(`[${chalk.red('✖')}] Device detection failed.`));
+        log.error(chalk.dim(e instanceof Error ? e.message : String(e)), {
+          prefix: chalk.dim.red(' ↳ '),
+        });
+      }
       throw new Error('Device detection failed.');
     }
 
@@ -113,7 +117,7 @@ export async function executeBenchmark(opts: BenchmarkOpts): Promise<string> {
         )
       );
     } catch (e: unknown) {
-      if (runtimeSpinner.isRunning()) {
+      if (!interrupted && runtimeSpinner.isRunning()) {
         runtimeSpinner.stop(chalk.white(`[${chalk.red('✖')}] Runtime resolution failed.`));
         log.error(chalk.dim(e instanceof Error ? e.message : String(e)), {
           prefix: chalk.dim.red(' ↳ '),
@@ -147,10 +151,12 @@ export async function executeBenchmark(opts: BenchmarkOpts): Promise<string> {
       activeSpinner = null;
       modelSpinner.stop(chalk.white(`[${chalk.green('✓')}] Model resolved:`));
     } catch (e: unknown) {
-      modelSpinner.stop(chalk.white(`[${chalk.red('✖')}] Model resolution failed.`));
-      log.error(chalk.dim(e instanceof Error ? e.message : String(e)), {
-        prefix: chalk.dim.red(' ↳ '),
-      });
+      if (!interrupted) {
+        modelSpinner.stop(chalk.white(`[${chalk.red('✖')}] Model resolution failed.`));
+        log.error(chalk.dim(e instanceof Error ? e.message : String(e)), {
+          prefix: chalk.dim.red(' ↳ '),
+        });
+      }
       throw e instanceof Error ? e : new Error(String(e));
     }
 
@@ -296,15 +302,17 @@ export async function executeBenchmark(opts: BenchmarkOpts): Promise<string> {
       );
     } catch (e: unknown) {
       stopDownloadPoll();
-      // Close whichever spinner is active.
-      if (benchSpinner.isRunning()) {
-        benchSpinner.stop(chalk.white(`[${chalk.red('✖')}] Benchmark failed.`));
-      } else {
-        resolveSpinner.stop(chalk.white(`[${chalk.red('✖')}] Model resolution failed.`));
+      if (!interrupted) {
+        // Close whichever spinner is active.
+        if (benchSpinner.isRunning()) {
+          benchSpinner.stop(chalk.white(`[${chalk.red('✖')}] Benchmark failed.`));
+        } else {
+          resolveSpinner.stop(chalk.white(`[${chalk.red('✖')}] Model resolution failed.`));
+        }
+        log.error(chalk.dim(e instanceof Error ? e.message : String(e)), {
+          prefix: chalk.dim.red(' ↳ '),
+        });
       }
-      log.error(chalk.dim(e instanceof Error ? e.message : String(e)), {
-        prefix: chalk.dim.red(' ↳ '),
-      });
       throw e instanceof Error ? e : new Error(String(e));
     }
 
@@ -366,16 +374,18 @@ export async function executeBenchmark(opts: BenchmarkOpts): Promise<string> {
           chalk.white(`[${chalk.green('✓')}] Uploaded run: ${chalk.underline(result.run_url)}`)
         );
       } catch (e: unknown) {
-        uploadSpinner.stop(chalk.white(`[${chalk.red('✖')}] Run upload failed.`));
-        log.error(chalk.dim(e instanceof Error ? e.message : String(e)), {
-          prefix: chalk.dim.red(' ↳ '),
-        });
-        console.log();
-        console.log(
-          chalk.dim(
-            `You can submit with ${chalk.bold.cyan(`${binName()} submit ${log.filepath(bundlePath)}`)}.`
-          )
-        );
+        if (!interrupted) {
+          uploadSpinner.stop(chalk.white(`[${chalk.red('✖')}] Run upload failed.`));
+          log.error(chalk.dim(e instanceof Error ? e.message : String(e)), {
+            prefix: chalk.dim.red(' ↳ '),
+          });
+          console.log();
+          console.log(
+            chalk.dim(
+              `You can submit with ${chalk.bold.cyan(`${binName()} submit ${log.filepath(bundlePath)}`)}.`
+            )
+          );
+        }
       }
     }
 
