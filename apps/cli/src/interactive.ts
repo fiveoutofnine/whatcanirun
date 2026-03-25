@@ -222,7 +222,7 @@ export async function runInteractive(): Promise<void> {
   process.on('SIGINT', onSigint);
 
   // Detect available runtimes.
-  const detectSpinner = new Spinner(chalk.dim('Detecting runtimes…')).start();
+  const detectSpinner = new Spinner(chalk.dim('Detecting runtimes on your system…')).start();
   activeSpinner = detectSpinner;
   let runtimes: DetectedRuntime[];
   try {
