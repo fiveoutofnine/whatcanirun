@@ -2,9 +2,11 @@
 
 import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 
-import { Copy, RotateCw } from 'lucide-react';
+import { Check, Copy, RotateCw } from 'lucide-react';
 
-import { Button, IconButton } from '@/components/ui';
+import { RUN_AND_SUBMIT_COMMAND } from '@/lib/constants/cli';
+
+import { Button, IconButton, toast, Tooltip } from '@/components/ui';
 
 // -----------------------------------------------------------------------------
 // Constants
@@ -20,8 +22,6 @@ const ANSI = {
   bar: '#555555',
   bg: '#1C1C1C',
 } as const;
-const COMMAND =
-  'bunx whatcanirun@latest run --model mlx-community/Qwen3.5-0.8B-MLX-8bit --runtime mlx_lm --submit';
 
 // -----------------------------------------------------------------------------
 // Step types
@@ -210,6 +210,7 @@ const SubItems: React.FC<{ items: SubItem[] }> = ({ items }) => {
 // -----------------------------------------------------------------------------
 
 const AnimatedCliDemo: React.FC = () => {
+  const [copied, setCopied] = useState<boolean>(false);
   // State
   const [typedChars, setTypedChars] = useState<number>(0);
   const [isTypingDone, setIsTypingDone] = useState<boolean>(false);
@@ -229,7 +230,7 @@ const AnimatedCliDemo: React.FC = () => {
   useEffect(() => {
     prefersReducedMotion.current = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (prefersReducedMotion.current) {
-      setTypedChars(COMMAND.length);
+      setTypedChars(RUN_AND_SUBMIT_COMMAND.length);
       setIsTypingDone(true);
       setCurrentStep(STEPS.length);
       setCompletedUpTo(STEPS.length - 1);
@@ -252,7 +253,7 @@ const AnimatedCliDemo: React.FC = () => {
 
     intervalRef.current = setInterval(() => {
       setTypedChars((prev) => {
-        if (prev >= COMMAND.length) {
+        if (prev >= RUN_AND_SUBMIT_COMMAND.length) {
           clearTimers();
           timerRef.current = setTimeout(() => {
             setIsTypingDone(true);
@@ -453,6 +454,14 @@ const AnimatedCliDemo: React.FC = () => {
     return null;
   };
 
+  const copyCommand = useCallback(() => {
+    if (copied) return;
+    navigator.clipboard.writeText(RUN_AND_SUBMIT_COMMAND);
+    setCopied(true);
+    toast({ title: 'Copied command clipboard!', intent: 'success', hasCloseButton: true });
+    setTimeout(() => setCopied(false), 3000);
+  }, [copied]);
+
   return (
     <div className="overflow-hidden rounded-xl border border-gray-6 bg-gray-2 shadow-lg">
       <div className="flex h-9 items-center justify-between border-b border-gray-6 bg-gray-1 pl-3 pr-1.5">
@@ -461,34 +470,59 @@ const AnimatedCliDemo: React.FC = () => {
           <span className="size-3 rounded-full bg-[#FFBD2E]" />
           <span className="size-3 rounded-full bg-[#28C840]" />
         </div>
-        <div className="flex items-center gap-1">
-          {isComplete ? (
-            <IconButton size="sm" variant="ghost" intent="none" onClick={restart}>
+        <Button
+          size="sm"
+          variant="primary"
+          intent="none"
+          rightIcon={
+            copied ? (
+              <Check className="animate-in fade-in zoom-in" />
+            ) : (
+              <Copy className="animate-in fade-in" />
+            )
+          }
+          onClick={copyCommand}
+        >
+          Copy command
+        </Button>
+      </div>
+      <div className="relative">
+        <div
+          className="hide-scrollbar h-[355.5px] overflow-x-auto overflow-y-auto whitespace-nowrap bg-gray-2 p-3 font-mono text-[12px] leading-relaxed"
+          style={{ color: ANSI.white }}
+        >
+          {/* Command line */}
+          <div className="min-w-fit">
+            <span style={{ color: ANSI.fg }}>~ $ </span>
+            <W>{RUN_AND_SUBMIT_COMMAND.slice(0, typedChars)}</W>
+            {!isTypingDone ? <span style={{ color: ANSI.white }}>▌</span> : null}
+          </div>
+          {/* Completed steps */}
+          {STEPS.slice(0, completedUpTo + 1).map((step, i) => renderCompletedStep(step, i))}
+          {/* Active step */}
+          {currentStep >= 0 &&
+            currentStep < STEPS.length &&
+            currentStep > completedUpTo &&
+            renderActiveStep(STEPS[currentStep])}
+        </div>
+        {isComplete ? (
+          <Tooltip
+            content="Restart animation"
+            side="left"
+            triggerProps={{ asChild: true }}
+            inverted={false}
+          >
+            <IconButton
+              className="absolute right-1 top-1 backdrop-blur duration-1000 animate-in fade-in"
+              size="sm"
+              variant="outline"
+              intent="none"
+              onClick={restart}
+            >
               <RotateCw />
             </IconButton>
-          ) : null}
-          <Button size="sm" variant="outline" intent="none" rightIcon={<Copy />}>
-            Command
-          </Button>
-        </div>
-      </div>
-      <div
-        className="hide-scrollbar h-[355.5px] overflow-x-auto overflow-y-auto whitespace-nowrap bg-gray-2 p-3 font-mono text-[12px] leading-relaxed"
-        style={{ color: ANSI.white }}
-      >
-        {/* Command line */}
-        <div className="min-w-fit">
-          <span style={{ color: ANSI.fg }}>~ $ </span>
-          <W>{COMMAND.slice(0, typedChars)}</W>
-          {!isTypingDone ? <span style={{ color: ANSI.white }}>▌</span> : null}
-        </div>
-        {/* Completed steps */}
-        {STEPS.slice(0, completedUpTo + 1).map((step, i) => renderCompletedStep(step, i))}
-        {/* Active step */}
-        {currentStep >= 0 &&
-          currentStep < STEPS.length &&
-          currentStep > completedUpTo &&
-          renderActiveStep(STEPS[currentStep])}
+          </Tooltip>
+        ) : null}
       </div>
     </div>
   );
