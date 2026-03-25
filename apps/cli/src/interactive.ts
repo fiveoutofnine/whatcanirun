@@ -4,7 +4,6 @@ import { getAuth } from './auth/token';
 import { executeBenchmark } from './commands/run';
 import { resolveRuntime } from './runtime/resolve';
 import type { RuntimeInfo } from './runtime/types';
-import { uploadBundle } from './upload/client';
 import { binName } from './utils/bin';
 import * as log from './utils/log';
 import { Spinner } from './utils/log';
@@ -71,6 +70,17 @@ const FALLBACK_MODELS: FeaturedModel[] = [
 
 const API_BASE = process.env.WCIR_API_URL || 'https://whatcani.run';
 
+function isFeaturedModel(item: unknown): item is FeaturedModel {
+  if (typeof item !== 'object' || item === null) return false;
+  const obj = item as Record<string, unknown>;
+  return (
+    typeof obj.displayName === 'string' &&
+    typeof obj.hfRepoId === 'string' &&
+    (obj.hfFileName === undefined || typeof obj.hfFileName === 'string') &&
+    (obj.runtime === 'mlx_lm' || obj.runtime === 'llama.cpp')
+  );
+}
+
 async function fetchFeaturedModels(): Promise<FeaturedModel[]> {
   try {
     const controller = new AbortController();
@@ -80,7 +90,9 @@ async function fetchFeaturedModels(): Promise<FeaturedModel[]> {
     });
     clearTimeout(timeout);
     if (!resp.ok) return FALLBACK_MODELS;
-    return (await resp.json()) as FeaturedModel[];
+    const data: unknown = await resp.json();
+    if (!Array.isArray(data) || !data.every(isFeaturedModel)) return FALLBACK_MODELS;
+    return data;
   } catch {
     return FALLBACK_MODELS;
   }
@@ -91,6 +103,10 @@ async function fetchFeaturedModels(): Promise<FeaturedModel[]> {
 // -----------------------------------------------------------------------------
 
 function pick(items: string[], defaultIndex = 0): Promise<number> {
+  if (!process.stdin.isTTY) {
+    return Promise.resolve(defaultIndex);
+  }
+
   return new Promise((resolve) => {
     let cursor = defaultIndex;
     const { stdin, stdout } = process;
@@ -299,32 +315,14 @@ export async function runInteractive(): Promise<void> {
   console.log(chalk.dim(`Benchmarking ${chalk.reset.bold.cyan(selected.displayName)}…`));
   console.log();
 
-  let bundlePath: string;
   try {
-    bundlePath = await executeBenchmark({
+    await executeBenchmark({
       model: modelRef,
       runtime: selected.runtime,
+      submit: shouldSubmit,
     });
   } catch {
     process.exit(1);
-  }
-
-  // Upload if requested.
-  if (shouldSubmit) {
-    const uploadSpinner = new Spinner(chalk.dim('Uploading bundle…')).start();
-    activeSpinner = uploadSpinner;
-    try {
-      const result = await uploadBundle(bundlePath);
-      activeSpinner = null;
-      uploadSpinner.stop(
-        chalk.white(`[${chalk.green('✓')}] Uploaded run: ${chalk.underline(result.run_url)}`)
-      );
-    } catch (e: unknown) {
-      uploadSpinner.stop(chalk.white(`[${chalk.red('✖')}] Upload failed.`));
-      log.error(chalk.dim(e instanceof Error ? e.message : String(e)), {
-        prefix: chalk.dim.red(' ↳ '),
-      });
-    }
   }
 
   process.exit(0);

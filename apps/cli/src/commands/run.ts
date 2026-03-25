@@ -60,7 +60,6 @@ export async function executeBenchmark(opts: BenchmarkOpts): Promise<string> {
       activeSpinner.stop(chalk.white(`[${chalk.gray('−')}] ${chalk.yellow('Interrupted ⚠')}`));
     }
     console.log();
-    process.exit(130);
   };
   process.on('SIGINT', onSigint);
 
@@ -133,6 +132,7 @@ export async function executeBenchmark(opts: BenchmarkOpts): Promise<string> {
     try {
       modelRef = await resolveModel(opts.model, {
         runtime: opts.runtime,
+        signal: controller.signal,
         onDownloadProgress: ({ downloadedBytes, totalBytes }: DownloadProgress) => {
           if (totalBytes) {
             modelSpinner.setTotal(100, { percent: true });
@@ -498,13 +498,12 @@ function formatBytes(bytes: number): string {
   return `${Math.round(bytes / 1024)} KB`;
 }
 
-function parsePositiveInt(value: string, name: string): number {
+export function parsePositiveInt(value: string, name: string): number {
   const n = parseInt(value, 10);
   if (isNaN(n) || n <= 0) {
-    log.error(
+    throw new Error(
       `Invalid value for ${chalk.bold.cyan(`--${name}`)}: "${chalk.cyan(value)}". Expected a positive integer.`
     );
-    process.exit(1);
   }
   return n;
 }

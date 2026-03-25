@@ -4,6 +4,7 @@ import { createHash } from 'crypto';
 import { existsSync, readdirSync, readFileSync, statSync } from 'fs';
 import { homedir } from 'os';
 import { basename, extname, join, resolve } from 'path';
+import { pipeline } from 'stream/promises';
 
 import * as log from '../utils/log';
 import { readGgufMetadata } from './gguf';
@@ -217,7 +218,7 @@ const MODELS_CACHE_DIR = join(homedir(), APP_DIR_NAME, 'models');
 async function downloadHfFile(
   repoId: string,
   fileName: string,
-  onProgress?: (progress: DownloadProgress) => void
+  opts?: { onProgress?: (progress: DownloadProgress) => void; signal?: AbortSignal }
 ): Promise<string> {
   const [org, repo] = repoId.split('/');
   const destDir = join(MODELS_CACHE_DIR, org!, repo!);
@@ -226,13 +227,14 @@ async function downloadHfFile(
   if (existsSync(destPath)) return destPath;
 
   const url = `https://huggingface.co/${repoId}/resolve/main/${fileName}`;
-  const resp = await fetch(url, { redirect: 'follow' });
+  const resp = await fetch(url, { redirect: 'follow', signal: opts?.signal });
 
   if (!resp.ok) {
     throw new Error(`Failed to download ${repoId}/${fileName}: HTTP ${resp.status}`);
   }
 
   const { mkdirSync, createWriteStream, renameSync, unlinkSync } = await import('fs');
+  const { Readable, Transform } = await import('stream');
   mkdirSync(destDir, { recursive: true });
 
   const totalBytes = resp.headers.get('content-length')
@@ -246,19 +248,16 @@ async function downloadHfFile(
   const body = resp.body;
   if (!body) throw new Error(`Empty response body for ${repoId}/${fileName}`);
 
+  const progress = new Transform({
+    transform(chunk, _encoding, callback) {
+      downloadedBytes += chunk.length;
+      opts?.onProgress?.({ downloadedBytes, totalBytes });
+      callback(null, chunk);
+    },
+  });
+
   try {
-    for await (const chunk of body) {
-      writer.write(chunk);
-      downloadedBytes += chunk.byteLength;
-      onProgress?.({ downloadedBytes, totalBytes });
-    }
-
-    await new Promise<void>((res, rej) => {
-      writer.on('finish', res);
-      writer.on('error', rej);
-      writer.end();
-    });
-
+    await pipeline(Readable.fromWeb(body as any), progress, writer, { signal: opts?.signal });
     renameSync(tmpPath, destPath);
   } catch (e) {
     // Clean up partial temp file on failure.
@@ -272,6 +271,7 @@ async function downloadHfFile(
 export interface ResolveModelOpts {
   runtime?: string;
   onDownloadProgress?: (progress: DownloadProgress) => void;
+  signal?: AbortSignal;
 }
 
 /**
@@ -296,7 +296,10 @@ export async function resolveModel(modelRef: string, opts?: ResolveModelOpts): P
     const colonIdx = modelRef.indexOf(':');
     const repoId = modelRef.slice(0, colonIdx);
     const fileName = modelRef.slice(colonIdx + 1);
-    return downloadHfFile(repoId, fileName, opts?.onDownloadProgress);
+    return downloadHfFile(repoId, fileName, {
+      onProgress: opts?.onDownloadProgress,
+      signal: opts?.signal,
+    });
   }
 
   // Hugging Face repo ID — validate against runtime, then return as-is.
