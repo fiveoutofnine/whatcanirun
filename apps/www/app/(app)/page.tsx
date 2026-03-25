@@ -14,7 +14,7 @@ export default async function Page({
   return (
     <ContainerLayout className="flex flex-col">
       <Hero />
-      <H2 className="mb-2">Recent runs</H2>
+      <H2 className="mb-2">Models</H2>
       <Suspense fallback={null}>
         <ModelsDataTableServer searchParams={searchParams} />
       </Suspense>
