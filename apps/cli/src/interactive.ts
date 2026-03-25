@@ -340,7 +340,8 @@ export async function runInteractive(): Promise<void> {
   const submitHint = auth
     ? `  (as ${chalk.cyan(auth.user.name)} <${chalk.cyan(auth.user.email)}>, publicly visible)`
     : '  (anonymous, publicly visible)';
-  console.log(chalk.white('Submit results to whatcani.run?') + chalk.dim(submitHint));
+  const wcirLink = `\x1b]8;;https://whatcani.run\x07${chalk.underline('whatcani.run')}\x1b]8;;\x07`;
+  console.log(chalk.white(`Submit results to ${wcirLink}?`) + chalk.dim(submitHint));
 
   const submitChoice = await pick(['Yes, submit', 'No, skip']);
   if (submitChoice < 0) process.exit(0);
