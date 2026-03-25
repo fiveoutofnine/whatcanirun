@@ -1,20 +1,32 @@
 'use client';
 
-import { Fragment, useMemo } from 'react';
+import { Fragment, useCallback, useMemo, useState } from 'react';
 
 import type { ModelsDataTableInternalProps } from '.';
 import type { ModelsDataTableValue } from './types';
 import { type ColumnDef, flexRender, useReactTable } from '@tanstack/react-table';
 import clsx from 'clsx';
-import { ChevronRight, FileText } from 'lucide-react';
+import { Check, ChevronRight, Copy, FileText } from 'lucide-react';
+
+import { RUN_AND_SUBMIT_COMMAND } from '@/lib/constants/cli';
 
 import DataTableSortHeader from '@/components/templates/data-table-sort-header';
 import Stat from '@/components/templates/stat';
 import StateInfo from '@/components/templates/state-info';
 import { ModelTableCell, RuntimeTableCell } from '@/components/templates/table-cells';
-import { Button, IconButton, Table, Tooltip } from '@/components/ui';
+import { Button, IconButton, Table, toast, Tooltip } from '@/components/ui';
 
 const ModelsDataTableMobile: React.FC<ModelsDataTableInternalProps> = (tableOptions) => {
+  const [copied, setCopied] = useState<boolean>(false);
+
+  const copyCommand = useCallback(() => {
+    if (copied) return;
+    navigator.clipboard.writeText(RUN_AND_SUBMIT_COMMAND);
+    setCopied(true);
+    toast({ title: 'Copied command clipboard!', intent: 'success', hasCloseButton: true });
+    setTimeout(() => setCopied(false), 3000);
+  }, [copied]);
+
   const columns: ColumnDef<ModelsDataTableValue>[] = useMemo(
     () => [
       {
@@ -161,18 +173,24 @@ const ModelsDataTableMobile: React.FC<ModelsDataTableInternalProps> = (tableOpti
               <StateInfo
                 className="mx-auto py-9"
                 size="sm"
-                title="No users yet"
-                description="Be the first to submit a prompt."
+                title="No runs submitted yet"
+                description="Be the first to submit a benchmark for your device."
                 icon={<FileText />}
               >
                 <Button
                   size="sm"
-                  variant="secondary"
-                  intent="info"
-                  href="/"
-                  rightIcon={<ChevronRight />}
+                  variant="primary"
+                  intent="none"
+                  rightIcon={
+                    copied ? (
+                      <Check className="animate-in fade-in zoom-in" />
+                    ) : (
+                      <Copy className="animate-in fade-in" />
+                    )
+                  }
+                  onClick={copyCommand}
                 >
-                  Submit
+                  Copy command
                 </Button>
               </StateInfo>
             </Table.Cell>
