@@ -338,12 +338,12 @@ export async function runInteractive(): Promise<void> {
   // Ask to submit before running.
   const auth = getAuth();
   const submitHint = auth
-    ? `  (as ${chalk.cyan(auth.user.name)} <${chalk.cyan(auth.user.email)}>, publicly visible)`
+    ? `  (as ${chalk.cyan(auth.user.name)} (${chalk.cyan(auth.user.email)}), publicly visible)`
     : '  (anonymous, publicly visible)';
   const wcirLink = `\x1b]8;;https://whatcani.run\x07${chalk.underline('whatcani.run')}\x1b]8;;\x07`;
   console.log(chalk.white(`Submit results to ${wcirLink}?`) + chalk.dim(submitHint));
 
-  const submitChoice = await pick(['Yes, submit', 'No, skip']);
+  const submitChoice = await pick(['Yes, submit', 'No, submit later']);
   if (submitChoice < 0) process.exit(0);
   const shouldSubmit = submitChoice === 0;
 
