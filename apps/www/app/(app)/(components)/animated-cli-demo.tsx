@@ -95,8 +95,8 @@ const STEPS: Step[] = [
   },
   {
     type: 'spinner',
-    spinnerLabel: 'Inspecting model…',
-    label: 'Model inspected.',
+    spinnerLabel: 'Resolving model…',
+    label: 'Model resolved.',
     duration: 700,
   },
   {
