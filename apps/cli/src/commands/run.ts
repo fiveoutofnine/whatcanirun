@@ -23,6 +23,351 @@ import * as log from '../utils/log';
 import { Spinner } from '../utils/log';
 
 // -----------------------------------------------------------------------------
+// Types
+// -----------------------------------------------------------------------------
+
+export interface BenchmarkOpts {
+  model: string;
+  runtime: string;
+  promptTokens?: number;
+  genTokens?: number;
+  trials?: number;
+  notes?: string;
+  submit?: boolean;
+  output?: string;
+}
+
+// -----------------------------------------------------------------------------
+// Core benchmark logic
+// -----------------------------------------------------------------------------
+
+export async function executeBenchmark(opts: BenchmarkOpts): Promise<string> {
+  const promptTokens = opts.promptTokens ?? 4096;
+  const genTokens = opts.genTokens ?? 1024;
+  const numTrials = opts.trials ?? 10;
+  const outputDir = opts.output ?? DEFAULT_BUNDLES_DIR;
+
+  // Graceful Ctrl+C handling.
+  const controller = new AbortController();
+  let activeSpinner: log.Spinner | null = null;
+  let downloadPollCleanup: (() => void) | null = null;
+
+  const onSigint = () => {
+    controller.abort();
+    downloadPollCleanup?.();
+    if (activeSpinner?.isRunning()) {
+      activeSpinner.stop(chalk.white(`[${chalk.gray('−')}] ${chalk.yellow('Interrupted ⚠')}`));
+    }
+    console.log();
+    process.exit(130);
+  };
+  process.on('SIGINT', onSigint);
+
+  // Detect device.
+  const deviceSpinner = new log.Spinner(chalk.dim('Detecting device…')).start();
+  activeSpinner = deviceSpinner;
+  let device;
+  try {
+    device = await detectDevice();
+    activeSpinner = null;
+    deviceSpinner.stop(
+      chalk.white(
+        `[${chalk.green('✓')}] ${chalk.cyan(device.os_name)} (${chalk.cyan(device.os_version)}) detected.`
+      )
+    );
+  } catch (e: unknown) {
+    deviceSpinner.stop(chalk.white(`[${chalk.red('✖')}] Device detection failed.`));
+    log.error(chalk.dim(e instanceof Error ? e.message : String(e)), {
+      prefix: chalk.dim.red(' ↳ '),
+    });
+    process.exit(1);
+  }
+
+  // Resolve and detect runtime.
+  const runtimeSpinner = new log.Spinner(chalk.dim('Detecting runtime…')).start();
+  activeSpinner = runtimeSpinner;
+  let adapter;
+  let runtimeInfo;
+  try {
+    adapter = resolveRuntime(opts.runtime);
+    runtimeInfo = await adapter.detect();
+    if (!runtimeInfo) {
+      runtimeSpinner.stop(
+        chalk.white(
+          `[${chalk.red('✖')}] Runtime "${chalk.cyan(opts.runtime)}" is not available. Make sure it is installed and on ${chalk.cyan('PATH')}.`
+        )
+      );
+      const installHints: Record<string, string> = {
+        mlx_lm: `Install with ${chalk.bold.cyan('brew install mlx-lm')} or ${chalk.bold.cyan('pip install mlx-lm')}.`,
+        'llama.cpp': `Install with ${chalk.bold.cyan('brew install llama.cpp')}.`,
+      };
+      const hint = installHints[opts.runtime];
+      if (hint) console.log(chalk.dim(` ↳ ${hint}`));
+      process.exit(1);
+    }
+    activeSpinner = null;
+    runtimeSpinner.stop(
+      chalk.white(
+        `[${chalk.green('✓')}] ${chalk.cyan(runtimeInfo.name)} (${chalk.cyan(runtimeInfo.version)}) detected.`
+      )
+    );
+  } catch (e: unknown) {
+    runtimeSpinner.stop(chalk.white(`[${chalk.red('✖')}] Runtime resolution failed.`));
+    log.error(chalk.dim(e instanceof Error ? e.message : String(e)), {
+      prefix: chalk.dim.red(' ↳ '),
+    });
+    process.exit(1);
+  }
+
+  // Resolve and inspect model.
+  const modelInspectSpinner = new log.Spinner(chalk.dim('Inspecting model…')).start();
+  activeSpinner = modelInspectSpinner;
+  let modelRef: string;
+  let modelInfoGuessed;
+  try {
+    modelRef = await resolveModel(opts.model);
+    modelInfoGuessed = inferModelFromName(modelRef);
+    activeSpinner = null;
+    modelInspectSpinner.stop(chalk.white(`[${chalk.green('✓')}] Model inspected:`));
+  } catch (e: unknown) {
+    modelInspectSpinner.stop(chalk.white(`[${chalk.red('✖')}] Model not found.`));
+    log.error(chalk.dim(e instanceof Error ? e.message : String(e)), {
+      prefix: chalk.dim.red(' ↳ '),
+    });
+    process.exit(1);
+  }
+
+  // Display config.
+  const rows: [string, string][] = [
+    ['Model', modelInfoGuessed.display_name],
+    ...(modelInfoGuessed.parameters
+      ? [['Parameters', modelInfoGuessed.parameters] as [string, string]]
+      : []),
+    ['Format', modelInfoGuessed.format],
+    ...(modelInfoGuessed.quant ? [['Quant', modelInfoGuessed.quant] as [string, string]] : []),
+  ];
+  const maxKey = Math.max(...rows.map(([k]) => k.length));
+  for (const [key, value] of rows) {
+    console.log(
+      chalk.dim(` →  ${key.padEnd(maxKey)}  ${chalk.reset.cyan(value)} ${chalk.dim('(guessed)')}`)
+    );
+  }
+
+  // Resolve model (download or load from cache).
+  const isLocal = !isHuggingFaceRepoId(modelRef);
+  const isCached = isLocal || findHfCachePath(modelRef) !== null;
+  const resolveMsg = isCached
+    ? chalk.dim('Loading model from cache…')
+    : chalk.dim('Downloading model…');
+  const resolveSpinner = new Spinner(resolveMsg).start();
+  activeSpinner = resolveSpinner;
+
+  // File system-based download progress tracking.
+  let downloadPoll: ReturnType<typeof setInterval> | null = null;
+  let downloadDone = false;
+
+  if (!isCached && isHuggingFaceRepoId(modelRef)) {
+    const initialBlobSize = getHfCacheBlobSize(modelRef);
+    getHfRepoSize(modelRef).then((expectedSize) => {
+      if (!expectedSize || downloadDone) return;
+      resolveSpinner.setTotal(100, { percent: true });
+      resolveSpinner.update(chalk.dim('Downloading model'));
+      downloadPoll = setInterval(() => {
+        const currentSize = getHfCacheBlobSize(modelRef);
+        const downloaded = currentSize - initialBlobSize;
+        const pct = Math.min(Math.round((downloaded / expectedSize) * 100), 99);
+        resolveSpinner.setCurrent(pct);
+        resolveSpinner.setDetail(`${formatBytes(downloaded)} / ${formatBytes(expectedSize)}`);
+      }, 200);
+    });
+  }
+
+  const stopDownloadPoll = () => {
+    if (downloadPoll) {
+      clearInterval(downloadPoll);
+      downloadPoll = null;
+    }
+    downloadDone = true;
+  };
+  downloadPollCleanup = stopDownloadPoll;
+
+  // Re-inspect model now that cache is populated (reads real metadata).
+  const modelInfo = await inspectModel(modelRef);
+
+  // Run benchmark.
+  let bench: BenchResult;
+  let trialsStarted = false;
+  let lastTrial = 0;
+  const benchSpinner = new Spinner(chalk.dim('Warming up…'));
+
+  try {
+    bench = await adapter.benchmark({
+      model: modelRef,
+      promptTokens,
+      genTokens,
+      numTrials,
+      signal: controller.signal,
+      onProgress: (msg) => {
+        // Transition from resolve spinner to bench spinner on first
+        // non-download message.
+        if (!benchSpinner.isRunning() && !/Downloading model/i.test(msg)) {
+          stopDownloadPoll();
+          const resolveLabel = isCached
+            ? `${chalk.cyan(modelInfo.display_name)} loaded from disk.`
+            : `${chalk.cyan(modelInfo.display_name)} downloaded.`;
+          resolveSpinner.stop(chalk.white(`[${chalk.green('✓')}] ${resolveLabel}`));
+
+          // Display model info.
+          const modelRows: [string, string][] = [
+            ...(modelInfo.parameters
+              ? [['Parameters', modelInfo.parameters] as [string, string]]
+              : []),
+            ['Format', modelInfo.format],
+            ...(modelInfo.quant ? [['Quant', modelInfo.quant] as [string, string]] : []),
+            ...(modelInfo.architecture
+              ? [['Architecture', modelInfo.architecture] as [string, string]]
+              : []),
+            ...(modelInfo.artifact_sha256
+              ? [['Hash', modelInfo.artifact_sha256.slice(0, 7)] as [string, string]]
+              : []),
+          ];
+          const maxModelKey = Math.max(...modelRows.map(([k]) => k.length));
+          for (const [key, value] of modelRows) {
+            console.log(chalk.dim(` →  ${key.padEnd(maxModelKey)}  ${chalk.reset.cyan(value)}`));
+          }
+
+          benchSpinner.start();
+          activeSpinner = benchSpinner;
+        }
+
+        const trialMatch = msg.match(/^Trial (\d+)\/(\d+)/);
+        if (trialMatch) {
+          const trial = parseInt(trialMatch[1]!, 10);
+          const total = parseInt(trialMatch[2]!, 10);
+          if (!trialsStarted) {
+            trialsStarted = true;
+            benchSpinner.setTotal(total);
+            benchSpinner.setDetail('');
+            benchSpinner.update(chalk.dim('Running trials'));
+          }
+          if (trial > lastTrial) {
+            lastTrial = trial;
+            const tpsMatch = msg.match(/— ([\d.]+ tok\/s)/);
+            if (tpsMatch) benchSpinner.setDetail(tpsMatch[1]!);
+            benchSpinner.tick();
+          }
+        } else if (/Downloading model/i.test(msg)) {
+          return;
+        }
+      },
+    });
+
+    // If warmup was never reported (edge case), close resolve spinner now.
+    if (!benchSpinner.isRunning()) {
+      stopDownloadPoll();
+      const resolveLabel = isCached
+        ? `${chalk.cyan(modelInfo.display_name)} loaded from disk.`
+        : `${chalk.cyan(modelInfo.display_name)} downloaded.`;
+      resolveSpinner.stop(chalk.white(`[${chalk.green('✓')}] ${resolveLabel}`));
+    }
+
+    activeSpinner = null;
+    benchSpinner.stop(
+      chalk.white(
+        `[${chalk.green('✓')}] ${bench.trials.length}/${numTrials} trial${numTrials > 1 ? 's' : ''} ran successfully:`
+      )
+    );
+  } catch (e: unknown) {
+    stopDownloadPoll();
+    // Close whichever spinner is active.
+    if (benchSpinner.isRunning()) {
+      benchSpinner.stop(chalk.white(`[${chalk.red('✖')}] Benchmark failed.`));
+    } else {
+      resolveSpinner.stop(chalk.white(`[${chalk.red('✖')}] Model resolution failed.`));
+    }
+    log.error(chalk.dim(e instanceof Error ? e.message : String(e)), {
+      prefix: chalk.dim.red(' ↳ '),
+    });
+    process.exit(1);
+  }
+
+  // Compute derived metrics.
+  const metrics = computeMetrics(bench);
+
+  // Display results.
+  const resultRows: [string, string][] = [
+    ['TTFT p50/p95', `${metrics.ttftP50Ms} ms / ${metrics.ttftP95Ms} ms`],
+    ['Prefill TPS', `${metrics.prefillTpsMean} tok/s`],
+    ['Decode TPS', `${metrics.decodeTpsMean} tok/s`],
+    ...(metrics.idleRssMb > 0
+      ? [['Idle Memory', `${(metrics.idleRssMb / 1_024).toFixed(2)} GB`] as [string, string]]
+      : []),
+    ...(metrics.peakRssMb > 0
+      ? [['Peak Memory', `${(metrics.peakRssMb / 1_024).toFixed(2)} GB`] as [string, string]]
+      : []),
+  ];
+  const maxResultKey = Math.max(...resultRows.map(([k]) => k.length));
+  for (const [key, value] of resultRows) {
+    console.log(chalk.dim(` →  ${key.padEnd(maxResultKey)}  ${chalk.reset.bold.cyan(value)}`));
+  }
+
+  // Create bundle.
+  const bundlePath = await createBundle({
+    outputDir,
+    device,
+    runtimeInfo,
+    model: modelInfo,
+    bench,
+    metrics,
+    notes: opts.notes,
+  });
+
+  // Validate bundle.
+  const validationSpinner = new log.Spinner(chalk.dim('Validating bundle…')).start();
+  activeSpinner = validationSpinner;
+  const validation = await validateBundle(bundlePath);
+  if (!validation.valid) {
+    validationSpinner.stop(
+      chalk.white(`[${chalk.red('✖')}] ${chalk.bold.red('Bundle validation failed.')}`)
+    );
+    for (const err of validation.errors) {
+      log.error(chalk.dim(err), { prefix: chalk.dim.red(' ↳ ') });
+    }
+    process.exit(1);
+  }
+  activeSpinner = null;
+  validationSpinner.stop(chalk.white(`[${chalk.green('✓')}] Bundle is valid.`));
+  console.log(chalk.dim(` ↳ Saved to ${log.filepath(bundlePath)}.`));
+
+  // Upload bundle.
+  if (opts.submit) {
+    const uploadSpinner = new log.Spinner(chalk.dim('Uploading bundle…')).start();
+    activeSpinner = uploadSpinner;
+    try {
+      const result = await uploadBundle(bundlePath, { signal: controller.signal });
+      uploadSpinner.stop(
+        chalk.white(`[${chalk.green('✓')}] Uploaded run: ${chalk.underline(result.run_url)}`)
+      );
+    } catch (e: unknown) {
+      uploadSpinner.stop(chalk.white(`[${chalk.red('✖')}] Run upload failed.`));
+      log.error(chalk.dim(e instanceof Error ? e.message : String(e)), {
+        prefix: chalk.dim.red(' ↳ '),
+      });
+      console.log();
+      console.log(
+        chalk.dim(
+          `You can submit with ${chalk.bold.cyan(`${binName()} submit ${log.filepath(bundlePath)}`)}.`
+        )
+      );
+    }
+  }
+
+  process.off('SIGINT', onSigint);
+
+  return bundlePath;
+}
+
+// -----------------------------------------------------------------------------
 // Command
 // -----------------------------------------------------------------------------
 
@@ -69,330 +414,17 @@ const command = defineCommand({
     },
   },
   async run({ args }) {
-    const promptTokens = parsePositiveInt(
-      (args['prompt-tokens'] as string) || '4096',
-      'prompt-tokens'
-    );
-    const genTokens = parsePositiveInt((args['gen-tokens'] as string) || '1024', 'gen-tokens');
-    const numTrials = parsePositiveInt((args.trials as string) || '10', 'trials');
-    const outputDir = (args.output as string) || DEFAULT_BUNDLES_DIR;
-
-    // Graceful Ctrl+C handling.
-    const controller = new AbortController();
-    let activeSpinner: log.Spinner | null = null;
-    let downloadPollCleanup: (() => void) | null = null;
-
-    const onSigint = () => {
-      controller.abort();
-      downloadPollCleanup?.();
-      if (activeSpinner?.isRunning()) {
-        activeSpinner.stop(chalk.white(`[${chalk.gray('−')}] ${chalk.yellow('Interrupted ⚠')}`));
-      }
-      console.log();
-      process.exit(130);
-    };
-    process.on('SIGINT', onSigint);
-
-    // Detect device.
-    const deviceSpinner = new log.Spinner(chalk.dim('Detecting device…')).start();
-    activeSpinner = deviceSpinner;
-    let device;
-    try {
-      device = await detectDevice();
-      activeSpinner = null;
-      deviceSpinner.stop(
-        chalk.white(
-          `[${chalk.green('✓')}] ${chalk.cyan(device.os_name)} (${chalk.cyan(device.os_version)}) detected.`
-        )
-      );
-    } catch (e: unknown) {
-      deviceSpinner.stop(chalk.white(`[${chalk.red('✖')}] Device detection failed.`));
-      log.error(chalk.dim(e instanceof Error ? e.message : String(e)), {
-        prefix: chalk.dim.red(' ↳ '),
-      });
-      process.exit(1);
-    }
-
-    // Resolve and detect runtime.
-    const runtimeSpinner = new log.Spinner(chalk.dim('Detecting runtime…')).start();
-    activeSpinner = runtimeSpinner;
-    let adapter;
-    let runtimeInfo;
-    try {
-      adapter = resolveRuntime(args.runtime as string);
-      runtimeInfo = await adapter.detect();
-      if (!runtimeInfo) {
-        runtimeSpinner.stop(
-          chalk.white(
-            `[${chalk.red('✖')}] Runtime "${chalk.cyan(args.runtime)}" is not available. Make sure it is installed and on ${chalk.cyan('PATH')}.`
-          )
-        );
-        const installHints: Record<string, string> = {
-          mlx_lm: `Install with ${chalk.bold.cyan('brew install mlx-lm')} or ${chalk.bold.cyan('pip install mlx-lm')}.`,
-          'llama.cpp': `Install with ${chalk.bold.cyan('brew install llama.cpp')}.`,
-        };
-        const hint = installHints[args.runtime as string];
-        if (hint) console.log(chalk.dim(` ↳ ${hint}`));
-        process.exit(1);
-      }
-      activeSpinner = null;
-      runtimeSpinner.stop(
-        chalk.white(
-          `[${chalk.green('✓')}] ${chalk.cyan(runtimeInfo.name)} (${chalk.cyan(runtimeInfo.version)}) detected.`
-        )
-      );
-    } catch (e: unknown) {
-      runtimeSpinner.stop(chalk.white(`[${chalk.red('✖')}] Runtime resolution failed.`));
-      log.error(chalk.dim(e instanceof Error ? e.message : String(e)), {
-        prefix: chalk.dim.red(' ↳ '),
-      });
-      process.exit(1);
-    }
-
-    // Resolve and inspect model.
-    const modelInspectSpinner = new log.Spinner(chalk.dim('Inspecting model…')).start();
-    activeSpinner = modelInspectSpinner;
-    let modelRef: string;
-    let modelInfoGuessed;
-    try {
-      modelRef = await resolveModel(args.model as string);
-      modelInfoGuessed = inferModelFromName(modelRef);
-      activeSpinner = null;
-      modelInspectSpinner.stop(chalk.white(`[${chalk.green('✓')}] Model inspected:`));
-    } catch (e: unknown) {
-      modelInspectSpinner.stop(chalk.white(`[${chalk.red('✖')}] Model not found.`));
-      log.error(chalk.dim(e instanceof Error ? e.message : String(e)), {
-        prefix: chalk.dim.red(' ↳ '),
-      });
-      process.exit(1);
-    }
-
-    // Display config.
-    const rows: [string, string][] = [
-      ['Model', modelInfoGuessed.display_name],
-      ...(modelInfoGuessed.parameters
-        ? [['Parameters', modelInfoGuessed.parameters] as [string, string]]
-        : []),
-      ['Format', modelInfoGuessed.format],
-      ...(modelInfoGuessed.quant ? [['Quant', modelInfoGuessed.quant] as [string, string]] : []),
-    ];
-    const maxKey = Math.max(...rows.map(([k]) => k.length));
-    for (const [key, value] of rows) {
-      console.log(
-        chalk.dim(` →  ${key.padEnd(maxKey)}  ${chalk.reset.cyan(value)} ${chalk.dim('(guessed)')}`)
-      );
-    }
-
-    // Resolve model (download or load from cache).
-    const isLocal = !isHuggingFaceRepoId(modelRef);
-    const isCached = isLocal || findHfCachePath(modelRef) !== null;
-    const resolveMsg = isCached
-      ? chalk.dim('Loading model from cache…')
-      : chalk.dim('Downloading model…');
-    const resolveSpinner = new Spinner(resolveMsg).start();
-    activeSpinner = resolveSpinner;
-
-    // File system-based download progress tracking.
-    let downloadPoll: ReturnType<typeof setInterval> | null = null;
-    let downloadDone = false;
-
-    if (!isCached && isHuggingFaceRepoId(modelRef)) {
-      const initialBlobSize = getHfCacheBlobSize(modelRef);
-      getHfRepoSize(modelRef).then((expectedSize) => {
-        if (!expectedSize || downloadDone) return;
-        resolveSpinner.setTotal(100, { percent: true });
-        resolveSpinner.update(chalk.dim('Downloading model'));
-        downloadPoll = setInterval(() => {
-          const currentSize = getHfCacheBlobSize(modelRef);
-          const downloaded = currentSize - initialBlobSize;
-          const pct = Math.min(Math.round((downloaded / expectedSize) * 100), 99);
-          resolveSpinner.setCurrent(pct);
-          resolveSpinner.setDetail(`${formatBytes(downloaded)} / ${formatBytes(expectedSize)}`);
-        }, 200);
-      });
-    }
-
-    const stopDownloadPoll = () => {
-      if (downloadPoll) {
-        clearInterval(downloadPoll);
-        downloadPoll = null;
-      }
-      downloadDone = true;
-    };
-    downloadPollCleanup = stopDownloadPoll;
-
-    // Re-inspect model now that cache is populated (reads real metadata).
-    const modelInfo = await inspectModel(modelRef);
-
-    // Run benchmark.
-    let bench: BenchResult;
-    let trialsStarted = false;
-    let lastTrial = 0;
-    const benchSpinner = new Spinner(chalk.dim('Warming up…'));
-
-    try {
-      bench = await adapter.benchmark({
-        model: modelRef,
-        promptTokens,
-        genTokens,
-        numTrials,
-        signal: controller.signal,
-        onProgress: (msg) => {
-          // Transition from resolve spinner to bench spinner on first
-          // non-download message.
-          if (!benchSpinner.isRunning() && !/Downloading model/i.test(msg)) {
-            stopDownloadPoll();
-            const resolveLabel = isCached
-              ? `${chalk.cyan(modelInfo.display_name)} loaded from disk.`
-              : `${chalk.cyan(modelInfo.display_name)} downloaded.`;
-            resolveSpinner.stop(chalk.white(`[${chalk.green('✓')}] ${resolveLabel}`));
-
-            // Display model info.
-            const modelRows: [string, string][] = [
-              ...(modelInfo.parameters
-                ? [['Parameters', modelInfo.parameters] as [string, string]]
-                : []),
-              ['Format', modelInfo.format],
-              ...(modelInfo.quant ? [['Quant', modelInfo.quant] as [string, string]] : []),
-              ...(modelInfo.architecture
-                ? [['Architecture', modelInfo.architecture] as [string, string]]
-                : []),
-              ...(modelInfo.artifact_sha256
-                ? [['Hash', modelInfo.artifact_sha256.slice(0, 7)] as [string, string]]
-                : []),
-            ];
-            const maxModelKey = Math.max(...modelRows.map(([k]) => k.length));
-            for (const [key, value] of modelRows) {
-              console.log(chalk.dim(` →  ${key.padEnd(maxModelKey)}  ${chalk.reset.cyan(value)}`));
-            }
-
-            benchSpinner.start();
-            activeSpinner = benchSpinner;
-          }
-
-          const trialMatch = msg.match(/^Trial (\d+)\/(\d+)/);
-          if (trialMatch) {
-            const trial = parseInt(trialMatch[1]!, 10);
-            const total = parseInt(trialMatch[2]!, 10);
-            if (!trialsStarted) {
-              trialsStarted = true;
-              benchSpinner.setTotal(total);
-              benchSpinner.setDetail('');
-              benchSpinner.update(chalk.dim('Running trials'));
-            }
-            if (trial > lastTrial) {
-              lastTrial = trial;
-              const tpsMatch = msg.match(/— ([\d.]+ tok\/s)/);
-              if (tpsMatch) benchSpinner.setDetail(tpsMatch[1]!);
-              benchSpinner.tick();
-            }
-          } else if (/Downloading model/i.test(msg)) {
-            return;
-          }
-        },
-      });
-
-      // If warmup was never reported (edge case), close resolve spinner now.
-      if (!benchSpinner.isRunning()) {
-        stopDownloadPoll();
-        const resolveLabel = isCached
-          ? `${chalk.cyan(modelInfo.display_name)} loaded from disk.`
-          : `${chalk.cyan(modelInfo.display_name)} downloaded.`;
-        resolveSpinner.stop(chalk.white(`[${chalk.green('✓')}] ${resolveLabel}`));
-      }
-
-      activeSpinner = null;
-      benchSpinner.stop(
-        chalk.white(
-          `[${chalk.green('✓')}] ${bench.trials.length}/${numTrials} trial${numTrials > 1 ? 's' : ''} ran successfully:`
-        )
-      );
-    } catch (e: unknown) {
-      stopDownloadPoll();
-      // Close whichever spinner is active.
-      if (benchSpinner.isRunning()) {
-        benchSpinner.stop(chalk.white(`[${chalk.red('✖')}] Benchmark failed.`));
-      } else {
-        resolveSpinner.stop(chalk.white(`[${chalk.red('✖')}] Model resolution failed.`));
-      }
-      log.error(chalk.dim(e instanceof Error ? e.message : String(e)), {
-        prefix: chalk.dim.red(' ↳ '),
-      });
-      process.exit(1);
-    }
-
-    // Compute derived metrics.
-    const metrics = computeMetrics(bench);
-
-    // Display results.
-    const resultRows: [string, string][] = [
-      ['TTFT p50/p95', `${metrics.ttftP50Ms} ms / ${metrics.ttftP95Ms} ms`],
-      ['Prefill TPS', `${metrics.prefillTpsMean} tok/s`],
-      ['Decode TPS', `${metrics.decodeTpsMean} tok/s`],
-      ...(metrics.idleRssMb > 0
-        ? [['Idle Memory', `${(metrics.idleRssMb / 1_024).toFixed(2)} GB`] as [string, string]]
-        : []),
-      ...(metrics.peakRssMb > 0
-        ? [['Peak Memory', `${(metrics.peakRssMb / 1_024).toFixed(2)} GB`] as [string, string]]
-        : []),
-    ];
-    const maxResultKey = Math.max(...resultRows.map(([k]) => k.length));
-    for (const [key, value] of resultRows) {
-      console.log(chalk.dim(` →  ${key.padEnd(maxResultKey)}  ${chalk.reset.bold.cyan(value)}`));
-    }
-
-    // Create bundle.
-    const bundlePath = await createBundle({
-      outputDir,
-      device,
-      runtimeInfo,
-      model: modelInfo,
-      bench,
-      metrics,
+    await executeBenchmark({
+      model: args.model as string,
+      runtime: args.runtime as string,
+      promptTokens: parsePositiveInt((args['prompt-tokens'] as string) || '4096', 'prompt-tokens'),
+      genTokens: parsePositiveInt((args['gen-tokens'] as string) || '1024', 'gen-tokens'),
+      trials: parsePositiveInt((args.trials as string) || '10', 'trials'),
       notes: args.notes as string | undefined,
+      submit: args.submit as boolean,
+      output: args.output as string | undefined,
     });
-
-    // Validate bundle.
-    const validationSpinner = new log.Spinner(chalk.dim('Validating bundle…')).start();
-    activeSpinner = validationSpinner;
-    const validation = await validateBundle(bundlePath);
-    if (!validation.valid) {
-      validationSpinner.stop(
-        chalk.white(`[${chalk.red('✖')}] ${chalk.bold.red('Bundle validation failed.')}`)
-      );
-      for (const err of validation.errors) {
-        log.error(chalk.dim(err), { prefix: chalk.dim.red(' ↳ ') });
-      }
-      process.exit(1);
-    }
-    activeSpinner = null;
-    validationSpinner.stop(chalk.white(`[${chalk.green('✓')}] Bundle is valid.`));
-    console.log(chalk.dim(` ↳ Saved to ${log.filepath(bundlePath)}.`));
-
-    // Upload bundle.
-    if (args.submit) {
-      const uploadSpinner = new log.Spinner(chalk.dim('Uploading bundle…')).start();
-      activeSpinner = uploadSpinner;
-      try {
-        const result = await uploadBundle(bundlePath, { signal: controller.signal });
-        uploadSpinner.stop(
-          chalk.white(`[${chalk.green('✓')}] Uploaded run: ${chalk.underline(result.run_url)}`)
-        );
-      } catch (e: unknown) {
-        uploadSpinner.stop(chalk.white(`[${chalk.red('✖')}] Run upload failed.`));
-        log.error(chalk.dim(e instanceof Error ? e.message : String(e)), {
-          prefix: chalk.dim.red(' ↳ '),
-        });
-        console.log();
-        console.log(
-          chalk.dim(
-            `You can submit with ${chalk.bold.cyan(`${binName()} submit ${log.filepath(bundlePath)}`)}.`
-          )
-        );
-      }
-    }
-
-    process.off('SIGINT', onSigint);
+    process.exit(0);
   },
 });
 

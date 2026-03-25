@@ -1,0 +1,38 @@
+[
+  {
+    "displayName": "Qwen 3.5 0.8B (4-bit)",
+    "hfRepoId": "mlx-community/Qwen3.5-0.8B-OptiQ-4bit",
+    "runtime": "mlx_lm",
+    "platform": "darwin"
+  },
+  {
+    "displayName": "Qwen 3.5 4B (4-bit)",
+    "hfRepoId": "mlx-community/Qwen3.5-4B-MLX-4bit",
+    "runtime": "mlx_lm",
+    "platform": "darwin"
+  },
+  {
+    "displayName": "Qwen 3.5 9B (4-bit)",
+    "hfRepoId": "mlx-community/Qwen3.5-9B-MLX-4bit",
+    "runtime": "mlx_lm",
+    "platform": "darwin"
+  },
+  {
+    "displayName": "Llama 3.1 8B Instruct (4-bit)",
+    "hfRepoId": "mlx-community/Meta-Llama-3.1-8B-Instruct-4bit",
+    "runtime": "mlx_lm",
+    "platform": "darwin"
+  },
+  {
+    "displayName": "Qwen 3.5 4B (GGUF)",
+    "hfRepoId": "unsloth/Qwen3.5-4B-GGUF",
+    "runtime": "llama.cpp",
+    "platform": "linux"
+  },
+  {
+    "displayName": "Qwen 3.5 9B (GGUF)",
+    "hfRepoId": "unsloth/Qwen3.5-9B-GGUF",
+    "runtime": "llama.cpp",
+    "platform": "linux"
+  }
+]
