@@ -6,6 +6,7 @@ import { createBundle } from '../bundle/create';
 import { validateBundle } from '../bundle/validate';
 import { detectDevice } from '../device/detect';
 import {
+  type DownloadProgress,
   findHfCachePath,
   getHfCacheBlobSize,
   getHfRepoSize,
@@ -108,7 +109,7 @@ export async function executeBenchmark(opts: BenchmarkOpts): Promise<string> {
     activeSpinner = null;
     runtimeSpinner.stop(
       chalk.white(
-        `[${chalk.green('✓')}] ${chalk.cyan(runtimeInfo.name)} (${chalk.cyan(runtimeInfo.version)}) detected.`
+        `[${chalk.green('✓')}] ${chalk.cyan(runtimeInfo.name)} (${chalk.cyan(runtimeInfo.version)}) found.`
       )
     );
   } catch (e: unknown) {
@@ -119,18 +120,31 @@ export async function executeBenchmark(opts: BenchmarkOpts): Promise<string> {
     process.exit(1);
   }
 
-  // Resolve and inspect model.
-  const modelInspectSpinner = new log.Spinner(chalk.dim('Inspecting model…')).start();
-  activeSpinner = modelInspectSpinner;
+  // Resolve model.
+  // - Local paths and bare HF repo IDs resolve instantly.
+  // - "repo:file.gguf" refs download the file first (with progress).
+  const modelSpinner = new log.Spinner(chalk.dim('Resolving model…')).start();
+  activeSpinner = modelSpinner;
   let modelRef: string;
   let modelInfoGuessed;
   try {
-    modelRef = await resolveModel(opts.model);
+    modelRef = await resolveModel(opts.model, {
+      runtime: opts.runtime,
+      onDownloadProgress: ({ downloadedBytes, totalBytes }: DownloadProgress) => {
+        if (totalBytes) {
+          modelSpinner.setTotal(100, { percent: true });
+          modelSpinner.update(chalk.dim('Downloading model'));
+          const pct = Math.min(Math.round((downloadedBytes / totalBytes) * 100), 99);
+          modelSpinner.setCurrent(pct);
+          modelSpinner.setDetail(`${formatBytes(downloadedBytes)} / ${formatBytes(totalBytes)}`);
+        }
+      },
+    });
     modelInfoGuessed = inferModelFromName(modelRef);
     activeSpinner = null;
-    modelInspectSpinner.stop(chalk.white(`[${chalk.green('✓')}] Model inspected:`));
+    modelSpinner.stop(chalk.white(`[${chalk.green('✓')}] Model resolved:`));
   } catch (e: unknown) {
-    modelInspectSpinner.stop(chalk.white(`[${chalk.red('✖')}] Model not found.`));
+    modelSpinner.stop(chalk.white(`[${chalk.red('✖')}] Model resolution failed.`));
     log.error(chalk.dim(e instanceof Error ? e.message : String(e)), {
       prefix: chalk.dim.red(' ↳ '),
     });

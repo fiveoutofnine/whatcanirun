@@ -1,3 +1,4 @@
+import { APP_DIR_NAME } from '@whatcanirun/shared';
 import chalk from 'chalk';
 import { existsSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
@@ -25,7 +26,7 @@ export interface AuthData {
 // Constants
 // -----------------------------------------------------------------------------
 
-const AUTH_FILE = join(homedir(), '.whatcanirun', 'auth.json');
+const AUTH_FILE = join(homedir(), APP_DIR_NAME, 'auth.json');
 
 // -----------------------------------------------------------------------------
 // Functions

@@ -155,7 +155,7 @@ export class MlxAdapter implements RuntimeAdapter {
 
       if (/RepositoryNotFoundError|404 Client Error.*Repository Not Found/i.test(output)) {
         throw new Error(
-          `Model not found: '${opts.model}'. Check the HuggingFace repo ID and try again.`
+          `Model not found: '${opts.model}'. Check the Hugging Face repo ID and try again.`
         );
       }
       if (/EntryNotFoundError/i.test(output)) {

@@ -51,6 +51,13 @@ const FALLBACK_MODELS: FeaturedModel[] = [
     platform: 'darwin',
   },
   {
+    displayName: 'Qwen 3.5 0.8B (Q4_K_M GGUF)',
+    hfRepoId: 'unsloth/Qwen3.5-0.8B-GGUF',
+    hfFileName: 'Qwen3.5-0.8B-Q4_K_M.gguf',
+    runtime: 'llama.cpp',
+    platform: 'darwin',
+  },
+  {
     displayName: 'Qwen 3.5 4B (Q4_K_M GGUF)',
     hfRepoId: 'unsloth/Qwen3.5-4B-GGUF',
     hfFileName: 'Qwen3.5-4B-Q4_K_M.gguf',
@@ -196,46 +203,6 @@ async function detectRuntimes(): Promise<DetectedRuntime[]> {
 }
 
 // -----------------------------------------------------------------------------
-// GGUF model resolution
-// -----------------------------------------------------------------------------
-
-/**
- * For llama.cpp models, download the specific GGUF file from HuggingFace
- * and return the local path. Uses `huggingface-cli download` which caches
- * files in the standard HF cache directory.
- */
-async function resolveGgufModel(model: FeaturedModel): Promise<string> {
-  if (!model.hfFileName) {
-    return model.hfRepoId;
-  }
-
-  const proc = Bun.spawn(['huggingface-cli', 'download', model.hfRepoId, model.hfFileName], {
-    stdout: 'pipe',
-    stderr: 'pipe',
-  });
-
-  const stdout = (await new Response(proc.stdout).text()).trim();
-  const stderr = (await new Response(proc.stderr).text()).trim();
-  const code = await proc.exited;
-
-  if (code !== 0) {
-    throw new Error(
-      `Failed to download ${model.hfRepoId}/${model.hfFileName}:\n${stderr || stdout}`
-    );
-  }
-
-  // huggingface-cli download prints the local cache path on stdout.
-  const localPath = stdout.split('\n').pop()!.trim();
-  if (!localPath) {
-    throw new Error(
-      `huggingface-cli returned empty path for ${model.hfRepoId}/${model.hfFileName}`
-    );
-  }
-
-  return localPath;
-}
-
-// -----------------------------------------------------------------------------
 // Interactive mode
 // -----------------------------------------------------------------------------
 
@@ -317,12 +284,13 @@ export async function runInteractive(): Promise<void> {
   fetchSpinner.stop();
 
   if (models.length === 0) {
+    if (runtimes.length > 1) console.log();
     log.error(
       `No featured models for ${chalk.cyan(selectedRuntime.name)} on ${chalk.cyan(platform)}.`
     );
     console.log(
       chalk.dim(
-        ` ↳ Run a benchmark manually with ${chalk.bold.cyan(`${binName()} run --model <model> --runtime ${selectedRuntime.name}`)}`
+        `↳ Run a benchmark manually with ${chalk.bold.cyan(`${binName()} run --model <model> --runtime ${selectedRuntime.name}`)}`
       )
     );
     process.exit(1);
@@ -347,27 +315,11 @@ export async function runInteractive(): Promise<void> {
   if (submitChoice < 0) process.exit(0);
   const shouldSubmit = submitChoice === 0;
 
-  // Resolve model path (download GGUF file if needed).
-  let modelRef = selected.hfRepoId;
-  if (selected.runtime === 'llama.cpp' && selected.hfFileName) {
-    const downloadSpinner = new Spinner(
-      chalk.dim(`Downloading ${chalk.reset.cyan(selected.hfFileName)}…`)
-    ).start();
-    activeSpinner = downloadSpinner;
-    try {
-      modelRef = await resolveGgufModel(selected);
-      activeSpinner = null;
-      downloadSpinner.stop(
-        chalk.white(`[${chalk.green('✓')}] Downloaded ${chalk.cyan(selected.hfFileName)}.`)
-      );
-    } catch (e: unknown) {
-      downloadSpinner.stop(chalk.white(`[${chalk.red('✖')}] Download failed.`));
-      log.error(chalk.dim(e instanceof Error ? e.message : String(e)), {
-        prefix: chalk.dim.red(' ↳ '),
-      });
-      process.exit(1);
-    }
-  }
+  // Build model ref — for GGUF repos with a specific file, use "repoId:fileName"
+  // so that resolveModel handles the download during benchmark execution.
+  const modelRef = selected.hfFileName
+    ? `${selected.hfRepoId}:${selected.hfFileName}`
+    : selected.hfRepoId;
 
   // Run benchmark.
   console.log();

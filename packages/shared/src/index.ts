@@ -1,4 +1,4 @@
-export { HARNESS_VERSION } from './constants';
+export { APP_DIR_NAME, HARNESS_VERSION } from './constants';
 export type {
   AggregateMetrics,
   DerivedMetrics,

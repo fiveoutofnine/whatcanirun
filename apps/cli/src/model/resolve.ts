@@ -1,3 +1,4 @@
+import { APP_DIR_NAME } from '@whatcanirun/shared';
 import chalk from 'chalk';
 import { createHash } from 'crypto';
 import { existsSync, readdirSync, readFileSync, statSync } from 'fs';
@@ -189,16 +190,117 @@ export function getHfCacheBlobSize(repoId: string): number {
   return total;
 }
 
-export async function resolveModel(modelRef: string): Promise<string> {
+/**
+ * Check if a string is a HF repo ID with a specific file
+ * (e.g. "unsloth/Qwen3.5-4B-GGUF:Qwen3.5-4B-Q4_K_M.gguf").
+ */
+export function isHuggingFaceFileRef(ref: string): boolean {
+  const colonIdx = ref.indexOf(':');
+  if (colonIdx < 0) return false;
+  const repoId = ref.slice(0, colonIdx);
+  const fileName = ref.slice(colonIdx + 1);
+  return isHuggingFaceRepoId(repoId) && fileName.length > 0;
+}
+
+export interface DownloadProgress {
+  downloadedBytes: number;
+  totalBytes: number | null;
+}
+
+const MODELS_CACHE_DIR = join(homedir(), APP_DIR_NAME, 'models');
+
+/**
+ * Download a specific file from a HF repo via HTTPS.
+ * Caches to ~/.whatcanirun/models/{org}/{repo}/{fileName}.
+ * Returns the local path immediately if already cached.
+ */
+async function downloadHfFile(
+  repoId: string,
+  fileName: string,
+  onProgress?: (progress: DownloadProgress) => void
+): Promise<string> {
+  const [org, repo] = repoId.split('/');
+  const destDir = join(MODELS_CACHE_DIR, org!, repo!);
+  const destPath = join(destDir, fileName);
+
+  if (existsSync(destPath)) return destPath;
+
+  const url = `https://huggingface.co/${repoId}/resolve/main/${fileName}`;
+  const resp = await fetch(url, { redirect: 'follow' });
+
+  if (!resp.ok) {
+    throw new Error(`Failed to download ${repoId}/${fileName}: HTTP ${resp.status}`);
+  }
+
+  const { mkdirSync, createWriteStream } = await import('fs');
+  mkdirSync(destDir, { recursive: true });
+
+  const totalBytes = resp.headers.get('content-length')
+    ? parseInt(resp.headers.get('content-length')!, 10)
+    : null;
+  let downloadedBytes = 0;
+
+  const writer = createWriteStream(destPath);
+  const body = resp.body;
+  if (!body) throw new Error(`Empty response body for ${repoId}/${fileName}`);
+
+  for await (const chunk of body) {
+    writer.write(chunk);
+    downloadedBytes += chunk.byteLength;
+    onProgress?.({ downloadedBytes, totalBytes });
+  }
+
+  await new Promise<void>((res, rej) => {
+    writer.on('finish', res);
+    writer.on('error', rej);
+    writer.end();
+  });
+
+  return destPath;
+}
+
+export interface ResolveModelOpts {
+  runtime?: string;
+  onDownloadProgress?: (progress: DownloadProgress) => void;
+}
+
+/**
+ * Resolve a model reference to a path that the runtime can use.
+ *
+ * Inputs:
+ *   - Local file/dir path       → returned as-is if it exists
+ *   - "org/repo:file.gguf"      → downloads the specific file, returns local path
+ *   - "org/repo" (HF repo ID)   → returned as-is (mlx_lm handles its own download)
+ *
+ * When `runtime` is provided, validates that the model format is compatible:
+ *   - llama.cpp requires a local .gguf file or a "repo:file" ref (not a bare repo ID)
+ *   - mlx_lm accepts bare repo IDs (it handles download internally)
+ */
+export async function resolveModel(modelRef: string, opts?: ResolveModelOpts): Promise<string> {
   // Direct file path or directory (mlx model dir or gguf file).
   const resolved = resolve(modelRef);
   if (existsSync(resolved)) return resolved;
 
-  // Hugging Face repo ID — return as-is (mlx_lm handles download).
-  if (isHuggingFaceRepoId(modelRef)) return modelRef;
+  // HF repo with specific file (e.g. "org/repo:file.gguf") — download the file.
+  if (isHuggingFaceFileRef(modelRef)) {
+    const colonIdx = modelRef.indexOf(':');
+    const repoId = modelRef.slice(0, colonIdx);
+    const fileName = modelRef.slice(colonIdx + 1);
+    return downloadHfFile(repoId, fileName, opts?.onDownloadProgress);
+  }
+
+  // Hugging Face repo ID — validate against runtime, then return as-is.
+  if (isHuggingFaceRepoId(modelRef)) {
+    if (opts?.runtime === 'llama.cpp') {
+      throw new Error(
+        `${chalk.cyan('llama.cpp')} requires a file path or Hugging Face ${chalk.italic('file reference')}: '${chalk.cyan('{org}/{repo}:{file}.gguf')}'.`
+      );
+    }
+    return modelRef;
+  }
 
   throw new Error(
-    `Model not found: "${chalk.cyan(modelRef)}". Provide a file path or Hugging Face repo ID.`
+    `Model '${chalk.cyan(modelRef)}' not found. Provide a file path or Hugging Face repo ID.`
   );
 }
 
@@ -297,16 +399,35 @@ function readParameters(dirPath: string, config?: Record<string, unknown>): stri
  * the model is downloaded or cached.
  */
 export function inferModelFromName(modelRef: string): ModelInfo {
-  const isHfRepo = isHuggingFaceRepoId(modelRef);
-  const name = isHfRepo ? modelRef.split('/')[1]! : basename(modelRef);
+  const isHfFile = isHuggingFaceFileRef(modelRef);
+  const isHfRepo = isHfFile || isHuggingFaceRepoId(modelRef);
+
+  let name: string;
+  let source: string | undefined;
+  let format: string;
+
+  if (isHfFile) {
+    const colonIdx = modelRef.indexOf(':');
+    const fileName = modelRef.slice(colonIdx + 1);
+    source = modelRef.slice(0, colonIdx);
+    name = fileName;
+    format = inferFormat(fileName);
+  } else if (isHfRepo) {
+    name = modelRef.split('/')[1]!;
+    source = modelRef;
+    format = 'mlx';
+  } else {
+    name = basename(modelRef);
+    format = inferFormat(resolve(modelRef));
+  }
 
   return {
     display_name: name,
     path: modelRef,
-    format: isHfRepo ? 'mlx' : inferFormat(resolve(modelRef)),
+    format,
     quant: inferQuant(isHfRepo ? modelRef : name),
     artifact_sha256: '',
-    source: isHfRepo ? modelRef : undefined,
+    source,
   };
 }
 

@@ -1,3 +1,4 @@
+import { APP_DIR_NAME } from '@whatcanirun/shared';
 import chalk from 'chalk';
 import { randomBytes } from 'crypto';
 import { existsSync, readdirSync } from 'fs';
@@ -8,7 +9,7 @@ import { join } from 'path';
 // Constants
 // -----------------------------------------------------------------------------
 
-export const DEFAULT_BUNDLES_DIR = join(homedir(), '.whatcanirun', 'bundles');
+export const DEFAULT_BUNDLES_DIR = join(homedir(), APP_DIR_NAME, 'bundles');
 
 const RUNTIME_SLUGS: Record<string, string> = {
   mlx_lm: 'mlx',
