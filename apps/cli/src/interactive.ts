@@ -300,8 +300,21 @@ async function resolveGgufModel(model: FeaturedModel): Promise<string> {
 export async function runInteractive(): Promise<void> {
   const platform = process.platform;
 
+  // Graceful Ctrl+C handling.
+  let activeSpinner: Spinner | null = null;
+
+  const onSigint = () => {
+    if (activeSpinner?.isRunning()) {
+      activeSpinner.stop(chalk.white(`[${chalk.gray('−')}] ${chalk.yellow('Interrupted ⚠')}`));
+    }
+    console.log();
+    process.exit(130);
+  };
+  process.on('SIGINT', onSigint);
+
   // Detect available runtimes.
   const detectSpinner = new Spinner(chalk.dim('Detecting runtimes…')).start();
+  activeSpinner = detectSpinner;
   let runtimes: DetectedRuntime[];
   try {
     runtimes = await detectRuntimes();
@@ -316,9 +329,10 @@ export async function runInteractive(): Promise<void> {
       }
       process.exit(1);
     }
+    activeSpinner = null;
     detectSpinner.stop(
       chalk.white(
-        `[${chalk.green('✓')}] Found ${chalk.cyan(String(runtimes.length))} runtime${runtimes.length > 1 ? 's' : ''}.`
+        `[${chalk.green('✓')}] Found ${chalk.cyan(String(runtimes.length))} supported runtime${runtimes.length > 1 ? 's' : ''}.`
       )
     );
   } catch (e: unknown) {
@@ -333,6 +347,12 @@ export async function runInteractive(): Promise<void> {
 
   if (runtimes.length === 1) {
     selectedRuntime = runtimes[0]!;
+    console.log(
+      chalk.dim(
+        ` ↳ Using ${chalk.cyan(selectedRuntime.info.name)} (${chalk.cyan(selectedRuntime.info.version)}).`
+      )
+    );
+    console.log();
   } else {
     console.log();
     console.log(
@@ -346,10 +366,12 @@ export async function runInteractive(): Promise<void> {
 
   // Fetch and filter models for this runtime.
   const fetchSpinner = new Spinner(chalk.dim('Fetching models…')).start();
+  activeSpinner = fetchSpinner;
   const allModels = await fetchFeaturedModels();
   const models = allModels.filter(
     (m) => m.runtime === selectedRuntime.name && m.platform === platform
   );
+  activeSpinner = null;
   fetchSpinner.stop();
 
   if (models.length === 0) {
@@ -391,8 +413,10 @@ export async function runInteractive(): Promise<void> {
     const downloadSpinner = new Spinner(
       chalk.dim(`Downloading ${chalk.reset.cyan(selected.hfFileName)}…`)
     ).start();
+    activeSpinner = downloadSpinner;
     try {
       modelRef = await resolveGgufModel(selected);
+      activeSpinner = null;
       downloadSpinner.stop(
         chalk.white(`[${chalk.green('✓')}] Downloaded ${chalk.cyan(selected.hfFileName)}.`)
       );
@@ -418,8 +442,10 @@ export async function runInteractive(): Promise<void> {
   // Upload if requested.
   if (shouldSubmit) {
     const uploadSpinner = new Spinner(chalk.dim('Uploading bundle…')).start();
+    activeSpinner = uploadSpinner;
     try {
       const result = await uploadBundle(bundlePath);
+      activeSpinner = null;
       uploadSpinner.stop(
         chalk.white(`[${chalk.green('✓')}] Uploaded run: ${chalk.underline(result.run_url)}`)
       );
