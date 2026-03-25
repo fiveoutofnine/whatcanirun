@@ -14,7 +14,7 @@ import { Button } from '@/components/ui';
 
 const Hero: React.FC = async () => {
   return (
-    <div className="mb-8 flex flex-col items-center gap-4 lg:mb-12 lg:flex-row lg:gap-16">
+    <div className="mb-8 flex flex-col items-center gap-4 md:mb-12 lg:flex-row lg:gap-16">
       <div className="flex min-w-0 flex-1 flex-col">
         <h1 className="mb-2 text-3xl font-normal leading-snug tracking-tight text-gray-11 md:mb-4 md:text-5xl md:leading-[1.167]">
           <Logo className="inline select-text text-3xl md:text-5xl" /> on an{' '}
