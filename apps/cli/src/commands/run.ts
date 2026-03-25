@@ -321,9 +321,12 @@ export async function executeBenchmark(opts: BenchmarkOpts): Promise<string> {
 
     // Display results.
     const resultRows: [string, string][] = [
-      ['TTFT p50/p95', `${metrics.ttftP50Ms} ms / ${metrics.ttftP95Ms} ms`],
-      ['Prefill TPS', `${metrics.prefillTpsMean} tok/s`],
-      ['Decode TPS', `${metrics.decodeTpsMean} tok/s`],
+      [
+        'TTFT p50/p95',
+        `${metrics.ttftP50Ms.toLocaleString()} ms / ${metrics.ttftP95Ms.toLocaleString()} ms`,
+      ],
+      ['Prefill TPS', `${metrics.prefillTpsMean.toLocaleString()} tok/s`],
+      ['Decode TPS', `${metrics.decodeTpsMean.toLocaleString()} tok/s`],
       ...(metrics.idleRssMb > 0
         ? [['Idle Memory', `${(metrics.idleRssMb / 1_024).toFixed(2)} GB`] as [string, string]]
         : []),

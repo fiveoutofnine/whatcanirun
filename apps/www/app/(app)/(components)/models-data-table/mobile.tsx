@@ -23,7 +23,7 @@ const ModelsDataTableMobile: React.FC<ModelsDataTableInternalProps> = (tableOpti
     if (copied) return;
     navigator.clipboard.writeText(RUN_COMMAND);
     setCopied(true);
-    toast({ title: 'Copied command clipboard!', intent: 'success', hasCloseButton: true });
+    toast({ title: 'Copied command to clipboard.', intent: 'success', hasCloseButton: true });
     setTimeout(() => setCopied(false), 3000);
   }, [copied]);
 

@@ -35,8 +35,9 @@ const HeroDescription: React.FC & { Fallback: React.FC } = async () => {
       trial
       {trialsCount > 1 ? 's' : ''} from{' '}
       <span className="font-medium tabular-nums text-gray-12">
-        {uniqueUsersCount.toLocaleString()} {uniqueUsersCount === 1 ? 'person' : 'people'}.
+        {uniqueUsersCount.toLocaleString()} {uniqueUsersCount === 1 ? 'person' : 'people'}
       </span>
+      .
     </span>
   );
 };

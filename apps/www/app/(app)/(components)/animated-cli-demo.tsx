@@ -88,7 +88,7 @@ const STEPS: Step[] = [
     spinnerLabel: 'Detecting runtime…',
     label: (
       <Fragment>
-        <C>mlx_lm</C> (<C>0.31.0</C>) detected.
+        <C>mlx_lm</C> (<C>0.31.0</C>) found.
       </Fragment>
     ),
     duration: 700,
@@ -458,7 +458,7 @@ const AnimatedCliDemo: React.FC = () => {
     if (copied) return;
     navigator.clipboard.writeText(RUN_COMMAND);
     setCopied(true);
-    toast({ title: 'Copied command clipboard!', intent: 'success', hasCloseButton: true });
+    toast({ title: 'Copied command to clipboard.', intent: 'success', hasCloseButton: true });
     setTimeout(() => setCopied(false), 3000);
   }, [copied]);
 
