@@ -37,6 +37,7 @@ export type ModelsDataTableInternalProps = Omit<TableOptions<ModelsDataTableValu
 const ModelsDataTable: React.FC<ModelsDataTableProps> = ({ data, total, queryParams }) => {
   const [sorting, setSorting] = useSortingQueryState('sorting');
   const [pagination, setPagination] = usePaginationQueryState('pagination', total);
+
   const maxPageIndex = Math.ceil(total / Math.max(pagination.pageSize, 1)) - 1;
   const isLoading =
     queryParams.pagination.pageIndex !== pagination.pageIndex ||
