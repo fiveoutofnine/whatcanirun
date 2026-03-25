@@ -24,7 +24,8 @@ const main = defineCommand({
 
 // Launch interactive mode when no subcommand is provided.
 const subCommandKeys = new Set(Object.keys(subCommands));
-const hasSubCommand = process.argv.slice(2).some((arg) => subCommandKeys.has(arg));
+const firstPositionalArg = process.argv.slice(2).find((arg) => !arg.startsWith('-'));
+const hasSubCommand = firstPositionalArg != null && subCommandKeys.has(firstPositionalArg);
 
 if (
   hasSubCommand ||

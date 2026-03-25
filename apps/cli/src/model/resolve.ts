@@ -232,7 +232,7 @@ async function downloadHfFile(
     throw new Error(`Failed to download ${repoId}/${fileName}: HTTP ${resp.status}`);
   }
 
-  const { mkdirSync, createWriteStream } = await import('fs');
+  const { mkdirSync, createWriteStream, renameSync, unlinkSync } = await import('fs');
   mkdirSync(destDir, { recursive: true });
 
   const totalBytes = resp.headers.get('content-length')
@@ -240,21 +240,31 @@ async function downloadHfFile(
     : null;
   let downloadedBytes = 0;
 
-  const writer = createWriteStream(destPath);
+  // Write to a temp file first to avoid caching partial downloads.
+  const tmpPath = `${destPath}.tmp`;
+  const writer = createWriteStream(tmpPath);
   const body = resp.body;
   if (!body) throw new Error(`Empty response body for ${repoId}/${fileName}`);
 
-  for await (const chunk of body) {
-    writer.write(chunk);
-    downloadedBytes += chunk.byteLength;
-    onProgress?.({ downloadedBytes, totalBytes });
-  }
+  try {
+    for await (const chunk of body) {
+      writer.write(chunk);
+      downloadedBytes += chunk.byteLength;
+      onProgress?.({ downloadedBytes, totalBytes });
+    }
 
-  await new Promise<void>((res, rej) => {
-    writer.on('finish', res);
-    writer.on('error', rej);
-    writer.end();
-  });
+    await new Promise<void>((res, rej) => {
+      writer.on('finish', res);
+      writer.on('error', rej);
+      writer.end();
+    });
+
+    renameSync(tmpPath, destPath);
+  } catch (e) {
+    // Clean up partial temp file on failure.
+    try { unlinkSync(tmpPath); } catch {}
+    throw e;
+  }
 
   return destPath;
 }

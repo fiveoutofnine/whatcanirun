@@ -162,6 +162,7 @@ function pick(items: string[], defaultIndex = 0): Promise<number> {
     function cleanup() {
       stdin.removeListener('data', onData);
       if (stdin.isTTY) stdin.setRawMode(false);
+      stdin.pause();
     }
 
     if (stdin.isTTY) stdin.setRawMode(true);
@@ -326,10 +327,15 @@ export async function runInteractive(): Promise<void> {
   console.log(chalk.dim(`Benchmarking ${chalk.reset.bold.cyan(selected.displayName)}…`));
   console.log();
 
-  const bundlePath = await executeBenchmark({
-    model: modelRef,
-    runtime: selected.runtime,
-  });
+  let bundlePath: string;
+  try {
+    bundlePath = await executeBenchmark({
+      model: modelRef,
+      runtime: selected.runtime,
+    });
+  } catch {
+    process.exit(1);
+  }
 
   // Upload if requested.
   if (shouldSubmit) {

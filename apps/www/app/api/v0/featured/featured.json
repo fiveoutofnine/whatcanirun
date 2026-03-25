@@ -24,14 +24,37 @@
     "platform": "darwin"
   },
   {
-    "displayName": "Qwen 3.5 4B (GGUF)",
+    "displayName": "Qwen 3.5 0.8B (Q4_K_M GGUF)",
+    "hfRepoId": "unsloth/Qwen3.5-0.8B-GGUF",
+    "hfFileName": "Qwen3.5-0.8B-Q4_K_M.gguf",
+    "runtime": "llama.cpp",
+    "platform": "darwin"
+  },
+  {
+    "displayName": "Qwen 3.5 4B (Q4_K_M GGUF)",
     "hfRepoId": "unsloth/Qwen3.5-4B-GGUF",
+    "hfFileName": "Qwen3.5-4B-Q4_K_M.gguf",
+    "runtime": "llama.cpp",
+    "platform": "darwin"
+  },
+  {
+    "displayName": "Qwen 3.5 4B (Q4_K_M GGUF)",
+    "hfRepoId": "unsloth/Qwen3.5-4B-GGUF",
+    "hfFileName": "Qwen3.5-4B-Q4_K_M.gguf",
     "runtime": "llama.cpp",
     "platform": "linux"
   },
   {
-    "displayName": "Qwen 3.5 9B (GGUF)",
+    "displayName": "Qwen 3.5 9B (Q4_K_M GGUF)",
     "hfRepoId": "unsloth/Qwen3.5-9B-GGUF",
+    "hfFileName": "Qwen3.5-9B-Q4_K_M.gguf",
+    "runtime": "llama.cpp",
+    "platform": "darwin"
+  },
+  {
+    "displayName": "Qwen 3.5 9B (Q4_K_M GGUF)",
+    "hfRepoId": "unsloth/Qwen3.5-9B-GGUF",
+    "hfFileName": "Qwen3.5-9B-Q4_K_M.gguf",
     "runtime": "llama.cpp",
     "platform": "linux"
   }
