@@ -6,6 +6,7 @@ import { useQueryState } from 'nuqs';
 
 import Logo from '@/components/common/logo';
 import DeviceCombobox from '@/components/templates/device-combobox';
+import InlineButton from '@/components/templates/inline-button';
 import RamCombobox from '@/components/templates/ram-combobox';
 
 // -----------------------------------------------------------------------------
@@ -97,12 +98,9 @@ const HeroHeading: React.FC<{ chips: ChipOption[] }> = ({ chips }) => {
           setDevice(`${nextChip}:${nextRam}`);
         }}
       >
-        <button
-          className="inline rounded-lg font-semibold text-gray-12 transition-colors hover:bg-gray-4 focus-visible:bg-gray-4"
-          type="button"
-        >
-          {displayName}
-        </button>
+        <InlineButton className="rounded-md font-semibold text-gray-12 transition-colors hover:bg-gray-4 focus-visible:bg-gray-4">
+           {displayName}
+        </InlineButton>
       </DeviceCombobox>
     ) : (
       <span className="font-semibold text-gray-12">{displayName}</span>
@@ -115,12 +113,9 @@ const HeroHeading: React.FC<{ chips: ChipOption[] }> = ({ chips }) => {
         value={effectiveRam}
         onSelect={(ram: string) => setDevice(`${selectedChip}:${ram}`)}
       >
-        <button
-          className="inline rounded-lg font-semibold text-gray-12 transition-colors hover:bg-gray-4 focus-visible:bg-gray-4"
-          type="button"
-        >
+        <InlineButton className="rounded-md font-semibold text-gray-12 transition-colors hover:bg-gray-4 focus-visible:bg-gray-4">
           {effectiveRam} GB RAM
-        </button>
+        </InlineButton>
       </RamCombobox>
     ) : (
       <span className="font-semibold text-gray-12">{effectiveRam} GB RAM</span>

@@ -87,7 +87,7 @@ const DeviceCombobox: React.FC<DeviceComboboxProps> = ({ devices, value, onSelec
         </Drawer.Content>
       </Drawer.Root>
       <Popover.Root open={open && !isSmallScreen} onOpenChange={setOpen}>
-        <Popover.Trigger className="hidden md:inline-flex" asChild>
+        <Popover.Trigger className="hidden md:inline" asChild>
           {children}
         </Popover.Trigger>
         <Popover.Content className="w-72 p-0" align="start">

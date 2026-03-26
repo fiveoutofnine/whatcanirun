@@ -55,10 +55,14 @@ const RamCombobox: React.FC<RamComboboxProps> = ({ options, value, onSelect, chi
         </Drawer.Content>
       </Drawer.Root>
       <Popover.Root open={open && !isSmallScreen} onOpenChange={setOpen}>
-        <Popover.Trigger className="hidden md:inline-flex" asChild>
+        <Popover.Trigger className="hidden md:inline" asChild>
           {children}
         </Popover.Trigger>
-        <Popover.Content className="w-36 p-0" align="start">
+        <Popover.Content
+          className="w-36 p-0"
+          align="start"
+          onOpenAutoFocus={(e) => e.preventDefault()}
+        >
           <RamComboboxInternal {...internalProps} />
         </Popover.Content>
       </Popover.Root>
