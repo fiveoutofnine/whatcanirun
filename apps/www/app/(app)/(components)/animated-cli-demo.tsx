@@ -506,7 +506,7 @@ const AnimatedCliDemo: React.FC = () => {
           style={{ color: ANSI.white }}
         >
           {/* Command line */}
-          <div className="h-[19.5px] min-w-fit">
+          <div className="flex h-[19.5px] min-w-fit items-center">
             <span style={{ color: ANSI.fg }}>~ $ </span>
             <W>{RUN_AND_SUBMIT_COMMAND.slice(0, typedChars)}</W>
             {!isTypingDone ? <span style={{ color: ANSI.white }}>▌</span> : null}
