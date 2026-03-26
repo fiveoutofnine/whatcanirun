@@ -4,6 +4,7 @@ import { Suspense } from 'react';
 import Hero from './(components)/hero';
 import ModelsDataTable from './(components)/models-data-table';
 import ModelsDataTableSkeleton from './(components)/models-data-table/skeleton';
+import type { ModelsDataTableValue } from './(components)/models-data-table/types';
 import { asc, count, countDistinct, desc, eq, sql } from 'drizzle-orm';
 
 import { db } from '@/lib/db';
@@ -56,85 +57,81 @@ export default async function Page({
     { tags: [], revalidate: 600 },
   )();
 
-  // Prefer the one with the most models, then hardcoded fallback.
+  // If the device param is invalid/not found, pass empty data so the user sees
+  // instructions on how to submit results.
   const chipIds = new Set(chipRows.map((r) => r.chipId));
-  let effectiveDevice: string;
-  if (device && chipIds.has(device)) {
-    effectiveDevice = device;
-  } else {
-    const sorted = [...chipRows].sort((a, b) => b.modelCount - a.modelCount);
-    effectiveDevice = sorted[0]?.chipId ?? FALLBACK_DEVICE;
-  }
+  const validDevice = device !== undefined && chipIds.has(device);
 
-  const deviceFilter = eq(view__model_stats_by_device.deviceChipId, sql`${effectiveDevice}`);
+  const sorted = [...chipRows].sort((a, b) => b.modelCount - a.modelCount);
+  const effectiveDevice = device && validDevice ? device : (sorted[0]?.chipId ?? FALLBACK_DEVICE);
 
   // ---------------------------------------------------------------------------
-  // Total
+  // Total + Params + Data (skip queries for invalid device)
   // ---------------------------------------------------------------------------
 
-  const [{ count: total }] = await cache(
-    async () =>
-      await db.select({ count: count() }).from(view__model_stats_by_device).where(deviceFilter),
-    [`models-data-table-total-${effectiveDevice}`],
-    { tags: [], revalidate: 600 },
-  )();
-
-  // ---------------------------------------------------------------------------
-  // Params
-  // ---------------------------------------------------------------------------
-
+  let total = 0;
+  let data: ModelsDataTableValue[] = [];
   const sortingState = createSortingParser.parseServerSide(sortingParam);
-  const sorting = sortingState.length > 0 ? sortingState[0] : null;
+  let pageSize = 25;
+  let pageIndex = 0;
 
-  const { pageSize, pageIndex } = createPaginationParser(total).parseServerSide(pagination);
+  if (!device || validDevice) {
+    const deviceFilter = eq(view__model_stats_by_device.deviceChipId, sql`${effectiveDevice}`);
 
-  // ---------------------------------------------------------------------------
-  // Data
-  // ---------------------------------------------------------------------------
+    [{ count: total }] = await cache(
+      async () =>
+        await db.select({ count: count() }).from(view__model_stats_by_device).where(deviceFilter),
+      [`models-data-table-total-${effectiveDevice}`],
+      { tags: [], revalidate: 600 },
+    )();
 
-  const data = await cache(
-    async () =>
-      await db
-        .select()
-        .from(view__model_stats_by_device)
-        .where(deviceFilter)
-        .orderBy(() => {
-          if (!sorting) return desc(view__model_stats_by_device.avgDecodeTps);
+    const sorting = sortingState.length > 0 ? sortingState[0] : null;
+    ({ pageSize, pageIndex } = createPaginationParser(total).parseServerSide(pagination));
 
-          switch (sorting.id) {
-            case 'model':
-              return sorting.desc
-                ? desc(view__model_stats_by_device.modelDisplayName)
-                : asc(view__model_stats_by_device.modelDisplayName);
-            case 'decode':
-              return sorting.desc
-                ? desc(view__model_stats_by_device.avgDecodeTps)
-                : asc(view__model_stats_by_device.avgDecodeTps);
-            case 'prefill':
-              return sorting.desc
-                ? desc(view__model_stats_by_device.avgPrefillTps)
-                : asc(view__model_stats_by_device.avgPrefillTps);
-            case 'ttft':
-              return sorting.desc
-                ? desc(view__model_stats_by_device.ttftP50Ms)
-                : asc(view__model_stats_by_device.ttftP50Ms);
-            case 'memory':
-              return sorting.desc
-                ? desc(view__model_stats_by_device.avgPeakRssMb)
-                : asc(view__model_stats_by_device.avgPeakRssMb);
-            case 'trials':
-              return sorting.desc
-                ? desc(view__model_stats_by_device.trialCount)
-                : asc(view__model_stats_by_device.trialCount);
-            default:
-              return desc(view__model_stats_by_device.avgDecodeTps);
-          }
-        })
-        .limit(pageSize)
-        .offset(pageIndex * pageSize),
-    [`models-data-table-${effectiveDevice}-${pageIndex}-${pageSize}-${JSON.stringify(sorting)}`],
-    { tags: [], revalidate: 600 },
-  )();
+    data = await cache(
+      async () =>
+        await db
+          .select()
+          .from(view__model_stats_by_device)
+          .where(deviceFilter)
+          .orderBy(() => {
+            if (!sorting) return desc(view__model_stats_by_device.avgDecodeTps);
+
+            switch (sorting.id) {
+              case 'model':
+                return sorting.desc
+                  ? desc(view__model_stats_by_device.modelDisplayName)
+                  : asc(view__model_stats_by_device.modelDisplayName);
+              case 'decode':
+                return sorting.desc
+                  ? desc(view__model_stats_by_device.avgDecodeTps)
+                  : asc(view__model_stats_by_device.avgDecodeTps);
+              case 'prefill':
+                return sorting.desc
+                  ? desc(view__model_stats_by_device.avgPrefillTps)
+                  : asc(view__model_stats_by_device.avgPrefillTps);
+              case 'ttft':
+                return sorting.desc
+                  ? desc(view__model_stats_by_device.ttftP50Ms)
+                  : asc(view__model_stats_by_device.ttftP50Ms);
+              case 'memory':
+                return sorting.desc
+                  ? desc(view__model_stats_by_device.avgPeakRssMb)
+                  : asc(view__model_stats_by_device.avgPeakRssMb);
+              case 'trials':
+                return sorting.desc
+                  ? desc(view__model_stats_by_device.trialCount)
+                  : asc(view__model_stats_by_device.trialCount);
+              default:
+                return desc(view__model_stats_by_device.avgDecodeTps);
+            }
+          })
+          .limit(pageSize)
+          .offset(pageIndex * pageSize),
+      [`models-data-table-${effectiveDevice}-${pageIndex}-${pageSize}-${JSON.stringify(sorting)}`],
+      { tags: [], revalidate: 600 },
+    )();
+  }
 
   return (
     <ContainerLayout className="flex flex-col">
@@ -147,7 +144,7 @@ export default async function Page({
           queryParams={{
             pagination: { pageIndex, pageSize },
             sorting: sortingState,
-            stale: device !== undefined && effectiveDevice !== device,
+            stale: false,
           }}
         />
       </Suspense>
