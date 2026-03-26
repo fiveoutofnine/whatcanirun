@@ -502,11 +502,11 @@ const AnimatedCliDemo: React.FC = () => {
       </div>
       <div className="relative">
         <div
-          className="hide-scrollbar h-[355.5px] overflow-x-auto overflow-y-auto whitespace-nowrap bg-gray-2 p-3 font-mono text-[12px] leading-relaxed"
+          className="hide-scrollbar h-[330px] overflow-x-auto overflow-y-auto whitespace-nowrap bg-gray-2 p-3 font-mono text-[12px] leading-normal"
           style={{ color: ANSI.white }}
         >
           {/* Command line */}
-          <div className="flex h-[19.5px] min-w-fit items-center">
+          <div className="h-[18px] min-w-fit whitespace-pre">
             <span style={{ color: ANSI.fg }}>~ $ </span>
             <W>{RUN_AND_SUBMIT_COMMAND.slice(0, typedChars)}</W>
             {!isTypingDone ? <span style={{ color: ANSI.white }}>▌</span> : null}
