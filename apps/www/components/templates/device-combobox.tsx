@@ -101,7 +101,7 @@ const DeviceComboboxInternal: React.FC<DeviceComboboxInternalProps> = ({
   onSelect,
   setOpen,
 }) => {
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState<string>('');
 
   return (
     <Command.Root noBorder>
