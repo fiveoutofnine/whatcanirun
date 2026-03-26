@@ -11,11 +11,7 @@ import { RUN_COMMAND } from '@/lib/constants/cli';
 
 import DataTableSortHeader from '@/components/templates/data-table-sort-header';
 import StateInfo from '@/components/templates/state-info';
-import {
-  DeviceTableCell,
-  ModelTableCell,
-  RuntimeTableCell,
-} from '@/components/templates/table-cells';
+import { ModelTableCell, RuntimeTableCell } from '@/components/templates/table-cells';
 import { Button, Table, toast } from '@/components/ui';
 
 const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOptions) => {
@@ -50,20 +46,6 @@ const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOpt
             quant={row.original.modelQuant}
             parameters={row.original.modelParameters}
             architecture={row.original.modelArchitecture}
-          />
-        ),
-      },
-      {
-        id: 'device',
-        accessorKey: 'deviceCpu',
-        header: () => 'Device',
-        cell: ({ row }) => (
-          <DeviceTableCell
-            cpu={row.original.deviceCpu}
-            cpuCores={row.original.deviceCpuCores}
-            gpu={row.original.deviceGpu}
-            gpuCores={row.original.deviceGpuCores}
-            ramGb={row.original.deviceRamGb}
           />
         ),
       },
@@ -244,25 +226,24 @@ const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOpt
               <Table.Row key={row.id}>
                 {[
                   <ModelTableCell.Skeleton key={0} />,
-                  <DeviceTableCell.Skeleton key={1} />,
-                  <RuntimeTableCell.Skeleton key={2} />,
+                  <RuntimeTableCell.Skeleton key={1} />,
                   <div
-                    key={3}
+                    key={2}
                     className="ml-auto h-[1.125rem] w-20 animate-pulse rounded bg-gray-9"
                   />,
                   <div
-                    key={4}
+                    key={3}
                     className="ml-auto h-[1.125rem] w-24 animate-pulse rounded bg-gray-9"
                   />,
                   <div
-                    key={5}
+                    key={4}
                     className="w-18 ml-auto h-[1.125rem] animate-pulse rounded bg-gray-9"
                   />,
                   <div
-                    key={6}
+                    key={5}
                     className="ml-auto h-[1.125rem] w-16 animate-pulse rounded bg-gray-9"
                   />,
-                  <div key={7} className="flex flex-col items-end gap-0.5">
+                  <div key={6} className="flex flex-col items-end gap-0.5">
                     <div className="h-[1.125rem] w-5 animate-pulse rounded bg-gray-9" />
                     <div className="h-4 w-8 animate-pulse rounded bg-gray-9" />
                   </div>,
