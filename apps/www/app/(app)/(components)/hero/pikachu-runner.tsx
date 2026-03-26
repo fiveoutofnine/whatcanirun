@@ -16,17 +16,20 @@ const PikachuRunner: React.FC<{
 }> = ({ runKeys, onComplete }) => {
   return (
     <Fragment>
-      {runKeys.map((k) => (
-        <Image
-          key={k}
-          aria-hidden
-          src={pikachuGif}
-          alt=""
-          className="pointer-events-none absolute top-1 h-8 w-auto animate-[pikachu-run_3s_linear_forwards]"
-          onAnimationEnd={() => onComplete(k)}
-          unoptimized
-        />
-      ))}
+      {runKeys.map((k) => {
+        return (
+          <Image
+            key={k}
+            aria-hidden
+            src={pikachuGif}
+            alt=""
+            className="pointer-events-none absolute top-1 h-8 w-auto animate-[pikachu-run_linear_forwards]"
+            style={{ animationDuration: `${2 + ((k * 2654435761) >>> 0) / 4294967296}s` }}
+            onAnimationEnd={() => onComplete(k)}
+            unoptimized
+          />
+        );
+      })}
     </Fragment>
   );
 };
