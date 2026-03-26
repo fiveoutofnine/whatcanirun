@@ -52,8 +52,8 @@ const DeviceCombobox: React.FC<DeviceComboboxProps> = ({ devices, value, onSelec
   const groups = useMemo(() => {
     const byManufacturer = new Map<string, (DeviceOption & { key: string })[]>();
     for (const d of devices) {
-      const key = chipId(d);
-      const manufacturer = getManufacturer(d.cpu);
+      const key = `${d.cpu}:${d.cpuCores}:${d.gpu}:${d.gpuCores}:${d.ramGb}`;
+      const manufacturer = d.gpu.split(' ')[0];
       const group = byManufacturer.get(manufacturer) ?? [];
       group.push({ ...d, key });
       byManufacturer.set(manufacturer, group);
@@ -156,7 +156,7 @@ const DeviceComboboxInternal: React.FC<DeviceComboboxInternalProps> = ({
                     >
                       <div className="flex flex-col">
                         <span className="line-clamp-1 flex items-center gap-1.5 text-ellipsis leading-5">
-                          {formatCpu(d.gpu)}
+                          {d.gpu.replace(name, '')}
                           <Code>{d.ramGb} GB RAM</Code>
                         </span>
                         <span className="text-xs leading-4 text-gray-11">
@@ -179,24 +179,5 @@ const DeviceComboboxInternal: React.FC<DeviceComboboxInternalProps> = ({
     </Command.Root>
   );
 };
-
-// -----------------------------------------------------------------------------
-// Helpers
-// -----------------------------------------------------------------------------
-
-/** Full chip ID (hardware config including RAM). */
-const chipId = (c: {
-  cpu: string;
-  cpuCores: number;
-  gpu: string;
-  gpuCores: number;
-  ramGb: number;
-}) => `${c.cpu}:${c.cpuCores}:${c.gpu}:${c.gpuCores}:${c.ramGb}`;
-
-/** Extract manufacturer from CPU name (e.g. "Apple M1 Max" → "Apple"). */
-const getManufacturer = (cpu: string) => cpu.split(' ')[0] ?? cpu;
-
-/** Strip manufacturer prefix for display (e.g. "Apple M1 Max" → "M1 Max"). */
-const formatCpu = (name: string) => name.replace(/^\S+\s+/, '');
 
 export default DeviceCombobox;

@@ -60,14 +60,13 @@ const HeroHeading: React.FC<{ chips: ChipOption[] }> = ({ chips }) => {
   // Sort by GPU (primary), gpu cores, CPU, cpu cores, RAM, then model count (last tie-breaker).
   const chipsSorted = useMemo(
     () =>
-      chips.toSorted((a, b) => {
-        if (a.gpu !== b.gpu) return b.gpu.localeCompare(a.gpu);
-        if (a.gpuCores !== b.gpuCores) return b.gpuCores - a.gpuCores;
-        if (a.cpu !== b.cpu) return a.cpu.localeCompare(b.cpu);
-        if (a.cpuCores !== b.cpuCores) return b.cpuCores - a.cpuCores;
-        if (a.ramGb !== b.ramGb) return b.ramGb - a.ramGb;
-        return b.modelCount - a.modelCount;
-      }),
+      chips
+        .toSorted((a, b) => b.modelCount - a.modelCount)
+        .toSorted((a, b) => b.ramGb - a.ramGb)
+        .toSorted((a, b) => b.cpuCores - a.cpuCores)
+        .toSorted((a, b) => a.cpu.localeCompare(b.cpu))
+        .toSorted((a, b) => b.gpuCores - a.gpuCores)
+        .toSorted((a, b) => b.gpu.localeCompare(a.gpu)),
     [chips],
   );
 
