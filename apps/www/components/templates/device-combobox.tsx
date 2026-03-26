@@ -129,12 +129,13 @@ const DeviceComboboxInternal: React.FC<DeviceComboboxInternalProps> = ({
         </Command.Empty>
 
         {groups.map(({ name, devices: devs }, i) => {
-          const deviceCount = !search.trim()
-            ? devs.length
-            : devs.reduce((count, d) => {
+          let deviceCount = devs.length;
+          if (search.trim()) {
+            deviceCount = devs.filter((d) => {
               const itemValue = `${d.cpu} ${d.cpuCores} ${d.gpuCores} ${d.ramGb}`;
-              return count + (defaultFilter(itemValue, search) ? 1 : 0);
-            }, 0);
+              return defaultFilter(itemValue, search);
+            }).length;
+          }
 
           return (
             <Fragment key={name}>
