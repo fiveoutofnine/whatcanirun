@@ -8,7 +8,8 @@ import { Check, CircleHelp } from 'lucide-react';
 
 import { useMediaQuery } from '@/lib/hooks';
 
-import { Badge, Command, Drawer, Popover } from '@/components/ui';
+import { Code } from '@/components/templates/mdx';
+import { Command, Drawer, Popover } from '@/components/ui';
 
 // -----------------------------------------------------------------------------
 // Types
@@ -20,14 +21,13 @@ type DeviceOption = {
   gpu: string;
   gpuCores: number;
   ramGb: number;
-  modelCount: number;
 };
 
 type DeviceComboboxProps = {
   devices: DeviceOption[];
   value: string;
   // eslint-disable-next-line
-  onSelect: (chipKey: string) => void;
+  onSelect: (chipId: string) => void;
   children: React.ReactNode;
 };
 
@@ -35,7 +35,7 @@ type DeviceComboboxInternalProps = {
   groups: { name: string; devices: (DeviceOption & { key: string })[] }[];
   value: string;
   // eslint-disable-next-line
-  onSelect: (chipKey: string) => void;
+  onSelect: (chipId: string) => void;
   // eslint-disable-next-line
   setOpen: (open: boolean) => void;
 };
@@ -48,16 +48,11 @@ const DeviceCombobox: React.FC<DeviceComboboxProps> = ({ devices, value, onSelec
   const [open, setOpen] = useState(false);
   const isSmallScreen = useMediaQuery('(max-width: 768px)');
 
-  // Deduplicate by chip key and group by manufacturer.
+  // Group by manufacturer.
   const groups = useMemo(() => {
-    const seen = new Map<string, DeviceOption>();
-    for (const d of devices) {
-      const key = chipKey(d);
-      if (!seen.has(key)) seen.set(key, d);
-    }
-
     const byManufacturer = new Map<string, (DeviceOption & { key: string })[]>();
-    for (const [key, d] of seen) {
+    for (const d of devices) {
+      const key = chipId(d);
       const manufacturer = getManufacturer(d.cpu);
       const group = byManufacturer.get(manufacturer) ?? [];
       group.push({ ...d, key });
@@ -92,7 +87,7 @@ const DeviceCombobox: React.FC<DeviceComboboxProps> = ({ devices, value, onSelec
         <Popover.Trigger className="hidden md:inline" asChild>
           {children}
         </Popover.Trigger>
-        <Popover.Content className="w-72 p-0" align="start">
+        <Popover.Content className="w-56 p-0" align="start">
           <DeviceComboboxInternal {...internalProps} />
         </Popover.Content>
       </Popover.Root>
@@ -128,7 +123,7 @@ const DeviceComboboxInternal: React.FC<DeviceComboboxInternalProps> = ({
           let deviceCount = devs.length;
           if (search.trim()) {
             deviceCount = devs.filter((d) => {
-              const itemValue = `${d.cpu} ${d.cpuCores} ${d.gpuCores}`;
+              const itemValue = `${d.cpu} ${d.cpuCores} ${d.gpuCores} ${d.ramGb}`;
               return defaultFilter(itemValue, search);
             }).length;
           }
@@ -153,7 +148,7 @@ const DeviceComboboxInternal: React.FC<DeviceComboboxInternalProps> = ({
                     <Command.Item
                       key={d.key}
                       className="h-11 [&_[cmdk-item-content]]:flex [&_[cmdk-item-content]]:w-full [&_[cmdk-item-content]]:items-start [&_[cmdk-item-content]]:justify-between [&_[cmdk-item-content]]:gap-1.5"
-                      value={`${d.gpu}-${d.cpuCores}-${d.gpuCores}`}
+                      value={`${d.gpu}-${d.cpuCores}-${d.gpuCores}-${d.ramGb}`}
                       onSelect={() => {
                         onSelect(d.key);
                         setOpen(false);
@@ -162,12 +157,10 @@ const DeviceComboboxInternal: React.FC<DeviceComboboxInternalProps> = ({
                       <div className="flex flex-col">
                         <span className="line-clamp-1 flex items-center gap-1.5 text-ellipsis leading-5">
                           {formatCpu(d.gpu)}
-                          <Badge size="xs" variant="outline">
-                            {d.modelCount} model{d.modelCount === 1 ? '' : 's'}
-                          </Badge>
+                          <Code>{d.ramGb} GB RAM</Code>
                         </span>
                         <span className="text-xs leading-4 text-gray-11">
-                          {d.cpuCores}-core CPU / {d.gpuCores}-core GPU / {d.ramGb}GB RAM
+                          {d.cpuCores}-core CPU / {d.gpuCores}-core GPU
                         </span>
                       </div>
                       {selected ? (
@@ -191,9 +184,14 @@ const DeviceComboboxInternal: React.FC<DeviceComboboxInternalProps> = ({
 // Helpers
 // -----------------------------------------------------------------------------
 
-/** Chip key (hardware config without RAM). */
-const chipKey = (c: { cpu: string; cpuCores: number; gpu: string; gpuCores: number }) =>
-  `${c.cpu}:${c.cpuCores}:${c.gpu}:${c.gpuCores}`;
+/** Full chip ID (hardware config including RAM). */
+const chipId = (c: {
+  cpu: string;
+  cpuCores: number;
+  gpu: string;
+  gpuCores: number;
+  ramGb: number;
+}) => `${c.cpu}:${c.cpuCores}:${c.gpu}:${c.gpuCores}:${c.ramGb}`;
 
 /** Extract manufacturer from CPU name (e.g. "Apple M1 Max" → "Apple"). */
 const getManufacturer = (cpu: string) => cpu.split(' ')[0] ?? cpu;
