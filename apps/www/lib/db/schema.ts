@@ -184,7 +184,7 @@ export const runs = pgTable(
       .references(() => models.id),
     bundleId: text('bundle_id').notNull().unique(),
     schemaVersion: text('schema_version').notNull(),
-    status: runStatusEnum('status').notNull().default(RunStatus.VERIFIED),
+    status: runStatusEnum('status').notNull().default(RunStatus.PENDING),
     notes: text('notes'),
     bundleSha256: text('bundle_sha256').notNull().unique(),
     runtimeName: text('runtime_name').notNull(),
@@ -286,6 +286,7 @@ export const view__model_stats_by_device = pgMaterializedView('view__model_stats
       .innerJoin(runs, eq(trials.runId, runs.id))
       .innerJoin(models, eq(runs.modelId, models.id))
       .innerJoin(devices, eq(runs.deviceId, devices.id))
+      .where(eq(runs.status, RunStatus.VERIFIED))
       .groupBy(models.id, devices.chipId, runs.runtimeName),
 );
 

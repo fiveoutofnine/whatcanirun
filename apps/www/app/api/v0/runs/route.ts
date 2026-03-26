@@ -251,7 +251,7 @@ export async function POST(request: NextRequest) {
     .values({
       bundleId: manifest.bundle_id,
       schemaVersion: manifest.schema_version,
-      status: RunStatus.VERIFIED,
+      status: RunStatus.PENDING,
       notes: truncate(manifest.notes, 5000),
       userId,
       deviceId: device.id,
@@ -302,7 +302,7 @@ export async function POST(request: NextRequest) {
   return NextResponse.json(
     {
       run_id: run.id,
-      status: RunStatus.VERIFIED,
+      status: RunStatus.PENDING,
       run_url: `${process.env.NEXT_PUBLIC_BASE_URL ?? 'https://whatcani.run'}/run/${run.id}`,
     },
     { status: 201 },
