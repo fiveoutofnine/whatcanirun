@@ -2,6 +2,7 @@
 
 import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 
+import PikachuRunner from './hero/pikachu-runner';
 import { Check, Copy, RotateCw } from 'lucide-react';
 
 import { RUN_AND_SUBMIT_COMMAND, RUN_COMMAND } from '@/lib/constants/cli';
@@ -211,6 +212,8 @@ const SubItems: React.FC<{ items: SubItem[] }> = ({ items }) => {
 
 const AnimatedCliDemo: React.FC = () => {
   const [copied, setCopied] = useState<boolean>(false);
+  const [pikachuRuns, setPikachuRuns] = useState<number[]>([]);
+  const pikachuCounter = useRef(0);
   // State
   const [typedChars, setTypedChars] = useState<number>(0);
   const [isTypingDone, setIsTypingDone] = useState<boolean>(false);
@@ -454,18 +457,29 @@ const AnimatedCliDemo: React.FC = () => {
     return null;
   };
 
+  const removePikachu = useCallback((key: number) => {
+    setPikachuRuns((prev) => prev.filter((k) => k !== key));
+  }, []);
+
   const copyCommand = useCallback(() => {
-    if (copied) return;
+    pikachuCounter.current += 1;
+    setPikachuRuns((prev) => [...prev, pikachuCounter.current]);
     navigator.clipboard.writeText(RUN_COMMAND);
     setCopied(true);
-    toast({ title: 'Copied command to clipboard.', intent: 'success', hasCloseButton: true });
+    toast({
+      title: 'Copied command to clipboard.',
+      description: RUN_COMMAND,
+      intent: 'success',
+      hasCloseButton: true,
+    });
     setTimeout(() => setCopied(false), 3000);
-  }, [copied]);
+  }, []);
 
   return (
     <div className="overflow-hidden rounded-xl border border-gray-6 bg-gray-2 shadow-lg">
-      <div className="flex h-9 items-center justify-between border-b border-gray-6 bg-gray-1 pl-3 pr-1.5">
-        <div className="flex gap-2">
+      <div className="relative flex h-9 items-center justify-between overflow-hidden border-b border-gray-6 bg-gray-1 pl-3 pr-1.5">
+        <PikachuRunner runKeys={pikachuRuns} onComplete={removePikachu} />
+        <div className="z-10 flex gap-2">
           <span className="size-3 rounded-full bg-[#FF5F57]" />
           <span className="size-3 rounded-full bg-[#FFBD2E]" />
           <span className="size-3 rounded-full bg-[#28C840]" />

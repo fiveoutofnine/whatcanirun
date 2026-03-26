@@ -84,6 +84,10 @@ module.exports = {
             outline: '1px solid rgba(0, 0, 0, 0)',
           },
         },
+        'pikachu-run': {
+          '0%': { right: '-32px', transform: 'scaleX(-1)' },
+          '100%': { right: 'calc(100% + 32px)', transform: 'scaleX(-1)' },
+        },
       },
       zIndex: {
         base: '0',
