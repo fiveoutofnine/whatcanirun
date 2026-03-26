@@ -1,0 +1,1 @@
+ALTER TABLE "devices" ALTER COLUMN "chip_id" DROP DEFAULT;

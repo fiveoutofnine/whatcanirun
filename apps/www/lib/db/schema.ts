@@ -127,6 +127,7 @@ export const devices = pgTable(
     gpu: text('gpu').notNull(),
     gpuCores: integer('gpu_cores').notNull(),
     ramGb: integer('ram_gb').notNull(),
+    chipId: text('chip_id').notNull(),
     osName: text('os_name').notNull(),
     osVersion: text('os_version').notNull(),
     createdAt: timestamp('created_at').notNull().defaultNow(),
@@ -141,6 +142,7 @@ export const devices = pgTable(
       t.osName,
       t.osVersion,
     ),
+    index('devices_chip_id_idx').on(t.chipId),
   ],
 );
 
@@ -258,13 +260,12 @@ export const view__model_stats_by_device = pgMaterializedView('view__model_stats
         modelQuant: models.quant,
         modelArchitecture: models.architecture,
         // Device
-        deviceId: sql<string>`${devices.id}`.as('device_id'),
-        deviceOsName: devices.osName,
-        deviceCpu: devices.cpu,
-        deviceCpuCores: devices.cpuCores,
-        deviceGpu: devices.gpu,
-        deviceGpuCores: devices.gpuCores,
-        deviceRamGb: devices.ramGb,
+        deviceChipId: devices.chipId,
+        deviceCpu: sql<string>`MIN(${devices.cpu})`.as('device_cpu'),
+        deviceCpuCores: sql<number>`MIN(${devices.cpuCores})`.as('device_cpu_cores'),
+        deviceGpu: sql<string>`MIN(${devices.gpu})`.as('device_gpu'),
+        deviceGpuCores: sql<number>`MIN(${devices.gpuCores})`.as('device_gpu_cores'),
+        deviceRamGb: sql<number>`MIN(${devices.ramGb})`.as('device_ram_gb'),
         // Stats
         runtimeName: runs.runtimeName,
         runCount: countDistinct(runs.id).as('run_count'),
@@ -284,7 +285,7 @@ export const view__model_stats_by_device = pgMaterializedView('view__model_stats
       .innerJoin(runs, eq(trials.runId, runs.id))
       .innerJoin(models, eq(runs.modelId, models.id))
       .innerJoin(devices, eq(runs.deviceId, devices.id))
-      .groupBy(models.id, devices.id, runs.runtimeName),
+      .groupBy(models.id, devices.chipId, runs.runtimeName),
 );
 
 // -----------------------------------------------------------------------------

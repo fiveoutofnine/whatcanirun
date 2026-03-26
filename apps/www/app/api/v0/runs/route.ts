@@ -160,6 +160,7 @@ export async function POST(request: NextRequest) {
   const devGpuCores = dev.gpu_cores ?? 0;
   const devOsName = truncate(dev.os_name)!;
   const devOsVersion = truncate(dev.os_version)!;
+  const devChipId = `${devCpu}:${devCpuCores}:${devGpu}:${devGpuCores}:${dev.ram_gb}`;
   await db
     .insert(devices)
     .values({
@@ -168,6 +169,7 @@ export async function POST(request: NextRequest) {
       gpu: devGpu,
       gpuCores: devGpuCores,
       ramGb: dev.ram_gb,
+      chipId: devChipId,
       osName: devOsName,
       osVersion: devOsVersion,
     })
