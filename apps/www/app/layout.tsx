@@ -32,6 +32,14 @@ const serpentine = LocalFont({
 
 const title = 'whatcani.run';
 const description = 'Find the best models and how to run them locally.';
+const images = [
+  {
+    url: 'https://whatcani.run/images/og/home.png',
+    alt: 'whatcani.run OpenGraph image',
+    width: 1200,
+    height: 630,
+  },
+];
 
 export const metadata: Metadata = {
   title: {
@@ -51,7 +59,7 @@ export const metadata: Metadata = {
   openGraph: {
     title,
     description,
-    images: [],
+    images,
     url: 'https://whatcani.run',
     siteName: 'whatcani.run',
     locale: 'en_US',
@@ -60,7 +68,7 @@ export const metadata: Metadata = {
   twitter: {
     title,
     description,
-    images: [],
+    images,
     card: 'summary_large_image',
     creator: '@fiveoutofnine',
     creatorId: '1269561030272643076',
