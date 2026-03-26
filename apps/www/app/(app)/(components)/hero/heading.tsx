@@ -98,7 +98,7 @@ const HeroHeading: React.FC<{ chips: ChipOption[] }> = ({ chips }) => {
         }}
       >
         <button
-          className="inline-flex rounded-lg font-semibold text-gray-12 transition-colors hover:bg-gray-4 focus-visible:bg-gray-4"
+          className="inline rounded-lg font-semibold text-gray-12 transition-colors hover:bg-gray-4 focus-visible:bg-gray-4"
           type="button"
         >
           {displayName}
@@ -116,7 +116,7 @@ const HeroHeading: React.FC<{ chips: ChipOption[] }> = ({ chips }) => {
         onSelect={(ram: string) => setDevice(`${selectedChip}:${ram}`)}
       >
         <button
-          className="inline-flex rounded-lg font-semibold text-gray-12 transition-colors hover:bg-gray-4 focus-visible:bg-gray-4"
+          className="inline rounded-lg font-semibold text-gray-12 transition-colors hover:bg-gray-4 focus-visible:bg-gray-4"
           type="button"
         >
           {effectiveRam} GB RAM
