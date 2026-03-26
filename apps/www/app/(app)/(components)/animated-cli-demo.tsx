@@ -466,7 +466,12 @@ const AnimatedCliDemo: React.FC = () => {
     setPikachuRuns((prev) => [...prev, pikachuCounter.current]);
     navigator.clipboard.writeText(RUN_COMMAND);
     setCopied(true);
-    toast({ title: 'Copied command to clipboard.', intent: 'success', hasCloseButton: true });
+    toast({
+      title: 'Copied command to clipboard.',
+      description: RUN_COMMAND,
+      intent: 'success',
+      hasCloseButton: true,
+    });
     setTimeout(() => setCopied(false), 3000);
   }, []);
 
