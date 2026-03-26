@@ -9,6 +9,7 @@ import type { view__model_stats_by_device } from '@/lib/db/schema';
 export type ModelsDataTableValue = typeof view__model_stats_by_device.$inferSelect;
 
 export type ModelsDataTableQueryParams = {
+  stale: boolean;
   pagination: PaginationState;
   sorting: SortingState;
 };

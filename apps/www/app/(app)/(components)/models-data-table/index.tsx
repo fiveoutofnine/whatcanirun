@@ -40,6 +40,7 @@ const ModelsDataTable: React.FC<ModelsDataTableProps> = ({ data, total, queryPar
 
   const maxPageIndex = Math.ceil(total / Math.max(pagination.pageSize, 1)) - 1;
   const isLoading =
+    queryParams.stale ||
     queryParams.pagination.pageIndex !== pagination.pageIndex ||
     queryParams.pagination.pageSize !== pagination.pageSize ||
     JSON.stringify(queryParams.sorting) !== JSON.stringify(sorting);
