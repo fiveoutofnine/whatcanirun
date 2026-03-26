@@ -4,7 +4,7 @@ import { Fragment, useMemo, useState } from 'react';
 
 import * as VisuallyHidden from '@radix-ui/react-visually-hidden';
 import { defaultFilter } from 'cmdk';
-import { Check, CircleHelp, Cpu, Gpu } from 'lucide-react';
+import { Check, CircleHelp } from 'lucide-react';
 
 import { useMediaQuery } from '@/lib/hooks';
 
@@ -66,7 +66,7 @@ const DeviceCombobox: React.FC<DeviceComboboxProps> = ({ devices, value, onSelec
       .sort(([a], [b]) => a.localeCompare(b))
       .map(([name, devs]) => ({
         name,
-        devices: devs.sort((a, b) => a.cpuCores - b.cpuCores || a.gpuCores - b.gpuCores),
+        devices: devs,
       }));
   }, [devices]);
 
@@ -90,7 +90,7 @@ const DeviceCombobox: React.FC<DeviceComboboxProps> = ({ devices, value, onSelec
         <Popover.Trigger className="hidden md:inline" asChild>
           {children}
         </Popover.Trigger>
-        <Popover.Content className="w-72 p-0" align="start">
+        <Popover.Content className="w-60 p-0" align="start">
           <DeviceComboboxInternal {...internalProps} />
         </Popover.Content>
       </Popover.Root>
@@ -144,30 +144,35 @@ const DeviceComboboxInternal: React.FC<DeviceComboboxInternalProps> = ({
                   </span>
                 }
               >
-                {devs.map((d) => (
-                  <Command.Item
-                    key={d.key}
-                    className="[&_[cmdk-item-content]]:flex [&_[cmdk-item-content]]:w-full [&_[cmdk-item-content]]:items-center [&_[cmdk-item-content]]:justify-between [&_[cmdk-item-content]]:gap-1.5"
-                    value={`${d.cpu} ${d.cpuCores} ${d.gpuCores}`}
-                    icon={<Check className={d.key === value ? 'opacity-100' : 'opacity-0'} />}
-                    onSelect={() => {
-                      onSelect(d.key);
-                      setOpen(false);
-                    }}
-                  >
-                    <span className="line-clamp-1 text-ellipsis">{formatCpu(d.cpu)}</span>
-                    <div className="flex items-center gap-2">
-                      <div className="flex items-center gap-1 text-xs text-gray-11">
-                        <Cpu className="size-3" />
-                        <span>{d.cpuCores}</span>
+                {devs.map((d) => {
+                  const selected = d.key === value;
+
+                  return (
+                    <Command.Item
+                      key={d.key}
+                      className="h-11 [&_[cmdk-item-content]]:flex [&_[cmdk-item-content]]:w-full [&_[cmdk-item-content]]:items-start [&_[cmdk-item-content]]:justify-between [&_[cmdk-item-content]]:gap-1.5"
+                      value={`${d.gpu}-${d.cpuCores}-${d.gpuCores}`}
+                      onSelect={() => {
+                        onSelect(d.key);
+                        setOpen(false);
+                      }}
+                    >
+                      <div className="flex flex-col">
+                        <span className="line-clamp-1 text-ellipsis leading-5">
+                          {formatCpu(d.gpu)}
+                        </span>
+                        <span className="text-xs leading-4 text-gray-11">
+                          {d.cpuCores}-core CPU / {d.gpuCores}-core GPU
+                        </span>
                       </div>
-                      <div className="flex items-center gap-1 text-xs text-gray-11">
-                        <Gpu className="size-3" />
-                        <span>{d.gpuCores}</span>
-                      </div>
-                    </div>
-                  </Command.Item>
-                ))}
+                      {selected ? (
+                        <span className="flex items-center justify-center pt-0.5 text-gray-12">
+                          <Check className="size-4" />
+                        </span>
+                      ) : null}
+                    </Command.Item>
+                  );
+                })}
               </Command.Group>
             </Fragment>
           );

@@ -66,6 +66,19 @@ const HeroHeading: React.FC<{ chips: ChipOption[] }> = ({ chips }) => {
     [chips, device],
   );
 
+  // Sort by GPU (primary), gpu cores, CPU, cpu cores, then model count (last tie-breaker).
+  const chipsSorted = useMemo(
+    () =>
+      chips.toSorted((a, b) => {
+        if (a.gpu !== b.gpu) return b.gpu.localeCompare(a.gpu);
+        if (a.gpuCores !== b.gpuCores) return b.gpuCores - a.gpuCores;
+        if (a.cpu !== b.cpu) return a.cpu.localeCompare(b.cpu);
+        if (a.cpuCores !== b.cpuCores) return b.cpuCores - a.cpuCores;
+        return b.modelCount - a.modelCount;
+      }),
+    [chips],
+  );
+
   // RAM options for the selected chip config.
   const ramOptions = useMemo(
     () =>
@@ -88,7 +101,7 @@ const HeroHeading: React.FC<{ chips: ChipOption[] }> = ({ chips }) => {
   const chipElement =
     uniqueChipCount > 1 ? (
       <DeviceCombobox
-        devices={chips}
+        devices={chipsSorted}
         value={selectedChip}
         onSelect={(nextChip: string) => {
           const nextRam = chips
@@ -107,7 +120,7 @@ const HeroHeading: React.FC<{ chips: ChipOption[] }> = ({ chips }) => {
     );
 
   const ramElement =
-    ramOptions.length === 1 ? (
+    ramOptions.length > 1 ? (
       <RamCombobox
         options={ramOptions}
         value={effectiveRam}

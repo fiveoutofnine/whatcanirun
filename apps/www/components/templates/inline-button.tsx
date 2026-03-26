@@ -18,7 +18,7 @@ const InlineButton = forwardRef<HTMLSpanElement, React.HTMLAttributes<HTMLSpanEl
       ref={ref}
       className={twMerge(
         clsx(
-          'cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-9',
+          'inline cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-9',
           className,
         ),
       )}
@@ -31,6 +31,9 @@ const InlineButton = forwardRef<HTMLSpanElement, React.HTMLAttributes<HTMLSpanEl
         }
       }}
       {...rest}
+      // @ts-expect-error We prevent any `type="button"` prop merging via
+      // `Slot`/`asChild`.
+      type={undefined}
     >
       {children}
     </span>
