@@ -33,10 +33,31 @@ export function formatSysinfo(device: DeviceInfo): string {
   return lines.join('\n');
 }
 
+const SUPPORTED_TARGETS: ReadonlyArray<{ platform: string; arch: string }> = [
+  { platform: 'darwin', arch: 'arm64' },
+  { platform: 'linux', arch: 'x64' },
+];
+
 export async function detectDevice(): Promise<DeviceInfo> {
-  if (process.platform === 'darwin') return detectMacOS();
-  if (process.platform === 'linux') return detectLinux();
-  throw new Error(`Unsupported platform: ${chalk.cyan(process.platform)}.`);
+  const { platform, arch } = process;
+  const supported = SUPPORTED_TARGETS.some((t) => t.platform === platform && t.arch === arch);
+  if (!supported) {
+    throw new Error(`Unsupported platform: ${chalk.cyan(`${platform}${chalk.dim('/')}${arch}`)}.`);
+  }
+
+  const device = platform === 'darwin' ? await detectMacOS() : await detectLinux();
+  if (
+    !device.cpu_model ||
+    !device.gpu_model ||
+    !device.ram_gb ||
+    device.cpu_model === 'Unknown' ||
+    device.gpu_model === 'Unknown' ||
+    device.cpu_model === 'None' ||
+    device.gpu_model === 'None'
+  ) {
+    throw new Error('Could not identify device. Ensure system profiling tools are available.');
+  }
+  return device;
 }
 
 // -----------------------------------------------------------------------------
