@@ -80,7 +80,7 @@ const ModelTableCell: React.FC<ModelTableCellProps> & { Skeleton: React.FC } = (
 
 const ModelTableCellSkeleton: React.FC = () => {
   return (
-    <div className="flex flex-col items-start gap-0.5">
+    <div className="flex flex-col items-start gap-1">
       <span className="h-5 w-40 animate-pulse rounded bg-gray-9" />
       <div className="mt-0 flex h-4 gap-2">
         {[

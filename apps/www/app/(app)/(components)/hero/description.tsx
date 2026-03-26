@@ -1,4 +1,4 @@
-import { cacheLife } from 'next/cache';
+import { unstable_cache as cache } from 'next/cache';
 
 import { count, countDistinct, sum } from 'drizzle-orm';
 
@@ -10,17 +10,18 @@ import { runs, trials } from '@/lib/db/schema';
 // -----------------------------------------------------------------------------
 
 const HeroDescription: React.FC & { Fallback: React.FC } = async () => {
-  'use cache';
-  cacheLife({ stale: 300, revalidate: 300 });
-
-  const [[{ inputTokens, outputTokens }], [{ trialsCount }], [{ uniqueUsersCount }]] =
-    await Promise.all([
-      db
-        .select({ inputTokens: sum(runs.promptTokens), outputTokens: sum(runs.completionTokens) })
-        .from(runs),
-      db.select({ trialsCount: count() }).from(trials),
-      db.select({ uniqueUsersCount: countDistinct(runs.userId) }).from(runs),
-    ]);
+  const [[{ inputTokens, outputTokens }], [{ trialsCount }], [{ uniqueUsersCount }]] = await cache(
+    async () =>
+      await Promise.all([
+        db
+          .select({ inputTokens: sum(runs.promptTokens), outputTokens: sum(runs.completionTokens) })
+          .from(runs),
+        db.select({ trialsCount: count() }).from(trials),
+        db.select({ uniqueUsersCount: countDistinct(runs.userId) }).from(runs),
+      ]),
+    ['overview-stats'],
+    { tags: ['overview-stats'], revalidate: 600 },
+  )();
 
   const totalTokens = Number(inputTokens) + Number(outputTokens);
 

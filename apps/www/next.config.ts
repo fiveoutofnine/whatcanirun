@@ -3,7 +3,6 @@ import type { NextConfig } from 'next';
 import createMDX from '@next/mdx';
 
 const nextConfig: NextConfig = {
-  cacheComponents: true,
   images: {
     remotePatterns: [{ hostname: 'assets.peval.io' }],
   },

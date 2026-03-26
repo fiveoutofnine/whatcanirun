@@ -124,8 +124,8 @@ const STEPS: Step[] = [
     type: 'result',
     label: '10/10 trials ran successfully:',
     subItems: [
-      { key: 'TTFT p50/p95', value: '1861.34 ms / 2271.36 ms', bold: true },
-      { key: 'Prefill TPS', value: '2268.5 tok/s', bold: true },
+      { key: 'TTFT p50/p95', value: '1,861.34 ms / 2,271.36 ms', bold: true },
+      { key: 'Prefill TPS', value: '2,268.5 tok/s', bold: true },
       { key: 'Decode TPS', value: '177 tok/s', bold: true },
       { key: 'Idle Memory', value: '1.08 GB', bold: true },
       { key: 'Peak Memory', value: '2.56 GB', bold: true },
