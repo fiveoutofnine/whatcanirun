@@ -81,7 +81,7 @@ const HeroHeading: React.FC<{ chips: ChipOption[] }> = ({ chips }) => {
         value={device}
         onSelect={(chipId: string) => setDevice(chipId)}
       >
-        <InlineButton className="rounded-md font-semibold text-gray-12 transition-colors hover:bg-gray-4 focus-visible:bg-gray-4">
+        <InlineButton className="rounded-md box-decoration-clone font-semibold text-gray-12 transition-colors hover:bg-gray-4 focus-visible:bg-gray-4">
           {displayName}
           <span className="font-normal text-gray-11"> with </span>
           {displayRam} GB RAM
