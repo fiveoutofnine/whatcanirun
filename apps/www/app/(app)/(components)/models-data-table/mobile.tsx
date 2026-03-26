@@ -49,6 +49,8 @@ const ModelsDataTableMobile: React.FC<ModelsDataTableInternalProps> = (tableOpti
             quant={row.original.modelQuant}
             parameters={row.original.modelParameters}
             architecture={row.original.modelArchitecture}
+            source={row.original.modelSource}
+            runtimeName={row.original.runtimeName}
           />
         ),
       },

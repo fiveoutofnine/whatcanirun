@@ -47,6 +47,8 @@ const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOpt
             quant={row.original.modelQuant}
             parameters={row.original.modelParameters}
             architecture={row.original.modelArchitecture}
+            source={row.original.modelSource}
+            runtimeName={row.original.runtimeName}
           />
         ),
       },

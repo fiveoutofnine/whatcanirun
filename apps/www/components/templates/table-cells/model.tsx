@@ -1,12 +1,12 @@
 import { Fragment } from 'react';
 
 import clsx from 'clsx';
-import { Cpu } from 'lucide-react';
+import { ArrowUpRight, Cpu } from 'lucide-react';
 import { HardDrive } from 'lucide-react';
 import { Layers } from 'lucide-react';
 import { twMerge } from 'tailwind-merge';
 
-import type { Model } from '@/lib/db/schema';
+import type { Model, Run } from '@/lib/db/schema';
 
 import ClickableTooltip from '@/components/templates/clickable-tooltip';
 
@@ -14,7 +14,11 @@ import ClickableTooltip from '@/components/templates/clickable-tooltip';
 // Props
 // -----------------------------------------------------------------------------
 
-type ModelTableCellProps = Pick<Model, 'displayName' | 'quant' | 'parameters' | 'architecture'>;
+type ModelTableCellProps = Pick<
+  Model,
+  'displayName' | 'quant' | 'parameters' | 'architecture' | 'source'
+> &
+  Pick<Run, 'runtimeName'>;
 
 // -----------------------------------------------------------------------------
 // Component
@@ -25,10 +29,34 @@ const ModelTableCell: React.FC<ModelTableCellProps> & { Skeleton: React.FC } = (
   quant,
   parameters,
   architecture,
+  source,
+  runtimeName,
 }) => {
+  let url = '';
+  if (runtimeName === 'mlx_lm') {
+    url = `https://huggingface.co/${source}`;
+  } else if (runtimeName === 'llama.cpp') {
+    const parts = source?.split(':') ?? [];
+    if (parts.length > 1) {
+      url = `https://huggingface.co/${parts[0]}/blob/main/${parts[1]}`;
+    }
+  }
+
   return (
     <div className="flex flex-col items-start">
-      <span className="line-clamp-1 leading-5">{displayName}</span>
+      {source && url ? (
+        <a
+          className="flex h-5 hover:underline"
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <span className="line-clamp-1 leading-5">{displayName}</span>
+          <ArrowUpRight className="size-3 text-gray-11" />
+        </a>
+      ) : (
+        <span className="line-clamp-1 leading-5">{displayName}</span>
+      )}
       <div className="mt-0 flex h-4 gap-2">
         {[
           {
