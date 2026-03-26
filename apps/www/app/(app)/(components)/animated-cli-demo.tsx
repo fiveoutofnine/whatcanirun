@@ -485,6 +485,7 @@ const AnimatedCliDemo: React.FC = () => {
           <span className="size-3 rounded-full bg-[#28C840]" />
         </div>
         <Button
+          className="z-10"
           size="sm"
           variant="primary"
           intent="none"
