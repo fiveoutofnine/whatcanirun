@@ -48,7 +48,7 @@ const HeroHeading: React.FC<{ chips: ChipOption[] }> = ({ chips }) => {
     const seen = new Map<string, ChipOption>();
     for (const c of chips) {
       const key = chipKey(c);
-      // Keep the entry with the highest modelCount for each chip config.
+      // Keep the entry with the largest `modelCount` for each chip config.
       const existing = seen.get(key);
       if (!existing || c.modelCount > existing.modelCount) seen.set(key, c);
     }
