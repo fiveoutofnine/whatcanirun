@@ -8,7 +8,7 @@ import { Check, CircleHelp } from 'lucide-react';
 
 import { useMediaQuery } from '@/lib/hooks';
 
-import { Command, Drawer, Popover } from '@/components/ui';
+import { Badge, Command, Drawer, Popover } from '@/components/ui';
 
 // -----------------------------------------------------------------------------
 // Types
@@ -19,6 +19,8 @@ type DeviceOption = {
   cpuCores: number;
   gpu: string;
   gpuCores: number;
+  ramGb: number;
+  modelCount: number;
 };
 
 type DeviceComboboxProps = {
@@ -90,7 +92,7 @@ const DeviceCombobox: React.FC<DeviceComboboxProps> = ({ devices, value, onSelec
         <Popover.Trigger className="hidden md:inline" asChild>
           {children}
         </Popover.Trigger>
-        <Popover.Content className="w-60 p-0" align="start">
+        <Popover.Content className="w-72 p-0" align="start">
           <DeviceComboboxInternal {...internalProps} />
         </Popover.Content>
       </Popover.Root>
@@ -158,11 +160,14 @@ const DeviceComboboxInternal: React.FC<DeviceComboboxInternalProps> = ({
                       }}
                     >
                       <div className="flex flex-col">
-                        <span className="line-clamp-1 text-ellipsis leading-5">
+                        <span className="line-clamp-1 flex items-center gap-1.5 text-ellipsis leading-5">
                           {formatCpu(d.gpu)}
+                          <Badge size="xs" variant="outline">
+                            {d.modelCount} model{d.modelCount === 1 ? '' : 's'}
+                          </Badge>
                         </span>
                         <span className="text-xs leading-4 text-gray-11">
-                          {d.cpuCores}-core CPU / {d.gpuCores}-core GPU
+                          {d.cpuCores}-core CPU / {d.gpuCores}-core GPU / {d.ramGb}GB RAM
                         </span>
                       </div>
                       {selected ? (

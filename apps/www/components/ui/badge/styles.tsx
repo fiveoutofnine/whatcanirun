@@ -17,6 +17,7 @@ export const badgeVariants = cva(
   {
     variants: {
       size: {
+        xs: ['min-w-[1rem]', 'h-4', 'text-[0.625rem]', 'leading-4'],
         sm: ['min-w-[1.25rem]', 'h-5', 'text-xs'],
         md: ['min-w-[1.5rem]', 'h-6', 'text-sm'],
         lg: ['min-w-[1.75rem]', 'h-7', 'text-base'],
@@ -86,11 +87,17 @@ export const badgeVariants = cva(
       },
       type: {
         number: [
+          'data-[length-one=false]:data-[size=xs]:px-1',
           'data-[length-one=false]:data-[size=sm]:px-1.5',
           'data-[length-one=false]:data-[size=md]:px-2',
           'data-[length-one=false]:data-[size=lg]:px-2.5',
         ],
-        text: ['data-[size=sm]:px-2', 'data-[size=md]:px-2.5', 'data-[size=lg]:px-3'],
+        text: [
+          'data-[size=xs]:px-1.5',
+          'data-[size=sm]:px-2',
+          'data-[size=md]:px-2.5',
+          'data-[size=lg]:px-3',
+        ],
       },
     },
   },
