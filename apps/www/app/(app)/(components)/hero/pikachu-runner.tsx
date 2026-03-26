@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { Fragment } from 'react';
 
-import pikachuGif from './running.gif';
+import pikachu from './pikachu.gif';
 
 // -----------------------------------------------------------------------------
 // Component
@@ -21,7 +21,7 @@ const PikachuRunner: React.FC<{
           <Image
             key={k}
             aria-hidden
-            src={pikachuGif}
+            src={pikachu}
             alt=""
             className="pointer-events-none absolute top-1 h-8 w-auto animate-[pikachu-run_linear_forwards]"
             style={{ animationDuration: `${2 + ((k * 2654435761) >>> 0) / 4294967296}s` }}
