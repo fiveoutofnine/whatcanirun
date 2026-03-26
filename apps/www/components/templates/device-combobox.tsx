@@ -87,7 +87,7 @@ const DeviceCombobox: React.FC<DeviceComboboxProps> = ({ devices, value, onSelec
         <Popover.Trigger className="hidden md:inline" asChild>
           {children}
         </Popover.Trigger>
-        <Popover.Content className="w-56 p-0" align="start">
+        <Popover.Content className="w-56 p-0">
           <DeviceComboboxInternal {...internalProps} />
         </Popover.Content>
       </Popover.Root>
