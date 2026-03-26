@@ -2,6 +2,7 @@ import { unstable_cache as cache } from 'next/cache';
 import { Suspense } from 'react';
 
 import AnimatedCLIDemo from '../animated-cli-demo';
+import HeroCopyCommandButton from './copy-command';
 import HeroDescription from './description';
 import HeroHeading from './heading';
 import { countDistinct, sql } from 'drizzle-orm';
@@ -10,7 +11,6 @@ import { ArrowRight } from 'lucide-react';
 import { db } from '@/lib/db';
 import { view__model_stats_by_device } from '@/lib/db/schema';
 
-import LogoIcon from '@/components/common/logo-icon';
 import { Button } from '@/components/ui';
 
 // -----------------------------------------------------------------------------
@@ -54,14 +54,7 @@ const Hero: React.FC = async () => {
           <HeroDescription />
         </Suspense>
         <div className="mt-4 flex gap-2 md:mt-6">
-          <Button
-            variant="primary"
-            href="https://github.com/fiveoutofnine/whatcanirun"
-            leftIcon={<LogoIcon.GitHub />}
-            newTab
-          >
-            fiveoutofnine/whatcanirun
-          </Button>
+          <HeroCopyCommandButton />
           <Button variant="ghost" href="/docs" rightIcon={<ArrowRight />}>
             Docs
           </Button>
