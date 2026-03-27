@@ -12,7 +12,11 @@ import { RUN_COMMAND } from '@/lib/constants/cli';
 
 import DataTableSortHeader from '@/components/templates/data-table-sort-header';
 import StateInfo from '@/components/templates/state-info';
-import { ModelTableCell, RuntimeTableCell } from '@/components/templates/table-cells';
+import {
+  MemoryTableCell,
+  ModelTableCell,
+  RuntimeTableCell,
+} from '@/components/templates/table-cells';
 import { Button, IconButton, Table, toast } from '@/components/ui';
 
 const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOptions) => {
@@ -156,18 +160,16 @@ const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOpt
         id: 'memory',
         accessorKey: 'avgPeakRssMb',
         header: ({ column }) => (
-          <DataTableSortHeader className="ml-auto w-fit text-nowrap" column={column}>
+          <DataTableSortHeader className="mr-auto w-fit text-nowrap" column={column}>
             Peak memory
           </DataTableSortHeader>
         ),
         cell: ({ row }) => (
-          <div className="text-right tabular-nums">
-            {Number(row.original.avgPeakRssMb / 1024).toLocaleString(undefined, {
-              maximumFractionDigits: 2,
-              minimumFractionDigits: 2,
-            })}{' '}
-            <span className="text-gray-11">GB</span>
-          </div>
+          <MemoryTableCell
+            align="left"
+            usedGb={row.original.avgPeakRssMb / 1024}
+            totalGb={row.original.deviceRamGb}
+          />
         ),
       },
       {
@@ -261,10 +263,7 @@ const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOpt
                     key={4}
                     className="w-18 ml-auto h-[1.125rem] animate-pulse rounded bg-gray-9"
                   />,
-                  <div
-                    key={5}
-                    className="ml-auto h-[1.125rem] w-16 animate-pulse rounded bg-gray-9"
-                  />,
+                  <MemoryTableCell.Skeleton key={5} align="left" />,
                   <div key={6} className="flex flex-col items-end gap-0.5">
                     <div className="h-[1.125rem] w-5 animate-pulse rounded bg-gray-9" />
                     <div className="h-4 w-8 animate-pulse rounded bg-gray-9" />
