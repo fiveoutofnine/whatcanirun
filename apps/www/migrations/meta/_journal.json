@@ -169,6 +169,13 @@
       "when": 1774587373789,
       "tag": "0023_glorious_newton_destine",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1774654763691,
+      "tag": "0024_uneven_mauler",
+      "breakpoints": true
     }
   ]
 }

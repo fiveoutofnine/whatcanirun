@@ -4,6 +4,7 @@ import {
   boolean,
   index,
   integer,
+  jsonb,
   pgEnum,
   pgMaterializedView,
   pgTable,
@@ -165,6 +166,43 @@ export const models = pgTable('models', {
   createdAt: timestamp('created_at').notNull().defaultNow(),
 });
 
+export const organizations = pgTable('organizations', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => `org_${crypto.randomUUID()}`),
+  name: text('name').notNull(),
+  logoUrl: text('logo_url'),
+  websiteUrl: text('website_url'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at')
+    .notNull()
+    .defaultNow()
+    .$onUpdate(() => new Date()),
+});
+
+export const modelsInfo = pgTable('models_info', {
+  artifactSha256: text('artifact_sha256')
+    .primaryKey()
+    .references(() => models.artifactSha256),
+  labId: text('lab_id').references(() => organizations.id),
+  quantizedById: text('quantized_by_id').references(() => organizations.id),
+  // Overrides `models` column values
+  name: text('name'),
+  fileSizeBytes: bigint('file_size_bytes', { mode: 'number' }),
+  parameters: text('parameters'),
+  quant: text('quant'),
+  architecture: text('architecture'),
+  // Additional metadata
+  variant: text('variant'),
+  license: text('license'),
+  releaseDate: timestamp('release_date'),
+  tags: jsonb('tags'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at')
+    .notNull()
+    .defaultNow()
+    .$onUpdate(() => new Date()),
+});
 // -----------------------------------------------------------------------------
 // Runs
 // -----------------------------------------------------------------------------
@@ -304,8 +342,31 @@ export const devicesRelations = relations(devices, ({ many }) => ({
   runs: many(runs),
 }));
 
-export const modelsRelations = relations(models, ({ many }) => ({
+export const organizationsRelations = relations(organizations, ({ many }) => ({
+  models: many(modelsInfo, { relationName: 'lab' }),
+  quantizedModels: many(modelsInfo, { relationName: 'quantizedBy' }),
+}));
+
+export const modelsRelations = relations(models, ({ one, many }) => ({
   runs: many(runs),
+  info: one(modelsInfo, {
+    fields: [models.artifactSha256],
+    references: [modelsInfo.artifactSha256],
+  }),
+}));
+
+export const modelsInfoRelations = relations(modelsInfo, ({ one }) => ({
+  model: one(models, { fields: [modelsInfo.artifactSha256], references: [models.artifactSha256] }),
+  lab: one(organizations, {
+    fields: [modelsInfo.labId],
+    references: [organizations.id],
+    relationName: 'lab',
+  }),
+  quantizedBy: one(organizations, {
+    fields: [modelsInfo.quantizedById],
+    references: [organizations.id],
+    relationName: 'quantizedBy',
+  }),
 }));
 
 export const runsRelations = relations(runs, ({ one, many }) => ({
@@ -326,8 +387,10 @@ export const trialsRelations = relations(trials, ({ one }) => ({
 // Tables
 export type User = typeof users.$inferSelect;
 export type ApiToken = typeof apiTokens.$inferSelect;
+export type Organization = typeof organizations.$inferSelect;
 export type Device = typeof devices.$inferSelect;
 export type Model = typeof models.$inferSelect;
+export type ModelInfo = typeof modelsInfo.$inferSelect;
 export type Run = typeof runs.$inferSelect;
 export type Trial = typeof trials.$inferSelect;
 // Views
