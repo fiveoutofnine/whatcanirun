@@ -541,7 +541,7 @@ const AnimatedCliDemo: React.FC = () => {
             inverted={false}
           >
             <IconButton
-              className="absolute right-1 top-1 backdrop-blur duration-1000 animate-in fade-in"
+              className="absolute right-1.5 top-1.5 backdrop-blur duration-1000 animate-in fade-in"
               size="sm"
               variant="outline"
               intent="none"
