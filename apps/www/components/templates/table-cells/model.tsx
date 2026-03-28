@@ -4,9 +4,11 @@ import clsx from 'clsx';
 import { ArrowUpRight, Cpu, Layers, Waypoints } from 'lucide-react';
 import { twMerge } from 'tailwind-merge';
 
-import type { Model, Run } from '@/lib/db/schema';
+import type { Model, Organization, Run } from '@/lib/db/schema';
 
 import ClickableTooltip from '@/components/templates/clickable-tooltip';
+import UserAvatar from '@/components/templates/user-avatar';
+import { Tooltip } from '@/components/ui';
 
 // -----------------------------------------------------------------------------
 // Props
@@ -16,8 +18,9 @@ type ModelTableCellProps = Pick<
   Model,
   'displayName' | 'quant' | 'parameters' | 'architecture' | 'source'
 > &
-  Pick<Run, 'runtimeName'>;
-
+  Pick<Run, 'runtimeName'> & {
+    lab?: Pick<Organization, 'name' | 'logoUrl'>;
+  };
 // -----------------------------------------------------------------------------
 // Component
 // -----------------------------------------------------------------------------
@@ -29,6 +32,7 @@ const ModelTableCell: React.FC<ModelTableCellProps> & { Skeleton: React.FC } = (
   architecture,
   source,
   runtimeName,
+  lab,
 }) => {
   let url = '';
   if (runtimeName === 'mlx_lm') {
@@ -42,19 +46,31 @@ const ModelTableCell: React.FC<ModelTableCellProps> & { Skeleton: React.FC } = (
 
   return (
     <div className="flex flex-col items-start">
-      {source && url ? (
-        <a
-          className="flex h-5 hover:underline"
-          href={url}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+      <div className="flex h-5 items-center gap-1">
+        {source && url ? (
+          <a
+            className="flex h-5 hover:underline"
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span className="line-clamp-1 leading-5">{displayName}</span>
+            <ArrowUpRight className="size-3 text-gray-11" />
+          </a>
+        ) : (
           <span className="line-clamp-1 leading-5">{displayName}</span>
-          <ArrowUpRight className="size-3 text-gray-11" />
-        </a>
-      ) : (
-        <span className="line-clamp-1 leading-5">{displayName}</span>
-      )}
+        )}
+        {lab?.logoUrl ? (
+          <Tooltip content={lab.name} triggerProps={{ className: 'rounded-full' }} inverted={false}>
+            <UserAvatar
+              className="border-gray-7 transition-colors hover:border-gray-8"
+              image={lab.logoUrl}
+              name={lab.name}
+              size={18}
+            />
+          </Tooltip>
+        ) : null}
+      </div>
       <div className="mt-0 flex h-4 gap-2">
         {[
           {
@@ -107,7 +123,10 @@ const ModelTableCell: React.FC<ModelTableCellProps> & { Skeleton: React.FC } = (
 const ModelTableCellSkeleton: React.FC = () => {
   return (
     <div className="flex flex-col items-start gap-0.5">
-      <span className="h-[1.125rem] w-40 animate-pulse rounded bg-gray-9" />
+      <div className="flex h-[1.125rem] items-center gap-1">
+        <span className="h-[1.125rem] w-32 animate-pulse rounded bg-gray-9" />
+        <div className="size-[1.125rem] animate-pulse rounded-full bg-gray-9" />
+      </div>
       <div className="mt-0 flex h-4 gap-2">
         {[
           { icon: <Layers />, className: 'w-7' },

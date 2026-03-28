@@ -53,6 +53,11 @@ const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOpt
             architecture={row.original.modelArchitecture}
             source={row.original.modelSource}
             runtimeName={row.original.runtimeName}
+            lab={
+              row.original.labName
+                ? { name: row.original.labName, logoUrl: row.original.labLogoUrl }
+                : undefined
+            }
           />
         ),
       },
