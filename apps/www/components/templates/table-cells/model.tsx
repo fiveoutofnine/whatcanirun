@@ -1,9 +1,7 @@
 import { Fragment } from 'react';
 
 import clsx from 'clsx';
-import { ArrowUpRight, Cpu } from 'lucide-react';
-import { HardDrive } from 'lucide-react';
-import { Layers } from 'lucide-react';
+import { ArrowUpRight, Cpu, Layers, Waypoints } from 'lucide-react';
 import { twMerge } from 'tailwind-merge';
 
 import type { Model, Run } from '@/lib/db/schema';
@@ -65,7 +63,7 @@ const ModelTableCell: React.FC<ModelTableCellProps> & { Skeleton: React.FC } = (
             content: 'Quantization',
           },
           {
-            icon: <HardDrive />,
+            icon: <Waypoints />,
             value: parameters,
             content: 'Parameters',
           },
@@ -113,7 +111,7 @@ const ModelTableCellSkeleton: React.FC = () => {
       <div className="mt-0 flex h-4 gap-2">
         {[
           { icon: <Layers />, className: 'w-7' },
-          { icon: <HardDrive />, className: 'w-6' },
+          { icon: <Waypoints />, className: 'w-6' },
           { icon: <Cpu />, className: 'w-12' },
         ].map(({ icon, className }, index) => {
           return (

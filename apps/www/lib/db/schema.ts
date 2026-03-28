@@ -1,5 +1,6 @@
 import { and, count, countDistinct, eq, relations, sql } from 'drizzle-orm';
 import {
+  alias,
   bigint,
   boolean,
   index,
@@ -180,29 +181,36 @@ export const organizations = pgTable('organizations', {
     .$onUpdate(() => new Date()),
 });
 
-export const modelsInfo = pgTable('models_info', {
-  artifactSha256: text('artifact_sha256')
-    .primaryKey()
-    .references(() => models.artifactSha256),
-  labId: text('lab_id').references(() => organizations.id),
-  quantizedById: text('quantized_by_id').references(() => organizations.id),
-  // Overrides `models` column values
-  name: text('name'),
-  fileSizeBytes: bigint('file_size_bytes', { mode: 'number' }),
-  parameters: text('parameters'),
-  quant: text('quant'),
-  architecture: text('architecture'),
-  // Additional metadata
-  variant: text('variant'),
-  license: text('license'),
-  releaseDate: timestamp('release_date'),
-  tags: jsonb('tags'),
-  createdAt: timestamp('created_at').notNull().defaultNow(),
-  updatedAt: timestamp('updated_at')
-    .notNull()
-    .defaultNow()
-    .$onUpdate(() => new Date()),
-});
+export const modelsInfo = pgTable(
+  'models_info',
+  {
+    artifactSha256: text('artifact_sha256')
+      .primaryKey()
+      .references(() => models.artifactSha256),
+    labId: text('lab_id').references(() => organizations.id),
+    quantizedById: text('quantized_by_id').references(() => organizations.id),
+    // Overrides `models` column values
+    name: text('name'),
+    fileSizeBytes: bigint('file_size_bytes', { mode: 'number' }),
+    parameters: text('parameters'),
+    quant: text('quant'),
+    architecture: text('architecture'),
+    // Additional metadata
+    variant: text('variant'),
+    license: text('license'),
+    releaseDate: timestamp('release_date'),
+    tags: jsonb('tags'),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+    updatedAt: timestamp('updated_at')
+      .notNull()
+      .defaultNow()
+      .$onUpdate(() => new Date()),
+  },
+  (t) => [
+    index('models_info_lab_id_idx').on(t.labId),
+    index('models_info_quantized_by_id_idx').on(t.quantizedById),
+  ],
+);
 // -----------------------------------------------------------------------------
 // Runs
 // -----------------------------------------------------------------------------
@@ -286,18 +294,41 @@ export const trials = pgTable(
 // Views
 // -----------------------------------------------------------------------------
 
+const labOrg = alias(organizations, 'lab_org');
+const quantOrg = alias(organizations, 'quant_org');
+
 export const view__model_stats_by_device = pgMaterializedView('view__model_stats_by_device').as(
   (qb) =>
     qb
       .select({
-        // Model
+        // Model (prefer modelsInfo overrides, fall back to models)
         modelId: sql<string>`${models.id}`.as('model_id'),
-        modelDisplayName: models.displayName,
+        modelDisplayName:
+          sql<string>`COALESCE(NULLIF(MIN(${modelsInfo.name}), ''), ${models.displayName})`.as(
+            'model_display_name',
+          ),
         modelFormat: models.format,
-        modelParameters: models.parameters,
-        modelQuant: models.quant,
-        modelArchitecture: models.architecture,
+        modelParameters: sql<
+          string | null
+        >`COALESCE(NULLIF(MIN(${modelsInfo.parameters}), ''), ${models.parameters})`.as(
+          'model_parameters',
+        ),
+        modelQuant: sql<
+          string | null
+        >`COALESCE(NULLIF(MIN(${modelsInfo.quant}), ''), ${models.quant})`.as('model_quant'),
+        modelArchitecture: sql<
+          string | null
+        >`COALESCE(NULLIF(MIN(${modelsInfo.architecture}), ''), ${models.architecture})`.as(
+          'model_architecture',
+        ),
         modelSource: models.source,
+        // Organization
+        labName: sql<string | null>`MIN(${labOrg.name})`.as('lab_name'),
+        labLogoUrl: sql<string | null>`MIN(${labOrg.logoUrl})`.as('lab_logo_url'),
+        quantizedByName: sql<string | null>`MIN(${quantOrg.name})`.as('quantized_by_name'),
+        quantizedByLogoUrl: sql<string | null>`MIN(${quantOrg.logoUrl})`.as(
+          'quantized_by_logo_url',
+        ),
         // Device
         deviceChipId: devices.chipId,
         deviceCpu: sql<string>`MIN(${devices.cpu})`.as('device_cpu'),
@@ -324,6 +355,9 @@ export const view__model_stats_by_device = pgMaterializedView('view__model_stats
       .innerJoin(runs, eq(trials.runId, runs.id))
       .innerJoin(models, eq(runs.modelId, models.id))
       .innerJoin(devices, eq(runs.deviceId, devices.id))
+      .leftJoin(modelsInfo, eq(models.artifactSha256, modelsInfo.artifactSha256))
+      .leftJoin(labOrg, eq(modelsInfo.labId, labOrg.id))
+      .leftJoin(quantOrg, eq(modelsInfo.quantizedById, quantOrg.id))
       .where(
         and(
           eq(runs.status, RunStatus.VERIFIED),
