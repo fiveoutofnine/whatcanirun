@@ -1,81 +1,76 @@
 'use client';
 
-import { Fragment, useCallback, useMemo, useState } from 'react';
+import { Fragment, useMemo } from 'react';
 
-import type { ModelsDataTableInternalProps } from '.';
-import CopyCommandButton from './copy-command-button';
-import type { ModelsDataTableValue } from './types';
+import type { RunsDataTableInternalProps } from '.';
+import type { RunsDataTableValue } from './types';
 import { type ColumnDef, flexRender, useReactTable } from '@tanstack/react-table';
 import clsx from 'clsx';
-import { Check, ChevronRight, Copy, FileText, Info } from 'lucide-react';
+import { ChevronRight, FileText } from 'lucide-react';
 
-import { RUN_COMMAND } from '@/lib/constants/cli';
+import { RunStatus } from '@/lib/db/schema';
 
-import ClickableTooltip from '@/components/templates/clickable-tooltip';
 import DataTableSortHeader from '@/components/templates/data-table-sort-header';
+import RelativeDate from '@/components/templates/relative-date';
 import Stat from '@/components/templates/stat';
 import StateInfo from '@/components/templates/state-info';
 import { ModelTableCell, RuntimeTableCell } from '@/components/templates/table-cells';
-import { Button, IconButton, Table, toast, Tooltip } from '@/components/ui';
+import { Badge, IconButton, Table, Tooltip } from '@/components/ui';
 
-const ModelsDataTableMobile: React.FC<ModelsDataTableInternalProps> = (tableOptions) => {
-  const [copied, setCopied] = useState<boolean>(false);
+const STATUS_BADGE_INTENT = {
+  [RunStatus.VERIFIED]: 'success',
+  [RunStatus.PENDING]: 'warning',
+  [RunStatus.FLAGGED]: 'orange',
+  [RunStatus.REJECTED]: 'fail',
+} as const;
 
-  const copyCommand = useCallback(() => {
-    if (copied) return;
-    navigator.clipboard.writeText(RUN_COMMAND);
-    setCopied(true);
-    toast({
-      title: 'Copied command to clipboard.',
-      description: RUN_COMMAND,
-      intent: 'success',
-      hasCloseButton: true,
-    });
-    setTimeout(() => setCopied(false), 3000);
-  }, [copied]);
-
-  const columns: ColumnDef<ModelsDataTableValue>[] = useMemo(
+const RunsDataTableMobile: React.FC<RunsDataTableInternalProps> = (tableOptions) => {
+  const columns: ColumnDef<RunsDataTableValue>[] = useMemo(
     () => [
       {
         id: 'model',
-        accessorKey: 'modelDisplayName',
+        accessorKey: 'modelId',
         header: ({ column }) => (
           <DataTableSortHeader column={column} lowLabel="A" highLabel="Z">
             Model
           </DataTableSortHeader>
         ),
-        cell: ({ row }) => (
-          <ModelTableCell
-            displayName={row.original.modelDisplayName}
-            quant={row.original.modelQuant}
-            architecture={row.original.modelArchitecture}
-            source={row.original.modelSource}
-            runtimeName={row.original.runtimeName}
-            fileSizeBytes={row.original.modelFileSizeBytes}
-            lab={
-              row.original.labName
-                ? {
-                    name: row.original.labName,
-                    logoUrl: row.original.labLogoUrl,
-                    websiteUrl: row.original.labWebsiteUrl,
-                  }
-                : undefined
-            }
-            quantizedBy={
-              row.original.quantizedByName
-                ? {
-                    name: row.original.quantizedByName,
-                    logoUrl: row.original.quantizedByLogoUrl,
-                    websiteUrl: row.original.quantizedByWebsiteUrl,
-                  }
-                : undefined
-            }
-          />
-        ),
+        cell: ({ row }) => {
+          const { model } = row.original;
+          const info = model.info;
+          return (
+            <ModelTableCell
+              displayName={info?.name || model.displayName}
+              quant={info?.quant || model.quant}
+              architecture={info?.architecture || model.architecture}
+              source={info?.source || model.source}
+              runtimeName={row.original.runtimeName}
+              fileSizeBytes={info?.fileSizeBytes || model.fileSizeBytes}
+              lab={
+                info?.lab
+                  ? {
+                      name: info.lab.name,
+                      logoUrl: info.lab.logoUrl,
+                      websiteUrl: info.lab.websiteUrl,
+                    }
+                  : undefined
+              }
+              quantizedBy={
+                info?.quantizedBy
+                  ? {
+                      name: info.quantizedBy.name,
+                      logoUrl: info.quantizedBy.logoUrl,
+                      websiteUrl: info.quantizedBy.websiteUrl,
+                    }
+                  : undefined
+              }
+            />
+          );
+        },
       },
       {
         id: 'decode',
-        accessorKey: 'avgDecodeTps',
+        accessorKey: 'decodeTpsMean',
         header: ({ column }) => (
           <DataTableSortHeader
             className="ml-auto w-fit"
@@ -88,11 +83,29 @@ const ModelsDataTableMobile: React.FC<ModelsDataTableInternalProps> = (tableOpti
         ),
         cell: ({ row }) => (
           <div className="min-w-fit text-nowrap text-right tabular-nums">
-            {Number(row.original.avgDecodeTps).toLocaleString(undefined, {
+            {Number(row.original.decodeTpsMean).toLocaleString(undefined, {
               minimumFractionDigits: 1,
               maximumFractionDigits: 1,
             })}{' '}
             <span className="text-gray-11">tok/s</span>
+          </div>
+        ),
+      },
+      {
+        id: 'status',
+        accessorKey: 'status',
+        enableSorting: false,
+        header: () => <div className="flex justify-end">Status</div>,
+        cell: ({ row }) => (
+          <div className="flex justify-end">
+            <Badge
+              variant="outline"
+              size="sm"
+              type="text"
+              intent={STATUS_BADGE_INTENT[row.original.status]}
+            >
+              {row.original.status.charAt(0).toUpperCase() + row.original.status.slice(1)}
+            </Badge>
           </div>
         ),
       },
@@ -168,7 +181,7 @@ const ModelsDataTableMobile: React.FC<ModelsDataTableInternalProps> = (tableOpti
                 {row.getIsExpanded() ? (
                   <Table.Row isSubComponent>
                     <Table.Cell colSpan={row.getVisibleCells().length}>
-                      <ModelsDataTableMobileSubComponent data={row.original} />
+                      <RunsDataTableMobileSubComponent data={row.original} />
                     </Table.Cell>
                   </Table.Row>
                 ) : null}
@@ -181,7 +194,8 @@ const ModelsDataTableMobile: React.FC<ModelsDataTableInternalProps> = (tableOpti
                     key={1}
                     className="ml-auto h-[1.125rem] w-20 animate-pulse rounded bg-gray-9"
                   />,
-                  <div key={2} className="ml-auto w-8">
+                  <div key={2} className="ml-auto h-5 w-16 animate-pulse rounded-full bg-gray-9" />,
+                  <div key={3} className="ml-auto w-8">
                     <IconButton variant="outline" disabled>
                       <ChevronRight />
                     </IconButton>
@@ -200,26 +214,10 @@ const ModelsDataTableMobile: React.FC<ModelsDataTableInternalProps> = (tableOpti
               <StateInfo
                 className="mx-auto py-9"
                 size="sm"
-                title="No runs submitted yet"
-                description="Be the first to submit a benchmark for your device."
+                title="No runs found"
+                description="Be the first to submit a benchmark run."
                 icon={<FileText />}
-              >
-                <Button
-                  size="sm"
-                  variant="primary"
-                  intent="none"
-                  rightIcon={
-                    copied ? (
-                      <Check className="animate-in fade-in zoom-in" />
-                    ) : (
-                      <Copy className="animate-in fade-in" />
-                    )
-                  }
-                  onClick={copyCommand}
-                >
-                  {RUN_COMMAND}
-                </Button>
-              </StateInfo>
+              />
             </Table.Cell>
           </Table.Row>
         )}
@@ -228,102 +226,100 @@ const ModelsDataTableMobile: React.FC<ModelsDataTableInternalProps> = (tableOpti
   );
 };
 
-const ModelsDataTableMobileSubComponent: React.FC<{ data: ModelsDataTableValue }> = ({ data }) => {
+const RunsDataTableMobileSubComponent: React.FC<{ data: RunsDataTableValue }> = ({ data }) => {
+  const { device } = data;
+
   return (
     <div className="grid grid-cols-2 gap-2 p-1">
       <Stat className="col-span-2">
         <Stat.Name>Device</Stat.Name>
-        <Stat.Value>{data.deviceCpu ?? data.deviceGpu}</Stat.Value>
+        <Stat.Value>{device.cpu ?? device.gpu}</Stat.Value>
       </Stat>
       <Stat className="col-span-1">
         <Stat.Name>CPU/GPU cores</Stat.Name>
         <Stat.Value className="tabular-nums">
-          {data.deviceCpuCores}
+          {device.cpuCores}
           <span className="text-gray-11"> / </span>
-          {data.deviceGpuCores}
+          {device.gpuCores}
         </Stat.Value>
       </Stat>
       <Stat className="col-span-1">
         <Stat.Name>RAM</Stat.Name>
-        <Stat.Value className="tabular-nums">{data.deviceRamGb} GB</Stat.Value>
+        <Stat.Value className="tabular-nums">{device.ramGb} GB</Stat.Value>
       </Stat>
       <Stat className="col-span-1">
         <Stat.Name>Runtime</Stat.Name>
         <RuntimeTableCell
-          className="[&_[runtime-table-cell-icon]]:order-last"
+          className="[&_[runtime-table-cell-icon]]:order-last [&_[runtime-table-cell-version]]:pl-0"
           runtimeName={data.runtimeName}
         />
       </Stat>
       <Stat className="col-span-1">
+        <Stat.Name>Runtime version</Stat.Name>
+        <Stat.Value className="tabular-nums">{data.runtimeVersion}</Stat.Value>
+      </Stat>
+      <Stat className="col-span-1">
+        <Stat.Name>Prompt tokens</Stat.Name>
+        <Stat.Value className="tabular-nums">
+          {(data.promptTokens ?? 0).toLocaleString()}
+        </Stat.Value>
+      </Stat>
+      <Stat className="col-span-1">
+        <Stat.Name>Generation tokens</Stat.Name>
+        <Stat.Value className="tabular-nums">
+          {(data.completionTokens ?? 0).toLocaleString()}
+        </Stat.Value>
+      </Stat>
+      <Stat className="col-span-1">
         <Stat.Name>Prefill</Stat.Name>
         <Stat.Value className="tabular-nums">
-          {Number(data.avgPrefillTps).toLocaleString(undefined, {
-            minimumFractionDigits: 1,
-            maximumFractionDigits: 1,
-          })}{' '}
+          {data.prefillTpsMean != null
+            ? `${Number(data.prefillTpsMean).toLocaleString(undefined, {
+                minimumFractionDigits: 1,
+                maximumFractionDigits: 1,
+              })} `
+            : '— '}
           <span className="text-gray-11">tok/s</span>
         </Stat.Value>
       </Stat>
       <Stat className="col-span-1">
-        <Stat.Name className="w-fit transition-colors hover:text-gray-12">
-          <ClickableTooltip
-            content={
-              <div className="flex flex-col">
-                <span className="text-sm font-medium text-gray-12">Time to first token</span>
-                <span className="text-xs leading-normal text-gray-11">
-                  p50 time taken to generate the first output token.
-                </span>
-              </div>
-            }
-          >
-            <div className="flex items-center gap-1">
-              <span className="leading-4">TTFT</span>
-              <Info className="size-3" />
-            </div>
-          </ClickableTooltip>
-        </Stat.Name>
-        {data.ttftP50Ms < 4_000 ? (
-          <Stat.Value className="tabular-nums">
-            {Number(data.ttftP50Ms).toLocaleString(undefined, {
-              minimumFractionDigits: 1,
-              maximumFractionDigits: 1,
-            })}{' '}
-            <span className="text-gray-11">ms</span>
-          </Stat.Value>
-        ) : (
-          <Stat.Value className="tabular-nums">
-            {Number(data.ttftP50Ms / 1_000).toLocaleString(undefined, {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            })}{' '}
-            <span className="text-gray-11">sec</span>
-          </Stat.Value>
-        )}
-      </Stat>
-      <Stat className="col-span-1">
         <Stat.Name>Peak memory</Stat.Name>
         <Stat.Value className="tabular-nums">
-          {Number(data.avgPeakRssMb / 1024).toLocaleString(undefined, {
+          {Number(data.peakRssMb / 1024).toLocaleString(undefined, {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
           })}{' '}
           <span className="text-gray-11">GB</span>{' '}
           <span className="text-gray-11">
-            ({((data.avgPeakRssMb / 1024 / data.deviceRamGb) * 100).toFixed(2)}%)
+            ({((data.peakRssMb / 1024 / device.ramGb) * 100).toFixed(2)}%)
           </span>
         </Stat.Value>
       </Stat>
       <Stat className="col-span-1">
-        <Stat.Name>Trials</Stat.Name>
-        <Stat.Value className="tabular-nums">{Number(data.trialCount).toLocaleString()}</Stat.Value>
+        <Stat.Name>Trials passed</Stat.Name>
+        <Stat.Value className="tabular-nums">{data.trialsPassed}</Stat.Value>
       </Stat>
       <Stat className="col-span-1">
-        <Stat.Name>Runs</Stat.Name>
-        <Stat.Value className="tabular-nums">{Number(data.runCount).toLocaleString()}</Stat.Value>
+        <Stat.Name>Trials total</Stat.Name>
+        <Stat.Value className="tabular-nums">{data.trialsTotal}</Stat.Value>
       </Stat>
-      <CopyCommandButton className="col-span-2 w-full" row={data} iconButton={false} />
+      <Stat className="col-span-1">
+        <Stat.Name>Status</Stat.Name>
+        <Badge variant="outline" size="sm" type="text" intent={STATUS_BADGE_INTENT[data.status]}>
+          {data.status.charAt(0).toUpperCase() + data.status.slice(1)}
+        </Badge>
+      </Stat>
+      <Stat className="col-span-1">
+        <Stat.Name>Date</Stat.Name>
+        <RelativeDate
+          className="min-w-fit text-nowrap"
+          date={data.createdAt}
+          type="relative"
+          clickable
+        />
+      </Stat>
     </div>
   );
 };
 
-export default ModelsDataTableMobile;
+export default RunsDataTableMobile;
