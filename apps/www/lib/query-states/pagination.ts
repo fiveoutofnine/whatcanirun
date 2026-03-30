@@ -40,6 +40,10 @@ export const createPaginationParser = (totalRows: number, defaultPageSize: numbe
 // Hook
 // -----------------------------------------------------------------------------
 
-export const usePaginationQueryState = (key: string, totalRows: number, defaultPageSize?: number) => {
+export const usePaginationQueryState = (
+  key: string,
+  totalRows: number,
+  defaultPageSize?: number,
+) => {
   return useQueryState(key ?? 'pagination', createPaginationParser(totalRows, defaultPageSize));
 };

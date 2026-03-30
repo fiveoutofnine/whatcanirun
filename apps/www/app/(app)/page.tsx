@@ -122,6 +122,10 @@ export default async function Page({
                 return sorting.desc
                   ? desc(view__model_stats_by_device.trialCount)
                   : asc(view__model_stats_by_device.trialCount);
+              case 'score':
+                return sorting.desc
+                  ? desc(view__model_stats_by_device.compositeScore)
+                  : asc(view__model_stats_by_device.compositeScore);
               default:
                 return desc(view__model_stats_by_device.avgDecodeTps);
             }

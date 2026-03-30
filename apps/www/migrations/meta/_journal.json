@@ -211,6 +211,20 @@
       "when": 1774812718825,
       "tag": "0029_nervous_sabra",
       "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1774868712150,
+      "tag": "0030_cheerful_chameleon",
+      "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1774869284982,
+      "tag": "0031_many_daredevil",
+      "breakpoints": true
     }
   ]
 }

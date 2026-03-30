@@ -11,6 +11,7 @@ import { Check, Copy, FileText } from 'lucide-react';
 import { RUN_COMMAND } from '@/lib/constants/cli';
 
 import DataTableSortHeader from '@/components/templates/data-table-sort-header';
+import ScoreBadge from '@/components/templates/score-badge';
 import StateInfo from '@/components/templates/state-info';
 import {
   MemoryTableCell,
@@ -103,7 +104,7 @@ const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOpt
           </DataTableSortHeader>
         ),
         cell: ({ row }) => (
-          <div className="text-right tabular-nums">
+          <div className="min-w-fit text-nowrap text-right tabular-nums">
             {Number(row.original.avgDecodeTps).toLocaleString(undefined, {
               minimumFractionDigits: 1,
               maximumFractionDigits: 1,
@@ -126,7 +127,7 @@ const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOpt
           </DataTableSortHeader>
         ),
         cell: ({ row }) => (
-          <div className="text-right tabular-nums">
+          <div className="min-w-fit text-nowrap text-right tabular-nums">
             {Number(row.original.avgPrefillTps).toLocaleString(undefined, {
               minimumFractionDigits: 1,
               maximumFractionDigits: 1,
@@ -158,14 +159,14 @@ const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOpt
         ),
         cell: ({ row }) =>
           row.original.ttftP50Ms < 4_000 ? (
-            <div className="text-right tabular-nums">
+            <div className="min-w-fit text-nowrap text-right tabular-nums">
               {Number(row.original.ttftP50Ms).toLocaleString(undefined, {
                 maximumFractionDigits: 0,
               })}{' '}
               <span className="text-gray-11">ms</span>
             </div>
           ) : (
-            <div className="text-right tabular-nums">
+            <div className="min-w-fit text-nowrap text-right tabular-nums">
               {Number(row.original.ttftP50Ms / 1_000).toLocaleString(undefined, {
                 maximumFractionDigits: 2,
                 minimumFractionDigits: 2,
@@ -205,6 +206,31 @@ const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOpt
               {Number(row.original.runCount).toLocaleString()} run
               {row.original.runCount === 1 ? '' : 's'}
             </span>
+          </div>
+        ),
+      },
+      {
+        id: 'score',
+        accessorKey: 'compositeScore',
+        header: ({ column }) => (
+          <DataTableSortHeader
+            className="ml-auto w-fit"
+            column={column}
+            description={
+              <div className="flex flex-col">
+                <span className="text-sm font-medium text-gray-12">Score</span>
+                <span className="text-xs leading-normal text-gray-11">
+                  Weighted blend of decode/prefill throughput and memory usage.
+                </span>
+              </div>
+            }
+          >
+            Score
+          </DataTableSortHeader>
+        ),
+        cell: ({ row }) => (
+          <div className="flex justify-end">
+            <ScoreBadge score={row.original.compositeScore} />
           </div>
         ),
       },
@@ -290,7 +316,8 @@ const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOpt
                     <div className="h-[1.125rem] w-5 animate-pulse rounded bg-gray-9" />
                     <div className="h-4 w-8 animate-pulse rounded bg-gray-9" />
                   </div>,
-                  <div key={7} className="flex justify-end">
+                  <div key={7} className="ml-auto h-5 w-20 animate-pulse rounded-full bg-gray-9" />,
+                  <div key={8} className="flex justify-end">
                     <IconButton variant="outline" disabled>
                       <Copy />
                     </IconButton>

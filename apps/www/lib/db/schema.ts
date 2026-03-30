@@ -362,6 +362,26 @@ export const view__model_stats_by_device = pgMaterializedView('view__model_stats
         avgPrefillTps: sql<number>`AVG(${trials.prefillTps})`.as('avg_prefill_tps'),
         avgIdleRssMb: sql<number>`AVG(${trials.idleRssMb})`.as('avg_idle_rss_mb'),
         avgPeakRssMb: sql<number>`AVG(${trials.peakRssMb})`.as('avg_peak_rss_mb'),
+        compositeScore: sql<number>`(
+          0.45 * (CASE
+            WHEN AVG(${trials.decodeTps}) >= 100 THEN 1.0
+            WHEN AVG(${trials.decodeTps}) >= 40  THEN 0.8 + 0.2 * (AVG(${trials.decodeTps}) - 40) / 60.0
+            WHEN AVG(${trials.decodeTps}) >= 20  THEN 0.6 + 0.2 * (AVG(${trials.decodeTps}) - 20) / 20.0
+            WHEN AVG(${trials.decodeTps}) >= 10  THEN 0.4 + 0.2 * (AVG(${trials.decodeTps}) - 10) / 10.0
+            WHEN AVG(${trials.decodeTps}) >= 5   THEN 0.2 + 0.2 * (AVG(${trials.decodeTps}) - 5) / 5.0
+            ELSE 0.2 * AVG(${trials.decodeTps}) / 5.0
+          END)
+          + 0.25 * (CASE
+            WHEN AVG(${trials.prefillTps}) >= 4000 THEN 1.0
+            WHEN AVG(${trials.prefillTps}) >= 2000 THEN 0.8 + 0.2 * (AVG(${trials.prefillTps}) - 2000) / 2000.0
+            WHEN AVG(${trials.prefillTps}) >= 1000 THEN 0.6 + 0.2 * (AVG(${trials.prefillTps}) - 1000) / 1000.0
+            WHEN AVG(${trials.prefillTps}) >= 500  THEN 0.4 + 0.2 * (AVG(${trials.prefillTps}) - 500) / 500.0
+            WHEN AVG(${trials.prefillTps}) >= 200  THEN 0.2 + 0.2 * (AVG(${trials.prefillTps}) - 200) / 300.0
+            ELSE 0.2 * AVG(${trials.prefillTps}) / 200.0
+          END)
+          -- 716.8 = 0.7 * 1024: only ~70% of device RAM is usable headroom
+          + 0.30 * GREATEST(0, 1.0 - AVG(${trials.peakRssMb}) / (MIN(${devices.ramGb}) * 716.8))
+        )`.as('composite_score'),
       })
       .from(trials)
       .innerJoin(runs, eq(trials.runId, runs.id))

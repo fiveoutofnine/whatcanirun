@@ -13,6 +13,7 @@ import { RUN_COMMAND } from '@/lib/constants/cli';
 
 import ClickableTooltip from '@/components/templates/clickable-tooltip';
 import DataTableSortHeader from '@/components/templates/data-table-sort-header';
+import ScoreBadge from '@/components/templates/score-badge';
 import Stat from '@/components/templates/stat';
 import StateInfo from '@/components/templates/state-info';
 import { ModelTableCell, RuntimeTableCell } from '@/components/templates/table-cells';
@@ -93,6 +94,31 @@ const ModelsDataTableMobile: React.FC<ModelsDataTableInternalProps> = (tableOpti
               maximumFractionDigits: 1,
             })}{' '}
             <span className="text-gray-11">tok/s</span>
+          </div>
+        ),
+      },
+      {
+        id: 'score',
+        accessorKey: 'compositeScore',
+        header: ({ column }) => (
+          <DataTableSortHeader
+            className="ml-auto w-fit"
+            column={column}
+            description={
+              <div className="flex flex-col">
+                <span className="text-sm font-medium text-gray-12">Score</span>
+                <span className="text-xs leading-normal text-gray-11">
+                  Weighted blend of decode/prefill throughput and memory usage.
+                </span>
+              </div>
+            }
+          >
+            Score
+          </DataTableSortHeader>
+        ),
+        cell: ({ row }) => (
+          <div className="flex justify-end">
+            <ScoreBadge score={row.original.compositeScore} />
           </div>
         ),
       },
@@ -181,7 +207,8 @@ const ModelsDataTableMobile: React.FC<ModelsDataTableInternalProps> = (tableOpti
                     key={1}
                     className="ml-auto h-[1.125rem] w-20 animate-pulse rounded bg-gray-9"
                   />,
-                  <div key={2} className="ml-auto w-8">
+                  <div key={2} className="ml-auto h-5 w-16 animate-pulse rounded-full bg-gray-9" />,
+                  <div key={3} className="ml-auto w-8">
                     <IconButton variant="outline" disabled>
                       <ChevronRight />
                     </IconButton>
