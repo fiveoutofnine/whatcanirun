@@ -228,6 +228,7 @@ const RunsDataTableDesktop: React.FC<RunsDataTableInternalProps> = (tableOptions
               className="min-w-fit text-nowrap"
               date={row.original.createdAt}
               type="relative"
+              clickable
             />
           </div>
         ),

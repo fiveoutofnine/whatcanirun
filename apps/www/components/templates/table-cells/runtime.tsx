@@ -84,7 +84,7 @@ const RuntimeTableCell: React.FC<RuntimeTableCellProps> & {
           'flex flex-col',
           align === 'right'
             ? 'items-end'
-            : '[&_[runtime-table-cell-version]]:pl-[1.375rem]] items-start',
+            : 'items-start [&_[runtime-table-cell-version]]:pl-[1.375rem]',
         )}
       >
         {content}

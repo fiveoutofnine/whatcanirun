@@ -233,8 +233,23 @@ const RunsDataTableMobileSubComponent: React.FC<{ data: RunsDataTableValue }> = 
         <RuntimeTableCell
           className="[&_[runtime-table-cell-icon]]:order-last [&_[runtime-table-cell-version]]:pl-0"
           runtimeName={data.runtimeName}
-          runtimeVersion={data.runtimeVersion}
         />
+      </Stat>
+      <Stat className="col-span-1">
+        <Stat.Name>Runtime version</Stat.Name>
+        <Stat.Value className="tabular-nums">{data.runtimeVersion}</Stat.Value>
+      </Stat>
+      <Stat className="col-span-1">
+        <Stat.Name>Prompt tokens</Stat.Name>
+        <Stat.Value className="tabular-nums">
+          {(data.promptTokens ?? 0).toLocaleString()}
+        </Stat.Value>
+      </Stat>
+      <Stat className="col-span-1">
+        <Stat.Name>Generation tokens</Stat.Name>
+        <Stat.Value className="tabular-nums">
+          {(data.completionTokens ?? 0).toLocaleString()}
+        </Stat.Value>
       </Stat>
       <Stat className="col-span-1">
         <Stat.Name>Prefill</Stat.Name>
@@ -259,6 +274,14 @@ const RunsDataTableMobileSubComponent: React.FC<{ data: RunsDataTableValue }> = 
         </Stat.Value>
       </Stat>
       <Stat className="col-span-1">
+        <Stat.Name>Trials passed</Stat.Name>
+        <Stat.Value className="tabular-nums">{data.trialsPassed}</Stat.Value>
+      </Stat>
+      <Stat className="col-span-1">
+        <Stat.Name>Trials total</Stat.Name>
+        <Stat.Value className="tabular-nums">{data.trialsTotal}</Stat.Value>
+      </Stat>
+      <Stat className="col-span-1">
         <Stat.Name>Status</Stat.Name>
         <Badge variant="outline" size="sm" type="text" intent={STATUS_BADGE_INTENT[data.status]}>
           {data.status.charAt(0).toUpperCase() + data.status.slice(1)}
@@ -266,13 +289,12 @@ const RunsDataTableMobileSubComponent: React.FC<{ data: RunsDataTableValue }> = 
       </Stat>
       <Stat className="col-span-1">
         <Stat.Name>Date</Stat.Name>
-        <RelativeDate className="min-w-fit text-nowrap" date={data.createdAt} type="relative" />
-      </Stat>
-      <Stat className="col-span-1">
-        <Stat.Name>Trials</Stat.Name>
-        <Stat.Value className="tabular-nums">
-          {data.trialsPassed}/{data.trialsTotal}
-        </Stat.Value>
+        <RelativeDate
+          className="min-w-fit text-nowrap"
+          date={data.createdAt}
+          type="relative"
+          clickable
+        />
       </Stat>
     </div>
   );
