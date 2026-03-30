@@ -307,7 +307,10 @@ const ModelsDataTableMobileSubComponent: React.FC<{ data: ModelsDataTableValue }
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
           })}{' '}
-          <span className="text-gray-11">GB</span>
+          <span className="text-gray-11">GB</span>{' '}
+          <span className="text-gray-11">
+            ({((data.avgPeakRssMb / 1024 / data.deviceRamGb) * 100).toFixed(2)}%)
+          </span>
         </Stat.Value>
       </Stat>
       <Stat className="col-span-1">

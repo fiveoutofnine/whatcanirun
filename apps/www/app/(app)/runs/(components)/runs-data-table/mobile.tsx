@@ -289,7 +289,10 @@ const RunsDataTableMobileSubComponent: React.FC<{ data: RunsDataTableValue }> = 
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
           })}{' '}
-          <span className="text-gray-11">GB</span>
+          <span className="text-gray-11">GB</span>{' '}
+          <span className="text-gray-11">
+            ({((data.peakRssMb / 1024 / device.ramGb) * 100).toFixed(2)}%)
+          </span>
         </Stat.Value>
       </Stat>
       <Stat className="col-span-1">
