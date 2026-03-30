@@ -177,21 +177,6 @@ const RunsDataTableDesktop: React.FC<RunsDataTableInternalProps> = (tableOptions
         ),
       },
       {
-        id: 'trials',
-        accessorKey: 'trialsTotal',
-        header: ({ column }) => (
-          <DataTableSortHeader className="ml-auto w-fit" column={column}>
-            Trials
-          </DataTableSortHeader>
-        ),
-        cell: ({ row }) => (
-          <div className="text-right tabular-nums">
-            {row.original.trialsPassed}
-            <span className="text-gray-11">/{row.original.trialsTotal}</span>
-          </div>
-        ),
-      },
-      {
         id: 'status',
         accessorKey: 'status',
         enableSorting: false,
@@ -297,12 +282,8 @@ const RunsDataTableDesktop: React.FC<RunsDataTableInternalProps> = (tableOptions
                     className="ml-auto h-[1.125rem] w-24 animate-pulse rounded bg-gray-9"
                   />,
                   <MemoryTableCell.Skeleton key={5} align="left" />,
-                  <div
-                    key={6}
-                    className="ml-auto h-[1.125rem] w-8 animate-pulse rounded bg-gray-9"
-                  />,
-                  <div key={7} className="ml-auto h-5 w-16 animate-pulse rounded-full bg-gray-9" />,
-                  <div key={8} className="ml-auto h-5 w-20 animate-pulse rounded bg-gray-9" />,
+                  <div key={6} className="ml-auto h-5 w-16 animate-pulse rounded-full bg-gray-9" />,
+                  <div key={7} className="ml-auto h-5 w-20 animate-pulse rounded bg-gray-9" />,
                 ].map((skeleton, i) => (
                   <Table.Cell key={i} className="first:pl-4 last:pr-4 md:first:pl-6 md:last:pr-6">
                     {skeleton}
