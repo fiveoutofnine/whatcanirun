@@ -174,7 +174,7 @@ const ModelsDataTableMobile: React.FC<ModelsDataTableInternalProps> = (tableOpti
                 ) : null}
               </Fragment>
             ) : (
-              <Table.Row key={row.id}>
+              <Table.Row key={row.id} className="h-16">
                 {[
                   <ModelTableCell.Skeleton key={0} />,
                   <div

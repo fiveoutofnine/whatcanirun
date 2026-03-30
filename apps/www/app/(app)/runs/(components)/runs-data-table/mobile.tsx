@@ -169,7 +169,7 @@ const RunsDataTableMobile: React.FC<RunsDataTableInternalProps> = (tableOptions)
                 ) : null}
               </Fragment>
             ) : (
-              <Table.Row key={row.id}>
+              <Table.Row key={row.id} className="h-16">
                 {[
                   <ModelTableCell.Skeleton key={0} />,
                   <div
