@@ -325,6 +325,18 @@ export async function executeBenchmark(opts: BenchmarkOpts): Promise<string> {
       throw e instanceof Error ? e : new Error(String(e));
     }
 
+    // Re-inspect model after benchmark to pick up artifact hash and metadata
+    // that may not have been available before (e.g. mlx_lm downloads the model
+    // during the benchmark, so the HF cache is only populated afterwards).
+    if (!modelInfo.artifact_sha256 && isHuggingFaceRepoId(modelRef)) {
+      const reinspected = await inspectModel(modelRef);
+      if (reinspected.artifact_sha256) modelInfo.artifact_sha256 = reinspected.artifact_sha256;
+      if (reinspected.file_size_bytes) modelInfo.file_size_bytes = reinspected.file_size_bytes;
+      if (reinspected.parameters) modelInfo.parameters = reinspected.parameters;
+      if (reinspected.architecture) modelInfo.architecture = reinspected.architecture;
+      if (reinspected.quant) modelInfo.quant = reinspected.quant;
+    }
+
     // Compute derived metrics.
     const metrics = computeMetrics(bench);
 
