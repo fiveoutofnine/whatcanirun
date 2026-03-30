@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { ChevronsUpDown } from 'lucide-react';
 import { useQueryState } from 'nuqs';
@@ -36,6 +36,33 @@ const FALLBACK_DEVICE = 'Apple M1 Max:10:Apple M1 Max:32:64';
 /** Strip manufacturer prefix for display (e.g. "Apple M1 Max" → "M1 Max"). */
 const formatCpu = (name: string) => name.replace(/^\S+\s+/, '');
 
+/** Detect hardware info from browser APIs. */
+const detectHardware = () => {
+  // GPU via WebGL debug renderer info.
+  let gpu: string | null = null;
+  try {
+    const canvas = document.createElement('canvas');
+    const gl = canvas.getContext('webgl2') ?? canvas.getContext('webgl');
+    if (gl) {
+      const ext = gl.getExtension('WEBGL_debug_renderer_info');
+      if (ext) {
+        const renderer = gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) as string;
+        // Parse e.g. "ANGLE (Apple, ANGLE Metal Renderer: Apple M1 Max,
+        // Unspecified Version)"
+        const match = renderer.match(/:\s*(.+?),\s*(?:Unspecified|Version)/);
+        gpu = match?.[1]?.trim() ?? renderer;
+      }
+    }
+  } catch {
+    /* noop */
+  }
+
+  const cores = navigator.hardwareConcurrency || null;
+  const ram = (navigator as Navigator & { deviceMemory?: number }).deviceMemory || null;
+
+  return { gpu, cores, ram };
+};
+
 // -----------------------------------------------------------------------------
 // Component
 // -----------------------------------------------------------------------------
@@ -43,7 +70,8 @@ const formatCpu = (name: string) => name.replace(/^\S+\s+/, '');
 const HeroHeading: React.FC<{ chips: ChipOption[] }> = ({ chips }) => {
   const [, setPagination] = useQueryState('pagination', { shallow: false });
   const [, setSorting] = useQueryState('sorting', { shallow: false });
-  // Default to the chip with the most models, then hardcoded fallback.
+
+  // Fallback to the chip with the most models, then hardcoded fallback.
   const defaultDevice = useMemo(() => {
     const sorted = [...chips].sort((a, b) => b.modelCount - a.modelCount);
     return sorted[0]?.chipId ?? FALLBACK_DEVICE;
@@ -53,6 +81,42 @@ const HeroHeading: React.FC<{ chips: ChipOption[] }> = ({ chips }) => {
     defaultValue: defaultDevice,
     shallow: false,
   });
+
+  // Try to auto-detect the user's GPU via WebGL and select a matching chip
+  // if no explicit device param was provided.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('device')) return;
+
+    const hw = detectHardware();
+
+    if (!hw.gpu) return;
+
+    // Filter chips by GPU name match first.
+    let candidates = chips.filter((c) => hw.gpu!.toLowerCase().includes(c.gpu.toLowerCase()));
+
+    if (candidates.length === 0) return;
+
+    // Narrow by CPU core count if available.
+    if (hw.cores) {
+      const coreMatch = candidates.filter((c) => c.cpuCores === hw.cores);
+      if (coreMatch.length > 0) candidates = coreMatch;
+    }
+
+    // Narrow by RAM if available (deviceMemory is approximate/capped, pick
+    // closest).
+    if (hw.ram) {
+      const ramMatch = candidates.filter((c) => c.ramGb >= hw.ram!);
+      if (ramMatch.length > 0) candidates = ramMatch;
+      candidates.sort((a, b) => a.ramGb - b.ramGb);
+    }
+
+    // Among remaining, prefer most popular.
+    candidates.sort((a, b) => b.modelCount - a.modelCount);
+
+    setDevice(candidates[0].chipId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Find selected device info for display.
   const selected = useMemo(
