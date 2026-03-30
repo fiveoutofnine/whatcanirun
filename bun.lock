@@ -18,7 +18,7 @@
     },
     "apps/cli": {
       "name": "whatcanirun",
-      "version": "0.1.15",
+      "version": "0.1.16",
       "bin": {
         "whatcanirun": "./dist/cli.js",
         "wcir": "./dist/cli.js",
