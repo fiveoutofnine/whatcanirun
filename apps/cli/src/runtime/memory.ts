@@ -1,21 +1,17 @@
 /**
  * Shared process memory monitoring for runtime adapters.
  *
- * Polls a subprocess's physical memory footprint at regular intervals to
- * capture peak and idle memory usage. This is used by both the llama.cpp and
- * mlx_lm adapters to provide consistent, comparable memory metrics across
- * runtimes.
+ * Two strategies are available:
  *
- * On macOS, uses `footprint` which reports both `phys_footprint` (current) and
- * `phys_footprint_peak` (OS-tracked all-time peak) — the true physical memory
- * footprint including unified (CPU+GPU) memory on Apple Silicon. Using the
- * OS-tracked peak avoids missing transient spikes between poll intervals.
- * Falls back to `ps -o rss=` on other platforms or if `footprint` fails.
+ * 1. `monitorProcessMemory(pid)` — polls a subprocess's `phys_footprint` via
+ *    the macOS `footprint` command (falls back to `ps -o rss=`). Suitable for
+ *    runtimes where memory is attributed to the process (e.g. mlx_lm).
  *
- * Note: llama-bench does not report memory in its JSON output, and mlx_lm's
- * `peak_memory` field is framework-level allocation (from `mx.get_peak_memory()`)
- * which is not equivalent to process RSS. External polling ensures both
- * runtimes use the same measurement methodology.
+ * 2. `monitorSystemMemory()` — measures system-wide memory delta before/during
+ *    a benchmark. Required for llama.cpp because Metal GPU buffer allocations
+ *    are not attributed to the process's `phys_footprint` — they consume real
+ *    unified memory but are owned by the GPU driver. The system-level delta
+ *    captures all memory consumption regardless of attribution.
  */
 
 const POLL_INTERVAL_MS = 500;
@@ -24,6 +20,10 @@ interface MemorySample {
   currentKb: number;
   peakKb: number;
 }
+
+// ---------------------------------------------------------------------------
+// Strategy 1: per-process monitoring (for mlx_lm)
+// ---------------------------------------------------------------------------
 
 /**
  * Start polling a subprocess's memory usage.
@@ -50,7 +50,7 @@ export function monitorProcessMemory(pid: number): {
 
   const poll = async () => {
     while (running) {
-      const sample = await sampleMemory(pid, useFootprint);
+      const sample = await sampleProcessMemory(pid, useFootprint);
       if (sample.currentKb > 0) {
         samples.push(sample);
       }
@@ -97,7 +97,107 @@ export function monitorProcessMemory(pid: number): {
 }
 
 // ---------------------------------------------------------------------------
-// Platform-specific memory sampling
+// Strategy 2: system-wide memory delta (for llama.cpp + Metal)
+// ---------------------------------------------------------------------------
+
+/**
+ * Monitor memory by tracking system-wide memory consumption delta.
+ *
+ * Takes a baseline of system "used memory" before the subprocess starts, then
+ * polls the delta during the benchmark. This captures ALL memory consumption
+ * including Metal GPU buffer allocations that `phys_footprint` misses.
+ *
+ * "Used memory" = (active + wired + speculative + compressor) pages from
+ * `vm_stat`. The delta from baseline isolates the benchmark's contribution.
+ *
+ * Trade-off: slightly noisier than per-process measurement (other processes
+ * can affect system memory), but a multi-GB model load dominates any noise.
+ */
+export async function monitorSystemMemory(): Promise<{
+  markInferenceStart: () => void;
+  stop: () => { peakMb: number; idleMb: number };
+}> {
+  const baselineKb = await getSystemUsedMemoryKb();
+  const deltas: number[] = [];
+  let running = true;
+  let inferenceStartIdx: number | null = null;
+
+  const poll = async () => {
+    while (running) {
+      await Bun.sleep(POLL_INTERVAL_MS);
+      const currentKb = await getSystemUsedMemoryKb();
+      const delta = currentKb - baselineKb;
+      deltas.push(Math.max(0, delta));
+    }
+  };
+  poll();
+
+  return {
+    markInferenceStart() {
+      if (inferenceStartIdx === null) {
+        inferenceStartIdx = deltas.length;
+      }
+    },
+
+    stop() {
+      running = false;
+      if (deltas.length === 0) return { peakMb: 0, idleMb: 0 };
+
+      const peakKb = deltas.reduce((a, b) => (a > b ? a : b), 0);
+
+      let idleSamples: number[];
+      if (inferenceStartIdx !== null && inferenceStartIdx > 0) {
+        idleSamples = deltas.slice(0, inferenceStartIdx);
+      } else {
+        idleSamples = deltas.slice(0, Math.max(1, Math.floor(deltas.length / 2)));
+      }
+      idleSamples.sort((a, b) => a - b);
+      const idleKb = idleSamples[Math.floor(idleSamples.length / 2)]!;
+
+      return {
+        peakMb: Math.round((peakKb / 1024) * 10) / 10,
+        idleMb: Math.round((idleKb / 1024) * 10) / 10,
+      };
+    },
+  };
+}
+
+/**
+ * Get system-wide "used memory" in KB by parsing `vm_stat` output.
+ *
+ * Used = (active + wired + speculative + compressor) * pageSize.
+ * This accounts for all physical memory actively consumed, including Metal
+ * GPU buffers which appear as wired/active pages at the system level.
+ */
+async function getSystemUsedMemoryKb(): Promise<number> {
+  try {
+    const proc = Bun.spawn(['vm_stat'], { stdout: 'pipe', stderr: 'ignore' });
+    const text = await new Response(proc.stdout).text();
+    await proc.exited;
+
+    // vm_stat header: "Mach Virtual Memory Statistics: (page size of 16384 bytes)"
+    const pageSizeMatch = text.match(/page size of (\d+) bytes/);
+    const pageSize = pageSizeMatch ? parseInt(pageSizeMatch[1]!, 10) : 16384;
+
+    const active = parseVmStatField(text, 'Pages active');
+    const wired = parseVmStatField(text, 'Pages wired down');
+    const speculative = parseVmStatField(text, 'Pages speculative');
+    const compressor = parseVmStatField(text, 'Pages occupied by compressor');
+
+    const usedPages = active + wired + speculative + compressor;
+    return (usedPages * pageSize) / 1024;
+  } catch {
+    return 0;
+  }
+}
+
+function parseVmStatField(text: string, field: string): number {
+  const match = text.match(new RegExp(`${field}:\\s*(\\d+)`));
+  return match ? parseInt(match[1]!, 10) : 0;
+}
+
+// ---------------------------------------------------------------------------
+// Platform-specific per-process memory sampling
 // ---------------------------------------------------------------------------
 
 /**
@@ -115,7 +215,10 @@ export function monitorProcessMemory(pid: number): {
  * failure, avoiding repeated spawn attempts for a missing binary while still
  * retrying across separate monitorProcessMemory() calls.
  */
-async function sampleMemory(pid: number, useFootprint: { value: boolean }): Promise<MemorySample> {
+async function sampleProcessMemory(
+  pid: number,
+  useFootprint: { value: boolean }
+): Promise<MemorySample> {
   // Try macOS `footprint` command (accurate unified memory measurement).
   if (process.platform === 'darwin' && useFootprint.value) {
     try {
