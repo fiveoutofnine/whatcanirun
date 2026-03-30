@@ -2,6 +2,7 @@
 
 import { useMemo } from 'react';
 
+import { ChevronsUpDown } from 'lucide-react';
 import { useQueryState } from 'nuqs';
 
 import Logo from '@/components/common/logo';
@@ -90,6 +91,7 @@ const HeroHeading: React.FC<{ chips: ChipOption[] }> = ({ chips }) => {
           {displayName}
           <span className="font-normal text-gray-11"> with </span>
           {displayRam} GB RAM
+          <ChevronsUpDown className="ml-[0.075em] inline size-[0.8em] align-[-0.025em] text-gray-11" />
         </InlineButton>
       </DeviceCombobox>
     ) : (
