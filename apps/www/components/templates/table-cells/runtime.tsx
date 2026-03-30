@@ -79,9 +79,16 @@ const RuntimeTableCell: React.FC<RuntimeTableCellProps> & {
 
   if (runtimeVersion) {
     return (
-      <div className={clsx('flex flex-col', align === 'right' ? 'items-end' : 'items-start')}>
+      <div
+        className={clsx(
+          'flex flex-col',
+          align === 'right'
+            ? 'items-end'
+            : '[&_[runtime-table-cell-version]]:pl-[1.375rem]] items-start',
+        )}
+      >
         {content}
-        <span className="pl-[1.375rem] text-xs tabular-nums leading-4 text-gray-11">
+        <span className="text-xs tabular-nums leading-4 text-gray-11" runtime-table-cell-version="">
           {runtimeVersion}
         </span>
       </div>
@@ -106,9 +113,9 @@ const RuntimeTableCellSkeleton: React.FC<RuntimeTableCellSkeletonProps> = ({
 
   if (showVersion) {
     return (
-      <div className="flex flex-col items-start gap-0.5">
+      <div className="flex flex-col items-start gap-0.5 [&_[runtime-table-cell-version]]:pl-[1.375rem]">
         {content}
-        <div className="ml-[1.375rem] h-4 w-10 animate-pulse rounded bg-gray-9" />
+        <div className="h-4 w-10 animate-pulse rounded bg-gray-9" runtime-table-cell-version="" />
       </div>
     );
   }

@@ -254,7 +254,11 @@ const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOpt
         {table.getRowModel().rows?.length ? (
           table.getRowModel().rows.map((row) =>
             !tableOptions.isLoading ? (
-              <Table.Row key={row.id} className="h-16" data-state={row.getIsSelected() && 'selected'}>
+              <Table.Row
+                key={row.id}
+                className="h-16"
+                data-state={row.getIsSelected() && 'selected'}
+              >
                 {row.getVisibleCells().map((cell) => (
                   <Table.Cell
                     key={cell.id}

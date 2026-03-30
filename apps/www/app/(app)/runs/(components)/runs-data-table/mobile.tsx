@@ -231,7 +231,7 @@ const RunsDataTableMobileSubComponent: React.FC<{ data: RunsDataTableValue }> = 
       <Stat className="col-span-1">
         <Stat.Name>Runtime</Stat.Name>
         <RuntimeTableCell
-          className="[&_[runtime-table-cell-icon]]:order-last"
+          className="[&_[runtime-table-cell-icon]]:order-last [&_[runtime-table-cell-version]]:pl-0"
           runtimeName={data.runtimeName}
           runtimeVersion={data.runtimeVersion}
         />
