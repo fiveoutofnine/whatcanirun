@@ -65,7 +65,7 @@ export default async function Page({
         return sorting.desc ? desc(runs.prefillTpsMean) : asc(runs.prefillTpsMean);
       case 'memory':
         return sorting.desc ? desc(runs.peakRssMb) : asc(runs.peakRssMb);
-      case 'createdAt':
+      case 'date':
         return sorting.desc ? desc(runs.createdAt) : asc(runs.createdAt);
       default:
         return desc(runs.createdAt);

@@ -195,14 +195,14 @@ const RunsDataTableDesktop: React.FC<RunsDataTableInternalProps> = (tableOptions
         ),
       },
       {
-        id: 'createdAt',
+        id: 'date',
         accessorKey: 'createdAt',
         header: ({ column }) => (
           <DataTableSortHeader
             className="ml-auto w-fit"
             column={column}
-            lowLabel="Old"
-            highLabel="New"
+            lowLabel="Oldest"
+            highLabel="Recent"
           >
             Date
           </DataTableSortHeader>
