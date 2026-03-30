@@ -92,6 +92,24 @@ const RunsDataTableMobile: React.FC<RunsDataTableInternalProps> = (tableOptions)
         ),
       },
       {
+        id: 'status',
+        accessorKey: 'status',
+        enableSorting: false,
+        header: () => <div className="flex justify-end">Status</div>,
+        cell: ({ row }) => (
+          <div className="flex justify-end">
+            <Badge
+              variant="outline"
+              size="sm"
+              type="text"
+              intent={STATUS_BADGE_INTENT[row.original.status]}
+            >
+              {row.original.status.charAt(0).toUpperCase() + row.original.status.slice(1)}
+            </Badge>
+          </div>
+        ),
+      },
+      {
         id: 'action',
         header: () => <span className="sr-only">Actions</span>,
         cell: ({ row }) => (
@@ -176,7 +194,8 @@ const RunsDataTableMobile: React.FC<RunsDataTableInternalProps> = (tableOptions)
                     key={1}
                     className="ml-auto h-[1.125rem] w-20 animate-pulse rounded bg-gray-9"
                   />,
-                  <div key={2} className="ml-auto w-8">
+                  <div key={2} className="ml-auto h-5 w-16 animate-pulse rounded-full bg-gray-9" />,
+                  <div key={3} className="ml-auto w-8">
                     <IconButton variant="outline" disabled>
                       <ChevronRight />
                     </IconButton>
