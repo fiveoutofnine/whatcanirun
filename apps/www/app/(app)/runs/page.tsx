@@ -3,10 +3,10 @@ import { Suspense } from 'react';
 
 import RunsDataTable from './(components)/runs-data-table';
 import RunsDataTableSkeleton from './(components)/runs-data-table/skeleton';
-import { asc, count, desc } from 'drizzle-orm';
+import { asc, count, desc, sql } from 'drizzle-orm';
 
 import { db } from '@/lib/db';
-import { devices, models, runs } from '@/lib/db/schema';
+import { runs } from '@/lib/db/schema';
 import { createPaginationParser, createSortingParser } from '@/lib/query-states';
 
 import ContainerLayout from '@/components/layouts/container';
@@ -48,24 +48,25 @@ export default async function Page({
   // Data
   // ---------------------------------------------------------------------------
 
+  const dir = sorting?.desc ? sql`DESC` : sql`ASC`;
   const orderByColumn = (() => {
     if (!sorting) return desc(runs.createdAt);
 
     switch (sorting.id) {
       case 'model':
-        return sorting.desc ? desc(models.displayName) : asc(models.displayName);
+        return sql`(SELECT display_name FROM models WHERE models.id = ${runs.modelId}) ${dir}`;
       case 'device':
-        return sorting.desc ? desc(devices.cpu) : asc(devices.cpu);
+        return sql`(SELECT cpu FROM devices WHERE devices.id = ${runs.deviceId}) ${dir}`;
       case 'runtime':
-        return sorting.desc ? desc(runs.runtimeName) : asc(runs.runtimeName);
+        return sql`${runs.runtimeVersion} ${dir}, ${runs.runtimeName} ${dir}`;
       case 'decode':
         return sorting.desc ? desc(runs.decodeTpsMean) : asc(runs.decodeTpsMean);
       case 'prefill':
         return sorting.desc ? desc(runs.prefillTpsMean) : asc(runs.prefillTpsMean);
       case 'memory':
         return sorting.desc ? desc(runs.peakRssMb) : asc(runs.peakRssMb);
-      case 'status':
-        return sorting.desc ? desc(runs.status) : asc(runs.status);
+      case 'trials':
+        return sorting.desc ? desc(runs.trialsPassed) : asc(runs.trialsPassed);
       case 'createdAt':
         return sorting.desc ? desc(runs.createdAt) : asc(runs.createdAt);
       default:

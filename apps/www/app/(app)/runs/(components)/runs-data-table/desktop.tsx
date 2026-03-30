@@ -194,11 +194,8 @@ const RunsDataTableDesktop: React.FC<RunsDataTableInternalProps> = (tableOptions
       {
         id: 'status',
         accessorKey: 'status',
-        header: ({ column }) => (
-          <DataTableSortHeader className="ml-auto w-fit" column={column}>
-            Status
-          </DataTableSortHeader>
-        ),
+        enableSorting: false,
+        header: () => <div className="flex justify-end">Status</div>,
         cell: ({ row }) => (
           <div className="flex justify-end">
             <Badge
