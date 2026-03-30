@@ -6,10 +6,11 @@
  * mlx_lm adapters to provide consistent, comparable memory metrics across
  * runtimes.
  *
- * On macOS, uses `footprint` which reports `phys_footprint_peak` — the true
- * physical memory footprint including unified (CPU+GPU) memory on Apple
- * Silicon. Falls back to `ps -o rss=` on other platforms or if `footprint`
- * fails.
+ * On macOS, uses `footprint` which reports both `phys_footprint` (current) and
+ * `phys_footprint_peak` (OS-tracked all-time peak) — the true physical memory
+ * footprint including unified (CPU+GPU) memory on Apple Silicon. Using the
+ * OS-tracked peak avoids missing transient spikes between poll intervals.
+ * Falls back to `ps -o rss=` on other platforms or if `footprint` fails.
  *
  * Note: llama-bench does not report memory in its JSON output, and mlx_lm's
  * `peak_memory` field is framework-level allocation (from `mx.get_peak_memory()`)
@@ -18,6 +19,11 @@
  */
 
 const POLL_INTERVAL_MS = 500;
+
+interface MemorySample {
+  currentKb: number;
+  peakKb: number;
+}
 
 /**
  * Start polling a subprocess's memory usage.
@@ -28,24 +34,25 @@ const POLL_INTERVAL_MS = 500;
  *
  * Call `stop()` when the process exits to get peak and idle measurements.
  *
- * "Peak" is the maximum memory observed across all samples.
- * "Idle" is the median of samples collected before `markInferenceStart()`.
- * Falls back to median of first half if no signal was received.
+ * "Peak" is from `phys_footprint_peak` (OS-tracked, no polling gaps) on macOS,
+ * or the maximum polled RSS on other platforms.
+ * "Idle" is the median of current-memory samples collected before
+ * `markInferenceStart()`. Falls back to median of first half if no signal.
  */
 export function monitorProcessMemory(pid: number): {
   markInferenceStart: () => void;
   stop: () => { peakMb: number; idleMb: number };
 } {
-  const samples: number[] = [];
+  const samples: MemorySample[] = [];
   let running = true;
   let inferenceStartIdx: number | null = null;
   const useFootprint = { value: process.platform === 'darwin' };
 
   const poll = async () => {
     while (running) {
-      const kb = await sampleMemoryKb(pid, useFootprint);
-      if (kb > 0) {
-        samples.push(kb);
+      const sample = await sampleMemory(pid, useFootprint);
+      if (sample.currentKb > 0) {
+        samples.push(sample);
       }
       await Bun.sleep(POLL_INTERVAL_MS);
     }
@@ -63,16 +70,20 @@ export function monitorProcessMemory(pid: number): {
       running = false;
       if (samples.length === 0) return { peakMb: 0, idleMb: 0 };
 
-      const peakKb = samples.reduce((a, b) => (a > b ? a : b), 0);
+      // Use the OS-tracked peak from the last sample (it's monotonically
+      // non-decreasing, so the last value is the true lifetime peak).
+      const peakKb = samples[samples.length - 1]!.peakKb;
 
       // Idle = RSS after model loading, before inference starts.
-      // Use samples collected before markInferenceStart() was called.
+      // Use current-memory samples collected before markInferenceStart().
       // Fall back to median of first half if no signal was received.
       let idleSamples: number[];
       if (inferenceStartIdx !== null && inferenceStartIdx > 0) {
-        idleSamples = samples.slice(0, inferenceStartIdx);
+        idleSamples = samples.slice(0, inferenceStartIdx).map((s) => s.currentKb);
       } else {
-        idleSamples = samples.slice(0, Math.max(1, Math.floor(samples.length / 2)));
+        idleSamples = samples
+          .slice(0, Math.max(1, Math.floor(samples.length / 2)))
+          .map((s) => s.currentKb);
       }
       idleSamples.sort((a, b) => a - b);
       const idleKb = idleSamples[Math.floor(idleSamples.length / 2)]!;
@@ -90,17 +101,21 @@ export function monitorProcessMemory(pid: number): {
 // ---------------------------------------------------------------------------
 
 /**
- * Sample the physical memory of a process in KB.
+ * Sample the physical memory of a process in KB, returning both the current
+ * footprint and the OS-tracked peak.
  *
- * On macOS, tries `footprint <pid>` first which reports `phys_footprint`
- * (accurate for unified memory on Apple Silicon). Falls back to `ps -o rss=`.
+ * On macOS, tries `footprint <pid>` first which reports both:
+ *   - `phys_footprint:` — current physical memory (for idle calculation)
+ *   - `phys_footprint_peak:` — all-time peak tracked by the OS (no polling gaps)
+ *
+ * Falls back to `ps -o rss=` where peak equals current (best effort).
  *
  * The `useFootprint` flag tracks whether `footprint` is available for this
  * monitor session. It starts as true on macOS and is set to false on the first
  * failure, avoiding repeated spawn attempts for a missing binary while still
  * retrying across separate monitorProcessMemory() calls.
  */
-async function sampleMemoryKb(pid: number, useFootprint: { value: boolean }): Promise<number> {
+async function sampleMemory(pid: number, useFootprint: { value: boolean }): Promise<MemorySample> {
   // Try macOS `footprint` command (accurate unified memory measurement).
   if (process.platform === 'darwin' && useFootprint.value) {
     try {
@@ -111,14 +126,13 @@ async function sampleMemoryKb(pid: number, useFootprint: { value: boolean }): Pr
       const text = await new Response(proc.stdout).text();
       const code = await proc.exited;
       if (code === 0) {
-        // Parse "phys_footprint: 785 KB" or "phys_footprint: 1.2 GB" etc.
-        const match = text.match(/phys_footprint:\s*([\d.]+)\s*(KB|MB|GB)/i);
-        if (match) {
-          const value = parseFloat(match[1]!);
-          const unit = match[2]!.toUpperCase();
-          if (unit === 'KB') return value;
-          if (unit === 'MB') return value * 1024;
-          if (unit === 'GB') return value * 1024 * 1024;
+        const currentKb = parseFootprintValue(
+          text,
+          /phys_footprint(?!_peak):\s*([\d.]+)\s*(KB|MB|GB)/i
+        );
+        const peakKb = parseFootprintValue(text, /phys_footprint_peak:\s*([\d.]+)\s*(KB|MB|GB)/i);
+        if (currentKb > 0) {
+          return { currentKb, peakKb: peakKb > 0 ? peakKb : currentKb };
         }
       }
     } catch {
@@ -128,6 +142,7 @@ async function sampleMemoryKb(pid: number, useFootprint: { value: boolean }): Pr
   }
 
   // Fallback: ps -o rss= (available on macOS and Linux).
+  // No separate peak tracking — peak equals current (best effort).
   try {
     const proc = Bun.spawn(['ps', '-o', 'rss=', '-p', String(pid)], {
       stdout: 'pipe',
@@ -136,9 +151,21 @@ async function sampleMemoryKb(pid: number, useFootprint: { value: boolean }): Pr
     const text = (await new Response(proc.stdout).text()).trim();
     await proc.exited;
     const kb = parseInt(text, 10);
-    return isNaN(kb) ? 0 : kb;
+    const val = isNaN(kb) ? 0 : kb;
+    return { currentKb: val, peakKb: val };
   } catch {
     // Process may have exited.
-    return 0;
+    return { currentKb: 0, peakKb: 0 };
   }
+}
+
+function parseFootprintValue(text: string, regex: RegExp): number {
+  const match = text.match(regex);
+  if (!match) return 0;
+  const value = parseFloat(match[1]!);
+  const unit = match[2]!.toUpperCase();
+  if (unit === 'KB') return value;
+  if (unit === 'MB') return value * 1024;
+  if (unit === 'GB') return value * 1024 * 1024;
+  return 0;
 }
