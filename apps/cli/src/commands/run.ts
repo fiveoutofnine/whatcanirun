@@ -329,12 +329,27 @@ export async function executeBenchmark(opts: BenchmarkOpts): Promise<string> {
     // that may not have been available before (e.g. mlx_lm downloads the model
     // during the benchmark, so the HF cache is only populated afterwards).
     if (!modelInfo.artifact_sha256 && isHuggingFaceRepoId(modelRef)) {
-      const reinspected = await inspectModel(modelRef);
-      if (reinspected.artifact_sha256) modelInfo.artifact_sha256 = reinspected.artifact_sha256;
-      if (reinspected.file_size_bytes) modelInfo.file_size_bytes = reinspected.file_size_bytes;
-      if (reinspected.parameters) modelInfo.parameters = reinspected.parameters;
-      if (reinspected.architecture) modelInfo.architecture = reinspected.architecture;
-      if (reinspected.quant) modelInfo.quant = reinspected.quant;
+      try {
+        const reinspected = await inspectModel(modelRef);
+        if (reinspected.artifact_sha256) modelInfo.artifact_sha256 = reinspected.artifact_sha256;
+        if (reinspected.file_size_bytes) modelInfo.file_size_bytes = reinspected.file_size_bytes;
+        if (reinspected.parameters) modelInfo.parameters = reinspected.parameters;
+        if (reinspected.architecture) modelInfo.architecture = reinspected.architecture;
+        if (reinspected.quant) modelInfo.quant = reinspected.quant;
+      } catch (e: unknown) {
+        // Re-inspection is best-effort; don't fail the whole run if it breaks.
+        log.warn(
+          chalk.yellow(
+            'Failed to re-inspect model after benchmark; continuing without updated metadata.'
+          )
+        );
+        const msg = e instanceof Error ? e.message : String(e);
+        if (msg) {
+          log.warn(chalk.dim(msg), {
+            prefix: chalk.dim.yellow(' ↳ '),
+          });
+        }
+      }
     }
 
     // Compute derived metrics.
