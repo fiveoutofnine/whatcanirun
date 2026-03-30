@@ -4,8 +4,8 @@
   "type": "module",
   "description": "Standardized local LLM inference benchmarks.",
   "bin": {
-    "whatcanirun": "./dist/cli.js",
-    "wcir": "./dist/cli.js"
+    "whatcanirun": "dist/cli.js",
+    "wcir": "dist/cli.js"
   },
   "scripts": {
     "dev": "bun run src/cli.ts",
