@@ -10,16 +10,23 @@ import LogoImg from '@/components/common/logo-img';
 // Props
 // -----------------------------------------------------------------------------
 
-type RuntimeTableCellProps = Pick<Run, 'runtimeName'> & { className?: string };
+type RuntimeTableCellProps = Pick<Run, 'runtimeName'> & {
+  className?: string;
+  runtimeVersion?: string;
+  align?: 'left' | 'right';
+};
 
 // -----------------------------------------------------------------------------
 // Component
 // -----------------------------------------------------------------------------
 
-const RuntimeTableCell: React.FC<RuntimeTableCellProps> & { Skeleton: React.FC } = ({
-  className,
-  runtimeName,
-}) => {
+type RuntimeTableCellSkeletonProps = {
+  showVersion?: boolean;
+};
+
+const RuntimeTableCell: React.FC<RuntimeTableCellProps> & {
+  Skeleton: React.FC<RuntimeTableCellSkeletonProps>;
+} = ({ className, runtimeName, runtimeVersion, align = 'left' }) => {
   let url;
   let Icon;
   if (runtimeName === 'llama.cpp') {
@@ -30,8 +37,8 @@ const RuntimeTableCell: React.FC<RuntimeTableCellProps> & { Skeleton: React.FC }
     Icon = LogoImg.Mlx;
   }
 
-  if (url && Icon) {
-    return (
+  const content =
+    url && Icon ? (
       <a
         className={twMerge(
           clsx(
@@ -52,30 +59,42 @@ const RuntimeTableCell: React.FC<RuntimeTableCellProps> & { Skeleton: React.FC }
             size={16}
           />
         </span>
-        <span className="line-clamp-1 leading-4" runtime-table-cell-name="">
+        <span className="line-clamp-1 leading-5" runtime-table-cell-name="">
           {runtimeName}
         </span>
       </a>
+    ) : (
+      <div className={twMerge(clsx('flex items-center gap-1.5', className))}>
+        <span
+          className="flex size-4 items-center justify-center rounded border border-gray-6 bg-gray-5 text-gray-11"
+          runtime-table-cell-icon=""
+        >
+          <FileQuestionMark className="size-2.5" />
+        </span>
+        <span className="line-clamp-1 leading-5" runtime-table-cell-name="">
+          {runtimeName}
+        </span>
+      </div>
+    );
+
+  if (runtimeVersion) {
+    return (
+      <div className={clsx('flex flex-col', align === 'right' ? 'items-end' : 'items-start')}>
+        {content}
+        <span className="pl-[1.375rem] text-xs tabular-nums leading-4 text-gray-11">
+          {runtimeVersion}
+        </span>
+      </div>
     );
   }
 
-  return (
-    <div className={twMerge(clsx('flex items-center gap-1.5', className))}>
-      <span
-        className="flex size-4 items-center justify-center rounded border border-gray-6 bg-gray-5 text-gray-11"
-        runtime-table-cell-icon=""
-      >
-        <FileQuestionMark className="size-2.5" />
-      </span>
-      <span className="line-clamp-1 leading-4" runtime-table-cell-name="">
-        {runtimeName}
-      </span>
-    </div>
-  );
+  return content;
 };
 
-const RuntimeTableCellSkeleton: React.FC = () => {
-  return (
+const RuntimeTableCellSkeleton: React.FC<RuntimeTableCellSkeletonProps> = ({
+  showVersion = false,
+}) => {
+  const content = (
     <div className="flex items-center gap-1.5">
       <div className="size-4 animate-pulse rounded bg-gray-9" runtime-table-cell-icon="" />
       <div
@@ -84,6 +103,17 @@ const RuntimeTableCellSkeleton: React.FC = () => {
       />
     </div>
   );
+
+  if (showVersion) {
+    return (
+      <div className="flex flex-col items-start gap-0.5">
+        {content}
+        <div className="ml-[1.375rem] h-4 w-10 animate-pulse rounded bg-gray-9" />
+      </div>
+    );
+  }
+
+  return content;
 };
 
 // -----------------------------------------------------------------------------
