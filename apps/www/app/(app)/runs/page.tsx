@@ -42,7 +42,7 @@ export default async function Page({
 
   const sortingState = createSortingParser.parseServerSide(sortingParam);
   const sorting = sortingState.length > 0 ? sortingState[0] : null;
-  const { pageSize, pageIndex } = createPaginationParser(total).parseServerSide(pagination);
+  const { pageSize, pageIndex } = createPaginationParser(total, 10).parseServerSide(pagination);
 
   // ---------------------------------------------------------------------------
   // Data

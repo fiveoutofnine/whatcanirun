@@ -13,7 +13,7 @@ const MIN_PAGE_SIZE = 1;
 // Parser
 // -----------------------------------------------------------------------------
 
-export const createPaginationParser = (totalRows: number) =>
+export const createPaginationParser = (totalRows: number, defaultPageSize: number = 25) =>
   createParser({
     parse(value: string): PaginationState | null {
       if (!value) return null;
@@ -33,13 +33,13 @@ export const createPaginationParser = (totalRows: number) =>
       return `${value.pageIndex},${value.pageSize}`;
     },
   })
-    .withDefault({ pageIndex: 0, pageSize: 25 })
+    .withDefault({ pageIndex: 0, pageSize: defaultPageSize })
     .withOptions({ shallow: false });
 
 // -----------------------------------------------------------------------------
 // Hook
 // -----------------------------------------------------------------------------
 
-export const usePaginationQueryState = (key: string, totalRows: number) => {
-  return useQueryState(key ?? 'pagination', createPaginationParser(totalRows));
+export const usePaginationQueryState = (key: string, totalRows: number, defaultPageSize?: number) => {
+  return useQueryState(key ?? 'pagination', createPaginationParser(totalRows, defaultPageSize));
 };

@@ -24,7 +24,7 @@ type RunsDataTableSkeletonProps = {
 // Component
 // -----------------------------------------------------------------------------
 
-const RunsDataTableSkeleton: React.FC<RunsDataTableSkeletonProps> = ({ rowCount = 25 }) => {
+const RunsDataTableSkeleton: React.FC<RunsDataTableSkeletonProps> = ({ rowCount = 10 }) => {
   const EMPTY_ROW = {
     id: '',
     userId: null,

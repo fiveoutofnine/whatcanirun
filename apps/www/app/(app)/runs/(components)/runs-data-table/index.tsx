@@ -36,7 +36,7 @@ export type RunsDataTableInternalProps = Omit<TableOptions<RunsDataTableValue>, 
 
 const RunsDataTable: React.FC<RunsDataTableProps> = ({ data, total, queryParams }) => {
   const [sorting, setSorting] = useSortingQueryState('sorting');
-  const [pagination, setPagination] = usePaginationQueryState('pagination', total);
+  const [pagination, setPagination] = usePaginationQueryState('pagination', total, 10);
 
   const maxPageIndex = Math.ceil(total / Math.max(pagination.pageSize, 1)) - 1;
   const isLoading =
