@@ -6,6 +6,7 @@ import * as VisuallyHidden from '@radix-ui/react-visually-hidden';
 import { defaultFilter } from 'cmdk';
 import { Check, CircleHelp } from 'lucide-react';
 
+import { getVramGb } from '@/lib/constants/gpu';
 import { useMediaQuery } from '@/lib/hooks';
 
 import { Code } from '@/components/templates/mdx';
@@ -16,6 +17,7 @@ import { Command, Drawer, Popover } from '@/components/ui';
 // -----------------------------------------------------------------------------
 
 type DeviceOption = {
+  chipId: string;
   cpu: string;
   cpuCores: number;
   gpu: string;
@@ -52,8 +54,10 @@ const DeviceCombobox: React.FC<DeviceComboboxProps> = ({ devices, value, onSelec
   const groups = useMemo(() => {
     const byManufacturer = new Map<string, (DeviceOption & { key: string })[]>();
     for (const d of devices) {
-      const key = `${d.cpu}:${d.cpuCores}:${d.gpu}:${d.gpuCores}:${d.ramGb}`;
-      const manufacturer = d.gpu.split(' ')[0];
+      const key = d.chipId;
+      const isApple = d.gpu.toLowerCase().startsWith('apple');
+      const primaryName = isApple ? d.gpu : d.gpuCores > 0 ? d.gpu : d.cpu;
+      const manufacturer = primaryName.split(' ')[0];
       const group = byManufacturer.get(manufacturer) ?? [];
       group.push({ ...d, key });
       byManufacturer.set(manufacturer, group);
@@ -123,7 +127,7 @@ const DeviceComboboxInternal: React.FC<DeviceComboboxInternalProps> = ({
           let deviceCount = devs.length;
           if (search.trim()) {
             deviceCount = devs.filter((d) => {
-              const itemValue = `${d.cpu} ${d.cpuCores} ${d.gpuCores} ${d.ramGb}`;
+              const itemValue = `${d.gpu} ${d.cpu} ${d.cpuCores} ${d.gpuCores} ${d.ramGb}`;
               return defaultFilter(itemValue, search);
             }).length;
           }
@@ -143,25 +147,54 @@ const DeviceComboboxInternal: React.FC<DeviceComboboxInternalProps> = ({
               >
                 {devs.map((d) => {
                   const selected = d.key === value;
+                  const isApple = d.gpu.toLowerCase().startsWith('apple');
+                  const hasGpu = d.gpuCores > 0;
 
                   return (
                     <Command.Item
                       key={d.key}
                       className="h-11 [&_[cmdk-item-content]]:flex [&_[cmdk-item-content]]:w-full [&_[cmdk-item-content]]:items-start [&_[cmdk-item-content]]:justify-between [&_[cmdk-item-content]]:gap-1.5"
-                      value={`${d.gpu}-${d.cpuCores}-${d.gpuCores}-${d.ramGb}`}
+                      value={isApple ? `${d.gpu}-${d.cpuCores}-${d.gpuCores}-${d.ramGb}` : d.key}
                       onSelect={() => {
                         onSelect(d.key);
                         setOpen(false);
                       }}
                     >
                       <div className="flex flex-col">
-                        <span className="line-clamp-1 flex items-center gap-1.5 text-ellipsis leading-5">
-                          {d.gpu.replace(name, '')}
-                          <Code>{d.ramGb} GB RAM</Code>
-                        </span>
-                        <span className="text-xs leading-4 text-gray-11">
-                          {d.cpuCores}-core CPU / {d.gpuCores}-core GPU
-                        </span>
+                        {isApple ? (
+                          <Fragment>
+                            <span className="line-clamp-1 flex items-center gap-1.5 text-ellipsis leading-5">
+                              {d.gpu.replace(name, '')}
+                              <Code>{d.ramGb} GB RAM</Code>
+                            </span>
+                            <span className="text-xs leading-4 text-gray-11">
+                              {d.cpuCores}-core CPU / {d.gpuCores}-core GPU
+                            </span>
+                          </Fragment>
+                        ) : hasGpu ? (
+                          <Fragment>
+                            <span className="line-clamp-1 flex items-center gap-1.5 text-ellipsis leading-5">
+                              {d.gpu.replace(name, '').trim()}
+                            </span>
+                            {(() => {
+                              const vram = getVramGb(d.gpu);
+                              return vram != null ? (
+                                <span className="text-xs leading-4 text-gray-11">
+                                  {vram} GB VRAM
+                                </span>
+                              ) : null;
+                            })()}
+                          </Fragment>
+                        ) : (
+                          <Fragment>
+                            <span className="line-clamp-1 flex items-center gap-1.5 text-ellipsis leading-5">
+                              {d.cpu.replace(name, '').trim()}
+                            </span>
+                            <span className="text-xs leading-4 text-gray-11">
+                              {d.cpuCores}-core CPU / {d.ramGb} GB RAM
+                            </span>
+                          </Fragment>
+                        )}
                       </div>
                       {selected ? (
                         <span className="flex items-center justify-center pt-0.5 text-gray-12">
