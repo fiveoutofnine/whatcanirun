@@ -27,6 +27,8 @@ type MemoryTableCellSkeletonProps = {
 const MemoryTableCell: React.FC<MemoryTableCellProps> & {
   Skeleton: React.FC<MemoryTableCellSkeletonProps>;
 } = ({ align, usedGb, totalGb }) => {
+  if (usedGb === 0) return <span className="w-fit italic text-gray-11">N/A</span>;
+
   const percentage = (usedGb / totalGb) * 100;
 
   const background = {

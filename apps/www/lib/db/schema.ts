@@ -360,8 +360,21 @@ export const view__model_stats_by_device = pgMaterializedView('view__model_stats
         ),
         avgDecodeTps: sql<number>`AVG(${trials.decodeTps})`.as('avg_decode_tps'),
         avgPrefillTps: sql<number>`AVG(${trials.prefillTps})`.as('avg_prefill_tps'),
-        avgIdleRssMb: sql<number>`AVG(${trials.idleRssMb})`.as('avg_idle_rss_mb'),
-        avgPeakRssMb: sql<number>`AVG(${trials.peakRssMb})`.as('avg_peak_rss_mb'),
+        // Memory: exclude under-reported llama.cpp readings (harnessVersion <= 0.1.16)
+        avgIdleRssMb: sql<number>`
+          COALESCE(AVG(
+            CASE WHEN NOT (${runs.runtimeName} = 'llama.cpp' AND ${runs.harnessVersion} <= '0.1.16')
+              THEN ${trials.idleRssMb}
+            END
+          ), 0)
+        `.as('avg_idle_rss_mb'),
+        avgPeakRssMb: sql<number>`
+          COALESCE(AVG(
+            CASE WHEN NOT (${runs.runtimeName} = 'llama.cpp' AND ${runs.harnessVersion} <= '0.1.16')
+              THEN ${trials.peakRssMb}
+            END
+          ), 0)
+        `.as('avg_peak_rss_mb'),
         compositeScore: sql<number>`(
           0.45 * (CASE
             WHEN AVG(${trials.decodeTps}) >= 100 THEN 1.0
@@ -380,7 +393,14 @@ export const view__model_stats_by_device = pgMaterializedView('view__model_stats
             ELSE 0.2 * AVG(${trials.prefillTps}) / 200.0
           END)
           -- 716.8 = 0.7 * 1024: only ~70% of device RAM is usable headroom
-          + 0.30 * GREATEST(0, 1.0 - AVG(${trials.peakRssMb}) / (MIN(${devices.ramGb}) * 716.8))
+          -- Peak RSS falls back to file-size estimate when bugged llama.cpp readings are excluded
+          + 0.30 * GREATEST(0, 1.0 - COALESCE(
+              AVG(CASE WHEN NOT (${runs.runtimeName} = 'llama.cpp' AND ${runs.harnessVersion} <= '0.1.16')
+                THEN ${trials.peakRssMb}
+              END),
+              COALESCE(NULLIF(MIN(${modelsInfo.fileSizeBytes}), 0), ${models.fileSizeBytes})
+                / (1024.0 * 1024.0) + 512.0
+            ) / (MIN(${devices.ramGb}) * 716.8))
         )`.as('composite_score'),
       })
       .from(trials)
