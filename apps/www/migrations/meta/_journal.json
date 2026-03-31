@@ -225,6 +225,27 @@
       "when": 1774869284982,
       "tag": "0031_many_daredevil",
       "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1774917880407,
+      "tag": "0032_flippant_domino",
+      "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1774918576392,
+      "tag": "0033_unusual_blizzard",
+      "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1774918951660,
+      "tag": "0034_parallel_zaladane",
+      "breakpoints": true
     }
   ]
 }

@@ -329,16 +329,20 @@ const ModelsDataTableMobileSubComponent: React.FC<{ data: ModelsDataTableValue }
       </Stat>
       <Stat className="col-span-1">
         <Stat.Name>Peak memory</Stat.Name>
-        <Stat.Value className="tabular-nums">
-          {Number(data.avgPeakRssMb / 1024).toLocaleString(undefined, {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })}{' '}
-          <span className="text-gray-11">GB</span>{' '}
-          <span className="text-gray-11">
-            ({((data.avgPeakRssMb / 1024 / data.deviceRamGb) * 100).toFixed(2)}%)
-          </span>
-        </Stat.Value>
+        {data.avgPeakRssMb ? (
+          <Stat.Value className="tabular-nums">
+            {Number(data.avgPeakRssMb / 1024).toLocaleString(undefined, {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}{' '}
+            <span className="text-gray-11">GB</span>{' '}
+            <span className="text-gray-11">
+              ({((data.avgPeakRssMb / 1024 / data.deviceRamGb) * 100).toFixed(2)}%)
+            </span>
+          </Stat.Value>
+        ) : (
+          <Stat.Value empty>N/A</Stat.Value>
+        )}
       </Stat>
       <Stat className="col-span-1">
         <Stat.Name>Trials</Stat.Name>

@@ -148,7 +148,7 @@ export class MlxAdapter implements RuntimeAdapter {
     const stdout = stdoutChunks.join('');
     const stderr = stderrChunks.join('');
 
-    const mem = memMonitor.stop();
+    const mem = await memMonitor.stop();
 
     if (code !== 0) {
       const output = stderr + stdout;
