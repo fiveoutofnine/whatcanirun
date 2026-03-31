@@ -14,6 +14,7 @@ export const DEFAULT_BUNDLES_DIR = join(homedir(), APP_DIR_NAME, 'bundles');
 const RUNTIME_SLUGS: Record<string, string> = {
   mlx_lm: 'mlx',
   'llama.cpp': 'llamacpp',
+  ollama: 'ollama',
 };
 
 // -----------------------------------------------------------------------------

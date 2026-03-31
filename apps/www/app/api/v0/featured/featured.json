@@ -31,5 +31,20 @@
     "hfRepoId": "unsloth/Qwen3.5-9B-GGUF",
     "hfFileName": "Qwen3.5-9B-Q4_K_M.gguf",
     "runtime": "llama.cpp"
+  },
+  {
+    "displayName": "Qwen-3.5-0.8B",
+    "hfRepoId": "ollama:qwen3.5:0.6b",
+    "runtime": "ollama"
+  },
+  {
+    "displayName": "Qwen-3.5-4B",
+    "hfRepoId": "ollama:qwen3.5:4b",
+    "runtime": "ollama"
+  },
+  {
+    "displayName": "Qwen-3.5-9B",
+    "hfRepoId": "ollama:qwen3.5:8b",
+    "runtime": "ollama"
   }
 ]
