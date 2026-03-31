@@ -1,5 +1,5 @@
 import { warn } from '../utils/log.ts';
-import { monitorSystemMemory } from './memory.ts';
+import { monitorProcessMemory, monitorSystemMemory } from './memory.ts';
 import type { BenchOpts, BenchResult, BenchTrial, RuntimeAdapter, RuntimeInfo } from './types.ts';
 import { LLAMA_CPP_MIN_BUILD, parseLlamaCppBuild, UnsupportedVersionError } from './version.ts';
 
@@ -24,8 +24,9 @@ import { LLAMA_CPP_MIN_BUILD, parseLlamaCppBuild, UnsupportedVersionError } from
  * n_gpu_layers, flash_attn, etc.) but are not used by our parser. The
  * [key: string]: unknown catch-all provides forward compatibility.
  *
- * Memory is NOT reported by llama-bench — we measure system-wide memory
- * delta via monitorSystemMemory() to capture Metal GPU buffer allocations.
+ * Memory is NOT reported by llama-bench. On macOS we measure system-wide
+ * memory delta via monitorSystemMemory() to capture Metal GPU buffer
+ * allocations; on other platforms we fall back to process-based RSS polling.
  *
  * Minimum stable version: b${LLAMA_CPP_MIN_BUILD} (for -o json with samples_ts).
  */
@@ -118,14 +119,20 @@ export class LlamaCppAdapter implements RuntimeAdapter {
       '--progress',
     ];
 
-    // Snapshot system memory baseline BEFORE spawning llama-bench, so the
-    // delta captures everything including model loading into Metal buffers.
-    const memMonitor = await monitorSystemMemory();
+    // On macOS, snapshot system memory BEFORE spawning llama-bench so the
+    // delta captures model loading into Metal buffers. Other platforms keep
+    // using per-process RSS polling.
+    const systemMemMonitor = process.platform === 'darwin' ? await monitorSystemMemory() : null;
 
     const proc = Bun.spawn(['llama-bench', ...args], {
       stdout: 'pipe',
       stderr: 'pipe',
     });
+
+    const memMonitor = systemMemMonitor ?? monitorProcessMemory(proc.pid);
+    if (systemMemMonitor) {
+      await systemMemMonitor.start();
+    }
 
     if (opts.signal) {
       opts.signal.addEventListener('abort', () => proc.kill(), { once: true });

@@ -8,10 +8,11 @@
  *    runtimes where memory is attributed to the process (e.g. mlx_lm).
  *
  * 2. `monitorSystemMemory()` — measures system-wide memory delta before/during
- *    a benchmark. Required for llama.cpp because Metal GPU buffer allocations
- *    are not attributed to the process's `phys_footprint` — they consume real
- *    unified memory but are owned by the GPU driver. The system-level delta
- *    captures all memory consumption regardless of attribution.
+ *    a benchmark on macOS. Required for llama.cpp because Metal GPU buffer
+ *    allocations are not always attributed to the process's
+ *    `phys_footprint` — they consume real unified memory but are owned by the
+ *    GPU driver. The system-level delta captures all memory consumption
+ *    regardless of attribution.
  */
 
 const POLL_INTERVAL_MS = 500;
@@ -70,9 +71,10 @@ export function monitorProcessMemory(pid: number): {
       running = false;
       if (samples.length === 0) return { peakMb: 0, idleMb: 0 };
 
-      // Use the OS-tracked peak from the last sample (it's monotonically
-      // non-decreasing, so the last value is the true lifetime peak).
-      const peakKb = samples[samples.length - 1]!.peakKb;
+      const peakKb = samples.reduce(
+        (max, sample) => (sample.peakKb > max ? sample.peakKb : max),
+        0
+      );
 
       // Idle = RSS after model loading, before inference starts.
       // Use current-memory samples collected before markInferenceStart().
@@ -101,11 +103,12 @@ export function monitorProcessMemory(pid: number): {
 // ---------------------------------------------------------------------------
 
 /**
- * Monitor memory by tracking system-wide memory consumption delta.
+ * Monitor memory by tracking system-wide memory consumption delta on macOS.
  *
  * Takes a baseline of system "used memory" before the subprocess starts, then
- * polls the delta during the benchmark. This captures ALL memory consumption
- * including Metal GPU buffer allocations that `phys_footprint` misses.
+ * call `start()` immediately after spawning the subprocess to begin polling.
+ * This captures ALL memory consumption including Metal GPU buffer allocations
+ * that `phys_footprint` misses.
  *
  * "Used memory" = (active + wired + speculative + compressor) pages from
  * `vm_stat`. The delta from baseline isolates the benchmark's contribution.
@@ -114,25 +117,37 @@ export function monitorProcessMemory(pid: number): {
  * can affect system memory), but a multi-GB model load dominates any noise.
  */
 export async function monitorSystemMemory(): Promise<{
+  start: () => Promise<void>;
   markInferenceStart: () => void;
   stop: () => { peakMb: number; idleMb: number };
 }> {
   const baselineKb = await getSystemUsedMemoryKb();
   const deltas: number[] = [];
-  let running = true;
+  let running = false;
   let inferenceStartIdx: number | null = null;
+
+  const sampleDelta = async () => {
+    const currentKb = await getSystemUsedMemoryKb();
+    const delta = currentKb - baselineKb;
+    deltas.push(Math.max(0, delta));
+  };
 
   const poll = async () => {
     while (running) {
       await Bun.sleep(POLL_INTERVAL_MS);
-      const currentKb = await getSystemUsedMemoryKb();
-      const delta = currentKb - baselineKb;
-      deltas.push(Math.max(0, delta));
+      if (!running) break;
+      await sampleDelta();
     }
   };
-  poll();
 
   return {
+    async start() {
+      if (running) return;
+      running = true;
+      await sampleDelta();
+      void poll();
+    },
+
     markInferenceStart() {
       if (inferenceStartIdx === null) {
         inferenceStartIdx = deltas.length;
