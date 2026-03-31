@@ -2,10 +2,11 @@
 import { HARNESS_VERSION } from '@whatcanirun/shared';
 import { defineCommand, runMain } from 'citty';
 
-import { auth, run, show, submit, validate, version } from './commands';
+import { auth, rewards, run, show, submit, validate, version } from './commands';
 
 const subCommands = {
   auth,
+  rewards,
   run,
   show,
   submit,

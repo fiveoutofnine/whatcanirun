@@ -33,5 +33,9 @@
   ],
   "publishConfig": {
     "access": "public"
+  },
+  "dependencies": {
+    "mppx": "^0.4.12",
+    "viem": "^2.47.6"
   }
 }

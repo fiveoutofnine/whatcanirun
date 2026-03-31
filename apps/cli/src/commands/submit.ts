@@ -5,6 +5,7 @@ import { validateBundle } from '../bundle/validate';
 import { uploadBundle } from '../upload/client';
 import { resolveBundlePath } from '../utils/id';
 import * as log from '../utils/log';
+import { getWallet } from '../wallet/wallet';
 
 const command = defineCommand({
   meta: {
@@ -16,6 +17,11 @@ const command = defineCommand({
       type: 'positional',
       description: 'Bundle ID or path to zip file',
       required: true,
+    },
+    rewarded: {
+      type: 'boolean',
+      description: 'Submit via rewarded route (requires opt-in wallet)',
+      default: false,
     },
   },
   async run({ args }) {
@@ -31,6 +37,15 @@ const command = defineCommand({
       process.exit(130);
     };
     process.on('SIGINT', onSigint);
+
+    const useRewarded = args.rewarded as boolean;
+
+    if (useRewarded && !getWallet()) {
+      log.error(
+        `No rewards wallet found. Run ${chalk.bold.cyan('wcir rewards opt-in')} first.`,
+      );
+      process.exit(1);
+    }
 
     let bundlePath;
     try {
@@ -57,13 +72,25 @@ const command = defineCommand({
     validationSpinner.stop(chalk.white(`[${chalk.green('✓')}] Bundle is valid.`));
 
     // Upload bundle.
-    const uploadSpinner = new log.Spinner(chalk.dim('Uploading bundle…')).start();
+    const uploadLabel = useRewarded ? 'Uploading bundle (rewarded)…' : 'Uploading bundle…';
+    const uploadSpinner = new log.Spinner(chalk.dim(uploadLabel)).start();
     activeSpinner = uploadSpinner;
     try {
-      const result = await uploadBundle(bundlePath, { signal: controller.signal });
-      uploadSpinner.stop(
-        chalk.white(`[${chalk.green('✓')}] Uploaded run: ${chalk.underline(result.run_url)}`)
-      );
+      if (useRewarded) {
+        const { uploadBundleRewarded } = await import('../upload/rewarded');
+        const result = await uploadBundleRewarded(bundlePath, { signal: controller.signal });
+        uploadSpinner.stop(
+          chalk.white(`[${chalk.green('✓')}] Uploaded run: ${chalk.underline(result.run_url)}`)
+        );
+        console.log(
+          chalk.dim(` ↳ DID: ${chalk.cyan(result.did)} — reward granted on verification.`),
+        );
+      } else {
+        const result = await uploadBundle(bundlePath, { signal: controller.signal });
+        uploadSpinner.stop(
+          chalk.white(`[${chalk.green('✓')}] Uploaded run: ${chalk.underline(result.run_url)}`)
+        );
+      }
     } catch (e: unknown) {
       uploadSpinner.stop(chalk.white(`[${chalk.red('✖')}] Run upload failed.`));
       log.error(chalk.dim(e instanceof Error ? e.message : String(e)), {

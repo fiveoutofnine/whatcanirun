@@ -225,6 +225,20 @@
       "when": 1774869284982,
       "tag": "0031_many_daredevil",
       "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1774920847597,
+      "tag": "0032_fantastic_ravenous",
+      "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1774921376240,
+      "tag": "0033_fresh_strong_guy",
+      "breakpoints": true
     }
   ]
 }
