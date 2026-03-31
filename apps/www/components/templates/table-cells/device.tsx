@@ -7,6 +7,7 @@ import { twMerge } from 'tailwind-merge';
 import type { Device } from '@/lib/db/schema';
 
 import ClickableTooltip from '@/components/templates/clickable-tooltip';
+import { Badge } from '@/components/ui';
 
 // -----------------------------------------------------------------------------
 // Props
@@ -155,6 +156,39 @@ const DeviceTableCell: React.FC<DeviceTableCellProps> & { Skeleton: React.FC } =
   const isMac = osName?.toLowerCase() === 'macos';
 
   if (!isMac) {
+    const hasGpu = gpuCores > 0;
+
+    if (!hasGpu) {
+      return (
+        <div className="flex flex-col items-start">
+          <span className="flex items-center gap-1.5 leading-5">
+            <span className="line-clamp-1">{cpu}</span>
+            <Badge size="sm" variant="outline" intent="info">
+              CPU
+            </Badge>
+          </span>
+          <div className="mt-0 flex h-4 gap-2">
+            <ClickableTooltip content="CPU cores">
+              <div className="flex w-fit items-center gap-1 whitespace-nowrap text-xs leading-4 text-gray-11 underline decoration-dotted transition-colors hover:text-gray-12">
+                <span className="flex size-3 items-center justify-center">
+                  <Cpu />
+                </span>
+                <span>{Number(cpuCores).toLocaleString()}</span>
+              </div>
+            </ClickableTooltip>
+            <ClickableTooltip content="RAM">
+              <div className="flex w-fit items-center gap-1 whitespace-nowrap text-xs leading-4 text-gray-11 underline decoration-dotted transition-colors hover:text-gray-12">
+                <span className="flex size-3 items-center justify-center">
+                  <MemoryStick />
+                </span>
+                <span>{Number(ramGb).toLocaleString()} GB</span>
+              </div>
+            </ClickableTooltip>
+          </div>
+        </div>
+      );
+    }
+
     const vram = getVramGb(gpu);
     return (
       <div className="flex flex-col items-start">
@@ -177,7 +211,7 @@ const DeviceTableCell: React.FC<DeviceTableCellProps> & { Skeleton: React.FC } =
 
   return (
     <div className="flex flex-col items-start">
-      <span className="line-clamp-1 leading-5">{cpu ?? gpu}</span>
+      <span className="line-clamp-1 leading-5">{gpu ?? cpu}</span>
       <div className="mt-0 flex h-4 gap-2">
         {[
           {
