@@ -117,12 +117,19 @@ export class LlamaCppAdapter implements RuntimeAdapter {
       '-o',
       'json',
       '--progress',
+      '-mmp',
+      '1',
     ];
 
     // On macOS, snapshot system memory BEFORE spawning llama-bench so the
     // delta captures model loading into Metal buffers. Other platforms keep
     // using per-process RSS polling.
     const systemMemMonitor = process.platform === 'darwin' ? await monitorSystemMemory() : null;
+    if (process.platform === 'darwin' && !systemMemMonitor) {
+      warn(
+        'System memory monitoring unavailable; falling back to process RSS, which may under-report Metal allocations.'
+      );
+    }
 
     const proc = Bun.spawn(['llama-bench', ...args], {
       stdout: 'pipe',
@@ -191,7 +198,7 @@ export class LlamaCppAdapter implements RuntimeAdapter {
     const stderr = stderrChunks.join('');
     const code = await proc.exited;
 
-    const mem = memMonitor.stop();
+    const mem = await memMonitor.stop();
 
     if (code !== 0) {
       const errMsg = stderr.trim() || stdout.trim() || `exit code ${code}`;

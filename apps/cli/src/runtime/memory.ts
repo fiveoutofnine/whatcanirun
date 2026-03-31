@@ -42,7 +42,7 @@ interface MemorySample {
  */
 export function monitorProcessMemory(pid: number): {
   markInferenceStart: () => void;
-  stop: () => { peakMb: number; idleMb: number };
+  stop: () => Promise<{ peakMb: number; idleMb: number }>;
 } {
   const samples: MemorySample[] = [];
   let running = true;
@@ -55,10 +55,11 @@ export function monitorProcessMemory(pid: number): {
       if (sample.currentKb > 0) {
         samples.push(sample);
       }
+      if (!running) break;
       await Bun.sleep(POLL_INTERVAL_MS);
     }
   };
-  poll();
+  const pollTask = poll();
 
   return {
     markInferenceStart() {
@@ -67,8 +68,9 @@ export function monitorProcessMemory(pid: number): {
       }
     },
 
-    stop() {
+    async stop() {
       running = false;
+      await pollTask;
       if (samples.length === 0) return { peakMb: 0, idleMb: 0 };
 
       const peakKb = samples.reduce(
@@ -119,15 +121,19 @@ export function monitorProcessMemory(pid: number): {
 export async function monitorSystemMemory(): Promise<{
   start: () => Promise<void>;
   markInferenceStart: () => void;
-  stop: () => { peakMb: number; idleMb: number };
-}> {
+  stop: () => Promise<{ peakMb: number; idleMb: number }>;
+} | null> {
   const baselineKb = await getSystemUsedMemoryKb();
+  if (baselineKb <= 0) return null;
+
   const deltas: number[] = [];
   let running = false;
   let inferenceStartIdx: number | null = null;
+  let pollTask: Promise<void> | null = null;
 
   const sampleDelta = async () => {
     const currentKb = await getSystemUsedMemoryKb();
+    if (currentKb <= 0) return;
     const delta = currentKb - baselineKb;
     deltas.push(Math.max(0, delta));
   };
@@ -145,7 +151,7 @@ export async function monitorSystemMemory(): Promise<{
       if (running) return;
       running = true;
       await sampleDelta();
-      void poll();
+      pollTask = poll();
     },
 
     markInferenceStart() {
@@ -154,8 +160,9 @@ export async function monitorSystemMemory(): Promise<{
       }
     },
 
-    stop() {
+    async stop() {
       running = false;
+      await pollTask;
       if (deltas.length === 0) return { peakMb: 0, idleMb: 0 };
 
       const peakKb = deltas.reduce((a, b) => (a > b ? a : b), 0);
@@ -253,6 +260,9 @@ async function sampleProcessMemory(
           return { currentKb, peakKb: peakKb > 0 ? peakKb : currentKb };
         }
       }
+      // The command can fail with a nonzero exit on some hosts even when the
+      // binary exists. Stop retrying in that case and fall back to RSS.
+      useFootprint.value = false;
     } catch {
       // footprint not available — stop trying for this monitor session.
       useFootprint.value = false;
