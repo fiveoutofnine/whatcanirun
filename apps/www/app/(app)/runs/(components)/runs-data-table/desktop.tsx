@@ -88,6 +88,7 @@ const RunsDataTableDesktop: React.FC<RunsDataTableInternalProps> = (tableOptions
               gpu={device.gpu}
               gpuCores={device.gpuCores}
               ramGb={device.ramGb}
+              osName={device.osName}
             />
           );
         },

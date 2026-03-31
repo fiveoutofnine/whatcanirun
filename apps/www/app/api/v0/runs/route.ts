@@ -160,7 +160,13 @@ export async function POST(request: NextRequest) {
   const devGpuCores = dev.gpu_cores ?? 0;
   const devOsName = truncate(dev.os_name)!;
   const devOsVersion = truncate(dev.os_version)!;
-  const devChipId = `${devCpu}:${devCpuCores}:${devGpu}:${devGpuCores}:${dev.ram_gb}`;
+  const isMac = devOsName.toLowerCase() === 'macos';
+  const hasGpu = devGpuCores > 0;
+  const devChipId = isMac
+    ? `${devCpu}:${devCpuCores}:${devGpu}:${devGpuCores}:${dev.ram_gb}`
+    : hasGpu
+      ? devGpu
+      : devCpu;
   await db
     .insert(devices)
     .values({

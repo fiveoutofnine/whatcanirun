@@ -12,7 +12,83 @@ import ClickableTooltip from '@/components/templates/clickable-tooltip';
 // Props
 // -----------------------------------------------------------------------------
 
-type DeviceTableCellProps = Pick<Device, 'cpu' | 'cpuCores' | 'gpu' | 'gpuCores' | 'ramGb'>;
+type DeviceTableCellProps = Pick<
+  Device,
+  'cpu' | 'cpuCores' | 'gpu' | 'gpuCores' | 'ramGb' | 'osName'
+>;
+
+// -----------------------------------------------------------------------------
+// GPU VRAM lookup (GB)
+// -----------------------------------------------------------------------------
+
+const GPU_VRAM: Record<string, number> = {
+  // NVIDIA GeForce RTX 50-series
+  'geforce rtx 5090': 32,
+  'geforce rtx 5080': 16,
+  'geforce rtx 5070 ti': 16,
+  'geforce rtx 5070': 12,
+  // NVIDIA GeForce RTX 40-series
+  'geforce rtx 4090': 24,
+  'geforce rtx 4080 super': 16,
+  'geforce rtx 4080': 16,
+  'geforce rtx 4070 ti super': 16,
+  'geforce rtx 4070 ti': 12,
+  'geforce rtx 4070 super': 12,
+  'geforce rtx 4070': 12,
+  'geforce rtx 4060 ti': 8,
+  'geforce rtx 4060': 8,
+  // NVIDIA GeForce RTX 30-series
+  'geforce rtx 3090 ti': 24,
+  'geforce rtx 3090': 24,
+  'geforce rtx 3080 ti': 12,
+  'geforce rtx 3080': 10,
+  'geforce rtx 3070 ti': 8,
+  'geforce rtx 3070': 8,
+  'geforce rtx 3060 ti': 8,
+  'geforce rtx 3060': 12,
+  // NVIDIA GeForce RTX 20-series
+  'geforce rtx 2080 ti': 11,
+  'geforce rtx 2080 super': 8,
+  'geforce rtx 2080': 8,
+  'geforce rtx 2070 super': 8,
+  'geforce rtx 2070': 8,
+  'geforce rtx 2060 super': 8,
+  'geforce rtx 2060': 6,
+  // NVIDIA professional
+  'rtx a6000': 48,
+  'rtx a5000': 24,
+  'rtx a4000': 16,
+  'rtx 6000 ada': 48,
+  'rtx 5000 ada': 32,
+  'rtx 4000 ada': 20,
+  'rtx 4500 ada': 24,
+  // AMD Radeon RX 7000-series
+  'radeon rx 7900 xtx': 24,
+  'radeon rx 7900 xt': 20,
+  'radeon rx 7900 gre': 16,
+  'radeon rx 7800 xt': 16,
+  'radeon rx 7700 xt': 12,
+  'radeon rx 7600 xt': 16,
+  'radeon rx 7600': 8,
+  // AMD Radeon RX 6000-series
+  'radeon rx 6950 xt': 16,
+  'radeon rx 6900 xt': 16,
+  'radeon rx 6800 xt': 16,
+  'radeon rx 6800': 16,
+  'radeon rx 6700 xt': 12,
+  'radeon rx 6600 xt': 8,
+  'radeon rx 6600': 8,
+};
+
+/** Look up VRAM by matching the GPU name suffix (case-insensitive). */
+function getVramGb(gpu: string): number | null {
+  const lower = gpu.toLowerCase();
+  // Try longest keys first so "4080 super" matches before "4080".
+  for (const [key, vram] of Object.entries(GPU_VRAM).sort((a, b) => b[0].length - a[0].length)) {
+    if (lower.includes(key)) return vram;
+  }
+  return null;
+}
 
 // -----------------------------------------------------------------------------
 // Component
@@ -24,7 +100,31 @@ const DeviceTableCell: React.FC<DeviceTableCellProps> & { Skeleton: React.FC } =
   gpu,
   gpuCores,
   ramGb,
+  osName,
 }) => {
+  const isMac = osName?.toLowerCase() === 'macos';
+
+  if (!isMac) {
+    const vram = getVramGb(gpu);
+    return (
+      <div className="flex flex-col items-start">
+        <span className="line-clamp-1 leading-5">{gpu}</span>
+        {vram != null ? (
+          <div className="mt-0 flex h-4 gap-2">
+            <ClickableTooltip content="VRAM">
+              <div className="flex w-fit items-center gap-1 whitespace-nowrap text-xs leading-4 text-gray-11 underline decoration-dotted transition-colors hover:text-gray-12">
+                <span className="flex size-3 items-center justify-center">
+                  <MemoryStick />
+                </span>
+                <span>{vram} GB</span>
+              </div>
+            </ClickableTooltip>
+          </div>
+        ) : null}
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col items-start">
       <span className="line-clamp-1 leading-5">{cpu ?? gpu}</span>
