@@ -6,20 +6,12 @@ import { twMerge } from 'tailwind-merge';
 
 import type { Device } from '@/lib/db/schema';
 
+import LogoImg from '@/components/common/logo-img';
 import ClickableTooltip from '@/components/templates/clickable-tooltip';
 import { Badge } from '@/components/ui';
 
 // -----------------------------------------------------------------------------
-// Props
-// -----------------------------------------------------------------------------
-
-type DeviceTableCellProps = Pick<
-  Device,
-  'cpu' | 'cpuCores' | 'gpu' | 'gpuCores' | 'ramGb' | 'osName'
->;
-
-// -----------------------------------------------------------------------------
-// GPU VRAM lookup (GB)
+// Constants
 // -----------------------------------------------------------------------------
 
 const GPU_VRAM: Record<string, number> = {
@@ -131,15 +123,39 @@ const GPU_VRAM: Record<string, number> = {
   'radeon rx 6600': 8,
 };
 
-/** Look up VRAM by matching the GPU name suffix (case-insensitive). */
-function getVramGb(gpu: string): number | null {
-  const lower = gpu.toLowerCase();
-  // Try longest keys first so "4080 super" matches before "4080".
-  for (const [key, vram] of Object.entries(GPU_VRAM).sort((a, b) => b[0].length - a[0].length)) {
-    if (lower.includes(key)) return vram;
-  }
-  return null;
-}
+const MANUFACTURER_PREFIXES: { prefix: string; manufacturer: Manufacturer }[] = [
+  { prefix: 'nvidia', manufacturer: 'nvidia' },
+  { prefix: 'geforce', manufacturer: 'nvidia' },
+  { prefix: 'amd', manufacturer: 'amd' },
+  { prefix: 'radeon', manufacturer: 'amd' },
+  { prefix: 'intel', manufacturer: 'intel' },
+  { prefix: 'apple', manufacturer: 'apple' },
+];
+
+const MANUFACTURER_ICON: Record<Manufacturer, React.FC<{ className?: string; size?: number }>> = {
+  nvidia: LogoImg.Nvidia,
+  amd: LogoImg.Amd,
+  intel: LogoImg.Intel,
+  apple: LogoImg.Apple,
+};
+
+const MANUFACTURER_LABEL: Record<Manufacturer, string> = {
+  nvidia: 'NVIDIA',
+  amd: 'AMD',
+  intel: 'Intel',
+  apple: 'Apple',
+};
+
+// -----------------------------------------------------------------------------
+// Props
+// -----------------------------------------------------------------------------
+
+type DeviceTableCellProps = Pick<
+  Device,
+  'cpu' | 'cpuCores' | 'gpu' | 'gpuCores' | 'ramGb' | 'osName'
+>;
+
+type Manufacturer = 'nvidia' | 'amd' | 'intel' | 'apple';
 
 // -----------------------------------------------------------------------------
 // Component
@@ -157,12 +173,25 @@ const DeviceTableCell: React.FC<DeviceTableCellProps> & { Skeleton: React.FC } =
 
   if (!isMac) {
     const hasGpu = gpuCores > 0;
+    const primaryName = hasGpu ? gpu : cpu;
+    const { manufacturer, displayName } = parseManufacturer(primaryName);
+    const Icon = manufacturer ? MANUFACTURER_ICON[manufacturer] : null;
 
     if (!hasGpu) {
       return (
         <div className="flex flex-col items-start">
           <span className="flex items-center gap-1.5 leading-5">
-            <span className="line-clamp-1">{cpu}</span>
+            {Icon && manufacturer ? (
+              <ClickableTooltip
+                content={MANUFACTURER_LABEL[manufacturer]}
+                triggerProps={{ className: 'rounded' }}
+              >
+                <span className="flex size-4 shrink-0 items-center justify-center rounded">
+                  <Icon className="border-gray-7 transition-colors hover:border-gray-8" size={16} />
+                </span>
+              </ClickableTooltip>
+            ) : null}
+            <span className="line-clamp-1">{displayName}</span>
             <Badge size="sm" variant="outline" intent="info">
               CPU
             </Badge>
@@ -192,7 +221,19 @@ const DeviceTableCell: React.FC<DeviceTableCellProps> & { Skeleton: React.FC } =
     const vram = getVramGb(gpu);
     return (
       <div className="flex flex-col items-start">
-        <span className="line-clamp-1 leading-5">{gpu}</span>
+        <span className="flex items-center gap-1.5 leading-5">
+          {Icon && manufacturer ? (
+            <ClickableTooltip
+              content={MANUFACTURER_LABEL[manufacturer]}
+              triggerProps={{ className: 'rounded' }}
+            >
+              <span className="flex size-4 shrink-0 items-center justify-center rounded">
+                <Icon className="border-gray-7 transition-colors hover:border-gray-8" size={16} />
+              </span>
+            </ClickableTooltip>
+          ) : null}
+          <span className="line-clamp-1">{displayName}</span>
+        </span>
         {vram != null ? (
           <div className="mt-0 flex h-4 gap-2">
             <ClickableTooltip content="VRAM">
@@ -209,9 +250,25 @@ const DeviceTableCell: React.FC<DeviceTableCellProps> & { Skeleton: React.FC } =
     );
   }
 
+  // macOS branch.
+  const { manufacturer, displayName } = parseManufacturer(gpu ?? cpu);
+  const Icon = manufacturer ? MANUFACTURER_ICON[manufacturer] : null;
+
   return (
     <div className="flex flex-col items-start">
-      <span className="line-clamp-1 leading-5">{gpu ?? cpu}</span>
+      <span className="flex items-center gap-1.5 leading-5">
+        {Icon && manufacturer ? (
+          <ClickableTooltip
+            content={MANUFACTURER_LABEL[manufacturer]}
+            triggerProps={{ className: 'rounded' }}
+          >
+            <span className="flex size-4 shrink-0 items-center justify-center rounded">
+              <Icon className="border-gray-7 transition-colors hover:border-gray-8" size={16} />
+            </span>
+          </ClickableTooltip>
+        ) : null}
+        <span className="line-clamp-1">{displayName}</span>
+      </span>
       <div className="mt-0 flex h-4 gap-2">
         {[
           {
@@ -283,6 +340,39 @@ const DeviceTableCellSkeleton: React.FC = () => {
     </div>
   );
 };
+
+// -----------------------------------------------------------------------------
+// Helpers
+// -----------------------------------------------------------------------------
+
+function getVramGb(gpu: string): number | null {
+  const lower = gpu.toLowerCase();
+  // Try longest keys first so "4080 super" matches before "4080".
+  for (const [key, vram] of Object.entries(GPU_VRAM).sort((a, b) => b[0].length - a[0].length)) {
+    if (lower.includes(key)) return vram;
+  }
+  return null;
+}
+
+function parseManufacturer(name: string): {
+  manufacturer: Manufacturer | null;
+  displayName: string;
+} {
+  const lower = name.toLowerCase();
+  // Try prefix match first (strip the prefix from the display name).
+  for (const { prefix, manufacturer } of MANUFACTURER_PREFIXES) {
+    if (lower.startsWith(prefix)) {
+      return { manufacturer, displayName: name.slice(prefix.length).trim() };
+    }
+  }
+  // Fall back to substring match (keep full name since prefix isn't leading).
+  for (const { prefix, manufacturer } of MANUFACTURER_PREFIXES) {
+    if (lower.includes(prefix)) {
+      return { manufacturer, displayName: name };
+    }
+  }
+  return { manufacturer: null, displayName: name };
+}
 
 // -----------------------------------------------------------------------------
 // Export

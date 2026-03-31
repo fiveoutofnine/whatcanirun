@@ -1,4 +1,4 @@
-import { GgmlImg, MlxImg } from './imgs';
+import { AmdImg, AppleImg, GgmlImg, IntelImg, MlxImg, NvidiaImg } from './imgs';
 
 // -----------------------------------------------------------------------------
 // Export
@@ -6,8 +6,12 @@ import { GgmlImg, MlxImg } from './imgs';
 
 const LogoImg = () => null;
 
+LogoImg.Amd = AmdImg;
+LogoImg.Apple = AppleImg;
 LogoImg.Ggml = GgmlImg;
+LogoImg.Intel = IntelImg;
 LogoImg.Mlx = MlxImg;
+LogoImg.Nvidia = NvidiaImg;
 
 LogoImg.displayName = 'LogoImg';
 
