@@ -136,7 +136,7 @@ const DeviceCombobox: React.FC<DeviceComboboxProps> = ({ devices, value, onSelec
         <Popover.Trigger className="hidden md:inline" asChild>
           {children}
         </Popover.Trigger>
-        <Popover.Content className="w-64 p-0">
+        <Popover.Content className="w-72 p-0">
           <DeviceComboboxInternal {...internalProps} />
         </Popover.Content>
       </Popover.Root>
@@ -218,7 +218,7 @@ const DeviceComboboxInternal: React.FC<DeviceComboboxInternalProps> = ({
                       <div className="flex flex-col">
                         {isApple ? (
                           <Fragment>
-                            <span className="line-clamp-1 flex items-center gap-1.5 text-ellipsis leading-5">
+                            <span className="line-clamp-1 flex w-full items-center gap-1.5 text-ellipsis text-nowrap leading-5">
                               {d.gpu.replace(name, '')}
                               <Code>{d.ramGb} GB RAM</Code>
                             </span>
@@ -228,7 +228,7 @@ const DeviceComboboxInternal: React.FC<DeviceComboboxInternalProps> = ({
                           </Fragment>
                         ) : (
                           <Fragment>
-                            <span className="line-clamp-1 flex items-center gap-1.5 text-ellipsis leading-5">
+                            <span className="line-clamp-1 flex w-full items-center gap-1.5 text-ellipsis text-nowrap leading-5">
                               {d.gpu.replace(name, '').trim()}
                             </span>
                             {(() => {
