@@ -1,0 +1,344 @@
+[
+  {
+    "id": "mlx-community/Qwen3.5-0.8B-OptiQ-4bit",
+    "name": "Qwen 3.5 0.8B",
+    "params": "0.8B",
+    "quant": "4bit",
+    "format": "mlx",
+    "runtime": "mlx_lm",
+    "family": "qwen"
+  },
+  {
+    "id": "mlx-community/Qwen3.5-4B-MLX-4bit",
+    "name": "Qwen 3.5 4B",
+    "params": "4B",
+    "quant": "4bit",
+    "format": "mlx",
+    "runtime": "mlx_lm",
+    "family": "qwen"
+  },
+  {
+    "id": "mlx-community/Qwen3.5-9B-MLX-4bit",
+    "name": "Qwen 3.5 9B",
+    "params": "9B",
+    "quant": "4bit",
+    "format": "mlx",
+    "runtime": "mlx_lm",
+    "family": "qwen"
+  },
+  {
+    "id": "mlx-community/Qwen3.5-14B-MLX-4bit",
+    "name": "Qwen 3.5 14B",
+    "params": "14B",
+    "quant": "4bit",
+    "format": "mlx",
+    "runtime": "mlx_lm",
+    "family": "qwen"
+  },
+  {
+    "id": "mlx-community/Qwen3.5-32B-MLX-4bit",
+    "name": "Qwen 3.5 32B",
+    "params": "32B",
+    "quant": "4bit",
+    "format": "mlx",
+    "runtime": "mlx_lm",
+    "family": "qwen"
+  },
+  {
+    "id": "mlx-community/Meta-Llama-3.1-8B-Instruct-4bit",
+    "name": "Llama 3.1 8B Instruct",
+    "params": "8B",
+    "quant": "4bit",
+    "format": "mlx",
+    "runtime": "mlx_lm",
+    "family": "llama"
+  },
+  {
+    "id": "mlx-community/Meta-Llama-3.3-70B-Instruct-4bit",
+    "name": "Llama 3.3 70B Instruct",
+    "params": "70B",
+    "quant": "4bit",
+    "format": "mlx",
+    "runtime": "mlx_lm",
+    "family": "llama"
+  },
+  {
+    "id": "mlx-community/Llama-4-Scout-17B-16E-Instruct-4bit",
+    "name": "Llama 4 Scout 17B",
+    "params": "17B",
+    "quant": "4bit",
+    "format": "mlx",
+    "runtime": "mlx_lm",
+    "family": "llama"
+  },
+  {
+    "id": "mlx-community/Mistral-Small-3.1-24B-Instruct-2503-4bit",
+    "name": "Mistral Small 3.1 24B",
+    "params": "24B",
+    "quant": "4bit",
+    "format": "mlx",
+    "runtime": "mlx_lm",
+    "family": "mistral"
+  },
+  {
+    "id": "mlx-community/gemma-3-4b-it-4bit",
+    "name": "Gemma 3 4B",
+    "params": "4B",
+    "quant": "4bit",
+    "format": "mlx",
+    "runtime": "mlx_lm",
+    "family": "gemma"
+  },
+  {
+    "id": "mlx-community/gemma-3-12b-it-4bit",
+    "name": "Gemma 3 12B",
+    "params": "12B",
+    "quant": "4bit",
+    "format": "mlx",
+    "runtime": "mlx_lm",
+    "family": "gemma"
+  },
+  {
+    "id": "mlx-community/gemma-3-27b-it-4bit",
+    "name": "Gemma 3 27B",
+    "params": "27B",
+    "quant": "4bit",
+    "format": "mlx",
+    "runtime": "mlx_lm",
+    "family": "gemma"
+  },
+  {
+    "id": "mlx-community/phi-4-4bit",
+    "name": "Phi 4 14B",
+    "params": "14B",
+    "quant": "4bit",
+    "format": "mlx",
+    "runtime": "mlx_lm",
+    "family": "phi"
+  },
+  {
+    "id": "mlx-community/DeepSeek-R1-Distill-Qwen-7B-4bit",
+    "name": "DeepSeek R1 Distill Qwen 7B",
+    "params": "7B",
+    "quant": "4bit",
+    "format": "mlx",
+    "runtime": "mlx_lm",
+    "family": "deepseek"
+  },
+  {
+    "id": "mlx-community/DeepSeek-R1-Distill-Qwen-14B-4bit",
+    "name": "DeepSeek R1 Distill Qwen 14B",
+    "params": "14B",
+    "quant": "4bit",
+    "format": "mlx",
+    "runtime": "mlx_lm",
+    "family": "deepseek"
+  },
+  {
+    "id": "mlx-community/DeepSeek-R1-Distill-Qwen-32B-4bit",
+    "name": "DeepSeek R1 Distill Qwen 32B",
+    "params": "32B",
+    "quant": "4bit",
+    "format": "mlx",
+    "runtime": "mlx_lm",
+    "family": "deepseek"
+  },
+  {
+    "id": "mlx-community/SmolLM2-135M-Instruct-4bit",
+    "name": "SmolLM2 135M",
+    "params": "135M",
+    "quant": "4bit",
+    "format": "mlx",
+    "runtime": "mlx_lm",
+    "family": "smollm"
+  },
+  {
+    "id": "mlx-community/SmolLM2-1.7B-Instruct-4bit",
+    "name": "SmolLM2 1.7B",
+    "params": "1.7B",
+    "quant": "4bit",
+    "format": "mlx",
+    "runtime": "mlx_lm",
+    "family": "smollm"
+  },
+  {
+    "id": "unsloth/Qwen3.5-0.8B-GGUF",
+    "name": "Qwen 3.5 0.8B",
+    "params": "0.8B",
+    "quant": "Q4_K_M",
+    "format": "gguf",
+    "runtime": "llama.cpp",
+    "family": "qwen",
+    "hfFileName": "Qwen3.5-0.8B-Q4_K_M.gguf"
+  },
+  {
+    "id": "unsloth/Qwen3.5-4B-GGUF",
+    "name": "Qwen 3.5 4B",
+    "params": "4B",
+    "quant": "Q4_K_M",
+    "format": "gguf",
+    "runtime": "llama.cpp",
+    "family": "qwen",
+    "hfFileName": "Qwen3.5-4B-Q4_K_M.gguf"
+  },
+  {
+    "id": "unsloth/Qwen3.5-9B-GGUF",
+    "name": "Qwen 3.5 9B",
+    "params": "9B",
+    "quant": "Q4_K_M",
+    "format": "gguf",
+    "runtime": "llama.cpp",
+    "family": "qwen",
+    "hfFileName": "Qwen3.5-9B-Q4_K_M.gguf"
+  },
+  {
+    "id": "unsloth/Qwen3.5-14B-GGUF",
+    "name": "Qwen 3.5 14B",
+    "params": "14B",
+    "quant": "Q4_K_M",
+    "format": "gguf",
+    "runtime": "llama.cpp",
+    "family": "qwen",
+    "hfFileName": "Qwen3.5-14B-Q4_K_M.gguf"
+  },
+  {
+    "id": "unsloth/Qwen3.5-32B-GGUF",
+    "name": "Qwen 3.5 32B",
+    "params": "32B",
+    "quant": "Q4_K_M",
+    "format": "gguf",
+    "runtime": "llama.cpp",
+    "family": "qwen",
+    "hfFileName": "Qwen3.5-32B-Q4_K_M.gguf"
+  },
+  {
+    "id": "bartowski/Meta-Llama-3.1-8B-Instruct-GGUF",
+    "name": "Llama 3.1 8B Instruct",
+    "params": "8B",
+    "quant": "Q4_K_M",
+    "format": "gguf",
+    "runtime": "llama.cpp",
+    "family": "llama",
+    "hfFileName": "Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf"
+  },
+  {
+    "id": "bartowski/Meta-Llama-3.3-70B-Instruct-GGUF",
+    "name": "Llama 3.3 70B Instruct",
+    "params": "70B",
+    "quant": "Q4_K_M",
+    "format": "gguf",
+    "runtime": "llama.cpp",
+    "family": "llama",
+    "hfFileName": "Meta-Llama-3.3-70B-Instruct-Q4_K_M.gguf"
+  },
+  {
+    "id": "unsloth/Llama-4-Scout-17B-16E-Instruct-GGUF",
+    "name": "Llama 4 Scout 17B",
+    "params": "17B",
+    "quant": "Q4_K_M",
+    "format": "gguf",
+    "runtime": "llama.cpp",
+    "family": "llama",
+    "hfFileName": "Llama-4-Scout-17B-16E-Instruct-Q4_K_M.gguf"
+  },
+  {
+    "id": "bartowski/Mistral-Small-3.1-24B-Instruct-2503-GGUF",
+    "name": "Mistral Small 3.1 24B",
+    "params": "24B",
+    "quant": "Q4_K_M",
+    "format": "gguf",
+    "runtime": "llama.cpp",
+    "family": "mistral",
+    "hfFileName": "Mistral-Small-3.1-24B-Instruct-2503-Q4_K_M.gguf"
+  },
+  {
+    "id": "bartowski/gemma-3-4b-it-GGUF",
+    "name": "Gemma 3 4B",
+    "params": "4B",
+    "quant": "Q4_K_M",
+    "format": "gguf",
+    "runtime": "llama.cpp",
+    "family": "gemma",
+    "hfFileName": "gemma-3-4b-it-Q4_K_M.gguf"
+  },
+  {
+    "id": "bartowski/gemma-3-12b-it-GGUF",
+    "name": "Gemma 3 12B",
+    "params": "12B",
+    "quant": "Q4_K_M",
+    "format": "gguf",
+    "runtime": "llama.cpp",
+    "family": "gemma",
+    "hfFileName": "gemma-3-12b-it-Q4_K_M.gguf"
+  },
+  {
+    "id": "bartowski/gemma-3-27b-it-GGUF",
+    "name": "Gemma 3 27B",
+    "params": "27B",
+    "quant": "Q4_K_M",
+    "format": "gguf",
+    "runtime": "llama.cpp",
+    "family": "gemma",
+    "hfFileName": "gemma-3-27b-it-Q4_K_M.gguf"
+  },
+  {
+    "id": "bartowski/phi-4-GGUF",
+    "name": "Phi 4 14B",
+    "params": "14B",
+    "quant": "Q4_K_M",
+    "format": "gguf",
+    "runtime": "llama.cpp",
+    "family": "phi",
+    "hfFileName": "phi-4-Q4_K_M.gguf"
+  },
+  {
+    "id": "unsloth/DeepSeek-R1-Distill-Qwen-7B-GGUF",
+    "name": "DeepSeek R1 Distill Qwen 7B",
+    "params": "7B",
+    "quant": "Q4_K_M",
+    "format": "gguf",
+    "runtime": "llama.cpp",
+    "family": "deepseek",
+    "hfFileName": "DeepSeek-R1-Distill-Qwen-7B-Q4_K_M.gguf"
+  },
+  {
+    "id": "unsloth/DeepSeek-R1-Distill-Qwen-14B-GGUF",
+    "name": "DeepSeek R1 Distill Qwen 14B",
+    "params": "14B",
+    "quant": "Q4_K_M",
+    "format": "gguf",
+    "runtime": "llama.cpp",
+    "family": "deepseek",
+    "hfFileName": "DeepSeek-R1-Distill-Qwen-14B-Q4_K_M.gguf"
+  },
+  {
+    "id": "unsloth/DeepSeek-R1-Distill-Qwen-32B-GGUF",
+    "name": "DeepSeek R1 Distill Qwen 32B",
+    "params": "32B",
+    "quant": "Q4_K_M",
+    "format": "gguf",
+    "runtime": "llama.cpp",
+    "family": "deepseek",
+    "hfFileName": "DeepSeek-R1-Distill-Qwen-32B-Q4_K_M.gguf"
+  },
+  {
+    "id": "bartowski/SmolLM2-135M-Instruct-GGUF",
+    "name": "SmolLM2 135M",
+    "params": "135M",
+    "quant": "Q4_K_M",
+    "format": "gguf",
+    "runtime": "llama.cpp",
+    "family": "smollm",
+    "hfFileName": "SmolLM2-135M-Instruct-Q4_K_M.gguf"
+  },
+  {
+    "id": "bartowski/SmolLM2-1.7B-Instruct-GGUF",
+    "name": "SmolLM2 1.7B",
+    "params": "1.7B",
+    "quant": "Q4_K_M",
+    "format": "gguf",
+    "runtime": "llama.cpp",
+    "family": "smollm",
+    "hfFileName": "SmolLM2-1.7B-Instruct-Q4_K_M.gguf"
+  }
+]

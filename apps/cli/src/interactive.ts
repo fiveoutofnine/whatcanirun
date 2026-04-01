@@ -1,3 +1,5 @@
+import { MODEL_CATALOG } from '@whatcanirun/shared';
+import type { CatalogModel } from '@whatcanirun/shared';
 import chalk from 'chalk';
 
 import { getAuth } from './auth/token';
@@ -9,93 +11,24 @@ import * as log from './utils/log';
 import { Spinner } from './utils/log';
 
 // -----------------------------------------------------------------------------
-// Types
+// Model catalog helpers
 // -----------------------------------------------------------------------------
 
-interface FeaturedModel {
-  displayName: string;
-  hfRepoId: string;
-  hfFileName?: string;
-  runtime: 'mlx_lm' | 'llama.cpp';
+function displayName(m: CatalogModel): string {
+  return `${m.name} (${m.quant})`;
 }
 
-// -----------------------------------------------------------------------------
-// Fallback featured models (used when API is unreachable)
-// -----------------------------------------------------------------------------
-
-const FALLBACK_MODELS: FeaturedModel[] = [
-  {
-    displayName: 'Qwen 3.5 0.8B (4-bit)',
-    hfRepoId: 'mlx-community/Qwen3.5-0.8B-OptiQ-4bit',
-    runtime: 'mlx_lm',
-  },
-  {
-    displayName: 'Qwen 3.5 4B (4-bit)',
-    hfRepoId: 'mlx-community/Qwen3.5-4B-MLX-4bit',
-    runtime: 'mlx_lm',
-  },
-  {
-    displayName: 'Qwen 3.5 9B (4-bit)',
-    hfRepoId: 'mlx-community/Qwen3.5-9B-MLX-4bit',
-    runtime: 'mlx_lm',
-  },
-  {
-    displayName: 'Llama 3.1 8B Instruct (4-bit)',
-    hfRepoId: 'mlx-community/Meta-Llama-3.1-8B-Instruct-4bit',
-    runtime: 'mlx_lm',
-  },
-  {
-    displayName: 'Qwen 3.5 0.8B (Q4_K_M GGUF)',
-    hfRepoId: 'unsloth/Qwen3.5-0.8B-GGUF',
-    hfFileName: 'Qwen3.5-0.8B-Q4_K_M.gguf',
-    runtime: 'llama.cpp',
-  },
-  {
-    displayName: 'Qwen 3.5 4B (Q4_K_M GGUF)',
-    hfRepoId: 'unsloth/Qwen3.5-4B-GGUF',
-    hfFileName: 'Qwen3.5-4B-Q4_K_M.gguf',
-    runtime: 'llama.cpp',
-  },
-  {
-    displayName: 'Qwen 3.5 9B (Q4_K_M GGUF)',
-    hfRepoId: 'unsloth/Qwen3.5-9B-GGUF',
-    hfFileName: 'Qwen3.5-9B-Q4_K_M.gguf',
-    runtime: 'llama.cpp',
-  },
-];
-
-// -----------------------------------------------------------------------------
-// Fetch featured models
-// -----------------------------------------------------------------------------
-
-const API_BASE = process.env.WCIR_API_URL || 'https://whatcani.run';
-
-function isFeaturedModel(item: unknown): item is FeaturedModel {
-  if (typeof item !== 'object' || item === null) return false;
-  const obj = item as Record<string, unknown>;
-  return (
-    typeof obj.displayName === 'string' &&
-    typeof obj.hfRepoId === 'string' &&
-    (obj.hfFileName === undefined || typeof obj.hfFileName === 'string') &&
-    (obj.runtime === 'mlx_lm' || obj.runtime === 'llama.cpp')
-  );
+function modelRef(m: CatalogModel): string {
+  return m.hfFileName ? `${m.id}:${m.hfFileName}` : m.id;
 }
 
-async function fetchFeaturedModels(): Promise<FeaturedModel[]> {
-  try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 5000);
-    const resp = await fetch(`${API_BASE}/api/v0/featured`, {
-      signal: controller.signal,
-    });
-    clearTimeout(timeout);
-    if (!resp.ok) return FALLBACK_MODELS;
-    const data: unknown = await resp.json();
-    if (!Array.isArray(data) || !data.every(isFeaturedModel)) return FALLBACK_MODELS;
-    return data;
-  } catch {
-    return FALLBACK_MODELS;
-  }
+function filterCatalog(models: CatalogModel[], query: string): CatalogModel[] {
+  const q = query.toLowerCase();
+  const terms = q.split(/\s+/).filter(Boolean);
+  return models.filter((m) => {
+    const haystack = `${m.name} ${m.id} ${m.family} ${m.params} ${m.quant}`.toLowerCase();
+    return terms.every((t) => haystack.includes(t));
+  });
 }
 
 // -----------------------------------------------------------------------------
@@ -118,7 +51,7 @@ function pick(items: string[], defaultIndex = 0): Promise<number> {
       for (let i = 0; i < items.length; i++) {
         const label = items[i]!;
         if (i === cursor) {
-          stdout.write(`\x1b[2K${chalk.cyan('❯')} ${chalk.cyan(label)}\n`);
+          stdout.write(`\x1b[2K${chalk.cyan('>')} ${chalk.cyan(label)}\n`);
         } else {
           stdout.write(`\x1b[2K  ${chalk.dim(label)}\n`);
         }
@@ -149,6 +82,136 @@ function pick(items: string[], defaultIndex = 0): Promise<number> {
       if (key === '\x03' || key === 'q' || key === '\x1b') {
         cleanup();
         resolve(-1);
+        return;
+      }
+    }
+
+    function cleanup() {
+      stdin.removeListener('data', onData);
+      if (stdin.isTTY) stdin.setRawMode(false);
+      stdin.pause();
+    }
+
+    if (stdin.isTTY) stdin.setRawMode(true);
+    stdin.resume();
+    stdin.on('data', onData);
+
+    render();
+  });
+}
+
+// -----------------------------------------------------------------------------
+// Searchable model picker
+// -----------------------------------------------------------------------------
+
+const MAX_VISIBLE = 10;
+
+function searchPick(models: CatalogModel[]): Promise<CatalogModel | null> {
+  if (!process.stdin.isTTY) {
+    return Promise.resolve(models[0] ?? null);
+  }
+
+  return new Promise((resolve) => {
+    const { stdin, stdout } = process;
+    let query = '';
+    let cursor = 0;
+    let items = models;
+    let prevLineCount = 0;
+
+    function render() {
+      if (prevLineCount > 0) {
+        stdout.write(`\x1b[${prevLineCount}A`);
+      }
+
+      const prompt = query
+        ? `${chalk.cyan('>')} ${chalk.white(query)}`
+        : `${chalk.cyan('>')} ${chalk.dim('Type to filter...')}`;
+      stdout.write(`\x1b[2K${prompt}\n`);
+
+      const visible = items.slice(0, MAX_VISIBLE);
+      let lineCount = 1;
+      for (let i = 0; i < visible.length; i++) {
+        const model = visible[i]!;
+        const label = `${displayName(model)}  ${chalk.dim(model.id)}`;
+        if (i === cursor) {
+          stdout.write(`\x1b[2K  ${chalk.cyan('>')} ${chalk.cyan(displayName(model))}  ${chalk.dim(model.id)}\n`);
+        } else {
+          stdout.write(`\x1b[2K    ${chalk.dim(label)}\n`);
+        }
+        lineCount++;
+      }
+
+      if (items.length === 0 && query) {
+        stdout.write(`\x1b[2K  ${chalk.dim('No models found')}\n`);
+        lineCount++;
+      } else if (items.length > MAX_VISIBLE) {
+        stdout.write(
+          `\x1b[2K  ${chalk.dim(`... and ${items.length - MAX_VISIBLE} more`)}\n`
+        );
+        lineCount++;
+      }
+
+      const extraLines = prevLineCount - lineCount;
+      for (let i = 0; i < extraLines; i++) {
+        stdout.write(`\x1b[2K\n`);
+      }
+      if (extraLines > 0) {
+        stdout.write(`\x1b[${extraLines}A`);
+      }
+
+      prevLineCount = lineCount;
+    }
+
+    function applyFilter() {
+      if (!query) {
+        items = models;
+      } else {
+        items = filterCatalog(models, query);
+      }
+      cursor = 0;
+      render();
+    }
+
+    function onData(data: Buffer) {
+      const key = data.toString();
+
+      if (key === '\x1b[A') {
+        if (items.length > 0) {
+          cursor = (cursor - 1 + Math.min(items.length, MAX_VISIBLE)) %
+            Math.min(items.length, MAX_VISIBLE);
+          render();
+        }
+        return;
+      }
+      if (key === '\x1b[B') {
+        if (items.length > 0) {
+          cursor = (cursor + 1) % Math.min(items.length, MAX_VISIBLE);
+          render();
+        }
+        return;
+      }
+      if (key === '\r' || key === '\n') {
+        if (items.length > 0) {
+          cleanup();
+          resolve(items[cursor] ?? null);
+        }
+        return;
+      }
+      if (key === '\x03' || key === '\x1b') {
+        cleanup();
+        resolve(null);
+        return;
+      }
+      if (key === '\x7f' || key === '\b') {
+        if (query.length > 0) {
+          query = query.slice(0, -1);
+          applyFilter();
+        }
+        return;
+      }
+      if (key.length === 1 && key >= ' ') {
+        query += key;
+        applyFilter();
         return;
       }
     }
@@ -202,12 +265,11 @@ async function detectRuntimes(): Promise<DetectedRuntime[]> {
 // -----------------------------------------------------------------------------
 
 export async function runInteractive(): Promise<void> {
-  // Graceful Ctrl+C handling.
   let activeSpinner: Spinner | null = null;
 
   const onSigint = () => {
     if (activeSpinner?.isRunning()) {
-      activeSpinner.stop(chalk.white(`[${chalk.gray('−')}] ${chalk.yellow('Interrupted ⚠')}`));
+      activeSpinner.stop(chalk.white(`[${chalk.gray('-')}] ${chalk.yellow('Interrupted')}`));
     }
     console.log();
     process.exit(130);
@@ -215,7 +277,7 @@ export async function runInteractive(): Promise<void> {
   process.on('SIGINT', onSigint);
 
   // Detect available runtimes.
-  const detectSpinner = new Spinner(chalk.dim('Detecting runtimes on your system…')).start();
+  const detectSpinner = new Spinner(chalk.dim('Detecting runtimes on your system...')).start();
   activeSpinner = detectSpinner;
   let runtimes: DetectedRuntime[];
   try {
@@ -223,24 +285,24 @@ export async function runInteractive(): Promise<void> {
     if (runtimes.length === 0) {
       detectSpinner.stop(
         chalk.white(
-          `[${chalk.red('✖')}] No supported runtimes found. Install one of the following:`
+          `[${chalk.red('x')}] No supported runtimes found. Install one of the following:`
         )
       );
       for (const name of RUNTIME_NAMES) {
-        console.log(chalk.dim(` ↳ ${chalk.cyan(name)}: ${INSTALL_HINTS[name]}`));
+        console.log(chalk.dim(` -> ${chalk.cyan(name)}: ${INSTALL_HINTS[name]}`));
       }
       process.exit(1);
     }
     activeSpinner = null;
     detectSpinner.stop(
       chalk.white(
-        `[${chalk.green('✓')}] Found ${chalk.cyan(String(runtimes.length))} supported runtime${runtimes.length > 1 ? 's' : ''}.`
+        `[${chalk.green('ok')}] Found ${chalk.cyan(String(runtimes.length))} supported runtime${runtimes.length > 1 ? 's' : ''}.`
       )
     );
   } catch (e: unknown) {
-    detectSpinner.stop(chalk.white(`[${chalk.red('✖')}] Runtime detection failed.`));
+    detectSpinner.stop(chalk.white(`[${chalk.red('x')}] Runtime detection failed.`));
     log.error(chalk.dim(e instanceof Error ? e.message : String(e)), {
-      prefix: chalk.dim.red(' ↳ '),
+      prefix: chalk.dim.red(' -> '),
     });
     process.exit(1);
   }
@@ -251,14 +313,14 @@ export async function runInteractive(): Promise<void> {
     selectedRuntime = runtimes[0]!;
     console.log(
       chalk.dim(
-        ` ↳ Using ${chalk.cyan(selectedRuntime.info.name)} (${chalk.cyan(selectedRuntime.info.version)}).`
+        ` -> Using ${chalk.cyan(selectedRuntime.info.name)} (${chalk.cyan(selectedRuntime.info.version)}).`
       )
     );
     console.log();
   } else {
     console.log();
     console.log(
-      chalk.white('Select a runtime') + chalk.dim('  (↑/↓ to move · enter to select · q to quit)')
+      chalk.white('Select a runtime') + chalk.dim('  (arrows to move - enter to select - q to quit)')
     );
 
     const runtimeChoice = await pick(runtimes.map((r) => `${r.info.name} (${r.info.version})`));
@@ -266,31 +328,28 @@ export async function runInteractive(): Promise<void> {
     selectedRuntime = runtimes[runtimeChoice]!;
   }
 
-  // Fetch and filter models for this runtime.
-  const fetchSpinner = new Spinner(chalk.dim('Fetching models…')).start();
-  activeSpinner = fetchSpinner;
-  const allModels = await fetchFeaturedModels();
-  const models = allModels.filter((m) => m.runtime === selectedRuntime.name);
-  activeSpinner = null;
-  fetchSpinner.stop();
+  // Filter bundled catalog by runtime.
+  const models = (MODEL_CATALOG as CatalogModel[]).filter(
+    (m) => m.runtime === selectedRuntime.name
+  );
 
   if (models.length === 0) {
-    if (runtimes.length > 1) console.log();
-    log.error(`No featured models for ${chalk.cyan(selectedRuntime.name)}.`);
+    log.error(`No models for ${chalk.cyan(selectedRuntime.name)}.`);
     console.log(
       chalk.dim(
-        `↳ Run a benchmark manually with ${chalk.bold.cyan(`${binName()} run --model <model> --runtime ${selectedRuntime.name}`)}`
+        `-> Run a benchmark manually with ${chalk.bold.cyan(`${binName()} run --model <model> --runtime ${selectedRuntime.name}`)}`
       )
     );
     process.exit(1);
   }
 
-  console.log(chalk.white('Select a model to benchmark'));
+  console.log(
+    chalk.white('Select a model to benchmark') +
+      chalk.dim(`  (type to filter ${chalk.cyan(String(models.length))} models - arrows to move - enter to select)`)
+  );
 
-  const choice = await pick(models.map((m) => m.displayName));
-  if (choice < 0) process.exit(0);
-
-  const selected = models[choice]!;
+  const selected = await searchPick(models);
+  if (!selected) process.exit(0);
 
   // Ask to submit before running.
   const auth = getAuth();
@@ -304,21 +363,16 @@ export async function runInteractive(): Promise<void> {
   if (submitChoice < 0) process.exit(0);
   const shouldSubmit = submitChoice === 0;
 
-  // Build model ref — for GGUF repos with a specific file, use "repoId:fileName"
-  // so that resolveModel handles the download during benchmark execution.
-  const modelRef = selected.hfFileName
-    ? `${selected.hfRepoId}:${selected.hfFileName}`
-    : selected.hfRepoId;
+  const ref = modelRef(selected);
 
-  // Run benchmark.
-  // Remove our SIGINT handler — executeBenchmark registers its own for cleanup.
+  // Remove our SIGINT handler - executeBenchmark registers its own for cleanup.
   process.off('SIGINT', onSigint);
 
   console.log();
   console.log(
     chalk.dim(
       'Benchmarking ' +
-        chalk.reset.cyan(selected.displayName) +
+        chalk.reset.cyan(displayName(selected)) +
         chalk.dim(' with ' + chalk.reset.cyan(selected.runtime)) +
         chalk.dim('.')
     )
@@ -327,7 +381,7 @@ export async function runInteractive(): Promise<void> {
 
   try {
     await executeBenchmark({
-      model: modelRef,
+      model: ref,
       runtime: selected.runtime,
       submit: shouldSubmit,
     });

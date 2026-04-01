@@ -74,3 +74,18 @@ export interface DerivedMetrics {
   idleRssMb: number;
   peakRssMb: number;
 }
+
+// -----------------------------------------------------------------------------
+// Model catalog types
+// -----------------------------------------------------------------------------
+
+export interface CatalogModel {
+  id: string;
+  name: string;
+  params: string;
+  quant: string;
+  format: 'mlx' | 'gguf';
+  runtime: 'mlx_lm' | 'llama.cpp';
+  family: string;
+  hfFileName?: string;
+}
