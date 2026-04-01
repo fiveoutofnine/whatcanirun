@@ -27,6 +27,7 @@ export interface BundleOpts {
   bench: BenchResult;
   metrics: DerivedMetrics;
   notes?: string;
+  hostnameOverride?: string;
 }
 
 // -----------------------------------------------------------------------------
@@ -114,7 +115,7 @@ export async function createBundle(opts: BundleOpts): Promise<string> {
 
   const results: Results = { trials, aggregate };
 
-  const sysinfo = formatSysinfo(opts.device);
+  const sysinfo = formatSysinfo(opts.device, opts.hostnameOverride);
 
   // Create a temporary directory for bundle contents.
   const tmpDir = join(opts.outputDir, `.tmp_${bundleId}`);

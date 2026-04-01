@@ -21,14 +21,14 @@ export interface DeviceInfo {
 // Functions
 // -----------------------------------------------------------------------------
 
-export function formatSysinfo(device: DeviceInfo): string {
+export function formatSysinfo(device: DeviceInfo, hostnameOverride?: string): string {
   const lines = [
     `uname: ${process.platform} ${process.arch}`,
     `cpu: ${device.cpu_model} (${device.cpu_cores} cores)`,
     `gpu: ${device.gpu_model} (${device.gpu_cores} cores)`,
     `ram: ${device.ram_gb} GB`,
     `os: ${device.os_name} ${device.os_version}`,
-    `hostname: ${device.hostname}`,
+    `hostname: ${hostnameOverride ?? device.hostname}`,
   ];
   return lines.join('\n');
 }

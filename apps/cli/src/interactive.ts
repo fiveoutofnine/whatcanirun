@@ -330,6 +330,7 @@ export async function runInteractive(): Promise<void> {
       model: modelRef,
       runtime: selected.runtime,
       submit: shouldSubmit,
+      hostname: process.env.WCIR_HOSTNAME,
     });
   } catch {
     process.exit(1);

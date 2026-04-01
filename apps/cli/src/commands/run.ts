@@ -37,6 +37,7 @@ export interface BenchmarkOpts {
   notes?: string;
   submit?: boolean;
   output?: string;
+  hostname?: string;
 }
 
 // -----------------------------------------------------------------------------
@@ -384,6 +385,7 @@ export async function executeBenchmark(opts: BenchmarkOpts): Promise<string> {
       bench,
       metrics,
       notes: opts.notes,
+      hostnameOverride: opts.hostname,
     });
 
     // Validate bundle.
@@ -479,6 +481,10 @@ const command = defineCommand({
       type: 'string',
       description: 'Bundle output directory (default: ~/.whatcanirun/bundles)',
     },
+    hostname: {
+      type: 'string',
+      description: 'Override hostname in sysinfo for privacy (env: WCIR_HOSTNAME)',
+    },
   },
   async run({ args }) {
     try {
@@ -494,6 +500,7 @@ const command = defineCommand({
         notes: args.notes as string | undefined,
         submit: args.submit as boolean,
         output: args.output as string | undefined,
+        hostname: (args.hostname as string | undefined) || process.env.WCIR_HOSTNAME,
       });
       process.exit(0);
     } catch {
