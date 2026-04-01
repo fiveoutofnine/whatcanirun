@@ -182,7 +182,7 @@ const HeroHeading: React.FC<{ chips: ChipOption[] }> = ({ chips }) => {
       <span className="font-semibold text-gray-12">{buttonContent}</span>
     );
 
-  const article = isApple ? 'an' : 'a';
+  const article = isApple || 'aeiou'.includes(displayName.charAt(0).toLowerCase()) ? 'an' : 'a';
 
   return (
     <h1 className="mb-2 text-3xl font-normal leading-snug tracking-tight text-gray-11 md:mb-4 md:text-5xl md:leading-[1.167]">
