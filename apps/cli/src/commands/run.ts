@@ -153,9 +153,6 @@ export async function executeBenchmark(opts: BenchmarkOpts): Promise<string> {
       modelInfoGuessed = inferModelFromName(modelRef);
       activeSpinner = null;
       modelSpinner.stop(chalk.white(`[${chalk.green('✓')}] Model resolved:`));
-      if (modelDownloaded) {
-        console.log(chalk.dim(` ↳ Cached at ${log.filepath(modelRef)}.`));
-      }
     } catch (e: unknown) {
       if (!interrupted) {
         modelSpinner.stop(chalk.white(`[${chalk.red('✖')}] Model resolution failed.`));
@@ -180,6 +177,9 @@ export async function executeBenchmark(opts: BenchmarkOpts): Promise<string> {
       console.log(
         chalk.dim(` →  ${key.padEnd(maxKey)}  ${chalk.reset.cyan(value)} ${chalk.dim('(guessed)')}`)
       );
+    }
+    if (modelDownloaded) {
+      console.log(chalk.dim(` ↳  Cached at ${log.filepath(modelRef)}.`));
     }
 
     // Resolve model (download or load from cache).
@@ -253,12 +253,6 @@ export async function executeBenchmark(opts: BenchmarkOpts): Promise<string> {
               ? `${chalk.cyan(modelInfo.display_name)} loaded from disk.`
               : `${chalk.cyan(modelInfo.display_name)} downloaded.`;
             resolveSpinner.stop(chalk.white(`[${chalk.green('✓')}] ${resolveLabel}`));
-            if (!isCached) {
-              const cachePath = findHfCachePath(modelRef);
-              if (cachePath) {
-                console.log(chalk.dim(` ↳ Cached at ${log.filepath(cachePath)}.`));
-              }
-            }
 
             // Display model info.
             const modelRows: [string, string][] = [
@@ -277,6 +271,12 @@ export async function executeBenchmark(opts: BenchmarkOpts): Promise<string> {
             const maxModelKey = Math.max(...modelRows.map(([k]) => k.length));
             for (const [key, value] of modelRows) {
               console.log(chalk.dim(` →  ${key.padEnd(maxModelKey)}  ${chalk.reset.cyan(value)}`));
+            }
+            if (!isCached) {
+              const cachePath = findHfCachePath(modelRef);
+              if (cachePath) {
+                console.log(chalk.dim(` ↳  Cached at ${log.filepath(cachePath)}.`));
+              }
             }
 
             benchSpinner.start();
@@ -315,7 +315,7 @@ export async function executeBenchmark(opts: BenchmarkOpts): Promise<string> {
         if (!isCached) {
           const cachePath = findHfCachePath(modelRef);
           if (cachePath) {
-            console.log(chalk.dim(` ↳ Cached at ${log.filepath(cachePath)}.`));
+            console.log(chalk.dim(` ↳  Cached at ${log.filepath(cachePath)}.`));
           }
         }
       }
