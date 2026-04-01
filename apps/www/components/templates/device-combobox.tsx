@@ -157,7 +157,11 @@ const DeviceComboboxInternal: React.FC<DeviceComboboxInternalProps> = ({
 
   return (
     <Command.Root noBorder>
-      <Command.Input placeholder="Search devices…" value={search} onValueChange={setSearch} />
+      <Command.Input
+        placeholder="Search devices to see all…"
+        value={search}
+        onValueChange={setSearch}
+      />
       <Command.List tabIndex={-1}>
         <Command.Empty className="flex flex-col items-center">
           <div className="flex size-8 items-center justify-center rounded-full border border-gray-6 bg-gray-3 text-gray-11">
