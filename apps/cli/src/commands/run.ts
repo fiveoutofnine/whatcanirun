@@ -1,6 +1,7 @@
 import type { DerivedMetrics } from '@whatcanirun/shared';
 import chalk from 'chalk';
 import { defineCommand } from 'citty';
+import { dirname } from 'node:path';
 
 import { createBundle } from '../bundle/create';
 import { validateBundle } from '../bundle/validate';
@@ -275,7 +276,9 @@ export async function executeBenchmark(opts: BenchmarkOpts): Promise<string> {
             if (!isCached) {
               const cachePath = findHfCachePath(modelRef);
               if (cachePath) {
-                console.log(chalk.dim(` ↳  Cached at ${log.filepath(cachePath)}.`));
+                console.log(
+                  chalk.dim(` ↳  Cached at ${log.filepath(dirname(dirname(cachePath)))}.`)
+                );
               }
             }
 
@@ -315,7 +318,7 @@ export async function executeBenchmark(opts: BenchmarkOpts): Promise<string> {
         if (!isCached) {
           const cachePath = findHfCachePath(modelRef);
           if (cachePath) {
-            console.log(chalk.dim(` ↳  Cached at ${log.filepath(cachePath)}.`));
+            console.log(chalk.dim(` ↳  Cached at ${log.filepath(dirname(dirname(cachePath)))}.`));
           }
         }
       }
