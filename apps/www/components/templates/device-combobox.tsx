@@ -7,7 +7,7 @@ import clsx from 'clsx';
 import { defaultFilter } from 'cmdk';
 import { Check, CircleHelp } from 'lucide-react';
 
-import { getVramGb } from '@/lib/constants/gpu';
+import { getGpuSeriesRank, getVramGb } from '@/lib/constants/gpu';
 import { useMediaQuery } from '@/lib/hooks';
 
 import LogoImg from '@/components/common/logo-img';
@@ -94,6 +94,9 @@ const DeviceCombobox: React.FC<DeviceComboboxProps> = ({ devices, value, onSelec
         });
       } else {
         devs.sort((a, b) => {
+          const seriesA = getGpuSeriesRank(a.gpu);
+          const seriesB = getGpuSeriesRank(b.gpu);
+          if (seriesA !== seriesB) return seriesB - seriesA;
           const vramA = getVramGb(a.gpu) ?? 0;
           const vramB = getVramGb(b.gpu) ?? 0;
           if (vramA !== vramB) return vramB - vramA;

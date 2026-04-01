@@ -128,3 +128,39 @@ export function getVramGb(gpu: string): number | null {
   }
   return null;
 }
+
+// -----------------------------------------------------------------------------
+// GPU series ranking (higher = more powerful series)
+// -----------------------------------------------------------------------------
+
+const GPU_SERIES: [RegExp, number][] = [
+  // NVIDIA data center (newest first)
+  [/\b(b\d|gb\d)/i, 20], // Blackwell (B200, GB200, GB300)
+  [/\bh\d/i, 19], // Hopper (H100, H200, H800)
+  [/\bl\d/i, 18], // Lovelace DC (L40S, L40, L4)
+  [/\ba\d/i, 17], // Ampere DC (A100, A40, etc.)
+  // NVIDIA professional
+  [/rtx pro/i, 16], // RTX PRO Blackwell
+  [/rtx \d+.*ada/i, 15], // RTX Ada generation
+  [/rtx a\d/i, 14], // RTX Ampere professional
+  // NVIDIA GeForce desktop
+  [/geforce rtx 50\d{2}(?!.*laptop)/i, 13],
+  [/geforce rtx 40\d{2}(?!.*laptop)/i, 11],
+  [/geforce rtx 30\d{2}(?!.*laptop)/i, 9],
+  [/geforce rtx 20\d{2}(?!.*laptop)/i, 7],
+  // NVIDIA GeForce laptop (one rank below desktop counterpart)
+  [/geforce rtx 50\d{2}.*laptop/i, 12],
+  [/geforce rtx 40\d{2}.*laptop/i, 10],
+  [/geforce rtx 30\d{2}.*laptop/i, 8],
+  // AMD Radeon
+  [/radeon rx 7\d/i, 6],
+  [/radeon rx 6\d/i, 5],
+];
+
+/** Get a series rank for a GPU (higher = more powerful series). */
+export function getGpuSeriesRank(gpu: string): number {
+  for (const [pattern, rank] of GPU_SERIES) {
+    if (pattern.test(gpu)) return rank;
+  }
+  return 0;
+}
