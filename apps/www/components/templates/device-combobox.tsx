@@ -53,10 +53,10 @@ const DeviceCombobox: React.FC<DeviceComboboxProps> = ({ devices, value, onSelec
   // Group by manufacturer.
   const groups = useMemo(() => {
     const byManufacturer = new Map<string, (DeviceOption & { key: string })[]>();
-    for (const d of devices) {
+    const filteredDevices = devices.filter((d) => d.gpuCores > 0);
+    for (const d of filteredDevices) {
       const key = d.chipId;
-      const isApple = d.gpu.toLowerCase().startsWith('apple');
-      const primaryName = isApple ? d.gpu : d.gpuCores > 0 ? d.gpu : d.cpu;
+      const primaryName = d.gpu;
       const manufacturer = primaryName.split(' ')[0];
       const group = byManufacturer.get(manufacturer) ?? [];
       group.push({ ...d, key });
@@ -148,7 +148,6 @@ const DeviceComboboxInternal: React.FC<DeviceComboboxInternalProps> = ({
                 {devs.map((d) => {
                   const selected = d.key === value;
                   const isApple = d.gpu.toLowerCase().startsWith('apple');
-                  const hasGpu = d.gpuCores > 0;
 
                   return (
                     <Command.Item
@@ -171,7 +170,7 @@ const DeviceComboboxInternal: React.FC<DeviceComboboxInternalProps> = ({
                               {d.cpuCores}-core CPU / {d.gpuCores}-core GPU
                             </span>
                           </Fragment>
-                        ) : hasGpu ? (
+                        ) : (
                           <Fragment>
                             <span className="line-clamp-1 flex items-center gap-1.5 text-ellipsis leading-5">
                               {d.gpu.replace(name, '').trim()}
@@ -184,15 +183,6 @@ const DeviceComboboxInternal: React.FC<DeviceComboboxInternalProps> = ({
                                 </span>
                               ) : null;
                             })()}
-                          </Fragment>
-                        ) : (
-                          <Fragment>
-                            <span className="line-clamp-1 flex items-center gap-1.5 text-ellipsis leading-5">
-                              {d.cpu.replace(name, '').trim()}
-                            </span>
-                            <span className="text-xs leading-4 text-gray-11">
-                              {d.cpuCores}-core CPU / {d.ramGb} GB RAM
-                            </span>
                           </Fragment>
                         )}
                       </div>
