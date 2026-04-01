@@ -84,6 +84,12 @@ export const GPU_VRAM: Record<string, number> = {
   'rtx 4000 ada': 20,
   'rtx 4000 sff ada': 20,
   'rtx 2000 ada': 16,
+  // NVIDIA professional (RTX PRO Blackwell)
+  'rtx pro 6000': 96,
+  'rtx pro 5000': 48,
+  'rtx pro 4500': 32,
+  'rtx pro 4000': 24,
+  'rtx pro 2000': 16,
   // NVIDIA H-series (data center)
   'h100 80gb': 80,
   h100: 80,
