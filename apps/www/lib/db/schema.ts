@@ -361,9 +361,11 @@ export const view__model_stats_by_device = pgMaterializedView('view__model_stats
         avgDecodeTps: sql<number>`AVG(${trials.decodeTps})`.as('avg_decode_tps'),
         avgPrefillTps: sql<number>`AVG(${trials.prefillTps})`.as('avg_prefill_tps'),
         // Memory: exclude under-reported llama.cpp readings (harnessVersion <= 0.1.16)
+        // and non-macOS readings (harnessVersion < 0.1.19) which report system RAM, not VRAM
         avgIdleRssMb: sql<number>`
           COALESCE(AVG(
             CASE WHEN NOT (${runs.runtimeName} = 'llama.cpp' AND ${runs.harnessVersion} <= '0.1.16')
+              AND NOT (LOWER(${devices.osName}) != 'macos' AND ${runs.harnessVersion} < '0.1.19')
               THEN ${trials.idleRssMb}
             END
           ), 0)
@@ -371,36 +373,65 @@ export const view__model_stats_by_device = pgMaterializedView('view__model_stats
         avgPeakRssMb: sql<number>`
           COALESCE(AVG(
             CASE WHEN NOT (${runs.runtimeName} = 'llama.cpp' AND ${runs.harnessVersion} <= '0.1.16')
+              AND NOT (LOWER(${devices.osName}) != 'macos' AND ${runs.harnessVersion} < '0.1.19')
               THEN ${trials.peakRssMb}
             END
           ), 0)
         `.as('avg_peak_rss_mb'),
         compositeScore: sql<number>`(
-          0.45 * (CASE
-            WHEN AVG(${trials.decodeTps}) >= 100 THEN 1.0
-            WHEN AVG(${trials.decodeTps}) >= 40  THEN 0.8 + 0.2 * (AVG(${trials.decodeTps}) - 40) / 60.0
-            WHEN AVG(${trials.decodeTps}) >= 20  THEN 0.6 + 0.2 * (AVG(${trials.decodeTps}) - 20) / 20.0
-            WHEN AVG(${trials.decodeTps}) >= 10  THEN 0.4 + 0.2 * (AVG(${trials.decodeTps}) - 10) / 10.0
-            WHEN AVG(${trials.decodeTps}) >= 5   THEN 0.2 + 0.2 * (AVG(${trials.decodeTps}) - 5) / 5.0
-            ELSE 0.2 * AVG(${trials.decodeTps}) / 5.0
-          END)
-          + 0.25 * (CASE
-            WHEN AVG(${trials.prefillTps}) >= 4000 THEN 1.0
-            WHEN AVG(${trials.prefillTps}) >= 2000 THEN 0.8 + 0.2 * (AVG(${trials.prefillTps}) - 2000) / 2000.0
-            WHEN AVG(${trials.prefillTps}) >= 1000 THEN 0.6 + 0.2 * (AVG(${trials.prefillTps}) - 1000) / 1000.0
-            WHEN AVG(${trials.prefillTps}) >= 500  THEN 0.4 + 0.2 * (AVG(${trials.prefillTps}) - 500) / 500.0
-            WHEN AVG(${trials.prefillTps}) >= 200  THEN 0.2 + 0.2 * (AVG(${trials.prefillTps}) - 200) / 300.0
-            ELSE 0.2 * AVG(${trials.prefillTps}) / 200.0
-          END)
-          -- 716.8 = 0.7 * 1024: only ~70% of device RAM is usable headroom
-          -- Peak RSS falls back to file-size estimate when bugged llama.cpp readings are excluded
-          + 0.30 * GREATEST(0, 1.0 - COALESCE(
-              AVG(CASE WHEN NOT (${runs.runtimeName} = 'llama.cpp' AND ${runs.harnessVersion} <= '0.1.16')
-                THEN ${trials.peakRssMb}
-              END),
-              COALESCE(NULLIF(MIN(${modelsInfo.fileSizeBytes}), 0), ${models.fileSizeBytes})
-                / (1024.0 * 1024.0) + 512.0
-            ) / (MIN(${devices.ramGb}) * 716.8))
+          CASE
+          -- When reliable memory data exists, use full formula (decode + prefill + memory)
+          WHEN AVG(
+            CASE WHEN NOT (${runs.runtimeName} = 'llama.cpp' AND ${runs.harnessVersion} <= '0.1.16')
+              AND NOT (LOWER(${devices.osName}) != 'macos' AND ${runs.harnessVersion} < '0.1.19')
+              THEN ${trials.peakRssMb}
+            END
+          ) IS NOT NULL THEN
+            0.45 * (CASE
+              WHEN AVG(${trials.decodeTps}) >= 100 THEN 1.0
+              WHEN AVG(${trials.decodeTps}) >= 40  THEN 0.8 + 0.2 * (AVG(${trials.decodeTps}) - 40) / 60.0
+              WHEN AVG(${trials.decodeTps}) >= 20  THEN 0.6 + 0.2 * (AVG(${trials.decodeTps}) - 20) / 20.0
+              WHEN AVG(${trials.decodeTps}) >= 10  THEN 0.4 + 0.2 * (AVG(${trials.decodeTps}) - 10) / 10.0
+              WHEN AVG(${trials.decodeTps}) >= 5   THEN 0.2 + 0.2 * (AVG(${trials.decodeTps}) - 5) / 5.0
+              ELSE 0.2 * AVG(${trials.decodeTps}) / 5.0
+            END)
+            + 0.25 * (CASE
+              WHEN AVG(${trials.prefillTps}) >= 4000 THEN 1.0
+              WHEN AVG(${trials.prefillTps}) >= 2000 THEN 0.8 + 0.2 * (AVG(${trials.prefillTps}) - 2000) / 2000.0
+              WHEN AVG(${trials.prefillTps}) >= 1000 THEN 0.6 + 0.2 * (AVG(${trials.prefillTps}) - 1000) / 1000.0
+              WHEN AVG(${trials.prefillTps}) >= 500  THEN 0.4 + 0.2 * (AVG(${trials.prefillTps}) - 500) / 500.0
+              WHEN AVG(${trials.prefillTps}) >= 200  THEN 0.2 + 0.2 * (AVG(${trials.prefillTps}) - 200) / 300.0
+              ELSE 0.2 * AVG(${trials.prefillTps}) / 200.0
+            END)
+            -- 716.8 = 0.7 * 1024: only ~70% of device RAM is usable headroom
+            -- Peak RSS falls back to file-size estimate when bugged readings are excluded
+            + 0.30 * GREATEST(0, 1.0 - COALESCE(
+                AVG(CASE WHEN NOT (${runs.runtimeName} = 'llama.cpp' AND ${runs.harnessVersion} <= '0.1.16')
+                  AND NOT (LOWER(${devices.osName}) != 'macos' AND ${runs.harnessVersion} < '0.1.19')
+                  THEN ${trials.peakRssMb}
+                END),
+                COALESCE(NULLIF(MIN(${modelsInfo.fileSizeBytes}), 0), ${models.fileSizeBytes})
+                  / (1024.0 * 1024.0) + 512.0
+              ) / (MIN(${devices.ramGb}) * 716.8))
+          -- No reliable memory data (non-macOS < 0.1.19): score on speed only
+          ELSE
+            0.65 * (CASE
+              WHEN AVG(${trials.decodeTps}) >= 100 THEN 1.0
+              WHEN AVG(${trials.decodeTps}) >= 40  THEN 0.8 + 0.2 * (AVG(${trials.decodeTps}) - 40) / 60.0
+              WHEN AVG(${trials.decodeTps}) >= 20  THEN 0.6 + 0.2 * (AVG(${trials.decodeTps}) - 20) / 20.0
+              WHEN AVG(${trials.decodeTps}) >= 10  THEN 0.4 + 0.2 * (AVG(${trials.decodeTps}) - 10) / 10.0
+              WHEN AVG(${trials.decodeTps}) >= 5   THEN 0.2 + 0.2 * (AVG(${trials.decodeTps}) - 5) / 5.0
+              ELSE 0.2 * AVG(${trials.decodeTps}) / 5.0
+            END)
+            + 0.35 * (CASE
+              WHEN AVG(${trials.prefillTps}) >= 4000 THEN 1.0
+              WHEN AVG(${trials.prefillTps}) >= 2000 THEN 0.8 + 0.2 * (AVG(${trials.prefillTps}) - 2000) / 2000.0
+              WHEN AVG(${trials.prefillTps}) >= 1000 THEN 0.6 + 0.2 * (AVG(${trials.prefillTps}) - 1000) / 1000.0
+              WHEN AVG(${trials.prefillTps}) >= 500  THEN 0.4 + 0.2 * (AVG(${trials.prefillTps}) - 500) / 500.0
+              WHEN AVG(${trials.prefillTps}) >= 200  THEN 0.2 + 0.2 * (AVG(${trials.prefillTps}) - 200) / 300.0
+              ELSE 0.2 * AVG(${trials.prefillTps}) / 200.0
+            END)
+          END
         )`.as('composite_score'),
       })
       .from(trials)
@@ -479,4 +510,3 @@ export type Model = typeof models.$inferSelect;
 export type ModelInfo = typeof modelsInfo.$inferSelect;
 export type Run = typeof runs.$inferSelect;
 export type Trial = typeof trials.$inferSelect;
-// Views
