@@ -72,8 +72,44 @@ const DeviceCombobox: React.FC<DeviceComboboxProps> = ({ devices, value, onSelec
       byManufacturer.set(manufacturer, group);
     }
 
+    // Sort devices within each group: most powerful first.
+    const appleTierOrder: Record<string, number> = { ultra: 4, max: 3, pro: 2 };
+    const parseAppleChip = (gpu: string) => {
+      const match = gpu.match(/Apple M(\d+)\s*(Ultra|Max|Pro)?/i);
+      if (!match) return { gen: 0, tier: 0 };
+      return {
+        gen: parseInt(match[1]),
+        tier: appleTierOrder[match[2]?.toLowerCase() ?? ''] ?? 1,
+      };
+    };
+
+    for (const [manufacturer, devs] of byManufacturer) {
+      if (manufacturer === 'Apple') {
+        devs.sort((a, b) => {
+          const chipA = parseAppleChip(a.gpu);
+          const chipB = parseAppleChip(b.gpu);
+          if (chipA.gen !== chipB.gen) return chipB.gen - chipA.gen;
+          if (chipA.tier !== chipB.tier) return chipB.tier - chipA.tier;
+          return b.ramGb - a.ramGb;
+        });
+      } else {
+        devs.sort((a, b) => {
+          const vramA = getVramGb(a.gpu) ?? 0;
+          const vramB = getVramGb(b.gpu) ?? 0;
+          if (vramA !== vramB) return vramB - vramA;
+          if (a.gpuCores !== b.gpuCores) return b.gpuCores - a.gpuCores;
+          return b.ramGb - a.ramGb;
+        });
+      }
+    }
+
+    // Apple first, then alphabetical.
     return [...byManufacturer.entries()]
-      .sort(([a], [b]) => a.localeCompare(b))
+      .sort(([a], [b]) => {
+        if (a === 'Apple') return -1;
+        if (b === 'Apple') return 1;
+        return a.localeCompare(b);
+      })
       .map(([name, devs]) => ({
         name,
         devices: devs,
