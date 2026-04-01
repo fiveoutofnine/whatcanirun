@@ -139,7 +139,7 @@ const DeviceCombobox: React.FC<DeviceComboboxProps> = ({ devices, value, onSelec
         <Popover.Trigger className="hidden md:inline" asChild>
           {children}
         </Popover.Trigger>
-        <Popover.Content className="w-72 p-0">
+        <Popover.Content className="w-72 rounded-[0.625rem] p-0">
           <DeviceComboboxInternal {...internalProps} />
         </Popover.Content>
       </Popover.Root>
@@ -195,6 +195,7 @@ const DeviceComboboxInternal: React.FC<DeviceComboboxInternalProps> = ({
                       {name}
                     </span>
                     <span className="text-xs font-normal leading-4 text-gray-11">
+                      {deviceCount > 5 ? 'Showing 5/' : ''}
                       {deviceCount.toLocaleString()} {deviceCount === 1 ? 'device' : 'devices'}
                     </span>
                   </span>
