@@ -199,13 +199,13 @@ const DeviceComboboxInternal: React.FC<DeviceComboboxInternalProps> = ({
                       {name}
                     </span>
                     <span className="text-xs font-normal leading-4 text-gray-11">
-                      {deviceCount > 5 ? 'Showing 5/' : ''}
+                      {i === 0 && deviceCount > 5 ? 'Showing 5/' : ''}
                       {deviceCount.toLocaleString()} {deviceCount === 1 ? 'device' : 'devices'}
                     </span>
                   </span>
                 }
               >
-                {(search.trim() ? devs : devs.slice(0, 5)).map((d) => {
+                {(search.trim() || i > 0 ? devs : devs.slice(0, 5)).map((d) => {
                   const selected = d.key === value;
                   const isApple = d.gpu.toLowerCase().startsWith('apple');
 
