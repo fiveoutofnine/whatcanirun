@@ -3,12 +3,14 @@
 import { Fragment, useMemo, useState } from 'react';
 
 import * as VisuallyHidden from '@radix-ui/react-visually-hidden';
+import clsx from 'clsx';
 import { defaultFilter } from 'cmdk';
 import { Check, CircleHelp } from 'lucide-react';
 
 import { getVramGb } from '@/lib/constants/gpu';
 import { useMediaQuery } from '@/lib/hooks';
 
+import LogoImg from '@/components/common/logo-img';
 import { Code } from '@/components/templates/mdx';
 import { Command, Drawer, Popover } from '@/components/ui';
 
@@ -41,6 +43,13 @@ type DeviceComboboxInternalProps = {
   // eslint-disable-next-line
   setOpen: (open: boolean) => void;
 };
+
+const MANUFACTURER_ICON: Map<string, React.FC<{ className?: string; size?: number }>> = new Map([
+  ['nvidia', LogoImg.Nvidia],
+  ['amd', LogoImg.Amd],
+  ['intel', LogoImg.Intel],
+  ['apple', LogoImg.Apple],
+]);
 
 // -----------------------------------------------------------------------------
 // Component
@@ -132,13 +141,20 @@ const DeviceComboboxInternal: React.FC<DeviceComboboxInternalProps> = ({
             }).length;
           }
 
+          const ManufacturerIcon = MANUFACTURER_ICON.get(name.toLowerCase());
+
           return (
             <Fragment key={name}>
               {i > 0 ? <Command.Separator /> : null}
               <Command.Group
                 heading={
                   <span className="flex w-full items-center justify-between">
-                    <span>{name}</span>
+                    <span className="flex items-center gap-1.5">
+                      {ManufacturerIcon ? (
+                        <ManufacturerIcon className="rounded-full" size={18} />
+                      ) : null}
+                      {name}
+                    </span>
                     <span className="text-xs font-normal leading-4 text-gray-11">
                       {deviceCount.toLocaleString()} {deviceCount === 1 ? 'device' : 'devices'}
                     </span>
@@ -152,8 +168,12 @@ const DeviceComboboxInternal: React.FC<DeviceComboboxInternalProps> = ({
                   return (
                     <Command.Item
                       key={d.key}
-                      className="h-11 [&_[cmdk-item-content]]:flex [&_[cmdk-item-content]]:w-full [&_[cmdk-item-content]]:items-start [&_[cmdk-item-content]]:justify-between [&_[cmdk-item-content]]:gap-1.5"
+                      className={clsx(
+                        'h-11 [&_[cmdk-item-content]]:flex [&_[cmdk-item-content]]:w-full [&_[cmdk-item-content]]:items-start [&_[cmdk-item-content]]:justify-between [&_[cmdk-item-content]]:gap-1.5',
+                        !selected ? '[&_[cmdk-item-content]]:pl-6' : '',
+                      )}
                       value={isApple ? `${d.gpu}-${d.cpuCores}-${d.gpuCores}-${d.ramGb}` : d.key}
+                      icon={selected ? <Check /> : null}
                       onSelect={() => {
                         onSelect(d.key);
                         setOpen(false);
@@ -186,11 +206,6 @@ const DeviceComboboxInternal: React.FC<DeviceComboboxInternalProps> = ({
                           </Fragment>
                         )}
                       </div>
-                      {selected ? (
-                        <span className="flex items-center justify-center pt-0.5 text-gray-12">
-                          <Check className="size-4" />
-                        </span>
-                      ) : null}
                     </Command.Item>
                   );
                 })}
