@@ -133,12 +133,14 @@ export async function executeBenchmark(opts: BenchmarkOpts): Promise<string> {
     const modelSpinner = new log.Spinner(chalk.dim('Resolving model…')).start();
     activeSpinner = modelSpinner;
     let modelRef: string;
+    let modelDownloaded = false;
     let modelInfoGuessed;
     try {
       modelRef = await resolveModel(opts.model, {
         runtime: opts.runtime,
         signal: controller.signal,
         onDownloadProgress: ({ downloadedBytes, totalBytes }: DownloadProgress) => {
+          modelDownloaded = true;
           if (totalBytes) {
             modelSpinner.setTotal(100, { percent: true });
             modelSpinner.update(chalk.dim('Downloading model'));
@@ -151,6 +153,9 @@ export async function executeBenchmark(opts: BenchmarkOpts): Promise<string> {
       modelInfoGuessed = inferModelFromName(modelRef);
       activeSpinner = null;
       modelSpinner.stop(chalk.white(`[${chalk.green('✓')}] Model resolved:`));
+      if (modelDownloaded) {
+        console.log(chalk.dim(` ↳ Cached at ${log.filepath(modelRef)}.`));
+      }
     } catch (e: unknown) {
       if (!interrupted) {
         modelSpinner.stop(chalk.white(`[${chalk.red('✖')}] Model resolution failed.`));
@@ -248,6 +253,12 @@ export async function executeBenchmark(opts: BenchmarkOpts): Promise<string> {
               ? `${chalk.cyan(modelInfo.display_name)} loaded from disk.`
               : `${chalk.cyan(modelInfo.display_name)} downloaded.`;
             resolveSpinner.stop(chalk.white(`[${chalk.green('✓')}] ${resolveLabel}`));
+            if (!isCached) {
+              const cachePath = findHfCachePath(modelRef);
+              if (cachePath) {
+                console.log(chalk.dim(` ↳ Cached at ${log.filepath(cachePath)}.`));
+              }
+            }
 
             // Display model info.
             const modelRows: [string, string][] = [
@@ -301,6 +312,12 @@ export async function executeBenchmark(opts: BenchmarkOpts): Promise<string> {
           ? `${chalk.cyan(modelInfo.display_name)} loaded from disk.`
           : `${chalk.cyan(modelInfo.display_name)} downloaded.`;
         resolveSpinner.stop(chalk.white(`[${chalk.green('✓')}] ${resolveLabel}`));
+        if (!isCached) {
+          const cachePath = findHfCachePath(modelRef);
+          if (cachePath) {
+            console.log(chalk.dim(` ↳ Cached at ${log.filepath(cachePath)}.`));
+          }
+        }
       }
 
       activeSpinner = null;
