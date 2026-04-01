@@ -3,29 +3,28 @@ import { unstable_cache as cache } from 'next/cache';
 import { count, countDistinct, sum } from 'drizzle-orm';
 
 import { db } from '@/lib/db';
-import { devices, runs, trials } from '@/lib/db/schema';
+import { runs, trials } from '@/lib/db/schema';
 
 // -----------------------------------------------------------------------------
 // Component
 // -----------------------------------------------------------------------------
 
 const HeroDescription: React.FC & { Fallback: React.FC } = async () => {
-  const [[{ inputTokens, outputTokens }], [{ trialsCount }], [{ uniqueDevicesCount }]] =
-    await cache(
-      async () =>
-        await Promise.all([
-          db
-            .select({
-              inputTokens: sum(runs.promptTokens),
-              outputTokens: sum(runs.completionTokens),
-            })
-            .from(runs),
-          db.select({ trialsCount: count() }).from(trials),
-          db.select({ uniqueDevicesCount: countDistinct(devices.chipId) }).from(devices),
-        ]),
-      ['overview-stats'],
-      { tags: ['overview-stats'], revalidate: 600 },
-    )();
+  const [[{ inputTokens, outputTokens }], [{ trialsCount }], [{ uniquePeopleCount }]] = await cache(
+    async () =>
+      await Promise.all([
+        db
+          .select({
+            inputTokens: sum(runs.promptTokens),
+            outputTokens: sum(runs.completionTokens),
+          })
+          .from(runs),
+        db.select({ trialsCount: count() }).from(trials),
+        db.select({ uniquePeopleCount: countDistinct(runs.ipHash) }).from(runs),
+      ]),
+    ['overview-stats'],
+    { tags: ['overview-stats'], revalidate: 600 },
+  )();
 
   const totalTokens = Number(inputTokens) + Number(outputTokens);
 
@@ -38,9 +37,9 @@ const HeroDescription: React.FC & { Fallback: React.FC } = async () => {
       across{' '}
       <span className="font-medium tabular-nums text-gray-12">{trialsCount.toLocaleString()}</span>{' '}
       trial
-      {trialsCount > 1 ? 's' : ''} for{' '}
+      {trialsCount > 1 ? 's' : ''} from{' '}
       <span className="font-medium tabular-nums text-gray-12">
-        {uniqueDevicesCount.toLocaleString()} {uniqueDevicesCount === 1 ? 'device' : 'devices'}
+        {uniquePeopleCount.toLocaleString()} {uniquePeopleCount === 1 ? 'person' : 'people'}
       </span>
       .
     </span>
@@ -53,9 +52,9 @@ const HeroDescriptionFallback: React.FC = () => (
     <span className="inline-block h-4 min-w-24 animate-pulse rounded bg-gray-9 align-sub md:h-[1.125rem]" />{' '}
     <span className="font-medium text-gray-12">tokens</span> across{' '}
     <span className="inline-block h-4 min-w-12 animate-pulse rounded bg-gray-9 align-sub md:h-[1.125rem]" />{' '}
-    <span className="font-medium text-gray-12">trials</span> for{' '}
+    <span className="font-medium text-gray-12">trials</span> from{' '}
     <span className="inline-block h-4 min-w-6 animate-pulse rounded bg-gray-9 align-sub md:h-[1.125rem]" />{' '}
-    <span className="font-medium text-gray-12">devices</span>.
+    <span className="font-medium text-gray-12">people</span>.
   </span>
 );
 
