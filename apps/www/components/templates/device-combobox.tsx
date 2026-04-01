@@ -200,7 +200,7 @@ const DeviceComboboxInternal: React.FC<DeviceComboboxInternalProps> = ({
                   </span>
                 }
               >
-                {devs.map((d) => {
+                {(search.trim() ? devs : devs.slice(0, 5)).map((d) => {
                   const selected = d.key === value;
                   const isApple = d.gpu.toLowerCase().startsWith('apple');
 
