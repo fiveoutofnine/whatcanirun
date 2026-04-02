@@ -5,17 +5,8 @@ import { and, eq } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { modelFamilies, organizations } from '@/lib/db/schema';
 
-export type ModelFamilyData = {
-  familyId: string;
-  familyName: string;
-  orgName: string;
-  orgLogoUrl: string | null;
-  orgSlug: string;
-  orgWebsiteUrl: string | null;
-};
-
 export const getModelFamily = cache(
-  async (orgSlug: string, modelSlug: string): Promise<ModelFamilyData | null> => {
+  async (orgSlug: string, modelSlug: string) => {
     const [row] = await db
       .select({
         familyId: modelFamilies.id,
