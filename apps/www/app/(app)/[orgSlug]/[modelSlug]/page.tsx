@@ -1,16 +1,8 @@
-import type { Metadata } from 'next';
-import { notFound } from 'next/navigation';
-
-import { and, eq, inArray } from 'drizzle-orm';
+import { getModelFamily } from './utils';
+import { eq, inArray } from 'drizzle-orm';
 
 import { db } from '@/lib/db';
-import {
-  modelFamilies,
-  models,
-  modelsInfo,
-  organizations,
-  view__model_stats_by_device,
-} from '@/lib/db/schema';
+import { models, modelsInfo, view__model_stats_by_device } from '@/lib/db/schema';
 
 import ContainerLayout from '@/components/layouts/container';
 import UserAvatar from '@/components/templates/user-avatar';
@@ -24,49 +16,12 @@ type Props = {
 };
 
 // -----------------------------------------------------------------------------
-// Metadata
-// -----------------------------------------------------------------------------
-
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { orgSlug, modelSlug } = await params;
-
-  const family = await db
-    .select({ name: modelFamilies.name, orgName: organizations.name })
-    .from(modelFamilies)
-    .innerJoin(organizations, eq(modelFamilies.orgId, organizations.id))
-    .where(and(eq(organizations.slug, orgSlug), eq(modelFamilies.slug, modelSlug)))
-    .limit(1);
-
-  if (family.length === 0) return { title: 'Not Found' };
-
-  return {
-    title: `${family[0].name} by ${family[0].orgName}`,
-    description: `Benchmark results for ${family[0].name} quantizations.`,
-  };
-}
-
-// -----------------------------------------------------------------------------
 // Page
 // -----------------------------------------------------------------------------
 
 export default async function ModelFamilyPage({ params }: Props) {
   const { orgSlug, modelSlug } = await params;
-
-  // Look up org + family
-  const [family] = await db
-    .select({
-      familyId: modelFamilies.id,
-      familyName: modelFamilies.name,
-      orgName: organizations.name,
-      orgLogoUrl: organizations.logoUrl,
-      orgWebsiteUrl: organizations.websiteUrl,
-    })
-    .from(modelFamilies)
-    .innerJoin(organizations, eq(modelFamilies.orgId, organizations.id))
-    .where(and(eq(organizations.slug, orgSlug), eq(modelFamilies.slug, modelSlug)))
-    .limit(1);
-
-  if (!family) notFound();
+  const family = (await getModelFamily(orgSlug, modelSlug))!;
 
   // Find all model IDs in this family
   const memberRows = await db
