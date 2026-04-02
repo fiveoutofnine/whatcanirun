@@ -10,6 +10,7 @@ export type ModelFamilyData = {
   familyName: string;
   orgName: string;
   orgLogoUrl: string | null;
+  orgSlug: string;
   orgWebsiteUrl: string | null;
 };
 
@@ -21,6 +22,7 @@ export const getModelFamily = cache(
         familyName: modelFamilies.name,
         orgName: organizations.name,
         orgLogoUrl: organizations.logoUrl,
+        orgSlug: organizations.slug,
         orgWebsiteUrl: organizations.websiteUrl,
       })
       .from(modelFamilies)
