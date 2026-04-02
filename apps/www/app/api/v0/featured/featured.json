@@ -1,12 +1,12 @@
 [
   {
     "displayName": "Gemma 4 E4B Instruct (4-bit)",
-    "hfRepoId": "/mlx-community/gemma-4-e4b-it-4bit",
+    "hfRepoId": "mlx-community/gemma-4-e4b-it-4bit",
     "runtime": "mlx_lm"
   },
   {
     "displayName": "Gemma 4 E4B Instruct (8-bit)",
-    "hfRepoId": "/mlx-community/gemma-4-e4b-it-8bit",
+    "hfRepoId": "mlx-community/gemma-4-e4b-it-8bit",
     "runtime": "mlx_lm"
   },
   {
