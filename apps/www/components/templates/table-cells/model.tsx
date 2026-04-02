@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { Fragment } from 'react';
 
 import clsx from 'clsx';
@@ -21,6 +22,8 @@ type ModelTableCellProps = Pick<
   Pick<Run, 'runtimeName'> & {
     lab?: Pick<Organization, 'name' | 'logoUrl' | 'websiteUrl'>;
     quantizedBy?: Pick<Organization, 'name' | 'logoUrl' | 'websiteUrl'>;
+    labSlug?: string | null;
+    familySlug?: string | null;
   };
 // -----------------------------------------------------------------------------
 // Component
@@ -35,6 +38,8 @@ const ModelTableCell: React.FC<ModelTableCellProps> & { Skeleton: React.FC } = (
   fileSizeBytes,
   lab,
   quantizedBy,
+  labSlug,
+  familySlug,
 }) => {
   let url = '';
   if (runtimeName === 'mlx_lm') {
@@ -46,10 +51,16 @@ const ModelTableCell: React.FC<ModelTableCellProps> & { Skeleton: React.FC } = (
     }
   }
 
+  const familyHref = labSlug && familySlug ? `/${labSlug}/${familySlug}` : null;
+
   return (
     <div className="flex flex-col items-start">
       <div className="flex h-5 items-center gap-1">
-        {source && url ? (
+        {familyHref ? (
+          <Link className="flex h-5 hover:underline" href={familyHref}>
+            <span className="line-clamp-1 leading-5">{displayName}</span>
+          </Link>
+        ) : source && url ? (
           <a
             className="flex h-5 hover:underline"
             href={url}

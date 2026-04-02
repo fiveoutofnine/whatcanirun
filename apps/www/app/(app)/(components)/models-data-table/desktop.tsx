@@ -72,6 +72,8 @@ const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOpt
                   }
                 : undefined
             }
+            labSlug={row.original.labSlug}
+            familySlug={row.original.familySlug}
           />
         ),
       },

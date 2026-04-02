@@ -71,6 +71,8 @@ const ModelsDataTableMobile: React.FC<ModelsDataTableInternalProps> = (tableOpti
                   }
                 : undefined
             }
+            labSlug={row.original.labSlug}
+            familySlug={row.original.familySlug}
           />
         ),
       },

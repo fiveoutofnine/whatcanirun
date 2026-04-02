@@ -174,12 +174,36 @@ export const organizations = pgTable('organizations', {
   name: text('name').notNull(),
   logoUrl: text('logo_url'),
   websiteUrl: text('website_url'),
+  slug: text('slug').notNull().unique(),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at')
     .notNull()
     .defaultNow()
     .$onUpdate(() => new Date()),
 });
+
+export const modelFamilies = pgTable(
+  'model_families',
+  {
+    id: text('id')
+      .primaryKey()
+      .$defaultFn(() => `fam_${crypto.randomUUID()}`),
+    orgId: text('org_id')
+      .notNull()
+      .references(() => organizations.id),
+    slug: text('slug').notNull(),
+    name: text('name').notNull(),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+    updatedAt: timestamp('updated_at')
+      .notNull()
+      .defaultNow()
+      .$onUpdate(() => new Date()),
+  },
+  (t) => [
+    uniqueIndex('model_families_org_slug_idx').on(t.orgId, t.slug),
+    index('model_families_org_id_idx').on(t.orgId),
+  ],
+);
 
 export const modelsInfo = pgTable(
   'models_info',
@@ -189,6 +213,7 @@ export const modelsInfo = pgTable(
       .references(() => models.artifactSha256),
     labId: text('lab_id').references(() => organizations.id),
     quantizedById: text('quantized_by_id').references(() => organizations.id),
+    familyId: text('family_id').references(() => modelFamilies.id),
     // Overrides `models` column values
     name: text('name'),
     source: text('source'),
@@ -210,6 +235,7 @@ export const modelsInfo = pgTable(
   (t) => [
     index('models_info_lab_id_idx').on(t.labId),
     index('models_info_quantized_by_id_idx').on(t.quantizedById),
+    index('models_info_family_id_idx').on(t.familyId),
   ],
 );
 // -----------------------------------------------------------------------------
@@ -334,6 +360,8 @@ export const view__model_stats_by_device = pgMaterializedView('view__model_stats
         labName: sql<string | null>`MIN(${labOrg.name})`.as('lab_name'),
         labLogoUrl: sql<string | null>`MIN(${labOrg.logoUrl})`.as('lab_logo_url'),
         labWebsiteUrl: sql<string | null>`MIN(${labOrg.websiteUrl})`.as('lab_website_url'),
+        labSlug: sql<string | null>`MIN(${labOrg.slug})`.as('lab_slug'),
+        familySlug: sql<string | null>`MIN(${modelFamilies.slug})`.as('family_slug'),
         quantizedByName: sql<string | null>`MIN(${quantOrg.name})`.as('quantized_by_name'),
         quantizedByLogoUrl: sql<string | null>`MIN(${quantOrg.logoUrl})`.as(
           'quantized_by_logo_url',
@@ -441,6 +469,7 @@ export const view__model_stats_by_device = pgMaterializedView('view__model_stats
       .leftJoin(modelsInfo, eq(models.artifactSha256, modelsInfo.artifactSha256))
       .leftJoin(labOrg, eq(modelsInfo.labId, labOrg.id))
       .leftJoin(quantOrg, eq(modelsInfo.quantizedById, quantOrg.id))
+      .leftJoin(modelFamilies, eq(modelsInfo.familyId, modelFamilies.id))
       .where(
         and(
           eq(runs.status, RunStatus.VERIFIED),
@@ -462,6 +491,7 @@ export const devicesRelations = relations(devices, ({ many }) => ({
 export const organizationsRelations = relations(organizations, ({ many }) => ({
   models: many(modelsInfo, { relationName: 'lab' }),
   quantizedModels: many(modelsInfo, { relationName: 'quantizedBy' }),
+  families: many(modelFamilies),
 }));
 
 export const modelsRelations = relations(models, ({ one, many }) => ({
@@ -470,6 +500,11 @@ export const modelsRelations = relations(models, ({ one, many }) => ({
     fields: [models.artifactSha256],
     references: [modelsInfo.artifactSha256],
   }),
+}));
+
+export const modelFamiliesRelations = relations(modelFamilies, ({ one, many }) => ({
+  org: one(organizations, { fields: [modelFamilies.orgId], references: [organizations.id] }),
+  models: many(modelsInfo),
 }));
 
 export const modelsInfoRelations = relations(modelsInfo, ({ one }) => ({
@@ -484,6 +519,7 @@ export const modelsInfoRelations = relations(modelsInfo, ({ one }) => ({
     references: [organizations.id],
     relationName: 'quantizedBy',
   }),
+  family: one(modelFamilies, { fields: [modelsInfo.familyId], references: [modelFamilies.id] }),
 }));
 
 export const runsRelations = relations(runs, ({ one, many }) => ({
@@ -507,6 +543,7 @@ export type ApiToken = typeof apiTokens.$inferSelect;
 export type Organization = typeof organizations.$inferSelect;
 export type Device = typeof devices.$inferSelect;
 export type Model = typeof models.$inferSelect;
+export type ModelFamily = typeof modelFamilies.$inferSelect;
 export type ModelInfo = typeof modelsInfo.$inferSelect;
 export type Run = typeof runs.$inferSelect;
 export type Trial = typeof trials.$inferSelect;
