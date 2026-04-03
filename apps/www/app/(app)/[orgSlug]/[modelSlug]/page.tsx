@@ -72,13 +72,17 @@ export default async function ModelFamilyPage({
       ? deviceParam
       : (sortedChips[0]?.chipId ?? '');
 
-  // Best score by model for device
+  // Best stats by model for device
   const bestScoreByModel = new Map<string, number>();
+  const bestDecodeTpsByModel = new Map<string, number>();
+  const bestPrefillTpsByModel = new Map<string, number>();
   for (const row of stats) {
     if (row.deviceChipId !== effectiveDevice) continue;
-    const existing = bestScoreByModel.get(row.modelId);
-    if (existing === undefined || row.compositeScore > existing) {
+    const existingScore = bestScoreByModel.get(row.modelId);
+    if (existingScore === undefined || row.compositeScore > existingScore) {
       bestScoreByModel.set(row.modelId, row.compositeScore);
+      bestDecodeTpsByModel.set(row.modelId, row.avgDecodeTps);
+      bestPrefillTpsByModel.set(row.modelId, row.avgPrefillTps);
     }
   }
 
@@ -93,6 +97,8 @@ export default async function ModelFamilyPage({
       source: m.source || m.model!.source,
       quantizedBy: m.quantizedBy,
       score: bestScoreByModel.get(m.model!.id) ?? null,
+      decodeTps: bestDecodeTpsByModel.get(m.model!.id) ?? null,
+      prefillTps: bestPrefillTpsByModel.get(m.model!.id) ?? null,
     }))
     .sort((a, b) => {
       if (a.fileSizeBytes == null && b.fileSizeBytes == null) return 0;

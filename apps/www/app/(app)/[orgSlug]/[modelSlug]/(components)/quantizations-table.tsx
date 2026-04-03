@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 
 import clsx from 'clsx';
 import { ArrowUpRight, Check, Copy, ExternalLink } from 'lucide-react';
@@ -26,18 +26,19 @@ export type Quant = {
   source: string | null;
   quantizedBy: Organization | null;
   score: number | null;
+  decodeTps: number | null;
+  prefillTps: number | null;
 };
 
 type ModelQuantizationsTableProps = {
   quants: Quant[];
-  loading?: boolean;
 };
 
 // -----------------------------------------------------------------------------
 // Component
 // -----------------------------------------------------------------------------
 
-const ModelQuantizationsTable: React.FC<ModelQuantizationsTableProps> = ({ quants, loading }) => {
+const ModelQuantizationsTable: React.FC<ModelQuantizationsTableProps> = ({ quants }) => {
   return (
     <Table.Root
       containerClassName={clsx(
@@ -50,7 +51,9 @@ const ModelQuantizationsTable: React.FC<ModelQuantizationsTableProps> = ({ quant
           <Table.Head className="pl-4">Quant</Table.Head>
           <Table.Head>Quantized by</Table.Head>
           <Table.Head>Size</Table.Head>
-          <Table.Head>Runnability</Table.Head>
+          <Table.Head>Decode</Table.Head>
+          <Table.Head>Prefill</Table.Head>
+          <Table.Head>Score</Table.Head>
           <Table.Head className="pr-4 text-right">Actions</Table.Head>
         </Table.Row>
       </Table.Header>
@@ -163,10 +166,38 @@ const ModelQuantizationsTable: React.FC<ModelQuantizationsTableProps> = ({ quant
                 <span className="tabular-nums text-gray-12">{sizeValue}</span>
                 <span className="text-gray-11"> {sizeUnit}</span>
               </Table.Cell>
+              <Table.Cell className="min-w-fit text-nowrap">
+                {v.decodeTps != null ? (
+                  <Fragment>
+                    <span className="tabular-nums text-gray-12">
+                      {v.decodeTps.toLocaleString(undefined, {
+                        minimumFractionDigits: 1,
+                        maximumFractionDigits: 1,
+                      })}
+                    </span>
+                    <span className="text-gray-11"> tok/s</span>
+                  </Fragment>
+                ) : (
+                  <span className="italic text-gray-11">N/A</span>
+                )}
+              </Table.Cell>
+              <Table.Cell className="min-w-fit text-nowrap">
+                {v.prefillTps != null ? (
+                  <Fragment>
+                    <span className="tabular-nums text-gray-12">
+                      {v.prefillTps.toLocaleString(undefined, {
+                        minimumFractionDigits: 1,
+                        maximumFractionDigits: 1,
+                      })}
+                    </span>
+                    <span className="text-gray-11"> tok/s</span>
+                  </Fragment>
+                ) : (
+                  <span className="italic text-gray-11">N/A</span>
+                )}
+              </Table.Cell>
               <Table.Cell>
-                {loading ? (
-                  <div className="h-5 w-16 animate-pulse rounded-full bg-gray-9" />
-                ) : v.score != null ? (
+                {v.score != null ? (
                   <ScoreBadge score={v.score} />
                 ) : (
                   <span className="italic text-gray-11">N/A</span>
