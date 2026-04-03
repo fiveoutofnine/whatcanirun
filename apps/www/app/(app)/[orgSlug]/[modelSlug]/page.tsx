@@ -164,21 +164,27 @@ export default async function ModelFamilyPage({
   // ---------------------------------------------------------------------------
 
   return (
-    <div className="flex grow flex-col py-4 md:py-6">
-      <div className="w-full md:px-6">
-        <div className="mx-auto w-full max-w-7xl">
+    <div className="flex grow md:px-6">
+      <div className="mx-auto flex w-full max-w-7xl grow p-4 md:p-0">
+        <div className="flex w-full grow flex-col py-0 md:py-6">
           <H2 className="mb-2 px-4 md:px-0">Variants</H2>
           <VariantsTable variants={variants} />
-        </div>
 
-        <div className="mx-auto mt-4 flex w-full max-w-7xl flex-col md:mt-8">
-          <H2 className="mb-1 px-4 md:px-0">Performance</H2>
+          <H2 className="mb-2 mt-4 md:mt-8">Performance</H2>
           <DevicePerformance devices={devices} perfByDevice={perfByDevice} />
+
+          <H2 className="mb-2 mt-4 md:mt-8">Speed</H2>
+          <PerformanceChart data={chartData} />
         </div>
 
-        <div className="mx-auto mt-4 flex w-full max-w-7xl flex-col md:mt-8">
-          <H2 className="mb-2 px-4 md:px-0">Speed</H2>
-          <PerformanceChart data={chartData} />
+        <hr
+          className="mx-6 hidden h-full w-px border-l border-gray-6 md:block"
+          role="separator"
+          aria-hidden
+        />
+
+        <div className="sticky top-[4rem] hidden h-fit max-h-[calc(100dvh-4rem)] w-[22rem] min-w-[22rem] py-6 md:flex md:flex-col">
+          Device selector
         </div>
       </div>
     </div>
