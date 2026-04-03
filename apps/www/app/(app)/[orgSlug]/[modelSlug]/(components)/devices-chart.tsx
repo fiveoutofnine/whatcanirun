@@ -1,0 +1,415 @@
+'use client';
+
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+
+import clsx from 'clsx';
+import { useQueryState } from 'nuqs';
+import {
+  CartesianGrid,
+  LabelList,
+  ResponsiveContainer,
+  Scatter,
+  ScatterChart,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
+
+import { getVramGb } from '@/lib/constants/gpu';
+import type { ModelDeviceSummary } from '@/lib/db/schema';
+import { formatChipName, parseManufacturer } from '@/lib/utils';
+
+import LogoImg from '@/components/common/logo-img';
+import { Code } from '@/components/templates/mdx';
+
+// -----------------------------------------------------------------------------
+// Types
+// -----------------------------------------------------------------------------
+
+export type ModelDevicesChartValue = ModelDeviceSummary & {
+  quant: string;
+  format: string;
+};
+
+type ModelDevicesChartProps = {
+  data: ModelDevicesChartValue[];
+  defaultDevice: string;
+};
+
+// -----------------------------------------------------------------------------
+// Component
+// -----------------------------------------------------------------------------
+
+const ModelDevicesChartChart: React.FC<ModelDevicesChartProps> = ({ data, defaultDevice }) => {
+  const chartRef = useRef<HTMLDivElement>(null);
+  const [chartDimensions, setChartDimensions] = useState<{ width: number; height: number }>({
+    width: 991,
+    height: 446,
+  });
+  const [device] = useQueryState('device', { defaultValue: defaultDevice });
+
+  const chartData = useMemo(
+    () => data.filter((d) => d.avgDecodeTps > 0 && d.avgPrefillTps > 0),
+    [data],
+  );
+
+  // Highlight highest cost (a), score (b), and score/cost ratio (c).
+  const highlightedIds = useMemo(() => {
+    const ids = new Map<string, 'decode' | 'prefill' | 'both'>();
+
+    const a = chartData.reduce(
+      (maxIdx, item, idx) => (item.avgDecodeTps > chartData[maxIdx].avgDecodeTps ? idx : maxIdx),
+      0,
+    );
+    const b = chartData.reduce(
+      (maxIdx, item, idx) => (item.avgPrefillTps > chartData[maxIdx].avgPrefillTps ? idx : maxIdx),
+      0,
+    );
+
+    if (chartData[a].deviceChipId) ids.set(chartData[a].deviceChipId, 'decode');
+    if (chartData[b].deviceChipId) ids.set(chartData[b].deviceChipId, 'prefill');
+    if (chartData[a].deviceChipId && chartData[a].deviceChipId) {
+      ids.set(chartData[a].deviceChipId, 'both');
+    }
+
+    return ids;
+  }, [chartData]);
+
+  const selectedChipId = device;
+
+  const updateDimensions = useCallback(() => {
+    if (chartRef.current) {
+      const svg = chartRef.current.querySelector('svg');
+      if (svg) {
+        const viewBox = svg.viewBox.baseVal;
+        setChartDimensions({
+          width: viewBox.width || svg.clientWidth,
+          height: viewBox.height || svg.clientHeight,
+        });
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(updateDimensions, 100);
+    window.addEventListener('resize', updateDimensions);
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('resize', updateDimensions);
+    };
+  }, [updateDimensions]);
+
+  return (
+    <div
+      ref={chartRef}
+      className="flex h-[32rem] w-full flex-col rounded-none border-y border-gray-6 bg-gray-2 p-4 md:rounded-xl md:border-x"
+    >
+      <div className="flex items-center gap-1.5">
+        <h3 className="text-base font-medium tracking-tight text-gray-12">
+          Decode / Prefill Speeds
+        </h3>
+        <span className="font-mono text-xs text-gray-11">
+          {chartData.length.toLocaleString()} devices
+        </span>
+      </div>
+      <ResponsiveContainer className="mt-2" width="100%" height="100%">
+        <ScatterChart
+          className="focus:outline-none"
+          margin={{ top: 0, left: 0, bottom: -11 }}
+          tabIndex={-1}
+        >
+          <CartesianGrid className="stroke-gray-6" strokeDasharray="3 3" />
+          <XAxis
+            className="stroke-gray-9"
+            orientation="bottom"
+            dataKey="avgPrefillTps"
+            type="number"
+            tick={{
+              className: 'tabular-nums select-none fill-gray-11',
+              fontSize: 14,
+              strokeWidth: 0,
+            }}
+            tickFormatter={(x) => x.toLocaleString()}
+            tickLine={false}
+            tickSize={4}
+          />
+          <YAxis
+            className="stroke-gray-9"
+            orientation="left"
+            width={36}
+            dataKey="avgDecodeTps"
+            type="number"
+            padding={{ top: 0, bottom: 0 }}
+            tick={{
+              className: 'tabular-nums select-none fill-gray-11',
+              fontSize: 14,
+              strokeWidth: 0,
+            }}
+            tickFormatter={(x) => x.toLocaleString()}
+            tickLine={false}
+            tickSize={4}
+          />
+          <Tooltip
+            cursor={{ strokeDasharray: '3 3' }}
+            content={({ active, payload }) => {
+              if (!active || !payload || !payload.length) return null;
+              const d = payload[0].payload as ModelDevicesChartValue;
+              const { manufacturer, logo: Logo } = getManufacturerLogo(d);
+              const FormatLogo = FORMAT_LOGO[d.format];
+              const deviceName = getDeviceDisplayName(d);
+
+              const isApple = manufacturer === 'apple';
+              const vram = !isApple ? getVramGb(d.deviceGpu) : null;
+              const deviceStats: string[] = [];
+              if (isApple) {
+                deviceStats.push(`${d.deviceCpuCores.toLocaleString()}-core CPU`);
+                deviceStats.push(`${d.deviceCpuCores.toLocaleString()}-core GPU`);
+              } else if (vram != null) {
+                deviceStats.push(`${vram} GB VRAM`);
+              }
+
+              const statGroups = [
+                [
+                  { label: 'Quant', value: d.quant },
+                  { label: 'Format', value: d.format.toUpperCase() },
+                ],
+                [
+                  {
+                    label: 'Prefill',
+                    value: (
+                      <span>
+                        <span>
+                          {d.avgPrefillTps.toLocaleString(undefined, {
+                            minimumFractionDigits: 1,
+                            maximumFractionDigits: 1,
+                          })}
+                        </span>
+                        <span className="text-gray-11"> tok/s</span>
+                      </span>
+                    ),
+                  },
+                  {
+                    label: 'Decode',
+                    value: (
+                      <span>
+                        <span>
+                          {d.avgDecodeTps.toLocaleString(undefined, {
+                            minimumFractionDigits: 1,
+                            maximumFractionDigits: 1,
+                          })}
+                        </span>
+                        <span className="text-gray-11"> tok/s</span>
+                      </span>
+                    ),
+                  },
+                ],
+              ];
+
+              return (
+                <div
+                  className="z-50 max-w-[20rem] overflow-hidden rounded-md border border-gray-6 bg-gray-2 text-sm font-normal leading-normal text-gray-12 shadow-md animate-in fade-in-50"
+                  tabIndex={-1}
+                >
+                  <div className="flex w-full items-center gap-2 p-2">
+                    <div className="relative" style={{ width: 32, height: 32, minWidth: 32 }}>
+                      {Logo ? (
+                        <Logo className="rounded-full" size={32} />
+                      ) : (
+                        <div className="size-8 rounded-full border border-gray-6 bg-gray-5" />
+                      )}
+                      {FormatLogo ? (
+                        <div className="absolute -bottom-0.5 -right-0.5 flex items-center justify-center overflow-hidden rounded-full">
+                          <FormatLogo className="rounded-full" size={16} />
+                        </div>
+                      ) : null}
+                    </div>
+                    <div className="flex flex-col items-start">
+                      <div className="flex items-center gap-1 text-sm font-medium leading-5">
+                        {deviceName}
+                        {isApple ? <Code>{d.deviceRamGb} GB RAM</Code> : null}
+                      </div>
+                      <span className="text-xs leading-4 text-gray-11">
+                        {deviceStats.join(' / ')}
+                      </span>
+                    </div>
+                  </div>
+                  {statGroups.map((stat, i) => {
+                    if (stat.length === 0) return null;
+                    return (
+                      <Fragment key={`stat-group-${i}`}>
+                        <hr
+                          className="border-0.5 w-full border-gray-6"
+                          role="separator"
+                          aria-hidden
+                        />
+                        <div className="flex gap-2 p-2 text-xs leading-4">
+                          <div className="flex flex-col gap-1">
+                            {stat.map(({ label }, j) => (
+                              <span
+                                key={`stat-label-${j}`}
+                                className="h-4 whitespace-nowrap text-right text-gray-11"
+                              >
+                                {label}
+                              </span>
+                            ))}
+                          </div>
+                          <div className="flex w-full flex-col gap-1">
+                            {stat.map(({ value }, j) => (
+                              <span key={`stat-value-${j}`} className="h-4 text-right font-mono">
+                                {value}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      </Fragment>
+                    );
+                  })}
+                </div>
+              );
+            }}
+          />
+          <Scatter
+            name="Devices"
+            data={chartData}
+            className="fill-gray-9"
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            shape={(props: any) => {
+              const { cx, cy } = props as { cx: number; cy: number } & ModelDevicesChartValue;
+              const d = props as ModelDevicesChartValue;
+              const selected = d.deviceChipId === selectedChipId;
+              const highlighted = highlightedIds.has(d.deviceChipId);
+              const highlight = selected || highlighted;
+              const { logo: Logo } = getManufacturerLogo(d);
+              const FormatLogo = FORMAT_LOGO[d.format];
+
+              const size = highlight ? 32 : 20;
+              const formatSize = highlight ? 16 : 12;
+              const containerSize = size + formatSize / 2 - 2;
+
+              return (
+                <foreignObject
+                  className={highlight ? 'z-50' : 'z-40'}
+                  x={cx - size / 2}
+                  y={cy - size / 2}
+                  width={containerSize}
+                  height={containerSize}
+                >
+                  <div
+                    className={clsx(
+                      'relative',
+                      highlight
+                        ? 'opacity:100 z-50'
+                        : 'z-40 opacity-50 transition-colors hover:opacity-100',
+                    )}
+                    style={{ width: size, height: size, minWidth: size }}
+                  >
+                    {Logo ? (
+                      <Logo className="rounded-full" size={size} />
+                    ) : (
+                      <div
+                        className="rounded-full border border-gray-6 bg-gray-5"
+                        style={{ width: size, height: size }}
+                      />
+                    )}
+                    {FormatLogo ? (
+                      <div className="absolute -bottom-0.5 -right-0.5 flex items-center justify-center overflow-hidden rounded-full">
+                        <FormatLogo className="rounded-full" size={formatSize} />
+                      </div>
+                    ) : null}
+                  </div>
+                </foreignObject>
+              );
+            }}
+          >
+            <LabelList
+              content={(props) => {
+                const { x, y, index } = props as { x: number; y: number; index: number };
+                const item = chartData[index];
+
+                if (!item.deviceChipId || !highlightedIds.has(item.deviceChipId)) return null;
+
+                const deviceName = getDeviceDisplayName(item);
+                const reason = highlightedIds.get(item.deviceChipId);
+                const reasonLabel = {
+                  decode: 'Fastest decode',
+                  prefill: 'Fastest prefill',
+                  both: 'Fastest decode and prefill',
+                }[reason!];
+
+                const { width: chartWidth } = chartDimensions;
+                let labelX = x;
+                // eslint-disable-next-line no-useless-assignment
+                let labelY = y;
+                let anchor: 'start' | 'middle' | 'end' = 'middle';
+
+                // Position based on proximity to edges.
+                if (x < 120) {
+                  // Right.
+                  labelX = x + 28;
+                  labelY = y + 3;
+                  anchor = 'start';
+                } else if (x > chartWidth - 96) {
+                  // Left.
+                  labelX = x - 20;
+                  labelY = y + 3;
+                  anchor = 'end';
+                } else if (y < 48) {
+                  // Bottom.
+                  labelY = y + 28;
+                } else {
+                  // Top.
+                  labelY = y - 26;
+                }
+
+                return (
+                  <text
+                    x={labelX}
+                    y={labelY}
+                    textAnchor={anchor}
+                    className="pointer-events-none select-none"
+                  >
+                    <tspan className="fill-gray-12 font-medium" fontSize="12">
+                      {deviceName}
+                    </tspan>
+                    <tspan className="fill-gray-11" x={labelX} dy="14" fontSize="10">
+                      {reasonLabel}
+                    </tspan>
+                  </text>
+                );
+              }}
+            />
+          </Scatter>
+        </ScatterChart>
+      </ResponsiveContainer>
+    </div>
+  );
+};
+
+// -----------------------------------------------------------------------------
+// Helpers
+// -----------------------------------------------------------------------------
+
+const FORMAT_LOGO: Record<string, React.FC<{ className?: string; size?: number }>> = {
+  gguf: LogoImg.Ggml,
+  mlx: LogoImg.Mlx,
+};
+
+function getManufacturerLogo(datum: ModelDevicesChartValue) {
+  const isApple = datum.deviceGpu.toLowerCase().startsWith('apple');
+  const hasGpu = datum.deviceGpuCores > 0;
+  const primaryName = isApple ? datum.deviceGpu : hasGpu ? datum.deviceGpu : datum.deviceCpu;
+  return parseManufacturer(primaryName);
+}
+
+function getDeviceDisplayName(datum: ModelDevicesChartValue) {
+  const isApple = datum.deviceGpu.toLowerCase().startsWith('apple');
+  const hasGpu = datum.deviceGpuCores > 0;
+  return isApple
+    ? formatChipName(datum.deviceCpu)
+    : hasGpu
+      ? formatChipName(datum.deviceGpu)
+      : formatChipName(datum.deviceCpu);
+}
+
+export default ModelDevicesChartChart;

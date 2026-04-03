@@ -3,6 +3,8 @@ import { notFound } from 'next/navigation';
 import { Fragment } from 'react';
 
 import DeviceFloatingSelector from './(components)/device-floating-selector';
+import DevicesChart from './(components)/devices-chart';
+import type { ModelDevicesChartValue } from './(components)/devices-chart';
 import ModelQuantizationsTable from './(components)/quantizations-table';
 import type { Quant } from './(components)/quantizations-table';
 import { getModelFamily, getModelFamilyChips } from './utils';
@@ -97,6 +99,29 @@ export default async function ModelFamilyPage({
       return a.fileSizeBytes - b.fileSizeBytes;
     });
 
+  // Chart data: all model×device combos across all chips
+  const modelInfoMap = new Map(
+    members
+      .filter((m) => m.model !== null)
+      .map((m) => [m.model!.id, { quant: m.quant || m.model!.quant, format: m.model!.format }]),
+  );
+  const devicesChartData: ModelDevicesChartValue[] = stats
+    .filter(
+      (r) =>
+        r.avgDecodeTps != null &&
+        r.avgPrefillTps != null &&
+        modelInfoMap.has(r.modelId) &&
+        modelInfoMap.get(r.modelId)!.quant != null,
+    )
+    .map((r) => {
+      const info = modelInfoMap.get(r.modelId)!;
+      return {
+        ...r,
+        quant: info.quant!,
+        format: info.format,
+      };
+    });
+
   // ---------------------------------------------------------------------------
   // Render
   // ---------------------------------------------------------------------------
@@ -107,11 +132,12 @@ export default async function ModelFamilyPage({
         <div className="mx-auto flex w-full max-w-5xl grow flex-col py-4 md:py-6">
           <H2 className="mb-2 px-4 md:px-0">Quantizations</H2>
           <ModelQuantizationsTable quants={quants} />
-          <H2 className="mb-2 mt-4 px-4 md:mt-8 md:px-0">Performance</H2>
-          <div className="flex w-full flex-col gap-2 md:flex-row">
-            <div className="h-64 w-full border-y border-gray-6 bg-gray-2 md:rounded-xl md:border-x" />
-            <div className="h-64 w-full border-y border-gray-6 bg-gray-2 md:rounded-xl md:border-x" />
-          </div>
+          {devicesChartData.length > 0 ? (
+            <Fragment>
+              <H2 className="mb-2 mt-4 px-4 md:mt-8 md:px-0">Devices</H2>
+              <DevicesChart data={devicesChartData} defaultDevice={effectiveDevice} />
+            </Fragment>
+          ) : null}
         </div>
       </div>
       <DeviceFloatingSelector chips={chips} />
