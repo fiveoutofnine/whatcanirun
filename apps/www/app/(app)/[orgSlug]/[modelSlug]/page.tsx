@@ -1,4 +1,5 @@
 import { unstable_cache as cache } from 'next/cache';
+import { notFound } from 'next/navigation';
 import { Fragment } from 'react';
 
 import DeviceFloatingSelector from './(components)/device-floating-selector';
@@ -25,7 +26,8 @@ export default async function ModelFamilyPage({
   const { device: deviceParam } = await searchParams;
 
   // We handle the not found case in the layout.
-  const family = (await getModelFamily(orgSlug, modelSlug))!;
+  const family = await getModelFamily(orgSlug, modelSlug);
+  if (!family) return notFound();
   const { members, stats } = await cache(
     async () => {
       const [members, stats] = await Promise.all([
