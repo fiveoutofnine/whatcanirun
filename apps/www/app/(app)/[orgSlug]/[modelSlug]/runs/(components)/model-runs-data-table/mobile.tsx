@@ -8,21 +8,16 @@ import { type ColumnDef, flexRender, useReactTable } from '@tanstack/react-table
 import clsx from 'clsx';
 import { ChevronRight, FileText } from 'lucide-react';
 
-import { RunStatus } from '@/lib/db/schema';
-
 import DataTableSortHeader from '@/components/templates/data-table-sort-header';
 import RelativeDate from '@/components/templates/relative-date';
 import Stat from '@/components/templates/stat';
 import StateInfo from '@/components/templates/state-info';
-import { DeviceTableCell, RuntimeTableCell } from '@/components/templates/table-cells';
-import { Badge, IconButton, Table, Tooltip } from '@/components/ui';
-
-const STATUS_BADGE_INTENT = {
-  [RunStatus.VERIFIED]: 'success',
-  [RunStatus.PENDING]: 'warning',
-  [RunStatus.FLAGGED]: 'orange',
-  [RunStatus.REJECTED]: 'fail',
-} as const;
+import {
+  DeviceTableCell,
+  QuantTableCell,
+  RuntimeTableCell,
+} from '@/components/templates/table-cells';
+import { IconButton, Table, Tooltip } from '@/components/ui';
 
 const ModelRunsDataTableMobile: React.FC<ModelRunsDataTableInternalProps> = (tableOptions) => {
   const columns: ColumnDef<ModelRunsDataTableValue>[] = useMemo(
@@ -50,6 +45,23 @@ const ModelRunsDataTableMobile: React.FC<ModelRunsDataTableInternalProps> = (tab
         },
       },
       {
+        id: 'quant',
+        accessorKey: 'modelId',
+        enableSorting: false,
+        header: () => <div>Quant</div>,
+        cell: ({ row }) => {
+          const { model } = row.original;
+          const info = model.info;
+          return (
+            <QuantTableCell
+              quant={info?.quant || model.quant}
+              format={model.format}
+              source={info?.source || model.source}
+            />
+          );
+        },
+      },
+      {
         id: 'decode',
         accessorKey: 'decodeTpsMean',
         header: ({ column }) => (
@@ -69,24 +81,6 @@ const ModelRunsDataTableMobile: React.FC<ModelRunsDataTableInternalProps> = (tab
               maximumFractionDigits: 1,
             })}{' '}
             <span className="text-gray-11">tok/s</span>
-          </div>
-        ),
-      },
-      {
-        id: 'status',
-        accessorKey: 'status',
-        enableSorting: false,
-        header: () => <div className="flex justify-end">Status</div>,
-        cell: ({ row }) => (
-          <div className="flex justify-end">
-            <Badge
-              variant="outline"
-              size="sm"
-              type="text"
-              intent={STATUS_BADGE_INTENT[row.original.status]}
-            >
-              {row.original.status.charAt(0).toUpperCase() + row.original.status.slice(1)}
-            </Badge>
           </div>
         ),
       },
@@ -171,11 +165,11 @@ const ModelRunsDataTableMobile: React.FC<ModelRunsDataTableInternalProps> = (tab
               <Table.Row key={row.id} className="h-16">
                 {[
                   <DeviceTableCell.Skeleton key={0} />,
+                  <QuantTableCell.Skeleton key={1} />,
                   <div
-                    key={1}
+                    key={2}
                     className="ml-auto h-[1.125rem] w-20 animate-pulse rounded bg-gray-9"
                   />,
-                  <div key={2} className="ml-auto h-5 w-16 animate-pulse rounded-full bg-gray-9" />,
                   <div key={3} className="ml-auto w-8">
                     <IconButton variant="outline" disabled>
                       <ChevronRight />
@@ -267,12 +261,6 @@ const ModelRunsDataTableMobileSubComponent: React.FC<{ data: ModelRunsDataTableV
       <Stat className="col-span-1">
         <Stat.Name>Trials total</Stat.Name>
         <Stat.Value className="tabular-nums">{data.trialsTotal}</Stat.Value>
-      </Stat>
-      <Stat className="col-span-1">
-        <Stat.Name>Status</Stat.Name>
-        <Badge variant="outline" size="sm" type="text" intent={STATUS_BADGE_INTENT[data.status]}>
-          {data.status.charAt(0).toUpperCase() + data.status.slice(1)}
-        </Badge>
       </Stat>
       <Stat className="col-span-1">
         <Stat.Name>Date</Stat.Name>

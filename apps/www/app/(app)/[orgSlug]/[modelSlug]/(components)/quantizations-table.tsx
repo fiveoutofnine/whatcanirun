@@ -3,14 +3,13 @@
 import { Fragment, useState } from 'react';
 
 import clsx from 'clsx';
-import { ArrowUpRight, Check, Copy, ExternalLink } from 'lucide-react';
+import { ArrowUpRight, Check, Copy } from 'lucide-react';
 
 import type { Organization } from '@/lib/db/schema';
 import { formatBytes } from '@/lib/utils';
 
-import LogoImg from '@/components/common/logo-img';
-import { Code } from '@/components/templates/mdx';
 import ScoreBadge from '@/components/templates/score-badge';
+import { QuantTableCell } from '@/components/templates/table-cells';
 import UserAvatar from '@/components/templates/user-avatar';
 import { Table, toast, Tooltip } from '@/components/ui';
 
@@ -61,73 +60,12 @@ const ModelQuantizationsTable: React.FC<ModelQuantizationsTableProps> = ({ quant
         {quants.map((v) => {
           if (!v.quant) return null;
 
-          let sourceUrl;
-          let formatUrl;
-          let Icon;
-          if (v.format === 'gguf') {
-            if (v.source) {
-              const sourceParts = v.source.split(':') ?? [];
-              if (sourceParts.length > 1) {
-                sourceUrl = `https://huggingface.co/${sourceParts[0]}/blob/main/${sourceParts[1]}`;
-              }
-            }
-            formatUrl = 'https://huggingface.co/docs/hub/gguf';
-            Icon = LogoImg.Ggml;
-          } else if (v.format === 'mlx') {
-            if (v.source) sourceUrl = `https://huggingface.co/${v.source}`;
-            formatUrl = 'https://github.com/ml-explore/mlx';
-            Icon = LogoImg.Mlx;
-          }
           const [sizeValue, sizeUnit] = formatBytes(v.fileSizeBytes ?? 0).split(' ');
 
           return (
             <Table.Row key={v.modelId}>
               <Table.Cell className="pl-4">
-                <div className="flex min-w-fit items-center gap-1.5 text-nowrap">
-                  {sourceUrl ? (
-                    <a
-                      className="flex hover:underline focus-visible:rounded"
-                      href={sourceUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      {v.quant}
-                      <ArrowUpRight className="size-3 text-gray-11" />
-                    </a>
-                  ) : (
-                    <span>{v.quant}</span>
-                  )}
-                  {formatUrl && Icon ? (
-                    <Tooltip
-                      content={
-                        <span>
-                          <Code>{v.format}</Code> format
-                        </span>
-                      }
-                      triggerProps={{
-                        className:
-                          'focus-visible:rounded group/quant-format size-4 overflow-hidden border rounded border-gray-7 transition-colors hover:border-gray-8',
-                        asChild: true,
-                      }}
-                      inverted={false}
-                    >
-                      <a
-                        className="relative flex items-center justify-center"
-                        href={formatUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <Icon
-                          className="rounded-none border-0 transition-[filter] group-hover/quant-format:blur group-focus-visible/quant-format:blur"
-                          size={16}
-                        />
-                        <ExternalLink className="pointer-events-none absolute size-2.5 opacity-0 transition-opacity group-hover/quant-format:opacity-100 group-focus-visible/quant-format:opacity-100" />
-                      </a>
-                    </Tooltip>
-                  ) : (
-                    <Code>{v.format}</Code>
-                  )}
-                </div>
+                <QuantTableCell quant={v.quant} format={v.format} source={v.source} />
               </Table.Cell>
               <Table.Cell>
                 {v.quantizedBy ? (

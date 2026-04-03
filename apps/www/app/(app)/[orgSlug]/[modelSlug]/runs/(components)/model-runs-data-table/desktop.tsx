@@ -7,24 +7,16 @@ import type { ModelRunsDataTableValue } from './types';
 import { type ColumnDef, flexRender, useReactTable } from '@tanstack/react-table';
 import { FileText } from 'lucide-react';
 
-import { RunStatus } from '@/lib/db/schema';
-
 import DataTableSortHeader from '@/components/templates/data-table-sort-header';
 import RelativeDate from '@/components/templates/relative-date';
 import StateInfo from '@/components/templates/state-info';
 import {
   DeviceTableCell,
   MemoryTableCell,
+  QuantTableCell,
   RuntimeTableCell,
 } from '@/components/templates/table-cells';
-import { Badge, Table } from '@/components/ui';
-
-const STATUS_BADGE_INTENT = {
-  [RunStatus.VERIFIED]: 'success',
-  [RunStatus.PENDING]: 'warning',
-  [RunStatus.FLAGGED]: 'orange',
-  [RunStatus.REJECTED]: 'fail',
-} as const;
+import { Table } from '@/components/ui';
 
 const ModelRunsDataTableDesktop: React.FC<ModelRunsDataTableInternalProps> = (tableOptions) => {
   const columns: ColumnDef<ModelRunsDataTableValue>[] = useMemo(
@@ -47,6 +39,23 @@ const ModelRunsDataTableDesktop: React.FC<ModelRunsDataTableInternalProps> = (ta
               gpuCores={device.gpuCores}
               ramGb={device.ramGb}
               osName={device.osName}
+            />
+          );
+        },
+      },
+      {
+        id: 'quant',
+        accessorKey: 'modelId',
+        enableSorting: false,
+        header: () => <div>Quant</div>,
+        cell: ({ row }) => {
+          const { model } = row.original;
+          const info = model.info;
+          return (
+            <QuantTableCell
+              quant={info?.quant || model.quant}
+              format={model.format}
+              source={info?.source || model.source}
             />
           );
         },
@@ -136,24 +145,6 @@ const ModelRunsDataTableDesktop: React.FC<ModelRunsDataTableInternalProps> = (ta
         ),
       },
       {
-        id: 'status',
-        accessorKey: 'status',
-        enableSorting: false,
-        header: () => <div className="flex justify-end">Status</div>,
-        cell: ({ row }) => (
-          <div className="flex justify-end">
-            <Badge
-              variant="outline"
-              size="sm"
-              type="text"
-              intent={STATUS_BADGE_INTENT[row.original.status]}
-            >
-              {row.original.status.charAt(0).toUpperCase() + row.original.status.slice(1)}
-            </Badge>
-          </div>
-        ),
-      },
-      {
         id: 'date',
         accessorKey: 'createdAt',
         header: ({ column }) => (
@@ -230,17 +221,17 @@ const ModelRunsDataTableDesktop: React.FC<ModelRunsDataTableInternalProps> = (ta
               <Table.Row key={row.id} className="h-16">
                 {[
                   <DeviceTableCell.Skeleton key={0} />,
-                  <RuntimeTableCell.Skeleton key={1} showVersion />,
+                  <QuantTableCell.Skeleton key={1} />,
+                  <RuntimeTableCell.Skeleton key={2} showVersion />,
                   <div
-                    key={2}
+                    key={3}
                     className="ml-auto h-[1.125rem] w-20 animate-pulse rounded bg-gray-9"
                   />,
                   <div
-                    key={3}
+                    key={4}
                     className="ml-auto h-[1.125rem] w-24 animate-pulse rounded bg-gray-9"
                   />,
-                  <MemoryTableCell.Skeleton key={4} align="left" />,
-                  <div key={5} className="ml-auto h-5 w-16 animate-pulse rounded-full bg-gray-9" />,
+                  <MemoryTableCell.Skeleton key={5} align="left" />,
                   <div key={6} className="ml-auto h-5 w-20 animate-pulse rounded bg-gray-9" />,
                 ].map((skeleton, i) => (
                   <Table.Cell key={i} className="first:pl-4 last:pr-4 md:first:pl-6 md:last:pr-6">
