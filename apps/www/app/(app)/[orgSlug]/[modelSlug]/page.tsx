@@ -1,5 +1,7 @@
 import { unstable_cache as cache } from 'next/cache';
+import { Fragment } from 'react';
 
+import DeviceFloatingSelector from './(components)/device-floating-selector';
 import ModelQuantizationsTable from './(components)/quantizations-table';
 import type { Quant } from './(components)/quantizations-table';
 import { getModelFamily, getModelFamilyChips } from './utils';
@@ -106,13 +108,16 @@ export default async function ModelFamilyPage({
   // ---------------------------------------------------------------------------
 
   return (
-    <div className="flex grow md:px-6">
-      <div className="mx-auto flex w-full max-w-5xl grow flex-col py-4 md:py-6">
-        <H2 className="mb-2 px-4 md:px-0" link={false}>
-          Quantizations
-        </H2>
-        <ModelQuantizationsTable quants={quants} />
+    <Fragment>
+      <div className="flex grow md:px-6">
+        <div className="mx-auto flex w-full max-w-5xl grow flex-col py-4 md:py-6">
+          <H2 className="mb-2 px-4 md:px-0" link={false}>
+            Quantizations
+          </H2>
+          <ModelQuantizationsTable quants={quants} />
+        </div>
       </div>
-    </div>
+      <DeviceFloatingSelector chips={chips} />
+    </Fragment>
   );
 }

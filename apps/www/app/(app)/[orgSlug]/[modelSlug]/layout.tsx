@@ -3,9 +3,8 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Fragment } from 'react';
 
-import DeviceFloatingSelector from './(components)/device-floating-selector';
 import { generateBaseMetadata } from './generate-base-metadata';
-import { getModelFamily, getModelFamilyChips } from './utils';
+import { getModelFamily } from './utils';
 
 import UserAvatar from '@/components/templates/user-avatar';
 
@@ -36,10 +35,7 @@ export default async function Layout({
 }) {
   const { orgSlug, modelSlug } = await params;
   const family = await getModelFamily(orgSlug, modelSlug);
-
   if (!family) notFound();
-
-  const chips = await getModelFamilyChips(family.familyId);
 
   return (
     <div className="flex grow flex-col">
@@ -66,11 +62,11 @@ export default async function Layout({
               <span>/</span>
               <span className="tracking-tight text-gray-12">{family.familyName}</span>
             </h1>
+            {/* <div className="flex flex-wrap gap-x-3 gap-y-1.5">{family.orgWebsiteUrl}</div> */}
           </div>
         </div>
       </header>
       {children}
-      <DeviceFloatingSelector chips={chips} />
     </div>
   );
 }
