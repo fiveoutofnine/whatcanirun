@@ -103,7 +103,14 @@ export default async function ModelFamilyPage({
   const modelInfoMap = new Map(
     members
       .filter((m) => m.model !== null)
-      .map((m) => [m.model!.id, { quant: m.quant || m.model!.quant, format: m.model!.format }]),
+      .map((m) => [
+        m.model!.id,
+        {
+          quant: m.quant || m.model!.quant,
+          format: m.model!.format,
+          fileSizeBytes: m.fileSizeBytes || m.model!.fileSizeBytes || null,
+        },
+      ]),
   );
   const devicesChartData: ModelDevicesChartValue[] = stats
     .filter(
@@ -119,6 +126,7 @@ export default async function ModelFamilyPage({
         ...r,
         quant: info.quant!,
         format: info.format,
+        fileSizeBytes: info.fileSizeBytes,
       };
     });
 

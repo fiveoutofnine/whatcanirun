@@ -3,6 +3,7 @@
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import clsx from 'clsx';
+import { ChevronDown } from 'lucide-react';
 import { useQueryState } from 'nuqs';
 import {
   CartesianGrid,
@@ -21,6 +22,7 @@ import { formatChipName, parseManufacturer } from '@/lib/utils';
 
 import LogoImg from '@/components/common/logo-img';
 import { Code } from '@/components/templates/mdx';
+import { Button, Dropdown } from '@/components/ui';
 
 // -----------------------------------------------------------------------------
 // Types
@@ -29,6 +31,7 @@ import { Code } from '@/components/templates/mdx';
 export type ModelDevicesChartValue = ModelDeviceSummary & {
   quant: string;
   format: string;
+  fileSizeBytes: number | null;
 };
 
 type ModelDevicesChartProps = {
@@ -47,10 +50,51 @@ const ModelDevicesChartChart: React.FC<ModelDevicesChartProps> = ({ data, defaul
     height: 446,
   });
   const [device] = useQueryState('device', { defaultValue: defaultDevice });
+  const [selectedQuants, setSelectedQuants] = useState<Set<string> | null>(null);
+
+  // Build quant options sorted by file size ascending (smallest → largest).
+  const quantOptions = useMemo(() => {
+    const counts = new Map<
+      string,
+      { quant: string; format: string; count: number; fileSizeBytes: number | null }
+    >();
+    for (const d of data) {
+      if (d.avgDecodeTps <= 0 || d.avgPrefillTps <= 0) continue;
+      const key = `${d.format}:${d.quant}`;
+      const existing = counts.get(key);
+      if (existing) {
+        existing.count++;
+        if (
+          d.fileSizeBytes != null &&
+          (existing.fileSizeBytes == null || d.fileSizeBytes < existing.fileSizeBytes)
+        ) {
+          existing.fileSizeBytes = d.fileSizeBytes;
+        }
+      } else {
+        counts.set(key, {
+          quant: d.quant,
+          format: d.format,
+          count: 1,
+          fileSizeBytes: d.fileSizeBytes,
+        });
+      }
+    }
+    return [...counts.values()].sort((a, b) => {
+      if (a.fileSizeBytes == null && b.fileSizeBytes == null) return 0;
+      if (a.fileSizeBytes == null) return 1;
+      if (b.fileSizeBytes == null) return -1;
+      return a.fileSizeBytes - b.fileSizeBytes;
+    });
+  }, [data]);
 
   const filteredData = useMemo(
-    () => data.filter((d) => d.avgDecodeTps > 0 && d.avgPrefillTps > 0),
-    [data],
+    () =>
+      data.filter((d) => {
+        if (d.avgDecodeTps <= 0 || d.avgPrefillTps <= 0) return false;
+        if (selectedQuants) return selectedQuants.has(`${d.format}:${d.quant}`);
+        return true;
+      }),
+    [data, selectedQuants],
   );
 
   // Highlight highest cost (a), score (b), and score/cost ratio (c).
@@ -124,6 +168,69 @@ const ModelDevicesChartChart: React.FC<ModelDevicesChartProps> = ({ data, defaul
         <span className="font-mono text-xs text-gray-11">
           {chartData.length.toLocaleString()} devices
         </span>
+        {quantOptions.length > 1 ? (
+          <Dropdown.Root>
+            <Dropdown.Trigger asChild>
+              <Button className="ml-auto" size="sm" variant="outline" rightIcon={<ChevronDown />}>
+                {selectedQuants
+                  ? `${selectedQuants.size} quant${selectedQuants.size !== 1 ? 's' : ''}`
+                  : 'All quants'}
+              </Button>
+            </Dropdown.Trigger>
+            <Dropdown.Content align="end">
+              <Dropdown.Group>
+                <Dropdown.Item>hi</Dropdown.Item>
+              </Dropdown.Group>
+              <Dropdown.Separator />
+              <Dropdown.Group>
+                {quantOptions.map((opt) => {
+                  const key = `${opt.format}:${opt.quant}`;
+                  const checked = selectedQuants ? selectedQuants.has(key) : true;
+                  const FormatLogo = FORMAT_LOGO[opt.format];
+
+                  return (
+                    <Dropdown.CheckboxItem
+                      key={key}
+                      checked={checked}
+                      onCheckedChange={() => {
+                        setSelectedQuants((prev) => {
+                          if (!prev) {
+                            // First deselection: start with all selected, then remove this one.
+                            const all = new Set(quantOptions.map((o) => `${o.format}:${o.quant}`));
+                            all.delete(key);
+                            return all.size === 0 ? null : all;
+                          }
+                          const next = new Set(prev);
+                          if (next.has(key)) {
+                            next.delete(key);
+                          } else {
+                            next.add(key);
+                          }
+                          // If all are selected again, reset to null (= "All").
+                          if (next.size === quantOptions.length) return null;
+                          // If none are selected, keep at least one (don't allow empty).
+                          if (next.size === 0) return prev;
+                          return next;
+                        });
+                      }}
+                      onSelect={(e) => e.preventDefault()}
+                    >
+                      <span className="flex w-full items-center gap-4">
+                        <span className="flex items-center gap-1.5">
+                          {opt.quant}
+                          {FormatLogo ? <FormatLogo size={16} /> : <Code>{opt.format}</Code>}
+                        </span>
+                        <span className="ml-auto tabular-nums text-gray-11">
+                          {opt.count.toLocaleString()} device{opt.count > 1 ? 's' : ''}
+                        </span>
+                      </span>
+                    </Dropdown.CheckboxItem>
+                  );
+                })}
+              </Dropdown.Group>
+            </Dropdown.Content>
+          </Dropdown.Root>
+        ) : null}
       </div>
       <ResponsiveContainer className="mt-2" width="100%" height="100%">
         <ScatterChart
@@ -338,6 +445,7 @@ const ModelDevicesChartChart: React.FC<ModelDevicesChartProps> = ({ data, defaul
               content={(props) => {
                 const { x, y, index } = props as { x: number; y: number; index: number };
                 const item = chartData[index];
+                if (!item) return null;
 
                 if (!item.deviceChipId || !highlightedIds.has(item.deviceChipId)) return null;
 
