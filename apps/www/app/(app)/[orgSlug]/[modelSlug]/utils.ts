@@ -3,7 +3,13 @@ import { unstable_cache as cache } from 'next/cache';
 import { and, countDistinct, eq, inArray, sql } from 'drizzle-orm';
 
 import { db } from '@/lib/db';
-import { modelFamilies, models, modelsInfo, organizations, view__model_stats_by_device } from '@/lib/db/schema';
+import {
+  modelFamilies,
+  models,
+  modelsInfo,
+  organizations,
+  view__model_stats_by_device,
+} from '@/lib/db/schema';
 
 export const getModelFamily = cache(
   async (orgSlug: string, modelSlug: string) => {

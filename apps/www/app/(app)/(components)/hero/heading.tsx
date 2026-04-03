@@ -5,6 +5,8 @@ import { Fragment, useEffect, useMemo } from 'react';
 import { ChevronsUpDown } from 'lucide-react';
 import { useQueryState } from 'nuqs';
 
+import { formatChipName } from '@/lib/utils';
+
 import Logo from '@/components/common/logo';
 import DeviceCombobox from '@/components/templates/device-combobox';
 import InlineButton from '@/components/templates/inline-button';
@@ -32,9 +34,6 @@ const FALLBACK_DEVICE = 'Apple M1 Max:10:Apple M1 Max:32:64';
 // -----------------------------------------------------------------------------
 // Helpers
 // -----------------------------------------------------------------------------
-
-/** Strip manufacturer prefix for display (e.g. "Apple M1 Max" → "M1 Max"). */
-const formatCpu = (name: string) => name.replace(/^\S+\s+/, '');
 
 /** Detect hardware info from browser APIs. */
 const detectHardware = () => {
@@ -145,10 +144,10 @@ const HeroHeading: React.FC<{ chips: ChipOption[] }> = ({ chips }) => {
   // Non-Apple CPU-only: strip manufacturer from CPU name.
   const displayName = selected
     ? isApple
-      ? formatCpu(selected.cpu)
+      ? formatChipName(selected.cpu)
       : hasGpu
-        ? selected.gpu.replace(/^\S+\s+/, '')
-        : selected.cpu.replace(/^\S+\s+/, '')
+        ? formatChipName(selected.gpu)
+        : formatChipName(selected.cpu)
     : 'M1 Max';
   const displayRam = selected?.ramGb ?? 64;
 

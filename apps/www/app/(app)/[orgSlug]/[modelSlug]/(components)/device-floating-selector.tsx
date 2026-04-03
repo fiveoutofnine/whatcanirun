@@ -5,8 +5,9 @@ import { Fragment, useMemo } from 'react';
 import { ChevronsUpDown } from 'lucide-react';
 import { useQueryState } from 'nuqs';
 
+import { formatChipName, parseManufacturer } from '@/lib/utils';
+
 import DeviceCombobox from '@/components/templates/device-combobox';
-import InlineButton from '@/components/templates/inline-button';
 
 // -----------------------------------------------------------------------------
 // Types
@@ -22,17 +23,15 @@ export type ChipOption = {
   modelCount: number;
 };
 
-// -----------------------------------------------------------------------------
-// Helpers
-// -----------------------------------------------------------------------------
-
-const formatCpu = (name: string) => name.replace(/^\S+\s+/, '');
+type DeviceFloatingSelectorProps = {
+  chips: ChipOption[];
+};
 
 // -----------------------------------------------------------------------------
 // Component
 // -----------------------------------------------------------------------------
 
-const DevicePill: React.FC<{ chips: ChipOption[] }> = ({ chips }) => {
+const DeviceFloatingSelector: React.FC<DeviceFloatingSelectorProps> = ({ chips }) => {
   const defaultDevice = useMemo(() => {
     const sorted = [...chips].sort((a, b) => b.modelCount - a.modelCount);
     return sorted[0]?.chipId ?? '';
@@ -65,10 +64,10 @@ const DevicePill: React.FC<{ chips: ChipOption[] }> = ({ chips }) => {
 
   const displayName = selected
     ? isApple
-      ? formatCpu(selected.cpu)
+      ? formatChipName(selected.cpu)
       : hasGpu
-        ? selected.gpu.replace(/^\S+\s+/, '')
-        : selected.cpu.replace(/^\S+\s+/, '')
+        ? formatChipName(selected.gpu)
+        : formatChipName(selected.cpu)
     : '';
   const displayRam = selected?.ramGb ?? 0;
 
@@ -84,16 +83,26 @@ const DevicePill: React.FC<{ chips: ChipOption[] }> = ({ chips }) => {
 
   if (chips.length <= 1) return null;
 
+  const primaryName = selected
+    ? isApple
+      ? selected.gpu
+      : hasGpu
+        ? selected.gpu
+        : selected.cpu
+    : '';
+  const { logo: Logo } = parseManufacturer(primaryName);
+
   return (
     <div className="pointer-events-none fixed inset-x-0 bottom-4 z-50 flex justify-center">
       <DeviceCombobox devices={chipsSorted} value={device} onSelect={setDevice}>
-        <InlineButton className="pointer-events-auto rounded-full border border-gray-7 bg-gray-2 px-4 py-2 text-sm font-semibold text-gray-12 shadow-lg backdrop-blur transition-colors hover:border-gray-8 hover:bg-gray-3 focus-visible:border-gray-8 focus-visible:bg-gray-3 active:bg-gray-4">
-          {buttonContent}
-          <ChevronsUpDown className="ml-1.5 inline size-3.5 align-[-0.1em] text-gray-11" />
-        </InlineButton>
+        <button className="pointer-events-auto flex items-center gap-1.5 rounded-full border border-gray-7 bg-gray-3 px-4 py-2 text-sm font-medium text-gray-12 shadow-lg backdrop-blur transition-colors hover:border-gray-8 hover:bg-gray-4 focus-visible:border-gray-8 focus-visible:bg-gray-4 active:bg-gray-5">
+          {Logo ? <Logo size={20} className="rounded-full" /> : null}
+          <span>{buttonContent}</span>
+          <ChevronsUpDown className="size-4 text-gray-11" />
+        </button>
       </DeviceCombobox>
     </div>
   );
 };
 
-export default DevicePill;
+export default DeviceFloatingSelector;

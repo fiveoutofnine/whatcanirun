@@ -6,34 +6,16 @@ import { twMerge } from 'tailwind-merge';
 
 import { getVramGb } from '@/lib/constants/gpu';
 import type { Device } from '@/lib/db/schema';
+import { parseManufacturer } from '@/lib/utils';
 
-import LogoImg from '@/components/common/logo-img';
 import ClickableTooltip from '@/components/templates/clickable-tooltip';
 import { Badge } from '@/components/ui';
 
 // -----------------------------------------------------------------------------
-// Manufacturer detection
+// Constants
 // -----------------------------------------------------------------------------
 
-type Manufacturer = 'nvidia' | 'amd' | 'intel' | 'apple';
-
-const MANUFACTURER_PREFIXES: { prefix: string; manufacturer: Manufacturer }[] = [
-  { prefix: 'nvidia', manufacturer: 'nvidia' },
-  { prefix: 'geforce', manufacturer: 'nvidia' },
-  { prefix: 'amd', manufacturer: 'amd' },
-  { prefix: 'radeon', manufacturer: 'amd' },
-  { prefix: 'intel', manufacturer: 'intel' },
-  { prefix: 'apple', manufacturer: 'apple' },
-];
-
-const MANUFACTURER_ICON: Record<Manufacturer, React.FC<{ className?: string; size?: number }>> = {
-  nvidia: LogoImg.Nvidia,
-  amd: LogoImg.Amd,
-  intel: LogoImg.Intel,
-  apple: LogoImg.Apple,
-};
-
-const MANUFACTURER_LABEL: Record<Manufacturer, string> = {
+const MANUFACTURER_LABEL: Record<string, string> = {
   nvidia: 'NVIDIA',
   amd: 'AMD',
   intel: 'Intel',
@@ -66,8 +48,7 @@ const DeviceTableCell: React.FC<DeviceTableCellProps> & { Skeleton: React.FC } =
   if (!isMac) {
     const hasGpu = gpuCores > 0;
     const primaryName = hasGpu ? gpu : cpu;
-    const { manufacturer, displayName } = parseManufacturer(primaryName);
-    const Icon = manufacturer ? MANUFACTURER_ICON[manufacturer] : null;
+    const { manufacturer, displayName, logo: Icon } = parseManufacturer(primaryName);
 
     if (!hasGpu) {
       return (
@@ -143,8 +124,7 @@ const DeviceTableCell: React.FC<DeviceTableCellProps> & { Skeleton: React.FC } =
   }
 
   // macOS branch.
-  const { manufacturer, displayName } = parseManufacturer(gpu ?? cpu);
-  const Icon = manufacturer ? MANUFACTURER_ICON[manufacturer] : null;
+  const { manufacturer, displayName, logo: Icon } = parseManufacturer(gpu ?? cpu);
 
   return (
     <div className="flex flex-col items-start">
@@ -232,30 +212,6 @@ const DeviceTableCellSkeleton: React.FC = () => {
     </div>
   );
 };
-
-// -----------------------------------------------------------------------------
-// Helpers
-// -----------------------------------------------------------------------------
-
-function parseManufacturer(name: string): {
-  manufacturer: Manufacturer | null;
-  displayName: string;
-} {
-  const lower = name.toLowerCase();
-  // Try prefix match first (strip the prefix from the display name).
-  for (const { prefix, manufacturer } of MANUFACTURER_PREFIXES) {
-    if (lower.startsWith(prefix)) {
-      return { manufacturer, displayName: name.slice(prefix.length).trim() };
-    }
-  }
-  // Fall back to substring match (keep full name since prefix isn't leading).
-  for (const { prefix, manufacturer } of MANUFACTURER_PREFIXES) {
-    if (lower.includes(prefix)) {
-      return { manufacturer, displayName: name };
-    }
-  }
-  return { manufacturer: null, displayName: name };
-}
 
 // -----------------------------------------------------------------------------
 // Export

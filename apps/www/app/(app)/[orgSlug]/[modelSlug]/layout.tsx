@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Fragment } from 'react';
 
-import DevicePill from './(components)/device-pill';
+import DeviceFloatingSelector from './(components)/device-floating-selector';
 import { generateBaseMetadata } from './generate-base-metadata';
 import { getModelFamily, getModelFamilyChips } from './utils';
 
@@ -68,7 +68,7 @@ export default async function Layout({ params, children }: Props) {
         </div>
       </header>
       {children}
-      <DevicePill chips={chips} />
+      <DeviceFloatingSelector chips={chips} />
     </div>
   );
 }
