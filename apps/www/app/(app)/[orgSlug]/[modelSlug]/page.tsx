@@ -4,58 +4,13 @@ import ModelQuantizationsTable from './(components)/quantizations-table';
 import type { Variant } from './(components)/quantizations-table';
 import { getModelFamily, getModelFamilyChips } from './utils';
 import { eq, inArray } from 'drizzle-orm';
-import { alias } from 'drizzle-orm/pg-core';
+import { File } from 'lucide-react';
 
 import { db } from '@/lib/db';
-import { models, modelsInfo, organizations, view__model_stats_by_device } from '@/lib/db/schema';
+import { modelsInfo, view__model_stats_by_device } from '@/lib/db/schema';
 
 import { H2 } from '@/components/templates/mdx';
-
-const getModelFamilyData = cache(
-  async (familyId: string) => {
-    const memberRows = await db
-      .select({ modelId: models.id })
-      .from(modelsInfo)
-      .innerJoin(models, eq(modelsInfo.artifactSha256, models.artifactSha256))
-      .where(eq(modelsInfo.familyId, familyId));
-
-    const modelIds = memberRows.map((r) => r.modelId);
-
-    const quantOrg = alias(organizations, 'quant_org_page');
-    const allMembers =
-      modelIds.length > 0
-        ? await db
-            .select({
-              modelId: models.id,
-              modelQuant: models.quant,
-              modelFormat: models.format,
-              modelFileSizeBytes: models.fileSizeBytes,
-              modelSource: models.source,
-              infoQuant: modelsInfo.quant,
-              infoSource: modelsInfo.source,
-              infoFileSizeBytes: modelsInfo.fileSizeBytes,
-              quantizedByName: quantOrg.name,
-              quantizedByLogoUrl: quantOrg.logoUrl,
-            })
-            .from(models)
-            .innerJoin(modelsInfo, eq(models.artifactSha256, modelsInfo.artifactSha256))
-            .leftJoin(quantOrg, eq(modelsInfo.quantizedById, quantOrg.id))
-            .where(inArray(models.id, modelIds))
-        : [];
-
-    const stats =
-      modelIds.length > 0
-        ? await db
-            .select()
-            .from(view__model_stats_by_device)
-            .where(inArray(view__model_stats_by_device.modelId, modelIds))
-        : [];
-
-    return { modelIds, allMembers, stats };
-  },
-  ['model-family-data'],
-  { revalidate: 3600 },
-);
+import StateInfo from '@/components/templates/state-info';
 
 export default async function ModelFamilyPage({
   params,
@@ -66,38 +21,47 @@ export default async function ModelFamilyPage({
 }) {
   const { orgSlug, modelSlug } = await params;
   const { device: deviceParam } = await searchParams;
+
+  // We handle the not found case in the layout.
   const family = (await getModelFamily(orgSlug, modelSlug))!;
+  const { members, stats } = await cache(
+    async () => {
+      const members = await db.query.modelsInfo.findMany({
+        where: eq(modelsInfo.familyId, family.familyId),
+        with: { model: true, quantizedBy: true },
+      });
 
-  // ---------------------------------------------------------------------------
-  // Data fetching
-  // ---------------------------------------------------------------------------
+      const modelIds = members.flatMap((m) => (m.model ? [m.model.id] : []));
 
-  const { modelIds, allMembers, stats } = await getModelFamilyData(family.familyId);
+      if (modelIds.length === 0) return { members, stats: [] };
 
-  if (modelIds.length === 0) {
+      const stats = await db
+        .select()
+        .from(view__model_stats_by_device)
+        .where(inArray(view__model_stats_by_device.modelId, modelIds));
+
+      return { members, stats };
+    },
+    ['model-family-data'],
+    { revalidate: 600 },
+  )();
+
+  if (members.length > 0 || stats.length > 0) {
     return (
-      <div className="flex grow flex-col py-4 md:py-6">
-        <p className="mx-auto max-w-7xl px-4 py-12 text-center text-gray-11 md:px-6">
-          No models have been linked to this family yet.
-        </p>
+      <div className="flex grow flex-col p-4 md:px-0 md:py-6">
+        <div className="mx-auto flex w-full max-w-5xl items-center justify-center rounded-xl border border-gray-6 bg-gray-2 px-4 py-12">
+          <StateInfo
+            size="sm"
+            title="No benchmark results found"
+            description="No benchmark results yet for this model family."
+            icon={<File />}
+          />
+        </div>
       </div>
     );
   }
 
-  if (stats.length === 0) {
-    return (
-      <div className="flex grow flex-col py-4 md:py-6">
-        <p className="mx-auto max-w-7xl px-4 py-12 text-center text-gray-11 md:px-6">
-          No benchmark results yet for this model family.
-        </p>
-      </div>
-    );
-  }
-
-  // ---------------------------------------------------------------------------
-  // Determine effective device
-  // ---------------------------------------------------------------------------
-
+  // Effective device.
   const chips = await getModelFamilyChips(family.familyId);
   const chipIds = new Set(chips.map((c) => c.chipId));
   const sortedChips = [...chips].sort((a, b) => b.modelCount - a.modelCount);
@@ -106,10 +70,7 @@ export default async function ModelFamilyPage({
       ? deviceParam
       : (sortedChips[0]?.chipId ?? '');
 
-  // ---------------------------------------------------------------------------
-  // Build best score per model on the selected device
-  // ---------------------------------------------------------------------------
-
+  // Best score by model for device
   const bestScoreByModel = new Map<string, number>();
   for (const row of stats) {
     if (row.deviceChipId !== effectiveDevice) continue;
@@ -119,21 +80,19 @@ export default async function ModelFamilyPage({
     }
   }
 
-  // ---------------------------------------------------------------------------
-  // Build variants
-  // ---------------------------------------------------------------------------
-
-  const variants: Variant[] = allMembers
+  // Variants
+  const variants: Variant[] = members
+    .filter((m) => m.model !== null)
     .map((m) => ({
-      modelId: m.modelId,
-      quant: m.infoQuant || m.modelQuant,
-      format: m.modelFormat,
-      fileSizeBytes: m.infoFileSizeBytes || m.modelFileSizeBytes || null,
-      source: m.infoSource || m.modelSource,
-      quantizedBy: m.quantizedByName
-        ? { name: m.quantizedByName, logoUrl: m.quantizedByLogoUrl }
+      modelId: m.model!.id,
+      quant: m.quant || m.model!.quant,
+      format: m.model!.format,
+      fileSizeBytes: m.fileSizeBytes || m.model!.fileSizeBytes || null,
+      source: m.source || m.model!.source,
+      quantizedBy: m.quantizedBy
+        ? { name: m.quantizedBy.name, logoUrl: m.quantizedBy.logoUrl }
         : null,
-      score: bestScoreByModel.get(m.modelId) ?? null,
+      score: bestScoreByModel.get(m.model!.id) ?? null,
     }))
     .sort((a, b) => {
       if (a.fileSizeBytes == null && b.fileSizeBytes == null) return 0;

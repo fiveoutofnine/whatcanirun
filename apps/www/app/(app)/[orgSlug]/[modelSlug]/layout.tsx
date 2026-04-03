@@ -10,20 +10,16 @@ import { getModelFamily, getModelFamilyChips } from './utils';
 import UserAvatar from '@/components/templates/user-avatar';
 
 // -----------------------------------------------------------------------------
-// Types
-// -----------------------------------------------------------------------------
-
-type Props = {
-  params: Promise<{ orgSlug: string; modelSlug: string }>;
-  children: React.ReactNode;
-};
-
-// -----------------------------------------------------------------------------
 // Metadata
 // -----------------------------------------------------------------------------
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ orgSlug: string; modelSlug: string }>;
+}): Promise<Metadata> {
   const { orgSlug, modelSlug } = await params;
+
   return generateBaseMetadata({ orgSlug, modelSlug });
 }
 
@@ -31,7 +27,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 // Layout
 // -----------------------------------------------------------------------------
 
-export default async function Layout({ params, children }: Props) {
+export default async function Layout({
+  params,
+  children,
+}: {
+  params: Promise<{ orgSlug: string; modelSlug: string }>;
+  children: React.ReactNode;
+}) {
   const { orgSlug, modelSlug } = await params;
   const family = await getModelFamily(orgSlug, modelSlug);
 

@@ -5,7 +5,6 @@ import { and, countDistinct, eq, inArray, sql } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import {
   modelFamilies,
-  models,
   modelsInfo,
   organizations,
   view__model_stats_by_device,
@@ -35,13 +34,12 @@ export const getModelFamily = cache(
 
 export const getModelFamilyChips = cache(
   async (familyId: string) => {
-    const memberRows = await db
-      .select({ modelId: models.id })
-      .from(modelsInfo)
-      .innerJoin(models, eq(modelsInfo.artifactSha256, models.artifactSha256))
-      .where(eq(modelsInfo.familyId, familyId));
+    const members = await db.query.modelsInfo.findMany({
+      where: eq(modelsInfo.familyId, familyId),
+      with: { model: { columns: { id: true } } },
+    });
 
-    const modelIds = memberRows.map((r) => r.modelId);
+    const modelIds = members.flatMap((m) => (m.model ? [m.model.id] : []));
     if (modelIds.length === 0) return [];
 
     const rows = await db
