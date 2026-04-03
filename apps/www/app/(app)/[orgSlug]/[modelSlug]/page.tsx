@@ -1,6 +1,5 @@
-import DevicePerformance from './(components)/device-performance';
-import DeviceSidebar from './(components)/device-sidebar';
-import type { ChipOption } from './(components)/device-sidebar';
+import DeviceSection from './(components)/device-section';
+import type { ChipOption } from './(components)/device-section';
 import PerformanceChart from './(components)/performance-chart';
 import type { ChartPoint } from './(components)/performance-chart';
 import ModelQuantizationsTable from './(components)/quantizations-table';
@@ -14,15 +13,24 @@ import { models, modelsInfo, organizations, view__model_stats_by_device } from '
 
 import { H2 } from '@/components/templates/mdx';
 
+type DevicePerf = {
+  modelId: string;
+  quant: string | null;
+  format: string;
+  compositeScore: number;
+  bestRuntime: string;
+  avgDecodeTps: number;
+  avgPrefillTps: number;
+  ttftP50Ms: number;
+  avgPeakRssMb: number | null;
+};
+
 export default async function ModelFamilyPage({
   params,
-  searchParams,
 }: {
   params: Promise<{ orgSlug: string; modelSlug: string }>;
-  searchParams: Promise<{ device?: string }>;
 }) {
   const { orgSlug, modelSlug } = await params;
-  const { device: deviceParam } = await searchParams;
   const family = (await getModelFamily(orgSlug, modelSlug))!;
 
   // ---------------------------------------------------------------------------
@@ -38,34 +46,34 @@ export default async function ModelFamilyPage({
   const modelIds = memberRows.map((r) => r.modelId);
 
   const quantOrg = alias(organizations, 'quant_org_page');
-  let allMembers;
-  if (modelIds.length > 0) {
-    allMembers = await db
-      .select({
-        modelId: models.id,
-        modelQuant: models.quant,
-        modelFormat: models.format,
-        modelFileSizeBytes: models.fileSizeBytes,
-        modelSource: models.source,
-        infoQuant: modelsInfo.quant,
-        infoSource: modelsInfo.source,
-        infoFileSizeBytes: modelsInfo.fileSizeBytes,
-        quantizedByName: quantOrg.name,
-        quantizedByLogoUrl: quantOrg.logoUrl,
-      })
-      .from(models)
-      .innerJoin(modelsInfo, eq(models.artifactSha256, modelsInfo.artifactSha256))
-      .leftJoin(quantOrg, eq(modelsInfo.quantizedById, quantOrg.id))
-      .where(inArray(models.id, modelIds));
-  }
+  const allMembers =
+    modelIds.length > 0
+      ? await db
+          .select({
+            modelId: models.id,
+            modelQuant: models.quant,
+            modelFormat: models.format,
+            modelFileSizeBytes: models.fileSizeBytes,
+            modelSource: models.source,
+            infoQuant: modelsInfo.quant,
+            infoSource: modelsInfo.source,
+            infoFileSizeBytes: modelsInfo.fileSizeBytes,
+            quantizedByName: quantOrg.name,
+            quantizedByLogoUrl: quantOrg.logoUrl,
+          })
+          .from(models)
+          .innerJoin(modelsInfo, eq(models.artifactSha256, modelsInfo.artifactSha256))
+          .leftJoin(quantOrg, eq(modelsInfo.quantizedById, quantOrg.id))
+          .where(inArray(models.id, modelIds))
+      : [];
 
-  let stats = [];
-  if (modelIds.length > 0) {
-    stats = await db
-      .select()
-      .from(view__model_stats_by_device)
-      .where(inArray(view__model_stats_by_device.modelId, modelIds));
-  }
+  const stats =
+    modelIds.length > 0
+      ? await db
+          .select()
+          .from(view__model_stats_by_device)
+          .where(inArray(view__model_stats_by_device.modelId, modelIds))
+      : [];
 
   if (modelIds.length === 0) {
     return (
@@ -121,12 +129,8 @@ export default async function ModelFamilyPage({
     modelCount: chipModelSets.get(chipId)?.size ?? 0,
   }));
 
-  // Determine effective device
-  const chipIds = new Set(chips.map((c) => c.chipId));
-  const validDevice = deviceParam !== undefined && chipIds.has(deviceParam);
   const sortedChips = [...chips].sort((a, b) => b.modelCount - a.modelCount);
-  const effectiveDevice = validDevice ? deviceParam : (sortedChips[0]?.chipId ?? '');
-  const effectiveChip = chips.find((c) => c.chipId === effectiveDevice);
+  const defaultDevice = sortedChips[0]?.chipId ?? '';
 
   // ---------------------------------------------------------------------------
   // 2. Build variants (aggregated across ALL devices)
@@ -167,37 +171,48 @@ export default async function ModelFamilyPage({
     });
 
   // ---------------------------------------------------------------------------
-  // 3. Build performance data (filtered by selected device)
+  // 3. Build performance data per device (for client-side device switching)
   // ---------------------------------------------------------------------------
 
-  const deviceStats = stats.filter((row) => row.deviceChipId === effectiveDevice);
+  const perfsByDevice: Record<string, DevicePerf[]> = {};
 
-  // For each modelId on this device, pick the runtime with the best composite score
-  const bestByModel = new Map<string, (typeof stats)[number]>();
-  for (const row of deviceStats) {
-    const existing = bestByModel.get(row.modelId);
+  for (const chip of chips) {
+    const deviceRows = stats.filter((row) => row.deviceChipId === chip.chipId);
+    const bestByModel = new Map<string, (typeof stats)[number]>();
+    for (const row of deviceRows) {
+      const existing = bestByModel.get(row.modelId);
+      if (!existing || row.compositeScore > existing.compositeScore) {
+        bestByModel.set(row.modelId, row);
+      }
+    }
+    perfsByDevice[chip.chipId] = [...bestByModel.values()].map((row) => ({
+      modelId: row.modelId,
+      quant: row.modelQuant,
+      format: row.modelFormat,
+      compositeScore: row.compositeScore,
+      bestRuntime: row.runtimeName,
+      avgDecodeTps: Number(row.avgDecodeTps),
+      avgPrefillTps: Number(row.avgPrefillTps),
+      ttftP50Ms: Number(row.ttftP50Ms),
+      avgPeakRssMb: row.avgPeakRssMb ? Number(row.avgPeakRssMb) : null,
+    }));
+  }
+
+  // ---------------------------------------------------------------------------
+  // 4. Build chart data (all devices)
+  // ---------------------------------------------------------------------------
+
+  // For each (model, device) pair, pick the runtime with the best composite score
+  const bestByModelDevice = new Map<string, (typeof stats)[number]>();
+  for (const row of stats) {
+    const key = `${row.modelId}::${row.deviceChipId}`;
+    const existing = bestByModelDevice.get(key);
     if (!existing || row.compositeScore > existing.compositeScore) {
-      bestByModel.set(row.modelId, row);
+      bestByModelDevice.set(key, row);
     }
   }
 
-  const perfs = [...bestByModel.values()].map((row) => ({
-    modelId: row.modelId,
-    quant: row.modelQuant,
-    format: row.modelFormat,
-    compositeScore: row.compositeScore,
-    bestRuntime: row.runtimeName,
-    avgDecodeTps: Number(row.avgDecodeTps),
-    avgPrefillTps: Number(row.avgPrefillTps),
-    ttftP50Ms: Number(row.ttftP50Ms),
-    avgPeakRssMb: row.avgPeakRssMb ? Number(row.avgPeakRssMb) : null,
-  }));
-
-  // ---------------------------------------------------------------------------
-  // 4. Build chart data (filtered by selected device)
-  // ---------------------------------------------------------------------------
-
-  const chartData: ChartPoint[] = [...bestByModel.values()].map((row) => {
+  const chartData: ChartPoint[] = [...bestByModelDevice.values()].map((row) => {
     const gpu = row.deviceGpu;
     const manufacturer = gpu.split(' ')[0];
     return {
@@ -227,10 +242,7 @@ export default async function ModelFamilyPage({
         </H2>
         <ModelQuantizationsTable variants={variants} />
 
-        <H2 className="mb-2 mt-4 px-4 md:mt-8 md:px-0" link={false}>
-          Performance
-        </H2>
-        <DevicePerformance perfs={perfs} deviceRamGb={effectiveChip?.ramGb ?? 0} />
+        <DeviceSection chips={chips} perfsByDevice={perfsByDevice} defaultDevice={defaultDevice} />
 
         <H2 className="mb-2 mt-4 px-4 md:mt-8 md:px-0" link={false}>
           Speed
