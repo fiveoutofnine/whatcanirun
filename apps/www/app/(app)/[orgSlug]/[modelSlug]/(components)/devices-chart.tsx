@@ -3,7 +3,7 @@
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import clsx from 'clsx';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, ChevronRight } from 'lucide-react';
 import { useQueryState } from 'nuqs';
 import {
   CartesianGrid,
@@ -179,7 +179,53 @@ const ModelDevicesChartChart: React.FC<ModelDevicesChartProps> = ({ data, defaul
             </Dropdown.Trigger>
             <Dropdown.Content align="end">
               <Dropdown.Group>
-                <Dropdown.Item>hi</Dropdown.Item>
+                <Dropdown.Item
+                  icon={<ChevronRight />}
+                  onSelect={(e) => {
+                    e.preventDefault();
+                    setSelectedQuants(null);
+                  }}
+                >
+                  Select all
+                </Dropdown.Item>
+                {quantOptions.some((o) => o.format === 'gguf') ? (
+                  <Dropdown.Item
+                    icon={<ChevronRight />}
+                    onSelect={(e) => {
+                      e.preventDefault();
+                      setSelectedQuants(
+                        new Set(
+                          quantOptions
+                            .filter((o) => o.format === 'gguf')
+                            .map((o) => `${o.format}:${o.quant}`),
+                        ),
+                      );
+                    }}
+                  >
+                    <span className="flex items-center gap-1.5">
+                      Select all <LogoImg.Ggml size={16} />
+                    </span>
+                  </Dropdown.Item>
+                ) : null}
+                {quantOptions.some((o) => o.format === 'mlx') ? (
+                  <Dropdown.Item
+                    icon={<ChevronRight />}
+                    onSelect={(e) => {
+                      e.preventDefault();
+                      setSelectedQuants(
+                        new Set(
+                          quantOptions
+                            .filter((o) => o.format === 'mlx')
+                            .map((o) => `${o.format}:${o.quant}`),
+                        ),
+                      );
+                    }}
+                  >
+                    <span className="flex items-center gap-1.5">
+                      Select all <LogoImg.Mlx size={16} />
+                    </span>
+                  </Dropdown.Item>
+                ) : null}
               </Dropdown.Group>
               <Dropdown.Separator />
               <Dropdown.Group>
