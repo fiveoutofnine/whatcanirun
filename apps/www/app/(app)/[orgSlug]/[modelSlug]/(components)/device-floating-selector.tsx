@@ -75,7 +75,7 @@ const DeviceFloatingSelector: React.FC<DeviceFloatingSelectorProps> = ({ chips }
     <Fragment>
       {displayName}
       <span className="font-normal text-gray-11"> · </span>
-      {displayRam} GB
+      <span className="font-normal text-gray-11">{displayRam} GB</span>
     </Fragment>
   ) : (
     <Fragment>{displayName}</Fragment>
@@ -95,10 +95,12 @@ const DeviceFloatingSelector: React.FC<DeviceFloatingSelectorProps> = ({ chips }
   return (
     <div className="pointer-events-none fixed inset-x-0 bottom-4 z-50 flex justify-center">
       <DeviceCombobox devices={chipsSorted} value={device} onSelect={setDevice}>
-        <button className="pointer-events-auto flex items-center gap-1.5 rounded-full border border-gray-7 bg-gray-3 px-4 py-2 text-sm font-medium text-gray-12 shadow-lg backdrop-blur transition-colors hover:border-gray-8 hover:bg-gray-4 focus-visible:border-gray-8 focus-visible:bg-gray-4 active:bg-gray-5">
-          {Logo ? <Logo size={20} className="rounded-full" /> : null}
-          <span>{buttonContent}</span>
-          <ChevronsUpDown className="size-4 text-gray-11" />
+        <button className="pointer-events-auto h-8 rounded-full border border-gray-7 bg-gray-3 shadow-lg backdrop-blur transition-colors hover:border-gray-8 hover:bg-gray-4 focus-visible:border-gray-8 focus-visible:bg-gray-4 active:bg-gray-5">
+          <span className="pr-32text-base flex items-center gap-1.5 pl-1.5 pr-2.5">
+            {Logo ? <Logo size={20} className="rounded-full border border-gray-6" /> : null}
+            <span className="font-medium text-gray-12">{buttonContent}</span>
+            <ChevronsUpDown className="size-4 text-gray-11" />
+          </span>
         </button>
       </DeviceCombobox>
     </div>
