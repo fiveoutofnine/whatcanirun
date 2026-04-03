@@ -15,7 +15,7 @@ import {
   uniqueIndex,
 } from 'drizzle-orm/pg-core';
 
-import { enumToPgEnum } from '@/lib/utils';
+import enumToPgEnum from '@/lib/utils/enum-to-pg-enum';
 
 // -----------------------------------------------------------------------------
 // Enums
@@ -480,6 +480,87 @@ export const view__model_stats_by_device = pgMaterializedView('view__model_stats
       .groupBy(models.id, devices.chipId, runs.runtimeName),
 );
 
+export const view__model_device_summary = pgMaterializedView('view__model_device_summary').as(
+  (qb) =>
+    qb
+      .select({
+        modelId: sql<string>`${models.id}`.as('model_id'),
+        familyId: sql<string | null>`MIN(${modelsInfo.familyId})`.as('family_id'),
+        deviceChipId: devices.chipId,
+        deviceCpu: sql<string>`MIN(${devices.cpu})`.as('device_cpu'),
+        deviceCpuCores: sql<number>`MIN(${devices.cpuCores})`.as('device_cpu_cores'),
+        deviceGpu: sql<string>`MIN(${devices.gpu})`.as('device_gpu'),
+        deviceGpuCores: sql<number>`MIN(${devices.gpuCores})`.as('device_gpu_cores'),
+        deviceRamGb: sql<number>`MIN(${devices.ramGb})`.as('device_ram_gb'),
+        avgDecodeTps: sql<number>`AVG(${trials.decodeTps})`.as('avg_decode_tps'),
+        avgPrefillTps: sql<number>`AVG(${trials.prefillTps})`.as('avg_prefill_tps'),
+        compositeScore: sql<number>`(
+          CASE
+          WHEN AVG(
+            CASE WHEN NOT (${runs.runtimeName} = 'llama.cpp' AND ${runs.harnessVersion} <= '0.1.16')
+              AND NOT (LOWER(${devices.osName}) != 'macos' AND ${runs.harnessVersion} < '0.1.19')
+              THEN ${trials.peakRssMb}
+            END
+          ) IS NOT NULL THEN
+            0.45 * (CASE
+              WHEN AVG(${trials.decodeTps}) >= 100 THEN 1.0
+              WHEN AVG(${trials.decodeTps}) >= 40  THEN 0.8 + 0.2 * (AVG(${trials.decodeTps}) - 40) / 60.0
+              WHEN AVG(${trials.decodeTps}) >= 20  THEN 0.6 + 0.2 * (AVG(${trials.decodeTps}) - 20) / 20.0
+              WHEN AVG(${trials.decodeTps}) >= 10  THEN 0.4 + 0.2 * (AVG(${trials.decodeTps}) - 10) / 10.0
+              WHEN AVG(${trials.decodeTps}) >= 5   THEN 0.2 + 0.2 * (AVG(${trials.decodeTps}) - 5) / 5.0
+              ELSE 0.2 * AVG(${trials.decodeTps}) / 5.0
+            END)
+            + 0.25 * (CASE
+              WHEN AVG(${trials.prefillTps}) >= 4000 THEN 1.0
+              WHEN AVG(${trials.prefillTps}) >= 2000 THEN 0.8 + 0.2 * (AVG(${trials.prefillTps}) - 2000) / 2000.0
+              WHEN AVG(${trials.prefillTps}) >= 1000 THEN 0.6 + 0.2 * (AVG(${trials.prefillTps}) - 1000) / 1000.0
+              WHEN AVG(${trials.prefillTps}) >= 500  THEN 0.4 + 0.2 * (AVG(${trials.prefillTps}) - 500) / 500.0
+              WHEN AVG(${trials.prefillTps}) >= 200  THEN 0.2 + 0.2 * (AVG(${trials.prefillTps}) - 200) / 300.0
+              ELSE 0.2 * AVG(${trials.prefillTps}) / 200.0
+            END)
+            + 0.30 * GREATEST(0, 1.0 - COALESCE(
+                AVG(CASE WHEN NOT (${runs.runtimeName} = 'llama.cpp' AND ${runs.harnessVersion} <= '0.1.16')
+                  AND NOT (LOWER(${devices.osName}) != 'macos' AND ${runs.harnessVersion} < '0.1.19')
+                  THEN ${trials.peakRssMb}
+                END),
+                COALESCE(NULLIF(MIN(${modelsInfo.fileSizeBytes}), 0), ${models.fileSizeBytes})
+                  / (1024.0 * 1024.0) + 512.0
+              ) / (MIN(${devices.ramGb}) * 716.8))
+          ELSE
+            0.65 * (CASE
+              WHEN AVG(${trials.decodeTps}) >= 100 THEN 1.0
+              WHEN AVG(${trials.decodeTps}) >= 40  THEN 0.8 + 0.2 * (AVG(${trials.decodeTps}) - 40) / 60.0
+              WHEN AVG(${trials.decodeTps}) >= 20  THEN 0.6 + 0.2 * (AVG(${trials.decodeTps}) - 20) / 20.0
+              WHEN AVG(${trials.decodeTps}) >= 10  THEN 0.4 + 0.2 * (AVG(${trials.decodeTps}) - 10) / 10.0
+              WHEN AVG(${trials.decodeTps}) >= 5   THEN 0.2 + 0.2 * (AVG(${trials.decodeTps}) - 5) / 5.0
+              ELSE 0.2 * AVG(${trials.decodeTps}) / 5.0
+            END)
+            + 0.35 * (CASE
+              WHEN AVG(${trials.prefillTps}) >= 4000 THEN 1.0
+              WHEN AVG(${trials.prefillTps}) >= 2000 THEN 0.8 + 0.2 * (AVG(${trials.prefillTps}) - 2000) / 2000.0
+              WHEN AVG(${trials.prefillTps}) >= 1000 THEN 0.6 + 0.2 * (AVG(${trials.prefillTps}) - 1000) / 1000.0
+              WHEN AVG(${trials.prefillTps}) >= 500  THEN 0.4 + 0.2 * (AVG(${trials.prefillTps}) - 500) / 500.0
+              WHEN AVG(${trials.prefillTps}) >= 200  THEN 0.2 + 0.2 * (AVG(${trials.prefillTps}) - 200) / 300.0
+              ELSE 0.2 * AVG(${trials.prefillTps}) / 200.0
+            END)
+          END
+        )`.as('composite_score'),
+      })
+      .from(trials)
+      .innerJoin(runs, eq(trials.runId, runs.id))
+      .innerJoin(models, eq(runs.modelId, models.id))
+      .innerJoin(devices, eq(runs.deviceId, devices.id))
+      .leftJoin(modelsInfo, eq(models.artifactSha256, modelsInfo.artifactSha256))
+      .where(
+        and(
+          eq(runs.status, RunStatus.VERIFIED),
+          eq(trials.inputTokens, 4096),
+          eq(trials.outputTokens, 1024),
+        ),
+      )
+      .groupBy(models.id, devices.chipId),
+);
+
 // -----------------------------------------------------------------------------
 // Relations
 // -----------------------------------------------------------------------------
@@ -549,3 +630,4 @@ export type Run = typeof runs.$inferSelect;
 export type Trial = typeof trials.$inferSelect;
 // Views
 export type ModelStatsByDevice = typeof view__model_stats_by_device.$inferSelect;
+export type ModelDeviceSummary = typeof view__model_device_summary.$inferSelect;

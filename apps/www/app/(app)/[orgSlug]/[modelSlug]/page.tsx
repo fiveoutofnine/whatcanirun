@@ -5,11 +5,11 @@ import DeviceFloatingSelector from './(components)/device-floating-selector';
 import ModelQuantizationsTable from './(components)/quantizations-table';
 import type { Quant } from './(components)/quantizations-table';
 import { getModelFamily, getModelFamilyChips } from './utils';
-import { eq, inArray } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { File } from 'lucide-react';
 
 import { db } from '@/lib/db';
-import { modelsInfo, view__model_stats_by_device } from '@/lib/db/schema';
+import { modelsInfo, view__model_device_summary } from '@/lib/db/schema';
 
 import { H2 } from '@/components/templates/mdx';
 import StateInfo from '@/components/templates/state-info';
@@ -28,19 +28,16 @@ export default async function ModelFamilyPage({
   const family = (await getModelFamily(orgSlug, modelSlug))!;
   const { members, stats } = await cache(
     async () => {
-      const members = await db.query.modelsInfo.findMany({
-        where: eq(modelsInfo.familyId, family.familyId),
-        with: { model: true, quantizedBy: true },
-      });
-
-      const modelIds = members.flatMap((m) => (m.model ? [m.model.id] : []));
-
-      if (modelIds.length === 0) return { members, stats: [] };
-
-      const stats = await db
-        .select()
-        .from(view__model_stats_by_device)
-        .where(inArray(view__model_stats_by_device.modelId, modelIds));
+      const [members, stats] = await Promise.all([
+        db.query.modelsInfo.findMany({
+          where: eq(modelsInfo.familyId, family.familyId),
+          with: { model: true, quantizedBy: true },
+        }),
+        db
+          .select()
+          .from(view__model_device_summary)
+          .where(eq(view__model_device_summary.familyId, family.familyId)),
+      ]);
 
       return { members, stats };
     },
@@ -72,19 +69,10 @@ export default async function ModelFamilyPage({
       ? deviceParam
       : (sortedChips[0]?.chipId ?? '');
 
-  // Best stats by model for device
-  const bestScoreByModel = new Map<string, number>();
-  const bestDecodeTpsByModel = new Map<string, number>();
-  const bestPrefillTpsByModel = new Map<string, number>();
-  for (const row of stats) {
-    if (row.deviceChipId !== effectiveDevice) continue;
-    const existingScore = bestScoreByModel.get(row.modelId);
-    if (existingScore === undefined || row.compositeScore > existingScore) {
-      bestScoreByModel.set(row.modelId, row.compositeScore);
-      bestDecodeTpsByModel.set(row.modelId, row.avgDecodeTps);
-      bestPrefillTpsByModel.set(row.modelId, row.avgPrefillTps);
-    }
-  }
+  // Stats by model for device (one row per model from the view)
+  const statsByModel = new Map(
+    stats.filter((r) => r.deviceChipId === effectiveDevice).map((r) => [r.modelId, r]),
+  );
 
   // Quantizations
   const quants: Quant[] = members
@@ -96,9 +84,9 @@ export default async function ModelFamilyPage({
       fileSizeBytes: m.fileSizeBytes || m.model!.fileSizeBytes || null,
       source: m.source || m.model!.source,
       quantizedBy: m.quantizedBy,
-      score: bestScoreByModel.get(m.model!.id) ?? null,
-      decodeTps: bestDecodeTpsByModel.get(m.model!.id) ?? null,
-      prefillTps: bestPrefillTpsByModel.get(m.model!.id) ?? null,
+      score: statsByModel.get(m.model!.id)?.compositeScore ?? null,
+      decodeTps: statsByModel.get(m.model!.id)?.avgDecodeTps ?? null,
+      prefillTps: statsByModel.get(m.model!.id)?.avgPrefillTps ?? null,
     }))
     .sort((a, b) => {
       if (a.fileSizeBytes == null && b.fileSizeBytes == null) return 0;

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
 import { db } from '@/lib/db';
-import { view__model_stats_by_device } from '@/lib/db/schema';
+import { view__model_device_summary, view__model_stats_by_device } from '@/lib/db/schema';
 
 export async function GET(request: Request) {
   const authHeader = request.headers.get('authorization');
@@ -10,7 +10,10 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  await db.refreshMaterializedView(view__model_stats_by_device);
+  await Promise.all([
+    db.refreshMaterializedView(view__model_stats_by_device),
+    db.refreshMaterializedView(view__model_device_summary),
+  ]);
 
   return NextResponse.json({ ok: true });
 }

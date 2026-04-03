@@ -274,6 +274,13 @@
       "when": 1775095839904,
       "tag": "0038_nice_hobgoblin",
       "breakpoints": true
+    },
+    {
+      "idx": 39,
+      "version": "7",
+      "when": 1775210394915,
+      "tag": "0039_first_imperial_guard",
+      "breakpoints": true
     }
   ]
 }
