@@ -91,7 +91,7 @@ const DeviceFloatingSelector: React.FC<DeviceFloatingSelectorProps> = ({ chips }
   const { logo: Logo } = parseManufacturer(primaryName);
 
   return (
-    <div className="pointer-events-none fixed inset-x-0 bottom-2 z-50 flex justify-center md:bottom-4">
+    <div className="pointer-events-none fixed inset-x-0 bottom-2 z-50 flex justify-center">
       <DeviceCombobox devices={chipsSorted} value={device} onSelect={setDevice}>
         <button className="pointer-events-auto h-8 rounded-full border border-gray-7 bg-gray-3 shadow-lg backdrop-blur transition-colors hover:border-gray-8 hover:bg-gray-4 focus-visible:border-gray-8 focus-visible:bg-gray-4 active:bg-gray-5">
           <span className="pr-32text-base flex items-center gap-1.5 pl-1 pr-2.5">
