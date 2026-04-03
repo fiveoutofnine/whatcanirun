@@ -32,13 +32,14 @@ export type Quant = {
 
 type ModelQuantizationsTableProps = {
   quants: Quant[];
+  loading?: boolean;
 };
 
 // -----------------------------------------------------------------------------
 // Component
 // -----------------------------------------------------------------------------
 
-const ModelQuantizationsTable: React.FC<ModelQuantizationsTableProps> = ({ quants }) => {
+const ModelQuantizationsTable: React.FC<ModelQuantizationsTableProps> = ({ quants, loading }) => {
   return (
     <Table.Root
       containerClassName={clsx(
@@ -142,7 +143,9 @@ const ModelQuantizationsTable: React.FC<ModelQuantizationsTableProps> = ({ quant
                 <span className="text-gray-11"> {sizeUnit}</span>
               </Table.Cell>
               <Table.Cell>
-                {v.score != null ? (
+                {loading ? (
+                  <div className="h-5 w-16 animate-pulse rounded-full bg-gray-9" />
+                ) : v.score != null ? (
                   <ScoreBadge score={v.score} />
                 ) : (
                   <span className="italic text-gray-11">N/A</span>
