@@ -26,6 +26,7 @@ export default async function ModelFamilyPage({
 }) {
   const { orgSlug, modelSlug } = await params;
   const { device: deviceParam } = await searchParams;
+  const rootPath = `/${orgSlug}/${modelSlug}`;
 
   // We handle the not found case in the layout.
   const family = await getModelFamily(orgSlug, modelSlug);
@@ -136,7 +137,12 @@ export default async function ModelFamilyPage({
 
   return (
     <Fragment>
-      <div className="flex grow md:px-6">
+      <div
+        id={`content-${rootPath}`}
+        className="flex grow md:px-6"
+        role="tabpanel"
+        aria-labelledby={`trigger-${rootPath}`}
+      >
         <div className="mx-auto flex w-full max-w-5xl grow flex-col py-4 md:py-6">
           <H2 className="mb-2 px-4 md:px-0">Quantizations</H2>
           <ModelQuantizationsTable quants={quants} />

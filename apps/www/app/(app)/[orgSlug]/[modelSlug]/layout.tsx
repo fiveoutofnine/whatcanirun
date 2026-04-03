@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { Fragment } from 'react';
 
 import { generateBaseMetadata } from './generate-base-metadata';
+import TabsNav from './tabs';
 import { getModelFamily } from './utils';
 
 import UserAvatar from '@/components/templates/user-avatar';
@@ -66,7 +67,9 @@ export default async function Layout({
           </div>
         </div>
       </header>
-      {children}
+      <TabsNav orgSlug={orgSlug} modelSlug={modelSlug} runs={0}>
+        {children}
+      </TabsNav>
     </div>
   );
 }
