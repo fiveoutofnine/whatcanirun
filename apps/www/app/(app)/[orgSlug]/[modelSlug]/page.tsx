@@ -134,7 +134,7 @@ export default async function ModelFamilyPage({
           <ModelQuantizationsTable quants={quants} />
           {devicesChartData.length > 0 ? (
             <Fragment>
-              <H2 className="mb-2 mt-4 px-4 md:mt-8 md:px-0">Devices</H2>
+              <H2 className="mb-2 mt-4 px-4 md:mt-8 md:px-0">Device Comparison</H2>
               <DevicesChart data={devicesChartData} defaultDevice={effectiveDevice} />
             </Fragment>
           ) : null}

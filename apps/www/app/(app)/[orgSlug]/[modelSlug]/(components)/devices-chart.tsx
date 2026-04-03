@@ -48,7 +48,7 @@ const ModelDevicesChartChart: React.FC<ModelDevicesChartProps> = ({ data, defaul
   });
   const [device] = useQueryState('device', { defaultValue: defaultDevice });
 
-  const chartData = useMemo(
+  const filteredData = useMemo(
     () => data.filter((d) => d.avgDecodeTps > 0 && d.avgPrefillTps > 0),
     [data],
   );
@@ -57,25 +57,37 @@ const ModelDevicesChartChart: React.FC<ModelDevicesChartProps> = ({ data, defaul
   const highlightedIds = useMemo(() => {
     const ids = new Map<string, 'decode' | 'prefill' | 'both'>();
 
-    const a = chartData.reduce(
-      (maxIdx, item, idx) => (item.avgDecodeTps > chartData[maxIdx].avgDecodeTps ? idx : maxIdx),
+    const a = filteredData.reduce(
+      (maxIdx, item, idx) => (item.avgDecodeTps > filteredData[maxIdx].avgDecodeTps ? idx : maxIdx),
       0,
     );
-    const b = chartData.reduce(
-      (maxIdx, item, idx) => (item.avgPrefillTps > chartData[maxIdx].avgPrefillTps ? idx : maxIdx),
+    const b = filteredData.reduce(
+      (maxIdx, item, idx) =>
+        item.avgPrefillTps > filteredData[maxIdx].avgPrefillTps ? idx : maxIdx,
       0,
     );
 
-    if (chartData[a].deviceChipId) ids.set(chartData[a].deviceChipId, 'decode');
-    if (chartData[b].deviceChipId) ids.set(chartData[b].deviceChipId, 'prefill');
-    if (chartData[a].deviceChipId && chartData[a].deviceChipId) {
-      ids.set(chartData[a].deviceChipId, 'both');
+    if (filteredData[a].deviceChipId) ids.set(filteredData[a].deviceChipId, 'decode');
+    if (filteredData[b].deviceChipId) ids.set(filteredData[b].deviceChipId, 'prefill');
+    if (filteredData[a].deviceChipId && filteredData[a].deviceChipId) {
+      ids.set(filteredData[a].deviceChipId, 'both');
     }
 
     return ids;
-  }, [chartData]);
+  }, [filteredData]);
 
   const selectedChipId = device;
+
+  // Sort so highlighted/selected nodes render last (on top) in SVG.
+  const chartData = useMemo(
+    () =>
+      [...filteredData].sort((a, b) => {
+        const aH = highlightedIds.has(a.deviceChipId) || a.deviceChipId === selectedChipId ? 1 : 0;
+        const bH = highlightedIds.has(b.deviceChipId) || b.deviceChipId === selectedChipId ? 1 : 0;
+        return aH - bH;
+      }),
+    [filteredData, highlightedIds, selectedChipId],
+  );
 
   const updateDimensions = useCallback(() => {
     if (chartRef.current) {
@@ -356,10 +368,10 @@ const ModelDevicesChartChart: React.FC<ModelDevicesChartProps> = ({ data, defaul
                   anchor = 'end';
                 } else if (y < 48) {
                   // Bottom.
-                  labelY = y + 28;
+                  labelY = y + 32;
                 } else {
                   // Top.
-                  labelY = y - 26;
+                  labelY = y - 30;
                 }
 
                 return (
