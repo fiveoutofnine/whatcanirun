@@ -1,9 +1,10 @@
 import DevicePerformance from './(components)/device-performance';
-import type { DevicePerformanceProps } from './(components)/device-performance';
+import DeviceSidebar from './(components)/device-sidebar';
+import type { ChipOption } from './(components)/device-sidebar';
 import PerformanceChart from './(components)/performance-chart';
 import type { ChartPoint } from './(components)/performance-chart';
-import VariantsTable from './(components)/variants-table';
-import type { Variant } from './(components)/variants-table';
+import ModelQuantizationsTable from './(components)/quantizations-table';
+import type { Variant } from './(components)/quantizations-table';
 import { getModelFamily } from './utils';
 import { eq, inArray } from 'drizzle-orm';
 
@@ -14,10 +15,13 @@ import { H2 } from '@/components/templates/mdx';
 
 export default async function ModelFamilyPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ orgSlug: string; modelSlug: string }>;
+  searchParams: Promise<{ device?: string }>;
 }) {
   const { orgSlug, modelSlug } = await params;
+  const { device: deviceParam } = await searchParams;
   const family = (await getModelFamily(orgSlug, modelSlug))!;
 
   // ---------------------------------------------------------------------------
@@ -61,22 +65,76 @@ export default async function ModelFamilyPage({
   }
 
   // ---------------------------------------------------------------------------
-  // 1. Build variants list (deduplicated per model)
+  // 1. Build chip options from stats
   // ---------------------------------------------------------------------------
+
+  const chipInfoMap = new Map<
+    string,
+    { chipId: string; cpu: string; cpuCores: number; gpu: string; gpuCores: number; ramGb: number }
+  >();
+  const chipModelSets = new Map<string, Set<string>>();
+
+  for (const row of stats) {
+    if (!chipInfoMap.has(row.deviceChipId)) {
+      chipInfoMap.set(row.deviceChipId, {
+        chipId: row.deviceChipId,
+        cpu: row.deviceCpu,
+        cpuCores: row.deviceCpuCores,
+        gpu: row.deviceGpu,
+        gpuCores: row.deviceGpuCores,
+        ramGb: row.deviceRamGb,
+      });
+    }
+    let modelSet = chipModelSets.get(row.deviceChipId);
+    if (!modelSet) {
+      modelSet = new Set();
+      chipModelSets.set(row.deviceChipId, modelSet);
+    }
+    modelSet.add(row.modelId);
+  }
+
+  const chips: ChipOption[] = [...chipInfoMap.entries()].map(([chipId, info]) => ({
+    ...info,
+    modelCount: chipModelSets.get(chipId)?.size ?? 0,
+  }));
+
+  // Determine effective device
+  const chipIds = new Set(chips.map((c) => c.chipId));
+  const validDevice = deviceParam !== undefined && chipIds.has(deviceParam);
+  const sortedChips = [...chips].sort((a, b) => b.modelCount - a.modelCount);
+  const effectiveDevice = validDevice ? deviceParam : (sortedChips[0]?.chipId ?? '');
+  const effectiveChip = chips.find((c) => c.chipId === effectiveDevice);
+
+  // ---------------------------------------------------------------------------
+  // 2. Build variants (aggregated across ALL devices)
+  // ---------------------------------------------------------------------------
+
+  const variantAgg = new Map<string, { totalTrials: number; devices: Set<string> }>();
+  for (const row of stats) {
+    let agg = variantAgg.get(row.modelId);
+    if (!agg) {
+      agg = { totalTrials: 0, devices: new Set() };
+      variantAgg.set(row.modelId, agg);
+    }
+    agg.totalTrials += row.trialCount;
+    agg.devices.add(row.deviceChipId);
+  }
 
   const variantMap = new Map<string, Variant>();
   for (const row of stats) {
     if (variantMap.has(row.modelId)) continue;
+    const agg = variantAgg.get(row.modelId)!;
     variantMap.set(row.modelId, {
       modelId: row.modelId,
       quant: row.modelQuant,
       format: row.modelFormat,
       fileSizeBytes: row.modelFileSizeBytes ? Number(row.modelFileSizeBytes) : null,
-      parameters: row.modelParameters,
       source: row.modelSource,
       quantizedBy: row.quantizedByName
         ? { name: row.quantizedByName, logoUrl: row.quantizedByLogoUrl }
         : null,
+      totalTrials: agg.totalTrials,
+      deviceCount: agg.devices.size,
     });
   }
 
@@ -88,60 +146,37 @@ export default async function ModelFamilyPage({
   });
 
   // ---------------------------------------------------------------------------
-  // 2. Build device performance data
+  // 3. Build performance data (filtered by selected device)
   // ---------------------------------------------------------------------------
 
-  const deviceMap = new Map<
-    string,
-    { chipId: string; cpu: string; cpuCores: number; gpu: string; gpuCores: number; ramGb: number }
-  >();
-  for (const row of stats) {
-    if (!deviceMap.has(row.deviceChipId)) {
-      deviceMap.set(row.deviceChipId, {
-        chipId: row.deviceChipId,
-        cpu: row.deviceCpu,
-        cpuCores: row.deviceCpuCores,
-        gpu: row.deviceGpu,
-        gpuCores: row.deviceGpuCores,
-        ramGb: row.deviceRamGb,
-      });
-    }
-  }
-  const devices = [...deviceMap.values()];
+  const deviceStats = stats.filter((row) => row.deviceChipId === effectiveDevice);
 
-  // For each (modelId, deviceChipId), pick best composite score runtime
-  const cellKey = (modelId: string, chipId: string) => `${modelId}::${chipId}`;
-  const bestByCell = new Map<string, (typeof stats)[number]>();
-  for (const row of stats) {
-    const key = cellKey(row.modelId, row.deviceChipId);
-    const existing = bestByCell.get(key);
+  // For each modelId on this device, pick the runtime with the best composite score
+  const bestByModel = new Map<string, (typeof stats)[number]>();
+  for (const row of deviceStats) {
+    const existing = bestByModel.get(row.modelId);
     if (!existing || row.compositeScore > existing.compositeScore) {
-      bestByCell.set(key, row);
+      bestByModel.set(row.modelId, row);
     }
   }
 
-  const perfByDevice: DevicePerformanceProps['perfByDevice'] = {};
-  for (const [, row] of bestByCell) {
-    const chipId = row.deviceChipId;
-    if (!perfByDevice[chipId]) perfByDevice[chipId] = [];
-    perfByDevice[chipId].push({
-      modelId: row.modelId,
-      quant: row.modelQuant,
-      format: row.modelFormat,
-      compositeScore: row.compositeScore,
-      bestRuntime: row.runtimeName,
-      avgDecodeTps: Number(row.avgDecodeTps),
-      avgPrefillTps: Number(row.avgPrefillTps),
-      ttftP50Ms: Number(row.ttftP50Ms),
-      avgPeakRssMb: row.avgPeakRssMb ? Number(row.avgPeakRssMb) : null,
-    });
-  }
+  const perfs = [...bestByModel.values()].map((row) => ({
+    modelId: row.modelId,
+    quant: row.modelQuant,
+    format: row.modelFormat,
+    compositeScore: row.compositeScore,
+    bestRuntime: row.runtimeName,
+    avgDecodeTps: Number(row.avgDecodeTps),
+    avgPrefillTps: Number(row.avgPrefillTps),
+    ttftP50Ms: Number(row.ttftP50Ms),
+    avgPeakRssMb: row.avgPeakRssMb ? Number(row.avgPeakRssMb) : null,
+  }));
 
   // ---------------------------------------------------------------------------
-  // 3. Build chart data
+  // 4. Build chart data (filtered by selected device)
   // ---------------------------------------------------------------------------
 
-  const chartData: ChartPoint[] = [...bestByCell.values()].map((row) => {
+  const chartData: ChartPoint[] = [...bestByModel.values()].map((row) => {
     const gpu = row.deviceGpu;
     const manufacturer = gpu.split(' ')[0];
     return {
@@ -168,10 +203,10 @@ export default async function ModelFamilyPage({
       <div className="mx-auto flex w-full max-w-7xl grow">
         <div className="flex w-full grow flex-col py-4 md:py-6">
           <H2 className="mb-2 px-4 md:px-0">Quantizations</H2>
-          <VariantsTable variants={variants} />
+          <ModelQuantizationsTable variants={variants} />
 
           <H2 className="mb-2 mt-4 px-4 md:mt-8 md:px-0">Performance</H2>
-          <DevicePerformance devices={devices} perfByDevice={perfByDevice} />
+          <DevicePerformance perfs={perfs} deviceRamGb={effectiveChip?.ramGb ?? 0} />
 
           <H2 className="mb-2 mt-4 px-4 md:mt-8 md:px-0">Speed</H2>
           <PerformanceChart data={chartData} />
@@ -184,7 +219,7 @@ export default async function ModelFamilyPage({
         />
 
         <div className="sticky top-[4rem] hidden h-fit max-h-[calc(100dvh-4rem)] w-[22rem] min-w-[22rem] py-6 md:flex md:flex-col">
-          Device selector
+          <DeviceSidebar chips={chips} />
         </div>
       </div>
     </div>
