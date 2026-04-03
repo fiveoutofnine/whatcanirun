@@ -7,9 +7,10 @@ import ModelQuantizationsTable from './(components)/quantizations-table';
 import type { Variant } from './(components)/quantizations-table';
 import { getModelFamily } from './utils';
 import { eq, inArray } from 'drizzle-orm';
+import { alias } from 'drizzle-orm/pg-core';
 
 import { db } from '@/lib/db';
-import { models, modelsInfo, view__model_stats_by_device } from '@/lib/db/schema';
+import { models, modelsInfo, organizations, view__model_stats_by_device } from '@/lib/db/schema';
 
 import { H2 } from '@/components/templates/mdx';
 
@@ -36,13 +37,35 @@ export default async function ModelFamilyPage({
 
   const modelIds = memberRows.map((r) => r.modelId);
 
-  const stats =
-    modelIds.length > 0
-      ? await db
-        .select()
-        .from(view__model_stats_by_device)
-        .where(inArray(view__model_stats_by_device.modelId, modelIds))
-      : [];
+  const quantOrg = alias(organizations, 'quant_org_page');
+  let allMembers;
+  if (modelIds.length > 0) {
+    allMembers = await db
+      .select({
+        modelId: models.id,
+        modelQuant: models.quant,
+        modelFormat: models.format,
+        modelFileSizeBytes: models.fileSizeBytes,
+        modelSource: models.source,
+        infoQuant: modelsInfo.quant,
+        infoSource: modelsInfo.source,
+        infoFileSizeBytes: modelsInfo.fileSizeBytes,
+        quantizedByName: quantOrg.name,
+        quantizedByLogoUrl: quantOrg.logoUrl,
+      })
+      .from(models)
+      .innerJoin(modelsInfo, eq(models.artifactSha256, modelsInfo.artifactSha256))
+      .leftJoin(quantOrg, eq(modelsInfo.quantizedById, quantOrg.id))
+      .where(inArray(models.id, modelIds));
+  }
+
+  let stats = [];
+  if (modelIds.length > 0) {
+    stats = await db
+      .select()
+      .from(view__model_stats_by_device)
+      .where(inArray(view__model_stats_by_device.modelId, modelIds));
+  }
 
   if (modelIds.length === 0) {
     return (
@@ -120,30 +143,28 @@ export default async function ModelFamilyPage({
     agg.devices.add(row.deviceChipId);
   }
 
-  const variantMap = new Map<string, Variant>();
-  for (const row of stats) {
-    if (variantMap.has(row.modelId)) continue;
-    const agg = variantAgg.get(row.modelId)!;
-    variantMap.set(row.modelId, {
-      modelId: row.modelId,
-      quant: row.modelQuant,
-      format: row.modelFormat,
-      fileSizeBytes: row.modelFileSizeBytes ? Number(row.modelFileSizeBytes) : null,
-      source: row.modelSource,
-      quantizedBy: row.quantizedByName
-        ? { name: row.quantizedByName, logoUrl: row.quantizedByLogoUrl }
-        : null,
-      totalTrials: agg.totalTrials,
-      deviceCount: agg.devices.size,
+  const variants: Variant[] = allMembers
+    .map((m) => {
+      const agg = variantAgg.get(m.modelId);
+      return {
+        modelId: m.modelId,
+        quant: m.infoQuant || m.modelQuant,
+        format: m.modelFormat,
+        fileSizeBytes: m.infoFileSizeBytes || m.modelFileSizeBytes || null,
+        source: m.infoSource || m.modelSource,
+        quantizedBy: m.quantizedByName
+          ? { name: m.quantizedByName, logoUrl: m.quantizedByLogoUrl }
+          : null,
+        totalTrials: agg?.totalTrials ?? 0,
+        deviceCount: agg?.devices.size ?? 0,
+      };
+    })
+    .sort((a, b) => {
+      if (a.fileSizeBytes == null && b.fileSizeBytes == null) return 0;
+      if (a.fileSizeBytes == null) return 1;
+      if (b.fileSizeBytes == null) return -1;
+      return a.fileSizeBytes - b.fileSizeBytes;
     });
-  }
-
-  const variants = [...variantMap.values()].sort((a, b) => {
-    if (a.fileSizeBytes == null && b.fileSizeBytes == null) return 0;
-    if (a.fileSizeBytes == null) return 1;
-    if (b.fileSizeBytes == null) return -1;
-    return a.fileSizeBytes - b.fileSizeBytes;
-  });
 
   // ---------------------------------------------------------------------------
   // 3. Build performance data (filtered by selected device)

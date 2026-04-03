@@ -1,18 +1,22 @@
+'use client';
+
+import { useState } from 'react';
+
 import clsx from 'clsx';
-import { ArrowUpRight, ExternalLink } from 'lucide-react';
+import { ArrowUpRight, Check, Copy, ExternalLink } from 'lucide-react';
 
 import { formatBytes } from '@/lib/utils';
 
 import LogoImg from '@/components/common/logo-img';
 import { Code } from '@/components/templates/mdx';
 import UserAvatar from '@/components/templates/user-avatar';
-import { Table, Tooltip } from '@/components/ui';
+import { Table, toast, Tooltip } from '@/components/ui';
 
 // -----------------------------------------------------------------------------
 // Props
 // -----------------------------------------------------------------------------
 
-export type QuantizationVariant = {
+export type Variant = {
   modelId: string;
   quant: string | null;
   format: string;
@@ -27,7 +31,7 @@ export type QuantizationVariant = {
 };
 
 type ModelQuantizationsTableProps = {
-  variants: QuantizationVariant[];
+  variants: Variant[];
 };
 
 // -----------------------------------------------------------------------------
@@ -48,7 +52,8 @@ const ModelQuantizationsTable: React.FC<ModelQuantizationsTableProps> = ({ varia
           <Table.Head>Quantized by</Table.Head>
           <Table.Head>Size</Table.Head>
           <Table.Head>Trials</Table.Head>
-          <Table.Head className="pr-4">Devices</Table.Head>
+          <Table.Head>Devices</Table.Head>
+          <Table.Head className="pr-4 text-right">Actions</Table.Head>
         </Table.Row>
       </Table.Header>
       <Table.Body>
@@ -133,21 +138,78 @@ const ModelQuantizationsTable: React.FC<ModelQuantizationsTableProps> = ({ varia
                   <span className="italic text-gray-11">Unknown</span>
                 )}
               </Table.Cell>
-              <Table.Cell>
+              <Table.Cell className="min-w-fit text-nowrap">
                 <span className="tabular-nums text-gray-12">{sizeValue}</span>
                 <span className="text-gray-11"> {sizeUnit}</span>
               </Table.Cell>
               <Table.Cell className="tabular-nums text-gray-12">
                 {v.totalTrials.toLocaleString()}
               </Table.Cell>
-              <Table.Cell className="pr-4 tabular-nums text-gray-12">
+              <Table.Cell className="tabular-nums text-gray-12">
                 {v.deviceCount.toLocaleString()}
+              </Table.Cell>
+              <Table.Cell className="flex tabular-nums text-gray-12">
+                <div className="ml-auto w-fit">
+                  {v.source ? (
+                    <ModelQuantizationsTableCopyButton source={v.source} format={v.format} />
+                  ) : (
+                    <span className="italic text-gray-11">N/A</span>
+                  )}
+                </div>
               </Table.Cell>
             </Table.Row>
           );
         })}
       </Table.Body>
     </Table.Root>
+  );
+};
+
+const ModelQuantizationsTableCopyButton: React.FC<{ source: string; format: string }> = ({
+  source,
+  format,
+}) => {
+  const [copied, setCopied] = useState<boolean>(false);
+
+  let runtimeName;
+  if (format === 'gguf') runtimeName = 'llama.cpp';
+  else if (format === 'mlx') runtimeName = 'mlx_lm';
+  else return null;
+
+  const copy = () => {
+    if (copied) return;
+
+    const command = `npx whatcanirun@latest run --model ${source} --runtime ${runtimeName} --submit`;
+    navigator.clipboard.writeText(command);
+    setCopied(true);
+    toast({
+      title: 'Copied command to clipboard.',
+      description: <span className="select-all font-mono">{command}</span>,
+      intent: 'success',
+      hasCloseButton: true,
+    });
+    setTimeout(() => setCopied(false), 3000);
+  };
+
+  return (
+    <Tooltip
+      content="Copy command to run the benchmark"
+      side="left"
+      inverted={false}
+      triggerProps={{ asChild: true }}
+    >
+      <button
+        className="flex items-center gap-1.5 text-sm text-gray-11 underline decoration-dotted transition-colors hover:text-gray-12 focus-visible:rounded"
+        onClick={copy}
+      >
+        <span>Run</span>
+        {copied ? (
+          <Check className="size-3.5 animate-in fade-in zoom-in" />
+        ) : (
+          <Copy className="size-3.5 animate-in fade-in" />
+        )}
+      </button>
+    </Tooltip>
   );
 };
 
