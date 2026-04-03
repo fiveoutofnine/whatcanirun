@@ -44,7 +44,7 @@ export default async function ModelFamilyPage({
 
       return { members, stats };
     },
-    ['model-family-data'],
+    ['model-family-data', family.familyId],
     { revalidate: 600 },
   )();
 
