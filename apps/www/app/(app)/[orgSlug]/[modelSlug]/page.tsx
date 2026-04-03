@@ -1,3 +1,5 @@
+import { unstable_cache as cache } from 'next/cache';
+
 import ModelQuantizationsTable from './(components)/quantizations-table';
 import type { Variant } from './(components)/quantizations-table';
 import { getModelFamily, getModelFamilyChips } from './utils';
@@ -8,6 +10,52 @@ import { db } from '@/lib/db';
 import { models, modelsInfo, organizations, view__model_stats_by_device } from '@/lib/db/schema';
 
 import { H2 } from '@/components/templates/mdx';
+
+const getModelFamilyData = cache(
+  async (familyId: string) => {
+    const memberRows = await db
+      .select({ modelId: models.id })
+      .from(modelsInfo)
+      .innerJoin(models, eq(modelsInfo.artifactSha256, models.artifactSha256))
+      .where(eq(modelsInfo.familyId, familyId));
+
+    const modelIds = memberRows.map((r) => r.modelId);
+
+    const quantOrg = alias(organizations, 'quant_org_page');
+    const allMembers =
+      modelIds.length > 0
+        ? await db
+            .select({
+              modelId: models.id,
+              modelQuant: models.quant,
+              modelFormat: models.format,
+              modelFileSizeBytes: models.fileSizeBytes,
+              modelSource: models.source,
+              infoQuant: modelsInfo.quant,
+              infoSource: modelsInfo.source,
+              infoFileSizeBytes: modelsInfo.fileSizeBytes,
+              quantizedByName: quantOrg.name,
+              quantizedByLogoUrl: quantOrg.logoUrl,
+            })
+            .from(models)
+            .innerJoin(modelsInfo, eq(models.artifactSha256, modelsInfo.artifactSha256))
+            .leftJoin(quantOrg, eq(modelsInfo.quantizedById, quantOrg.id))
+            .where(inArray(models.id, modelIds))
+        : [];
+
+    const stats =
+      modelIds.length > 0
+        ? await db
+            .select()
+            .from(view__model_stats_by_device)
+            .where(inArray(view__model_stats_by_device.modelId, modelIds))
+        : [];
+
+    return { modelIds, allMembers, stats };
+  },
+  ['model-family-data'],
+  { revalidate: 3600 },
+);
 
 export default async function ModelFamilyPage({
   params,
@@ -24,43 +72,7 @@ export default async function ModelFamilyPage({
   // Data fetching
   // ---------------------------------------------------------------------------
 
-  const memberRows = await db
-    .select({ modelId: models.id })
-    .from(modelsInfo)
-    .innerJoin(models, eq(modelsInfo.artifactSha256, models.artifactSha256))
-    .where(eq(modelsInfo.familyId, family.familyId));
-
-  const modelIds = memberRows.map((r) => r.modelId);
-
-  const quantOrg = alias(organizations, 'quant_org_page');
-  const allMembers =
-    modelIds.length > 0
-      ? await db
-          .select({
-            modelId: models.id,
-            modelQuant: models.quant,
-            modelFormat: models.format,
-            modelFileSizeBytes: models.fileSizeBytes,
-            modelSource: models.source,
-            infoQuant: modelsInfo.quant,
-            infoSource: modelsInfo.source,
-            infoFileSizeBytes: modelsInfo.fileSizeBytes,
-            quantizedByName: quantOrg.name,
-            quantizedByLogoUrl: quantOrg.logoUrl,
-          })
-          .from(models)
-          .innerJoin(modelsInfo, eq(models.artifactSha256, modelsInfo.artifactSha256))
-          .leftJoin(quantOrg, eq(modelsInfo.quantizedById, quantOrg.id))
-          .where(inArray(models.id, modelIds))
-      : [];
-
-  const stats =
-    modelIds.length > 0
-      ? await db
-          .select()
-          .from(view__model_stats_by_device)
-          .where(inArray(view__model_stats_by_device.modelId, modelIds))
-      : [];
+  const { modelIds, allMembers, stats } = await getModelFamilyData(family.familyId);
 
   if (modelIds.length === 0) {
     return (
