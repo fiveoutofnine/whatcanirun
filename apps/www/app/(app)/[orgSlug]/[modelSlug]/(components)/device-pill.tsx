@@ -32,10 +32,7 @@ const formatCpu = (name: string) => name.replace(/^\S+\s+/, '');
 // Component
 // -----------------------------------------------------------------------------
 
-const ModelHeading: React.FC<{ familyName: string; chips: ChipOption[] }> = ({
-  familyName,
-  chips,
-}) => {
+const DevicePill: React.FC<{ chips: ChipOption[] }> = ({ chips }) => {
   const defaultDevice = useMemo(() => {
     const sorted = [...chips].sort((a, b) => b.modelCount - a.modelCount);
     return sorted[0]?.chipId ?? '';
@@ -78,35 +75,25 @@ const ModelHeading: React.FC<{ familyName: string; chips: ChipOption[] }> = ({
   const buttonContent = isApple ? (
     <Fragment>
       {displayName}
-      <span className="font-normal text-gray-11"> with </span>
-      {displayRam} GB RAM
+      <span className="font-normal text-gray-11"> · </span>
+      {displayRam} GB
     </Fragment>
   ) : (
     <Fragment>{displayName}</Fragment>
   );
 
-  const chipElement =
-    chips.length > 1 ? (
-      <DeviceCombobox devices={chipsSorted} value={device} onSelect={setDevice}>
-        <InlineButton className="-mx-[0.1em] rounded-xl border border-dashed border-gray-7 bg-gray-3 box-decoration-clone px-[0.1em] font-semibold text-gray-12 transition-colors hover:border-gray-8 hover:bg-gray-4 focus-visible:border-gray-8 focus-visible:bg-gray-4 active:bg-gray-5">
-          {buttonContent}
-          <ChevronsUpDown className="ml-[0.075em] inline size-[0.8em] align-[-0.025em] text-gray-11" />
-        </InlineButton>
-      </DeviceCombobox>
-    ) : (
-      <span className="font-semibold text-gray-12">{buttonContent}</span>
-    );
-
-  const article = isApple || 'aeiou'.includes(displayName.charAt(0).toLowerCase()) ? 'an' : 'a';
+  if (chips.length <= 1) return null;
 
   return (
-    <span>
-      <span className="tracking-tight text-gray-12">{familyName}</span>{' '}
-      <span className="font-normal">
-        on {article} {chipElement}
-      </span>
-    </span>
+    <div className="pointer-events-none fixed inset-x-0 bottom-4 z-50 flex justify-center">
+      <DeviceCombobox devices={chipsSorted} value={device} onSelect={setDevice}>
+        <InlineButton className="pointer-events-auto rounded-full border border-gray-7 bg-gray-2 px-4 py-2 text-sm font-semibold text-gray-12 shadow-lg backdrop-blur transition-colors hover:border-gray-8 hover:bg-gray-3 focus-visible:border-gray-8 focus-visible:bg-gray-3 active:bg-gray-4">
+          {buttonContent}
+          <ChevronsUpDown className="ml-1.5 inline size-3.5 align-[-0.1em] text-gray-11" />
+        </InlineButton>
+      </DeviceCombobox>
+    </div>
   );
 };
 
-export default ModelHeading;
+export default DevicePill;
