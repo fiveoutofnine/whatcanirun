@@ -222,13 +222,19 @@ export default async function ModelFamilyPage({
   return (
     <div className="flex grow md:px-6">
       <div className="mx-auto flex w-full max-w-5xl grow flex-col py-4 md:py-6">
-        <H2 className="mb-2 px-4 md:px-0">Quantizations</H2>
+        <H2 className="mb-2 px-4 md:px-0" link={false}>
+          Quantizations
+        </H2>
         <ModelQuantizationsTable variants={variants} />
 
-        <H2 className="mb-2 mt-4 px-4 md:mt-8 md:px-0">Performance</H2>
+        <H2 className="mb-2 mt-4 px-4 md:mt-8 md:px-0" link={false}>
+          Performance
+        </H2>
         <DevicePerformance perfs={perfs} deviceRamGb={effectiveChip?.ramGb ?? 0} />
 
-        <H2 className="mb-2 mt-4 px-4 md:mt-8 md:px-0">Speed</H2>
+        <H2 className="mb-2 mt-4 px-4 md:mt-8 md:px-0" link={false}>
+          Speed
+        </H2>
         <PerformanceChart data={chartData} />
       </div>
     </div>
