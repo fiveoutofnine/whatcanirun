@@ -17,7 +17,7 @@ import { Table, toast, Tooltip } from '@/components/ui';
 // Props
 // -----------------------------------------------------------------------------
 
-export type Variant = {
+export type Quant = {
   modelId: string;
   quant: string | null;
   format: string;
@@ -31,14 +31,14 @@ export type Variant = {
 };
 
 type ModelQuantizationsTableProps = {
-  variants: Variant[];
+  quants: Quant[];
 };
 
 // -----------------------------------------------------------------------------
 // Component
 // -----------------------------------------------------------------------------
 
-const ModelQuantizationsTable: React.FC<ModelQuantizationsTableProps> = ({ variants }) => {
+const ModelQuantizationsTable: React.FC<ModelQuantizationsTableProps> = ({ quants }) => {
   return (
     <Table.Root
       containerClassName={clsx(
@@ -56,7 +56,7 @@ const ModelQuantizationsTable: React.FC<ModelQuantizationsTableProps> = ({ varia
         </Table.Row>
       </Table.Header>
       <Table.Body>
-        {variants.map((v) => {
+        {quants.map((v) => {
           if (!v.quant) return null;
 
           let sourceUrl;

@@ -1,7 +1,7 @@
 import { unstable_cache as cache } from 'next/cache';
 
 import ModelQuantizationsTable from './(components)/quantizations-table';
-import type { Variant } from './(components)/quantizations-table';
+import type { Quant } from './(components)/quantizations-table';
 import { getModelFamily, getModelFamilyChips } from './utils';
 import { eq, inArray } from 'drizzle-orm';
 import { File } from 'lucide-react';
@@ -46,7 +46,7 @@ export default async function ModelFamilyPage({
     { revalidate: 600 },
   )();
 
-  if (members.length > 0 || stats.length > 0) {
+  if (members.length === 0 || stats.length === 0) {
     return (
       <div className="flex grow flex-col p-4 md:px-0 md:py-6">
         <div className="mx-auto flex w-full max-w-5xl items-center justify-center rounded-xl border border-gray-6 bg-gray-2 px-4 py-12">
@@ -80,8 +80,8 @@ export default async function ModelFamilyPage({
     }
   }
 
-  // Variants
-  const variants: Variant[] = members
+  // Quantizations
+  const quants: Quant[] = members
     .filter((m) => m.model !== null)
     .map((m) => ({
       modelId: m.model!.id,
@@ -111,7 +111,7 @@ export default async function ModelFamilyPage({
         <H2 className="mb-2 px-4 md:px-0" link={false}>
           Quantizations
         </H2>
-        <ModelQuantizationsTable variants={variants} />
+        <ModelQuantizationsTable quants={quants} />
       </div>
     </div>
   );
