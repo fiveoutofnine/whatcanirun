@@ -221,27 +221,15 @@ export default async function ModelFamilyPage({
 
   return (
     <div className="flex grow md:px-6">
-      <div className="mx-auto flex w-full max-w-7xl grow">
-        <div className="flex w-full grow flex-col py-4 md:py-6">
-          <H2 className="mb-2 px-4 md:px-0">Quantizations</H2>
-          <ModelQuantizationsTable variants={variants} />
+      <div className="mx-auto flex w-full max-w-5xl grow flex-col py-4 md:py-6">
+        <H2 className="mb-2 px-4 md:px-0">Quantizations</H2>
+        <ModelQuantizationsTable variants={variants} />
 
-          <H2 className="mb-2 mt-4 px-4 md:mt-8 md:px-0">Performance</H2>
-          <DevicePerformance perfs={perfs} deviceRamGb={effectiveChip?.ramGb ?? 0} />
+        <H2 className="mb-2 mt-4 px-4 md:mt-8 md:px-0">Performance</H2>
+        <DevicePerformance perfs={perfs} deviceRamGb={effectiveChip?.ramGb ?? 0} />
 
-          <H2 className="mb-2 mt-4 px-4 md:mt-8 md:px-0">Speed</H2>
-          <PerformanceChart data={chartData} />
-        </div>
-
-        <hr
-          className="mx-6 hidden h-full w-px border-l border-gray-6 md:block"
-          role="separator"
-          aria-hidden
-        />
-
-        <div className="sticky top-[4rem] hidden h-fit max-h-[calc(100dvh-4rem)] w-[22rem] min-w-[22rem] py-6 md:flex md:flex-col">
-          <DeviceSidebar chips={chips} />
-        </div>
+        <H2 className="mb-2 mt-4 px-4 md:mt-8 md:px-0">Speed</H2>
+        <PerformanceChart data={chartData} />
       </div>
     </div>
   );

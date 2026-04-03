@@ -39,7 +39,7 @@ export default async function Layout({ params, children }: Props) {
   return (
     <div className="flex grow flex-col">
       <header className="w-full border-b border-gray-6 bg-black px-4 py-4 md:px-6 md:py-8">
-        <div className="mx-auto flex w-full max-w-7xl items-center">
+        <div className="mx-auto flex w-full max-w-5xl items-center">
           <div className="flex flex-col gap-2">
             <h1 className="flex items-center gap-1.5 text-2xl font-medium text-gray-11 md:text-3xl">
               <Link
