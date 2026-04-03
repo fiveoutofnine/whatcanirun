@@ -9,6 +9,7 @@ import { formatBytes } from '@/lib/utils';
 
 import LogoImg from '@/components/common/logo-img';
 import { Code } from '@/components/templates/mdx';
+import ScoreBadge from '@/components/templates/score-badge';
 import UserAvatar from '@/components/templates/user-avatar';
 import { Table, toast, Tooltip } from '@/components/ui';
 
@@ -26,8 +27,7 @@ export type Variant = {
     name: string;
     logoUrl: string | null;
   } | null;
-  totalTrials: number;
-  deviceCount: number;
+  score: number | null;
 };
 
 type ModelQuantizationsTableProps = {
@@ -51,8 +51,7 @@ const ModelQuantizationsTable: React.FC<ModelQuantizationsTableProps> = ({ varia
           <Table.Head className="pl-4">Quant</Table.Head>
           <Table.Head>Quantized by</Table.Head>
           <Table.Head>Size</Table.Head>
-          <Table.Head>Trials</Table.Head>
-          <Table.Head>Devices</Table.Head>
+          <Table.Head>Runnability</Table.Head>
           <Table.Head className="pr-4 text-right">Actions</Table.Head>
         </Table.Row>
       </Table.Header>
@@ -142,11 +141,12 @@ const ModelQuantizationsTable: React.FC<ModelQuantizationsTableProps> = ({ varia
                 <span className="tabular-nums text-gray-12">{sizeValue}</span>
                 <span className="text-gray-11"> {sizeUnit}</span>
               </Table.Cell>
-              <Table.Cell className="tabular-nums text-gray-12">
-                {v.totalTrials.toLocaleString()}
-              </Table.Cell>
-              <Table.Cell className="tabular-nums text-gray-12">
-                {v.deviceCount.toLocaleString()}
+              <Table.Cell>
+                {v.score != null ? (
+                  <ScoreBadge score={v.score} />
+                ) : (
+                  <span className="italic text-gray-11">N/A</span>
+                )}
               </Table.Cell>
               <Table.Cell className="flex tabular-nums text-gray-12">
                 <div className="ml-auto w-fit">

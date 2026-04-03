@@ -1,9 +1,9 @@
 import { unstable_cache as cache } from 'next/cache';
 
-import { and, eq } from 'drizzle-orm';
+import { and, countDistinct, eq, inArray, sql } from 'drizzle-orm';
 
 import { db } from '@/lib/db';
-import { modelFamilies, organizations } from '@/lib/db/schema';
+import { modelFamilies, models, modelsInfo, organizations, view__model_stats_by_device } from '@/lib/db/schema';
 
 export const getModelFamily = cache(
   async (orgSlug: string, modelSlug: string) => {
@@ -25,4 +25,43 @@ export const getModelFamily = cache(
   },
   ['model-family'],
   { revalidate: 3_600 },
+);
+
+export const getModelFamilyChips = cache(
+  async (familyId: string) => {
+    const memberRows = await db
+      .select({ modelId: models.id })
+      .from(modelsInfo)
+      .innerJoin(models, eq(modelsInfo.artifactSha256, models.artifactSha256))
+      .where(eq(modelsInfo.familyId, familyId));
+
+    const modelIds = memberRows.map((r) => r.modelId);
+    if (modelIds.length === 0) return [];
+
+    const rows = await db
+      .select({
+        chipId: view__model_stats_by_device.deviceChipId,
+        cpu: sql<string>`MIN(${view__model_stats_by_device.deviceCpu})`.as('cpu'),
+        cpuCores: sql<number>`MIN(${view__model_stats_by_device.deviceCpuCores})`.as('cpu_cores'),
+        gpu: sql<string>`MIN(${view__model_stats_by_device.deviceGpu})`.as('gpu'),
+        gpuCores: sql<number>`MIN(${view__model_stats_by_device.deviceGpuCores})`.as('gpu_cores'),
+        ramGb: sql<number>`MIN(${view__model_stats_by_device.deviceRamGb})`.as('ram_gb'),
+        modelCount: countDistinct(view__model_stats_by_device.modelId).as('model_count'),
+      })
+      .from(view__model_stats_by_device)
+      .where(inArray(view__model_stats_by_device.modelId, modelIds))
+      .groupBy(view__model_stats_by_device.deviceChipId);
+
+    return rows.map((r) => ({
+      chipId: r.chipId,
+      cpu: r.cpu,
+      cpuCores: r.cpuCores,
+      gpu: r.gpu,
+      gpuCores: r.gpuCores,
+      ramGb: r.ramGb,
+      modelCount: r.modelCount,
+    }));
+  },
+  ['model-family-chips'],
+  { revalidate: 600 },
 );
