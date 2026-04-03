@@ -13,7 +13,6 @@ import { Tabs } from '@/components/ui';
 type TabsNavProps = {
   orgSlug: string;
   modelSlug: string;
-  runs: number;
   children?: React.ReactNode;
 };
 
@@ -21,7 +20,7 @@ type TabsNavProps = {
 // Component
 // -----------------------------------------------------------------------------
 
-const TabsNav: React.FC<TabsNavProps> = ({ orgSlug, modelSlug, runs, children }) => {
+const TabsNav: React.FC<TabsNavProps> = ({ orgSlug, modelSlug, children }) => {
   const pathname = usePathname();
   const rootPath = `/${orgSlug}/${modelSlug}`;
 
@@ -45,16 +44,14 @@ const TabsNav: React.FC<TabsNavProps> = ({ orgSlug, modelSlug, runs, children })
             {
               name: 'Runs',
               href: `${rootPath}/runs`,
-              stat: runs,
               hidden: false,
             },
-          ].map(({ name, href, stat, hidden }) =>
+          ].map(({ name, href, hidden }) =>
             !hidden ? (
               <Tabs.Trigger
                 key={href}
                 className="data-[state=active]:before:bottom-0"
                 id={`trigger-${href}`}
-                stat={stat}
                 value={href}
                 href={href}
                 aria-controls={`content-${href}`}

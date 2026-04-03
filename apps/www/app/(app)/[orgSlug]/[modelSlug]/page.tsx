@@ -17,7 +17,7 @@ import { modelsInfo, view__model_device_summary } from '@/lib/db/schema';
 import { H2 } from '@/components/templates/mdx';
 import StateInfo from '@/components/templates/state-info';
 
-export default async function ModelFamilyPage({
+export default async function Page({
   params,
   searchParams,
 }: {

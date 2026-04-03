@@ -67,7 +67,7 @@ export default async function Layout({
           </div>
         </div>
       </header>
-      <TabsNav orgSlug={orgSlug} modelSlug={modelSlug} runs={0}>
+      <TabsNav orgSlug={orgSlug} modelSlug={modelSlug}>
         {children}
       </TabsNav>
     </div>
