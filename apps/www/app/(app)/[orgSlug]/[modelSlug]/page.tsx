@@ -1,5 +1,5 @@
 import DevicePerformance from './(components)/device-performance';
-import type { DevicePerformanceData } from './(components)/device-performance';
+import type { DevicePerformanceProps } from './(components)/device-performance';
 import PerformanceChart from './(components)/performance-chart';
 import type { ChartPoint } from './(components)/performance-chart';
 import VariantsTable from './(components)/variants-table';
@@ -10,19 +10,13 @@ import { eq, inArray } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { models, modelsInfo, view__model_stats_by_device } from '@/lib/db/schema';
 
-// -----------------------------------------------------------------------------
-// Types
-// -----------------------------------------------------------------------------
+import { H2 } from '@/components/templates/mdx';
 
-type Props = {
+export default async function ModelFamilyPage({
+  params,
+}: {
   params: Promise<{ orgSlug: string; modelSlug: string }>;
-};
-
-// -----------------------------------------------------------------------------
-// Page
-// -----------------------------------------------------------------------------
-
-export default async function ModelFamilyPage({ params }: Props) {
+}) {
   const { orgSlug, modelSlug } = await params;
   const family = (await getModelFamily(orgSlug, modelSlug))!;
 
@@ -41,9 +35,9 @@ export default async function ModelFamilyPage({ params }: Props) {
   const stats =
     modelIds.length > 0
       ? await db
-          .select()
-          .from(view__model_stats_by_device)
-          .where(inArray(view__model_stats_by_device.modelId, modelIds))
+        .select()
+        .from(view__model_stats_by_device)
+        .where(inArray(view__model_stats_by_device.modelId, modelIds))
       : [];
 
   if (modelIds.length === 0) {
@@ -126,7 +120,7 @@ export default async function ModelFamilyPage({ params }: Props) {
     }
   }
 
-  const perfByDevice: Record<string, DevicePerformanceData['perfByDevice'][string]> = {};
+  const perfByDevice: DevicePerformanceProps['perfByDevice'] = {};
   for (const [, row] of bestByCell) {
     const chipId = row.deviceChipId;
     if (!perfByDevice[chipId]) perfByDevice[chipId] = [];
@@ -170,27 +164,23 @@ export default async function ModelFamilyPage({ params }: Props) {
   // ---------------------------------------------------------------------------
 
   return (
-    <div className="flex grow flex-col gap-8 py-4 md:py-6">
-      {/* Section 1: Model Variants */}
-      <section className="mx-auto w-full max-w-7xl px-4 md:px-6">
-        <h2 className="mb-3 text-base font-medium tracking-tight text-gray-12">
-          Available variants
-        </h2>
-        <VariantsTable variants={variants} />
-      </section>
+    <div className="flex grow flex-col py-4 md:py-6">
+      <div className="w-full md:px-6">
+        <div className="mx-auto w-full max-w-7xl">
+          <H2 className="mb-2 px-4 md:px-0">Variants</H2>
+          <VariantsTable variants={variants} />
+        </div>
 
-      {/* Section 2: Device Performance */}
-      <section className="mx-auto w-full max-w-7xl px-4 md:px-6">
-        <h2 className="mb-3 text-base font-medium tracking-tight text-gray-12">
-          Performance by device
-        </h2>
-        <DevicePerformance devices={devices} perfByDevice={perfByDevice} />
-      </section>
+        <div className="mx-auto mt-4 flex w-full max-w-7xl flex-col md:mt-8">
+          <H2 className="mb-1 px-4 md:px-0">Performance</H2>
+          <DevicePerformance devices={devices} perfByDevice={perfByDevice} />
+        </div>
 
-      {/* Section 3: Prefill vs Decode Chart */}
-      <section className="mx-auto w-full max-w-7xl">
-        <PerformanceChart data={chartData} />
-      </section>
+        <div className="mx-auto mt-4 flex w-full max-w-7xl flex-col md:mt-8">
+          <H2 className="mb-2 px-4 md:px-0">Speed</H2>
+          <PerformanceChart data={chartData} />
+        </div>
+      </div>
     </div>
   );
 }

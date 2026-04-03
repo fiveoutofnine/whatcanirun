@@ -93,12 +93,8 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({ data }) => {
     if (data.length === 0) return ids;
 
     const bestDecode = data.reduce((best, d) => (d.avgDecodeTps > best.avgDecodeTps ? d : best));
-    const bestPrefill = data.reduce((best, d) =>
-      d.avgPrefillTps > best.avgPrefillTps ? d : best,
-    );
-    const bestScore = data.reduce((best, d) =>
-      d.compositeScore > best.compositeScore ? d : best,
-    );
+    const bestPrefill = data.reduce((best, d) => (d.avgPrefillTps > best.avgPrefillTps ? d : best));
+    const bestScore = data.reduce((best, d) => (d.compositeScore > best.compositeScore ? d : best));
 
     ids.set(bestDecode.id, 'decode');
     ids.set(bestPrefill.id, 'prefill');
@@ -215,8 +211,7 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({ data }) => {
                 { label: 'Runtime', value: d.bestRuntime },
               ];
 
-              const ManufacturerLogo =
-                MANUFACTURER_LOGO[d.deviceManufacturer.toLowerCase()];
+              const ManufacturerLogo = MANUFACTURER_LOGO[d.deviceManufacturer.toLowerCase()];
 
               return (
                 <div className="z-50 max-w-[20rem] overflow-hidden rounded-md border border-gray-6 bg-gray-2 text-sm font-normal leading-normal text-gray-12 shadow-md animate-in fade-in-50">
@@ -228,9 +223,7 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({ data }) => {
                     )}
                     <div className="flex flex-col items-start">
                       <div className="text-sm font-medium leading-5">{d.deviceLabel}</div>
-                      <span className="text-xs leading-4 text-gray-11">
-                        {d.quant ?? d.format}
-                      </span>
+                      <span className="text-xs leading-4 text-gray-11">{d.quant ?? d.format}</span>
                     </div>
                     <div className="ml-auto">
                       <ScoreBadge score={d.compositeScore} />
@@ -275,14 +268,7 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({ data }) => {
                     </foreignObject>
                   );
                 }
-                return (
-                  <circle
-                    className="fill-gray-9 stroke-gray-7"
-                    cx={cx}
-                    cy={cy}
-                    r={6}
-                  />
-                );
+                return <circle className="fill-gray-9 stroke-gray-7" cx={cx} cy={cy} r={6} />;
               }
 
               const size = 24;
@@ -293,14 +279,7 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({ data }) => {
                   </foreignObject>
                 );
               }
-              return (
-                <circle
-                  className="fill-blue-9 stroke-blue-7"
-                  cx={cx}
-                  cy={cy}
-                  r={8}
-                />
-              );
+              return <circle className="fill-blue-9 stroke-blue-7" cx={cx} cy={cy} r={8} />;
             }}
           >
             <LabelList
@@ -337,7 +316,12 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({ data }) => {
                 }
 
                 return (
-                  <text x={labelX} y={labelY} textAnchor={anchor} className="pointer-events-none select-none">
+                  <text
+                    x={labelX}
+                    y={labelY}
+                    textAnchor={anchor}
+                    className="pointer-events-none select-none"
+                  >
                     <tspan className="fill-gray-12 font-medium" fontSize="12">
                       {item.deviceLabel}
                     </tspan>

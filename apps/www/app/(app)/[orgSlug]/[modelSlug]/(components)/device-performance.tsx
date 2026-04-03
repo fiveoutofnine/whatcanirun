@@ -34,9 +34,8 @@ type VariantPerf = {
   avgPeakRssMb: number | null;
 };
 
-export type DevicePerformanceData = {
+export type DevicePerformanceProps = {
   devices: DeviceOption[];
-  /** Map<chipId, VariantPerf[]> — each device's results across all quant variants */
   perfByDevice: Record<string, VariantPerf[]>;
 };
 
@@ -62,7 +61,7 @@ function formatMemory(mb: number | null): string {
 // Component
 // -----------------------------------------------------------------------------
 
-const DevicePerformance: React.FC<DevicePerformanceData> = ({ devices, perfByDevice }) => {
+const DevicePerformance: React.FC<DevicePerformanceProps> = ({ devices, perfByDevice }) => {
   const [selectedChipId, setSelectedChipId] = useState<string>(devices[0]?.chipId ?? '');
 
   const selectedDevice = devices.find((d) => d.chipId === selectedChipId);
@@ -72,18 +71,18 @@ const DevicePerformance: React.FC<DevicePerformanceData> = ({ devices, perfByDev
   return (
     <div className="flex flex-col gap-3">
       {/* Device selector */}
-      <div className="flex items-center gap-3">
-        <DeviceCombobox devices={devices} value={selectedChipId} onSelect={setSelectedChipId}>
-          <Button variant="outline" size="sm">
-            <span className="line-clamp-1">
-              {selectedDevice ? `${selectedDevice.gpu} (${selectedDevice.ramGb} GB)` : 'Select device'}
-            </span>
-            <ChevronDown className="ml-1 size-3.5 shrink-0 text-gray-11" />
-          </Button>
-        </DeviceCombobox>
-      </div>
+      <DeviceCombobox devices={devices} value={selectedChipId} onSelect={setSelectedChipId}>
+        <Button variant="outline" size="sm">
+          <span className="line-clamp-1">
+            {selectedDevice
+              ? `${selectedDevice.gpu} (${selectedDevice.ramGb} GB)`
+              : 'Select device'}
+          </span>
+          <ChevronDown className="ml-1 size-3.5 shrink-0 text-gray-11" />
+        </Button>
+      </DeviceCombobox>
 
-      {/* Stats summary for best variant */}
+      {/* Stats summary */}
       {sorted.length > 0 && (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           <Stat>
@@ -123,10 +122,18 @@ const DevicePerformance: React.FC<DevicePerformanceData> = ({ devices, perfByDev
             {sorted.map((p) => (
               <Table.Row key={p.modelId}>
                 <Table.Cell className="font-medium">{p.quant ?? p.format}</Table.Cell>
-                <Table.Cell className="tabular-nums text-right">{formatTps(p.avgDecodeTps)}</Table.Cell>
-                <Table.Cell className="tabular-nums text-right">{formatTps(p.avgPrefillTps)}</Table.Cell>
-                <Table.Cell className="tabular-nums text-right">{formatTtft(p.ttftP50Ms)}</Table.Cell>
-                <Table.Cell className="tabular-nums text-right">{formatMemory(p.avgPeakRssMb)}</Table.Cell>
+                <Table.Cell className="text-right tabular-nums">
+                  {formatTps(p.avgDecodeTps)}
+                </Table.Cell>
+                <Table.Cell className="text-right tabular-nums">
+                  {formatTps(p.avgPrefillTps)}
+                </Table.Cell>
+                <Table.Cell className="text-right tabular-nums">
+                  {formatTtft(p.ttftP50Ms)}
+                </Table.Cell>
+                <Table.Cell className="text-right tabular-nums">
+                  {formatMemory(p.avgPeakRssMb)}
+                </Table.Cell>
                 <Table.Cell className="text-right text-gray-11">{p.bestRuntime}</Table.Cell>
                 <Table.Cell className="text-right">
                   <ScoreBadge score={p.compositeScore} />
@@ -136,9 +143,7 @@ const DevicePerformance: React.FC<DevicePerformanceData> = ({ devices, perfByDev
           </Table.Body>
         </Table.Root>
       ) : (
-        <p className="py-6 text-center text-sm text-gray-11">
-          No benchmark data for this device.
-        </p>
+        <p className="py-6 text-center text-sm text-gray-11">No benchmark data for this device.</p>
       )}
     </div>
   );

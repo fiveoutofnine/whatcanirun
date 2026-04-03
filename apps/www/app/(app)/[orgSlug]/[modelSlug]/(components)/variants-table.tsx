@@ -52,20 +52,16 @@ const VariantsTable: React.FC<{ variants: Variant[] }> = ({ variants }) => {
           <Table.Row key={v.modelId}>
             <Table.Cell className="font-medium">{v.quant ?? '—'}</Table.Cell>
             <Table.Cell className="text-gray-11">{v.format}</Table.Cell>
-            <Table.Cell className="tabular-nums text-right text-gray-11">
+            <Table.Cell className="text-right tabular-nums text-gray-11">
               {formatFileSize(v.fileSizeBytes)}
             </Table.Cell>
-            <Table.Cell className="tabular-nums text-right text-gray-11">
+            <Table.Cell className="text-right tabular-nums text-gray-11">
               {v.parameters ?? '—'}
             </Table.Cell>
             <Table.Cell>
               {v.quantizedBy ? (
                 <div className="flex items-center gap-1.5">
-                  <UserAvatar
-                    image={v.quantizedBy.logoUrl}
-                    name={v.quantizedBy.name}
-                    size={18}
-                  />
+                  <UserAvatar image={v.quantizedBy.logoUrl} name={v.quantizedBy.name} size={18} />
                   <span className="text-sm text-gray-11">{v.quantizedBy.name}</span>
                 </div>
               ) : (
