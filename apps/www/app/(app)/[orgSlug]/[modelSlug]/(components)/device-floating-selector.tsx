@@ -5,6 +5,7 @@ import { Fragment, useMemo } from 'react';
 import { ChevronsUpDown } from 'lucide-react';
 import { useQueryState } from 'nuqs';
 
+import type { Device } from '@/lib/db/schema';
 import { formatChipName, parseManufacturer } from '@/lib/utils';
 
 import DeviceCombobox from '@/components/templates/device-combobox';
@@ -13,13 +14,10 @@ import DeviceCombobox from '@/components/templates/device-combobox';
 // Types
 // -----------------------------------------------------------------------------
 
-export type ChipOption = {
-  chipId: string;
-  cpu: string;
-  cpuCores: number;
-  gpu: string;
-  gpuCores: number;
-  ramGb: number;
+export type ChipOption = Pick<
+  Device,
+  'chipId' | 'cpu' | 'cpuCores' | 'gpu' | 'gpuCores' | 'ramGb'
+> & {
   modelCount: number;
 };
 

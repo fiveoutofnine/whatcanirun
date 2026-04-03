@@ -5,6 +5,7 @@ import { useState } from 'react';
 import clsx from 'clsx';
 import { ArrowUpRight, Check, Copy, ExternalLink } from 'lucide-react';
 
+import type { Organization } from '@/lib/db/schema';
 import { formatBytes } from '@/lib/utils';
 
 import LogoImg from '@/components/common/logo-img';
@@ -23,10 +24,7 @@ export type Quant = {
   format: string;
   fileSizeBytes: number | null;
   source: string | null;
-  quantizedBy: {
-    name: string;
-    logoUrl: string | null;
-  } | null;
+  quantizedBy: Organization | null;
   score: number | null;
 };
 
@@ -130,10 +128,33 @@ const ModelQuantizationsTable: React.FC<ModelQuantizationsTableProps> = ({ quant
               </Table.Cell>
               <Table.Cell>
                 {v.quantizedBy ? (
-                  <div className="flex min-w-fit items-center gap-1.5 text-nowrap">
-                    <UserAvatar image={v.quantizedBy.logoUrl} name={v.quantizedBy.name} size={18} />
-                    <span className="text-sm text-gray-12">{v.quantizedBy.name}</span>
-                  </div>
+                  v.quantizedBy.websiteUrl ? (
+                    <a
+                      className="flex w-fit min-w-fit items-center gap-1.5 text-nowrap hover:underline focus-visible:rounded"
+                      href={v.quantizedBy.websiteUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <UserAvatar
+                        image={v.quantizedBy.logoUrl}
+                        name={v.quantizedBy.name}
+                        size={18}
+                      />
+                      <span className="flex text-sm text-gray-12">
+                        {v.quantizedBy.name}
+                        <ArrowUpRight className="size-3 text-gray-11" />
+                      </span>
+                    </a>
+                  ) : (
+                    <div className="flex min-w-fit items-center gap-1.5 text-nowrap">
+                      <UserAvatar
+                        image={v.quantizedBy.logoUrl}
+                        name={v.quantizedBy.name}
+                        size={18}
+                      />
+                      <span className="text-sm text-gray-12">{v.quantizedBy.name}</span>
+                    </div>
+                  )
                 ) : (
                   <span className="italic text-gray-11">Unknown</span>
                 )}

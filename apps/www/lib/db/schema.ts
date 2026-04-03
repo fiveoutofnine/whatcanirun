@@ -547,3 +547,5 @@ export type ModelFamily = typeof modelFamilies.$inferSelect;
 export type ModelInfo = typeof modelsInfo.$inferSelect;
 export type Run = typeof runs.$inferSelect;
 export type Trial = typeof trials.$inferSelect;
+// Views
+export type ModelStatsByDevice = typeof view__model_stats_by_device.$inferSelect;

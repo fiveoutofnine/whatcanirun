@@ -91,9 +91,7 @@ export default async function ModelFamilyPage({
       format: m.model!.format,
       fileSizeBytes: m.fileSizeBytes || m.model!.fileSizeBytes || null,
       source: m.source || m.model!.source,
-      quantizedBy: m.quantizedBy
-        ? { name: m.quantizedBy.name, logoUrl: m.quantizedBy.logoUrl }
-        : null,
+      quantizedBy: m.quantizedBy,
       score: bestScoreByModel.get(m.model!.id) ?? null,
     }))
     .sort((a, b) => {
