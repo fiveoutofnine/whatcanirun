@@ -114,7 +114,10 @@ export default async function ModelFamilyPage({
           <H2 className="mb-2 px-4 md:px-0">Quantizations</H2>
           <ModelQuantizationsTable quants={quants} />
           <H2 className="mb-2 mt-4 px-4 md:mt-8 md:px-0">Performance</H2>
-          <ModelQuantizationsTable quants={quants} />
+          <div className="flex w-full flex-col gap-2 md:flex-row">
+            <div className="h-64 w-full border-y border-gray-6 bg-gray-2 md:rounded-xl md:border-x" />
+            <div className="h-64 w-full border-y border-gray-6 bg-gray-2 md:rounded-xl md:border-x" />
+          </div>
         </div>
       </div>
       <DeviceFloatingSelector chips={chips} />
