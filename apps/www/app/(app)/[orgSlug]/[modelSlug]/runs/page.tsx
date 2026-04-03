@@ -151,7 +151,7 @@ export default async function Page({
       <div className="mx-auto flex w-full max-w-5xl grow flex-col py-4 md:py-6">
         <H2 className="mb-1 px-4 md:px-0">Runs</H2>
         <p className="mb-4 px-4 text-sm leading-normal text-gray-11 md:px-0 md:text-base">
-          Most recent benchmark runs for this model.
+          View all benchmark runs for this model family.
         </p>
         <Suspense fallback={<ModelRunsDataTableSkeleton rowCount={10} />}>
           <ModelRunsDataTable

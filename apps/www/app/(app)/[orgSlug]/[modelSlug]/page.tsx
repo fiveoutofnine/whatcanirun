@@ -148,7 +148,11 @@ export default async function Page({
           <ModelQuantizationsTable quants={quants} />
           {devicesChartData.length > 0 ? (
             <Fragment>
-              <H2 className="mb-2 mt-4 px-4 md:mt-8 md:px-0">Device Comparison</H2>
+              <H2 className="mb-1 mt-4 px-4 md:mt-8 md:px-0">Device Comparison</H2>
+              <p className="mb-4 px-4 text-sm tabular-nums leading-normal text-gray-11 md:px-0 md:text-base">
+                Results include trials with <span className="tabular-nums">4,096</span> input tokens
+                and <span className="tabular-nums">1,024</span> output tokens only.
+              </p>
               <DevicesChart data={devicesChartData} defaultDevice={effectiveDevice} />
             </Fragment>
           ) : null}
