@@ -165,15 +165,15 @@ export default async function ModelFamilyPage({
 
   return (
     <div className="flex grow md:px-6">
-      <div className="mx-auto flex w-full max-w-7xl grow p-4 md:p-0">
-        <div className="flex w-full grow flex-col py-0 md:py-6">
+      <div className="mx-auto flex w-full max-w-7xl grow">
+        <div className="flex w-full grow flex-col py-4 md:py-6">
           <H2 className="mb-2 px-4 md:px-0">Variants</H2>
           <VariantsTable variants={variants} />
 
-          <H2 className="mb-2 mt-4 md:mt-8">Performance</H2>
+          <H2 className="mb-2 mt-4 px-4 md:mt-8 md:px-0">Performance</H2>
           <DevicePerformance devices={devices} perfByDevice={perfByDevice} />
 
-          <H2 className="mb-2 mt-4 md:mt-8">Speed</H2>
+          <H2 className="mb-2 mt-4 px-4 md:mt-8 md:px-0">Speed</H2>
           <PerformanceChart data={chartData} />
         </div>
 
