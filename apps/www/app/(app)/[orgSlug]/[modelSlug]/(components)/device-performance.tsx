@@ -6,7 +6,6 @@ import { ChevronDown } from 'lucide-react';
 
 import DeviceCombobox from '@/components/templates/device-combobox';
 import ScoreBadge from '@/components/templates/score-badge';
-import Stat from '@/components/templates/stat';
 import { Button, Table } from '@/components/ui';
 
 // -----------------------------------------------------------------------------
@@ -82,31 +81,9 @@ const DevicePerformance: React.FC<DevicePerformanceProps> = ({ devices, perfByDe
         </Button>
       </DeviceCombobox>
 
-      {/* Stats summary */}
-      {sorted.length > 0 && (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <Stat>
-            <Stat.Name>Best decode</Stat.Name>
-            <Stat.Value className="tabular-nums">{formatTps(sorted[0].avgDecodeTps)}</Stat.Value>
-          </Stat>
-          <Stat>
-            <Stat.Name>Best prefill</Stat.Name>
-            <Stat.Value className="tabular-nums">{formatTps(sorted[0].avgPrefillTps)}</Stat.Value>
-          </Stat>
-          <Stat>
-            <Stat.Name>Best TTFT</Stat.Name>
-            <Stat.Value className="tabular-nums">{formatTtft(sorted[0].ttftP50Ms)}</Stat.Value>
-          </Stat>
-          <Stat>
-            <Stat.Name>Best variant</Stat.Name>
-            <Stat.Value>{sorted[0].quant ?? sorted[0].format}</Stat.Value>
-          </Stat>
-        </div>
-      )}
-
       {/* Per-variant table */}
       {sorted.length > 0 ? (
-        <Table.Root containerClassName="w-full">
+        <Table.Root containerClassName="hidden md:block border border-gray-6 rounded-xl hide-scrollbar [&>table]:border-0">
           <Table.Header>
             <Table.Row>
               <Table.Head>Variant</Table.Head>

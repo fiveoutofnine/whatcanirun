@@ -36,7 +36,7 @@ function formatFileSize(bytes: number | null): string {
 
 const VariantsTable: React.FC<{ variants: Variant[] }> = ({ variants }) => {
   return (
-    <Table.Root containerClassName="w-full">
+    <Table.Root containerClassName="hidden md:block border border-gray-6 rounded-xl hide-scrollbar [&>table]:border-0">
       <Table.Header>
         <Table.Row>
           <Table.Head>Quant</Table.Head>
