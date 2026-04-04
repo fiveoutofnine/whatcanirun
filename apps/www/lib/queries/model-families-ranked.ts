@@ -36,14 +36,17 @@ export async function getRankedModelFamilies(
   offset: number,
   limit: number,
   search?: string,
+  orgSlug?: string,
 ): Promise<RankedModelFamily[]> {
   const pattern = search ? `%${search}%` : undefined;
-  const whereClause = pattern
-    ? and(
-        eq(runs.status, RunStatus.VERIFIED),
-        or(ilike(modelFamilies.name, pattern), ilike(organizations.name, pattern)),
-      )
-    : eq(runs.status, RunStatus.VERIFIED);
+  const conditions = [eq(runs.status, RunStatus.VERIFIED)];
+  if (pattern) {
+    conditions.push(or(ilike(modelFamilies.name, pattern), ilike(organizations.name, pattern))!);
+  }
+  if (orgSlug) {
+    conditions.push(eq(organizations.slug, orgSlug));
+  }
+  const whereClause = and(...conditions);
 
   return db
     .select({
@@ -81,14 +84,19 @@ export async function getRankedModelFamilies(
     .offset(offset);
 }
 
-export async function getRankedModelFamiliesCount(search?: string): Promise<number> {
+export async function getRankedModelFamiliesCount(
+  search?: string,
+  orgSlug?: string,
+): Promise<number> {
   const pattern = search ? `%${search}%` : undefined;
-  const whereClause = pattern
-    ? and(
-        eq(runs.status, RunStatus.VERIFIED),
-        or(ilike(modelFamilies.name, pattern), ilike(organizations.name, pattern)),
-      )
-    : eq(runs.status, RunStatus.VERIFIED);
+  const conditions = [eq(runs.status, RunStatus.VERIFIED)];
+  if (pattern) {
+    conditions.push(or(ilike(modelFamilies.name, pattern), ilike(organizations.name, pattern))!);
+  }
+  if (orgSlug) {
+    conditions.push(eq(organizations.slug, orgSlug));
+  }
+  const whereClause = and(...conditions);
 
   const [row] = await db
     .select({ total: countDistinct(modelFamilies.id) })

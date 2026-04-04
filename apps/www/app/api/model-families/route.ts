@@ -25,16 +25,19 @@ export async function GET(request: NextRequest) {
     Math.max(1, parseInt(searchParams.get('limit') ?? String(DEFAULT_LIMIT), 10) || DEFAULT_LIMIT),
   );
   const q = searchParams.get('q')?.trim() || undefined;
+  const orgSlug = searchParams.get('orgSlug')?.trim() || undefined;
 
   const [data, total] = await Promise.all([
     cache(
-      () => getRankedModelFamilies(offset, limit, q),
-      [`model-families-ranked-${offset}-${limit}-${q ?? ''}`],
+      () => getRankedModelFamilies(offset, limit, q, orgSlug),
+      [`model-families-ranked-${offset}-${limit}-${q ?? ''}-${orgSlug ?? ''}`],
       { revalidate: 600 },
     )(),
-    cache(() => getRankedModelFamiliesCount(q), [`model-families-ranked-total-${q ?? ''}`], {
-      revalidate: 600,
-    })(),
+    cache(
+      () => getRankedModelFamiliesCount(q, orgSlug),
+      [`model-families-ranked-total-${q ?? ''}-${orgSlug ?? ''}`],
+      { revalidate: 600 },
+    )(),
   ]);
 
   return NextResponse.json({ data, total, offset, limit });

@@ -20,6 +20,7 @@ type ModelFamiliesListProps = {
   total: number;
   searchTotal: number;
   pageSize: number;
+  orgSlug?: string;
 };
 
 // -----------------------------------------------------------------------------
@@ -31,6 +32,7 @@ const ModelFamiliesList: React.FC<ModelFamiliesListProps> = ({
   total,
   searchTotal,
   pageSize,
+  orgSlug,
 }) => {
   const [q, setQ] = useQueryState('q', { shallow: false, throttleMs: 300 });
   const [localQuery, setLocalQuery] = useState(q ?? '');
@@ -57,10 +59,11 @@ const ModelFamiliesList: React.FC<ModelFamiliesListProps> = ({
         limit: String(pageSize),
       });
       if (query) params.set('q', query);
+      if (orgSlug) params.set('orgSlug', orgSlug);
       const res = await fetch(`/api/model-families?${params}`);
       return res.json();
     },
-    [pageSize],
+    [pageSize, orgSlug],
   );
 
   // Debounce local input → URL param

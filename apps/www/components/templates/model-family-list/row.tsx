@@ -84,7 +84,7 @@ const ModelFamilyRowSkeleton: React.FC = () => {
           <div className="size-10 animate-pulse rounded-full bg-gray-9" />
         </div>
         <div className="ml-3 flex min-w-0 grow flex-col gap-1">
-          <div className="flex w-full items-center justify-between">
+          <div className="flex w-full items-center justify-between gap-2">
             <div className="h-6 w-64 animate-pulse rounded bg-gray-9" />
             <div className="h-5 w-20 animate-pulse rounded bg-gray-9" />
           </div>
