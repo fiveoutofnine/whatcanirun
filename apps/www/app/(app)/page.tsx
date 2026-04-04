@@ -95,7 +95,7 @@ export default async function Page({
           .from(view__model_stats_by_device)
           .where(deviceFilter)
           .orderBy(() => {
-            if (!sorting) return desc(view__model_stats_by_device.avgDecodeTps);
+            if (!sorting) return desc(view__model_stats_by_device.compositeScore);
 
             switch (sorting.id) {
               case 'model':
