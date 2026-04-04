@@ -1,6 +1,6 @@
 'use client';
 
-import { Fragment, useCallback, useEffect, useRef, useState, useTransition } from 'react';
+import { useCallback, useEffect, useRef, useState, useTransition } from 'react';
 
 import ModelFamilyRow from './row';
 import { useWindowVirtualizer } from '@tanstack/react-virtual';
@@ -130,18 +130,27 @@ const ModelFamiliesList: React.FC<ModelFamiliesListProps> = ({
             {virtualItems.map((virtualRow) => {
               const item = items[virtualRow.index];
               return (
-                <Fragment key={item.familyId}>
+                <div
+                  key={item.familyId}
+                  ref={virtualizer.measureElement}
+                  data-index={virtualRow.index}
+                >
                   <hr
                     className="my-1 h-px w-full rounded-full border-0 bg-gray-6 first:mt-0 last:mb-0"
                     role="separator"
                     aria-hidden
                   />
-                  <div ref={virtualizer.measureElement} data-index={virtualRow.index}>
-                    <ModelFamilyRow item={item} />
-                  </div>
-                </Fragment>
+                  <ModelFamilyRow item={item} />
+                </div>
               );
             })}
+            {virtualItems.length > 0 ? (
+              <hr
+                className="my-1 h-px w-full rounded-full border-0 bg-gray-6 first:mt-0 last:mb-0"
+                role="separator"
+                aria-hidden
+              />
+            ) : null}
           </div>
         </div>
         {items.length === 0 && !isLoading && !isPending ? (

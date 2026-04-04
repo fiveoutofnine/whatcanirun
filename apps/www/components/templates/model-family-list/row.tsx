@@ -23,7 +23,7 @@ const ModelFamilyRow: React.FC<ModelFamilyRowProps> = ({ item }) => {
   return (
     <Link
       href={`/${item.orgSlug}/${item.familySlug}`}
-      className="-mx-2 flex w-[calc(100%+1rem)] rounded-xl px-2 py-2 transition-colors hover:bg-gray-4 md:-mx-4 md:w-[calc(100%+2rem)] md:px-4 md:py-4"
+      className="group/model-family-row -mx-2 flex w-[calc(100%+1rem)] rounded-xl px-2 py-2 transition-colors hover:bg-gray-4 md:-mx-4 md:w-[calc(100%+2rem)] md:px-4 md:py-4"
     >
       <div className="pt-0.5">
         <UserAvatar image={item.orgLogoUrl} name={item.orgName} size={40} />
