@@ -1,8 +1,8 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState, useTransition } from 'react';
+import { Fragment, useCallback, useEffect, useRef, useState, useTransition } from 'react';
 
-import ModelFamilyRow from './model-family-row';
+import ModelFamilyRow from './row';
 import { useWindowVirtualizer } from '@tanstack/react-virtual';
 import { Search } from 'lucide-react';
 import { useQueryState } from 'nuqs';
@@ -37,7 +37,7 @@ const ModelFamiliesList: React.FC<ModelFamiliesListProps> = ({
   const [items, setItems] = useState<RankedModelFamily[]>(initialData);
   const [totalCount, setTotalCount] = useState(searchTotal);
   const [isLoading, setIsLoading] = useState(false);
-  const [, startTransition] = useTransition();
+  const [isPending, startTransition] = useTransition();
   const hasMore = items.length < totalCount;
 
   const listRef = useRef<HTMLDivElement>(null);
@@ -130,22 +130,27 @@ const ModelFamiliesList: React.FC<ModelFamiliesListProps> = ({
             {virtualItems.map((virtualRow) => {
               const item = items[virtualRow.index];
               return (
-                <div
-                  key={item.familyId}
-                  ref={virtualizer.measureElement}
-                  data-index={virtualRow.index}
-                >
-                  <ModelFamilyRow item={item} />
-                </div>
+                <Fragment key={item.familyId}>
+                  <hr
+                    className="my-1 h-px w-full rounded-full border-0 bg-gray-6 first:mt-0 last:mb-0"
+                    role="separator"
+                    aria-hidden
+                  />
+                  <div ref={virtualizer.measureElement} data-index={virtualRow.index}>
+                    <ModelFamilyRow item={item} />
+                  </div>
+                </Fragment>
               );
             })}
           </div>
         </div>
-        {items.length === 0 && !isLoading ? (
+        {items.length === 0 && !isLoading && !isPending ? (
           <p className="py-8 text-center text-sm text-gray-11">No models found.</p>
         ) : null}
         <div ref={sentinelRef} className="h-1" />
-        {isLoading ? <p className="py-4 text-center text-sm text-gray-11">Loading...</p> : null}
+        {isLoading || isPending ? (
+          <p className="py-4 text-center text-sm text-gray-11">Loading...</p>
+        ) : null}
       </div>
     </div>
   );
