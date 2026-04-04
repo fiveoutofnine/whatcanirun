@@ -82,6 +82,7 @@ export default async function Page({
                 with: {
                   lab: true,
                   quantizedBy: true,
+                  family: true,
                 },
               },
             },

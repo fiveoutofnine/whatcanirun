@@ -46,6 +46,8 @@ const RunsDataTableMobile: React.FC<RunsDataTableInternalProps> = (tableOptions)
               source={info?.source || model.source}
               runtimeName={row.original.runtimeName}
               fileSizeBytes={info?.fileSizeBytes || model.fileSizeBytes}
+              labSlug={info?.lab?.slug}
+              familySlug={info?.family?.slug}
               lab={
                 info?.lab
                   ? {
