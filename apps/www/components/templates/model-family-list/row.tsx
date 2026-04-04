@@ -15,11 +15,17 @@ type ModelFamilyRowProps = {
   item: RankedModelFamily;
 };
 
+type ModelFamilyRowSkeletonProps = {
+  separator: boolean;
+};
+
 // -----------------------------------------------------------------------------
 // Component
 // -----------------------------------------------------------------------------
 
-const ModelFamilyRow: React.FC<ModelFamilyRowProps> = ({ item }) => {
+const ModelFamilyRow: React.FC<ModelFamilyRowProps> & {
+  Skeleton: React.FC<ModelFamilyRowSkeletonProps>;
+} = ({ item }) => {
   return (
     <Link
       href={`/${item.orgSlug}/${item.familySlug}`}
@@ -68,5 +74,37 @@ const ModelFamilyRow: React.FC<ModelFamilyRowProps> = ({ item }) => {
     </Link>
   );
 };
+
+const ModelFamilyRowSkeleton: React.FC<ModelFamilyRowSkeletonProps> = ({ separator = false }) => {
+  return (
+    <div>
+      {separator ? (
+        <hr
+          className="my-1 h-px w-full rounded-full border-0 bg-gray-6"
+          role="separator"
+          aria-hidden
+        />
+      ) : null}
+      <div className="flex w-full py-3 md:py-4">
+        <div className="pt-0.5">
+          <div className="size-10 animate-pulse rounded-full bg-gray-9" />
+        </div>
+        <div className="ml-3 flex min-w-0 grow flex-col gap-1">
+          <div className="flex w-full items-center justify-between">
+            <div className="h-6 w-64 animate-pulse rounded bg-gray-9" />
+            <div className="h-5 w-20 animate-pulse rounded bg-gray-9" />
+          </div>
+          <div className="flex gap-1">
+            <div className="h-4 w-16 animate-pulse rounded bg-gray-9" />
+            <div className="h-4 w-16 animate-pulse rounded bg-gray-9" />
+            <div className="h-4 w-14 animate-pulse rounded bg-gray-9" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+ModelFamilyRow.Skeleton = ModelFamilyRowSkeleton;
 
 export default ModelFamilyRow;

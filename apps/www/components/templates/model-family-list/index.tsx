@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState, useTransition } from 'react';
+import { Fragment, useCallback, useEffect, useRef, useState, useTransition } from 'react';
 
 import ModelFamilyRow from './row';
 import { Search } from 'lucide-react';
@@ -57,7 +57,7 @@ const ModelFamiliesList: React.FC<ModelFamiliesListProps> = ({
         limit: String(pageSize),
       });
       if (query) params.set('q', query);
-      const res = await fetch(`/api/v0/model-families?${params}`);
+      const res = await fetch(`/api/model-families?${params}`);
       return res.json();
     },
     [pageSize],
@@ -100,6 +100,13 @@ const ModelFamiliesList: React.FC<ModelFamiliesListProps> = ({
     return () => observer.disconnect();
   }, [loadMore]);
 
+  const Skeleton = (
+    <Fragment>
+      {Array.from({ length: 10 }).map((_, i) => (
+        <ModelFamilyRow.Skeleton key={i} separator={i > 0} />
+      ))}
+    </Fragment>
+  );
   return (
     <div className="flex flex-col gap-4">
       <Input
@@ -138,11 +145,7 @@ const ModelFamiliesList: React.FC<ModelFamiliesListProps> = ({
           </div>
         ) : null}
         <div ref={sentinelRef} className="h-1" aria-hidden />
-        {isLoading || isPending ? (
-          <div className="flex w-full items-center justify-center rounded-xl border border-gray-6 bg-gray-2 px-4 py-6 md:py-6">
-            <p className="py-4 text-center text-sm text-gray-11">Loading…</p>
-          </div>
-        ) : null}
+        {isLoading || isPending ? Skeleton : null}
       </div>
     </div>
   );
