@@ -381,7 +381,7 @@ const ModelDevicesChartChart: React.FC<ModelDevicesChartProps> = ({ data, defaul
 
               return (
                 <div
-                  className="z-50 max-w-[20rem] overflow-hidden rounded-md border border-gray-6 bg-gray-2 text-sm font-normal leading-normal text-gray-12 shadow-md animate-in fade-in-50"
+                  className="z-60 max-w-[20rem] overflow-hidden rounded-md border border-gray-6 bg-gray-2 text-sm font-normal leading-normal text-gray-12 shadow-md animate-in fade-in-50"
                   tabIndex={-1}
                 >
                   <div className="flex w-full items-center gap-2 p-2">
@@ -476,6 +476,7 @@ const ModelDevicesChartChart: React.FC<ModelDevicesChartProps> = ({ data, defaul
                         : 'z-40 opacity-50 transition-colors hover:opacity-100',
                     )}
                     style={{ width: size, height: size, minWidth: size }}
+                    tabIndex={-1}
                   >
                     {Logo ? (
                       <Logo className="rounded-full" size={size} />
