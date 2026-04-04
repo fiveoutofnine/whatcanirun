@@ -17,7 +17,7 @@ import UserAvatar from '@/components/templates/user-avatar';
 
 type ModelTableCellProps = Pick<Model, 'displayName' | 'quant' | 'source' | 'fileSizeBytes'> &
   Pick<Run, 'runtimeName'> & {
-    lab?: Pick<Organization, 'name' | 'logoUrl' | 'websiteUrl'>;
+    lab?: Pick<Organization, 'name' | 'logoUrl' | 'websiteUrl' | 'slug'>;
     quantizedBy?: Pick<Organization, 'name' | 'logoUrl' | 'websiteUrl'>;
     labSlug?: string | null;
     familySlug?: string | null;
@@ -75,19 +75,14 @@ const ModelTableCell: React.FC<ModelTableCellProps> & { Skeleton: React.FC } = (
             content={
               <span className="whitespace-nowrap text-gray-11">
                 Base model by{' '}
-                {lab.websiteUrl ? (
-                  <a
+                {lab.slug ? (
+                  <Link
                     className="inline-flex items-center gap-1 align-[-2px] text-gray-11 underline decoration-dotted transition-colors hover:text-gray-12"
-                    href={lab.websiteUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    href={`/${lab.slug}`}
                   >
                     <UserAvatar image={lab.logoUrl} name={lab.name} size={16} />
-                    <span className="flex">
-                      {lab.name}
-                      <ArrowUpRight className="size-3 text-gray-11" />
-                    </span>
-                  </a>
+                    {lab.name}
+                  </Link>
                 ) : (
                   <span className="inline-flex items-center gap-1 align-[-2px] text-gray-11">
                     <UserAvatar image={lab.logoUrl} name={lab.name} size={16} />
@@ -132,19 +127,14 @@ const ModelTableCell: React.FC<ModelTableCellProps> & { Skeleton: React.FC } = (
             content={
               <span className="text-gray-11">
                 Base model by{' '}
-                {lab.websiteUrl ? (
-                  <a
+                {lab.slug ? (
+                  <Link
                     className="inline-flex items-center gap-1 align-[-2px] text-gray-11 underline decoration-dotted transition-colors hover:text-gray-12"
-                    href={lab.websiteUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    href={`/${lab.slug}`}
                   >
                     <UserAvatar image={lab.logoUrl} name={lab.name} size={16} />
-                    <span className="flex">
-                      {lab.name}
-                      <ArrowUpRight className="size-3 text-gray-11" />
-                    </span>
-                  </a>
+                    {lab.name}
+                  </Link>
                 ) : (
                   <span className="inline-flex items-center gap-1 align-[-2px] text-gray-11">
                     <UserAvatar image={lab.logoUrl} name={lab.name} size={16} />

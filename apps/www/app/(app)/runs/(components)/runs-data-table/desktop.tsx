@@ -56,6 +56,7 @@ const RunsDataTableDesktop: React.FC<RunsDataTableInternalProps> = (tableOptions
                       name: info.lab.name,
                       logoUrl: info.lab.logoUrl,
                       websiteUrl: info.lab.websiteUrl,
+                      slug: info.lab.slug,
                     }
                   : undefined
               }

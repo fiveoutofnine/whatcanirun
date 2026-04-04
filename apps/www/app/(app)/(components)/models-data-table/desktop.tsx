@@ -59,6 +59,7 @@ const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOpt
                     name: row.original.labName,
                     logoUrl: row.original.labLogoUrl,
                     websiteUrl: row.original.labWebsiteUrl,
+                    slug: row.original.labSlug,
                   }
                 : undefined
             }
