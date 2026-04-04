@@ -26,6 +26,7 @@
     "@radix-ui/react-tooltip": "^1.2.8",
     "@radix-ui/react-visually-hidden": "^1.2.4",
     "@tanstack/react-table": "^8.21.3",
+    "@tanstack/react-virtual": "^3.13.23",
     "@types/mdx": "^2.0.13",
     "@vercel/analytics": "^2.0.1",
     "@whatcanirun/shared": "workspace:*",

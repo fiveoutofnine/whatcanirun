@@ -1,4 +1,4 @@
-import { FileText, Home, Play } from 'lucide-react';
+import { Boxes, FileText, Home, Play } from 'lucide-react';
 
 import type { Page } from '@/lib/types/site';
 
@@ -9,6 +9,7 @@ import LogoIcon from '@/components/common/logo-icon';
  */
 export const NAVBAR_PAGES: Page[] = [
   { name: 'Home', slug: '/', icon: <Home /> },
+  { name: 'Models', slug: '/models', icon: <Boxes /> },
   { name: 'Runs', slug: '/runs', icon: <Play /> },
   { name: 'Docs', slug: '/docs', icon: <FileText /> },
 ];

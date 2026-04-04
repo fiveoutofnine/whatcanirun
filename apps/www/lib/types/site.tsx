@@ -13,7 +13,7 @@ export type ExternalLink = {
 /**
  * Type for a page slug on [**whatcani.run**](https://whatcani.run).
  */
-export type PageSlug = '/' | '/runs' | '/docs';
+export type PageSlug = '/' | '/models' | '/runs' | '/docs';
 
 /**
  * Type for an external page linked on [**whatcani.run**](https://whatcani.run),
