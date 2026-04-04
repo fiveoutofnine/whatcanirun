@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Fragment } from 'react';
 
 import clsx from 'clsx';
-import { ArrowUpRight, Cpu, HardDrive, Layers } from 'lucide-react';
+import { ArrowUpRight, HardDrive, Layers, Link as LinkLucide } from 'lucide-react';
 import { twMerge } from 'tailwind-merge';
 
 import type { Model, Organization, Run } from '@/lib/db/schema';
@@ -15,10 +15,7 @@ import UserAvatar from '@/components/templates/user-avatar';
 // Props
 // -----------------------------------------------------------------------------
 
-type ModelTableCellProps = Pick<
-  Model,
-  'displayName' | 'quant' | 'architecture' | 'source' | 'fileSizeBytes'
-> &
+type ModelTableCellProps = Pick<Model, 'displayName' | 'quant' | 'source' | 'fileSizeBytes'> &
   Pick<Run, 'runtimeName'> & {
     lab?: Pick<Organization, 'name' | 'logoUrl' | 'websiteUrl'>;
     quantizedBy?: Pick<Organization, 'name' | 'logoUrl' | 'websiteUrl'>;
@@ -32,7 +29,6 @@ type ModelTableCellProps = Pick<
 const ModelTableCell: React.FC<ModelTableCellProps> & { Skeleton: React.FC } = ({
   displayName,
   quant,
-  architecture,
   source,
   runtimeName,
   fileSizeBytes,
@@ -180,12 +176,6 @@ const ModelTableCell: React.FC<ModelTableCellProps> & { Skeleton: React.FC } = (
             value: fileSizeBytes ? formatBytes(fileSizeBytes) : null,
             content: 'File size',
           },
-
-          {
-            icon: <Cpu />,
-            value: architecture,
-            content: 'Architecture',
-          },
         ].map(({ icon, value, content }, index) => {
           if (!value) return null;
 
@@ -212,6 +202,22 @@ const ModelTableCell: React.FC<ModelTableCellProps> & { Skeleton: React.FC } = (
 
           return <Fragment key={index}>{Children}</Fragment>;
         })}
+        {source && url ? (
+          <a
+            className="flex w-fit items-center gap-1 whitespace-nowrap text-xs leading-4 text-gray-11 underline decoration-dotted transition-colors hover:text-gray-12"
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span className="flex size-3 items-center justify-center">
+              <LinkLucide />
+            </span>
+            <span className="flex">
+              Source
+              <ArrowUpRight className="size-2.5" />
+            </span>
+          </a>
+        ) : null}
       </div>
     </div>
   );
@@ -228,7 +234,6 @@ const ModelTableCellSkeleton: React.FC = () => {
         {[
           { icon: <Layers />, className: 'w-7' },
           { icon: <HardDrive />, className: 'w-6' },
-          { icon: <Cpu />, className: 'w-12' },
         ].map(({ icon, className }, index) => {
           return (
             <div className="flex w-fit items-center gap-1 text-gray-11" key={index}>
@@ -239,6 +244,13 @@ const ModelTableCellSkeleton: React.FC = () => {
             </div>
           );
         })}
+        <div className="flex w-fit items-center gap-1 text-gray-11">
+          <LinkLucide className="size-3" />
+          <span className="flex">
+            Source
+            <ArrowUpRight className="size-3" />
+          </span>
+        </div>
       </div>
     </div>
   );
