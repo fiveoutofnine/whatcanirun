@@ -174,7 +174,7 @@ const ModelDevicesChartChart: React.FC<ModelDevicesChartProps> = ({ data, defaul
           Decode / Prefill Speeds
         </h3>
         <span className="font-mono text-xs text-gray-11">
-          {chartData.length.toLocaleString()} devices
+          {chartData.length.toLocaleString()} device{chartData.length !== 1 ? 's' : ''}
         </span>
         {quantOptions.length > 1 ? (
           <Dropdown.Root>
@@ -211,7 +211,7 @@ const ModelDevicesChartChart: React.FC<ModelDevicesChartProps> = ({ data, defaul
                     }}
                   >
                     <span className="flex items-center gap-1.5">
-                      Select all <LogoImg.Ggml size={16} />
+                      Select <LogoImg.Ggml size={16} /> only
                     </span>
                   </Dropdown.Item>
                 ) : null}
@@ -230,7 +230,7 @@ const ModelDevicesChartChart: React.FC<ModelDevicesChartProps> = ({ data, defaul
                     }}
                   >
                     <span className="flex items-center gap-1.5">
-                      Select all <LogoImg.Mlx size={16} />
+                      Select <LogoImg.Mlx size={16} /> only
                     </span>
                   </Dropdown.Item>
                 ) : null}

@@ -55,8 +55,8 @@ const Hero: React.FC = async () => {
         </Suspense>
         <div className="mt-4 flex gap-2 md:mt-6">
           <HeroCopyCommandButton />
-          <Button variant="ghost" href="/docs" rightIcon={<ArrowRight />}>
-            Docs
+          <Button variant="ghost" href="/models" rightIcon={<ArrowRight />}>
+            Models
           </Button>
         </div>
       </div>
