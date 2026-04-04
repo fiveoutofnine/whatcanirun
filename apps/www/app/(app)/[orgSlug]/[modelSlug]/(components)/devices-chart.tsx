@@ -97,8 +97,10 @@ const ModelDevicesChartChart: React.FC<ModelDevicesChartProps> = ({ data, defaul
     [data, selectedQuants],
   );
 
-  // Highlight highest cost (a), score (b), and score/cost ratio (c).
+  // Highlight highest decode (a) and prefill (b) data points.
   const highlightedIds = useMemo(() => {
+    if (filteredData.length === 0) return new Map<string, 'decode' | 'prefill' | 'both'>();
+
     const ids = new Map<string, 'decode' | 'prefill' | 'both'>();
 
     const a = filteredData.reduce(
@@ -111,10 +113,14 @@ const ModelDevicesChartChart: React.FC<ModelDevicesChartProps> = ({ data, defaul
       0,
     );
 
-    if (filteredData[a].deviceChipId) ids.set(filteredData[a].deviceChipId, 'decode');
-    if (filteredData[b].deviceChipId) ids.set(filteredData[b].deviceChipId, 'prefill');
-    if (filteredData[a].deviceChipId && filteredData[a].deviceChipId) {
-      ids.set(filteredData[a].deviceChipId, 'both');
+    const keyA = getDataPointKey(filteredData[a]);
+    const keyB = getDataPointKey(filteredData[b]);
+
+    if (keyA === keyB) {
+      ids.set(keyA, 'both');
+    } else {
+      ids.set(keyA, 'decode');
+      ids.set(keyB, 'prefill');
     }
 
     return ids;
@@ -126,8 +132,10 @@ const ModelDevicesChartChart: React.FC<ModelDevicesChartProps> = ({ data, defaul
   const chartData = useMemo(
     () =>
       [...filteredData].sort((a, b) => {
-        const aH = highlightedIds.has(a.deviceChipId) || a.deviceChipId === selectedChipId ? 1 : 0;
-        const bH = highlightedIds.has(b.deviceChipId) || b.deviceChipId === selectedChipId ? 1 : 0;
+        const aH =
+          highlightedIds.has(getDataPointKey(a)) || a.deviceChipId === selectedChipId ? 1 : 0;
+        const bH =
+          highlightedIds.has(getDataPointKey(b)) || b.deviceChipId === selectedChipId ? 1 : 0;
         return aH - bH;
       }),
     [filteredData, highlightedIds, selectedChipId],
@@ -443,7 +451,7 @@ const ModelDevicesChartChart: React.FC<ModelDevicesChartProps> = ({ data, defaul
               const { cx, cy } = props as { cx: number; cy: number } & ModelDevicesChartValue;
               const d = props as ModelDevicesChartValue;
               const selected = d.deviceChipId === selectedChipId;
-              const highlighted = highlightedIds.has(d.deviceChipId);
+              const highlighted = highlightedIds.has(getDataPointKey(d));
               const highlight = selected || highlighted;
               const { logo: Logo } = getManufacturerLogo(d);
               const FormatLogo = FORMAT_LOGO[d.format];
@@ -493,10 +501,11 @@ const ModelDevicesChartChart: React.FC<ModelDevicesChartProps> = ({ data, defaul
                 const item = chartData[index];
                 if (!item) return null;
 
-                if (!item.deviceChipId || !highlightedIds.has(item.deviceChipId)) return null;
+                const pointKey = getDataPointKey(item);
+                if (!pointKey || !highlightedIds.has(pointKey)) return null;
 
                 const deviceName = getDeviceDisplayName(item);
-                const reason = highlightedIds.get(item.deviceChipId);
+                const reason = highlightedIds.get(pointKey);
                 const reasonLabel = {
                   decode: 'Fastest decode',
                   prefill: 'Fastest prefill',
@@ -555,6 +564,10 @@ const ModelDevicesChartChart: React.FC<ModelDevicesChartProps> = ({ data, defaul
 // -----------------------------------------------------------------------------
 // Helpers
 // -----------------------------------------------------------------------------
+
+function getDataPointKey(d: ModelDevicesChartValue) {
+  return `${d.deviceChipId}:${d.format}:${d.quant}`;
+}
 
 const FORMAT_LOGO: Record<string, React.FC<{ className?: string; size?: number }>> = {
   gguf: LogoImg.Ggml,
