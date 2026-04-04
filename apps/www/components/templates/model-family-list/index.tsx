@@ -118,7 +118,7 @@ const ModelFamiliesList: React.FC<ModelFamiliesListProps> = ({
       />
       <div>
         {items.map((item, i) => (
-          <div key={item.familyId}>
+          <div key={i}>
             {i > 0 ? (
               <hr
                 className="my-1 h-px w-full rounded-full border-0 bg-gray-6"
