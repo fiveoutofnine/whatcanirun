@@ -23,7 +23,7 @@ const ModelFamilyRow: React.FC<ModelFamilyRowProps> = ({ item }) => {
   return (
     <Link
       href={`/${item.orgSlug}/${item.familySlug}`}
-      className="group/model-family-row -mx-2 flex w-[calc(100%+1rem)] rounded-xl px-2 py-2 transition-colors hover:bg-gray-4 md:-mx-4 md:w-[calc(100%+2rem)] md:px-4 md:py-4"
+      className="group/model-family-row -mx-2 flex w-[calc(100%+1rem)] rounded-xl p-3 transition-colors hover:bg-gray-4 md:-mx-4 md:w-[calc(100%+2rem)] md:p-4"
     >
       <div className="pt-0.5">
         <UserAvatar image={item.orgLogoUrl} name={item.orgName} size={40} />
@@ -31,11 +31,11 @@ const ModelFamilyRow: React.FC<ModelFamilyRowProps> = ({ item }) => {
       <div className="ml-3 flex min-w-0 grow flex-col">
         <div className="flex w-full items-center justify-between">
           <div className="line-clamp-1 flex items-center gap-1 text-base font-medium leading-6 text-gray-11">
-            <span className="font-normal">{item.orgName}</span>
-            <span>/</span>
+            <span className="hidden font-normal min-[560px]:block">{item.orgName}</span>
+            <span className="hidden min-[560px]:block">/</span>
             <span className="line-clamp-1 tracking-tight text-gray-12">{item.familyName}</span>
           </div>
-          <div className="w-fit text-nowrap text-base leading-6 text-gray-11">
+          <div className="w-fit text-nowrap text-sm leading-5 text-gray-11">
             <span className="tabular-nums">
               {formatValueToPrecision(item.totalTokens, 1, true)}
             </span>{' '}
