@@ -42,7 +42,6 @@ const RunsDataTableMobile: React.FC<RunsDataTableInternalProps> = (tableOptions)
             <ModelTableCell
               displayName={info?.name || model.displayName}
               quant={info?.quant || model.quant}
-              architecture={info?.architecture || model.architecture}
               source={info?.source || model.source}
               runtimeName={row.original.runtimeName}
               fileSizeBytes={info?.fileSizeBytes || model.fileSizeBytes}

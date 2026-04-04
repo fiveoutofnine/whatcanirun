@@ -50,7 +50,6 @@ const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOpt
           <ModelTableCell
             displayName={row.original.modelDisplayName}
             quant={row.original.modelQuant}
-            architecture={row.original.modelArchitecture}
             source={row.original.modelSource}
             runtimeName={row.original.runtimeName}
             fileSizeBytes={row.original.modelFileSizeBytes}
