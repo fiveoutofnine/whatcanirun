@@ -203,7 +203,7 @@ export async function GET(request: NextRequest) {
                         color: GRAY_12,
                       }}
                     >
-                      {models}
+                      {models.toLocaleString()}
                     </div>
                     <div
                       style={{
@@ -262,7 +262,7 @@ export async function GET(request: NextRequest) {
                         color: GRAY_12,
                       }}
                     >
-                      {quants}
+                      {quants.toLocaleString()}
                     </div>
                     <div
                       style={{
@@ -320,7 +320,7 @@ export async function GET(request: NextRequest) {
                     color: GRAY_12,
                   }}
                 >
-                  {devices}
+                  {devices.toLocaleString()}
                 </div>
                 <div
                   style={{
