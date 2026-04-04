@@ -54,7 +54,7 @@ const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOpt
             runtimeName={row.original.runtimeName}
             fileSizeBytes={row.original.modelFileSizeBytes}
             lab={
-              row.original.labName
+              row.original.labName && row.original.labSlug
                 ? {
                     name: row.original.labName,
                     logoUrl: row.original.labLogoUrl,

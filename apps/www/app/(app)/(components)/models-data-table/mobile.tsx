@@ -53,7 +53,7 @@ const ModelsDataTableMobile: React.FC<ModelsDataTableInternalProps> = (tableOpti
             runtimeName={row.original.runtimeName}
             fileSizeBytes={row.original.modelFileSizeBytes}
             lab={
-              row.original.labName
+              row.original.labName && row.original.labSlug
                 ? {
                     name: row.original.labName,
                     logoUrl: row.original.labLogoUrl,
