@@ -1,5 +1,6 @@
 import { ImageResponse } from 'next/og';
 import type { NextRequest } from 'next/server';
+import { Fragment } from 'react';
 
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
@@ -29,6 +30,7 @@ export async function GET(request: NextRequest) {
   const description = searchParams.get('description') ?? 'Description';
   const logoUrl = searchParams.get('logoUrl');
   const models = Number(searchParams.get('models') ?? 0);
+  const quants = Number(searchParams.get('quants') ?? 0);
   const devices = Number(searchParams.get('devices') ?? 0);
   const tokens = Number(searchParams.get('tokens') ?? 0);
 
@@ -150,69 +152,132 @@ export async function GET(request: NextRequest) {
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <div style={{ display: 'flex' }}>
-              <div
-                style={{
-                  width: 48,
-                  height: 48,
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="40"
-                  height="40"
-                  viewBox="0 0 40 40"
-                  fill="none"
-                >
-                  <g
-                    transform={`scale(${40 / 24})`}
-                    stroke={GRAY_11}
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
+              {models > 0 ? (
+                <Fragment>
+                  <div
+                    style={{
+                      width: 48,
+                      height: 48,
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
                   >
-                    <path d="M2.97 12.92A2 2 0 0 0 2 14.63v3.24a2 2 0 0 0 .97 1.71l3 1.8a2 2 0 0 0 2.06 0L12 19v-5.5l-5-3-4.03 2.42Z" />
-                    <path d="m7 16.5-4.74-2.85" />
-                    <path d="m7 16.5 5-3" />
-                    <path d="M7 16.5v5.17" />
-                    <path d="M12 13.5V19l3.97 2.38a2 2 0 0 0 2.06 0l3-1.8a2 2 0 0 0 .97-1.71v-3.24a2 2 0 0 0-.97-1.71L17 10.5l-5 3Z" />
-                    <path d="m17 16.5-5-3" />
-                    <path d="m17 16.5 4.74-2.85" />
-                    <path d="M17 16.5v5.17" />
-                    <path d="M7.97 4.42A2 2 0 0 0 7 6.13v4.37l5 3 5-3V6.13a2 2 0 0 0-.97-1.71l-3-1.8a2 2 0 0 0-2.06 0l-3 1.8Z" />
-                    <path d="M12 8 7.26 5.15" />
-                    <path d="m12 8 4.74-2.85" />
-                    <path d="M12 13.5V8" />
-                  </g>
-                </svg>
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', marginLeft: 8 }}>
-                <div
-                  style={{
-                    display: 'flex',
-                    fontSize: 40,
-                    fontWeight: 600,
-                    lineHeight: 1.2,
-                    letterSpacing: '-0.05em',
-                    color: GRAY_12,
-                  }}
-                >
-                  {models}
-                </div>
-                <div
-                  style={{
-                    fontSize: 24,
-                    fontWeight: 400,
-                    lineHeight: 1.2,
-                    color: GRAY_11,
-                    marginTop: 8,
-                  }}
-                >
-                  Models
-                </div>
-              </div>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="40"
+                      height="40"
+                      viewBox="0 0 40 40"
+                      fill="none"
+                    >
+                      <g
+                        transform={`scale(${40 / 24})`}
+                        stroke={GRAY_11}
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M2.97 12.92A2 2 0 0 0 2 14.63v3.24a2 2 0 0 0 .97 1.71l3 1.8a2 2 0 0 0 2.06 0L12 19v-5.5l-5-3-4.03 2.42Z" />
+                        <path d="m7 16.5-4.74-2.85" />
+                        <path d="m7 16.5 5-3" />
+                        <path d="M7 16.5v5.17" />
+                        <path d="M12 13.5V19l3.97 2.38a2 2 0 0 0 2.06 0l3-1.8a2 2 0 0 0 .97-1.71v-3.24a2 2 0 0 0-.97-1.71L17 10.5l-5 3Z" />
+                        <path d="m17 16.5-5-3" />
+                        <path d="m17 16.5 4.74-2.85" />
+                        <path d="M17 16.5v5.17" />
+                        <path d="M7.97 4.42A2 2 0 0 0 7 6.13v4.37l5 3 5-3V6.13a2 2 0 0 0-.97-1.71l-3-1.8a2 2 0 0 0-2.06 0l-3 1.8Z" />
+                        <path d="M12 8 7.26 5.15" />
+                        <path d="m12 8 4.74-2.85" />
+                        <path d="M12 13.5V8" />
+                      </g>
+                    </svg>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', marginLeft: 8 }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        fontSize: 40,
+                        fontWeight: 600,
+                        lineHeight: 1.2,
+                        letterSpacing: '-0.05em',
+                        color: GRAY_12,
+                      }}
+                    >
+                      {models}
+                    </div>
+                    <div
+                      style={{
+                        fontSize: 24,
+                        fontWeight: 400,
+                        lineHeight: 1.2,
+                        color: GRAY_11,
+                        marginTop: 8,
+                      }}
+                    >
+                      Models
+                    </div>
+                  </div>
+                </Fragment>
+              ) : null}
+              {quants > 0 ? (
+                <Fragment>
+                  <div
+                    style={{
+                      width: 48,
+                      height: 48,
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      marginLeft: models > 0 ? 40 : 0,
+                    }}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="40"
+                      height="40"
+                      viewBox="0 0 40 40"
+                      fill="none"
+                    >
+                      <g
+                        transform={`scale(${40 / 24})`}
+                        stroke={GRAY_11}
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z" />
+                        <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" />
+                        <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" />
+                      </g>
+                    </svg>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', marginLeft: 8 }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        fontSize: 40,
+                        fontWeight: 600,
+                        lineHeight: 1.2,
+                        letterSpacing: '-0.05em',
+                        color: GRAY_12,
+                      }}
+                    >
+                      {quants}
+                    </div>
+                    <div
+                      style={{
+                        fontSize: 24,
+                        fontWeight: 400,
+                        lineHeight: 1.2,
+                        color: GRAY_11,
+                        marginTop: 8,
+                      }}
+                    >
+                      Quants
+                    </div>
+                  </div>
+                </Fragment>
+              ) : null}
               <div
                 style={{
                   width: 48,
