@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Fragment } from 'react';
 
 import clsx from 'clsx';
-import { ArrowUpRight, HardDrive, Layers, Link as LinkLucide } from 'lucide-react';
+import { ArrowUpRight, HardDrive, Layers } from 'lucide-react';
 import { twMerge } from 'tailwind-merge';
 
 import type { Model, Organization, Run } from '@/lib/db/schema';
@@ -204,18 +204,13 @@ const ModelTableCell: React.FC<ModelTableCellProps> & { Skeleton: React.FC } = (
         })}
         {source && url ? (
           <a
-            className="flex w-fit items-center gap-1 whitespace-nowrap text-xs leading-4 text-gray-11 underline decoration-dotted transition-colors hover:text-gray-12"
+            className="flex w-fit whitespace-nowrap text-xs leading-4 text-gray-11 underline decoration-dotted transition-colors hover:text-gray-12"
             href={url}
             target="_blank"
             rel="noopener noreferrer"
           >
-            <span className="flex size-3 items-center justify-center">
-              <LinkLucide />
-            </span>
-            <span className="flex">
-              Source
-              <ArrowUpRight className="size-2.5" />
-            </span>
+            Source
+            <ArrowUpRight className="size-2.5" />
           </a>
         ) : null}
       </div>
@@ -244,12 +239,9 @@ const ModelTableCellSkeleton: React.FC = () => {
             </div>
           );
         })}
-        <div className="flex w-fit items-center gap-1 text-gray-11">
-          <LinkLucide className="size-3" />
-          <span className="flex">
-            Source
-            <ArrowUpRight className="size-3" />
-          </span>
+        <div className="flex w-fit text-gray-11">
+          Source
+          <ArrowUpRight className="size-2.5" />
         </div>
       </div>
     </div>
