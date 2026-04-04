@@ -103,12 +103,12 @@ const ModelFamiliesList: React.FC<ModelFamiliesListProps> = ({
   const Skeleton = (
     <Fragment>
       {Array.from({ length: 10 }).map((_, i) => (
-        <ModelFamilyRow.Skeleton key={i} separator={i > 0} />
+        <ModelFamilyRow.Skeleton key={i} />
       ))}
     </Fragment>
   );
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 md:gap-6">
       <Input
         leftIcon={<Search />}
         placeholder={`Search ${total} model${total > 1 ? 's' : ''}…`}
@@ -117,23 +117,18 @@ const ModelFamiliesList: React.FC<ModelFamiliesListProps> = ({
         containerized={false}
       />
       <div>
-        {items.map((item) => (
+        {items.map((item, i) => (
           <div key={item.familyId}>
-            <hr
-              className="my-1 h-px w-full rounded-full border-0 bg-gray-6"
-              role="separator"
-              aria-hidden
-            />
+            {i > 0 ? (
+              <hr
+                className="my-1 h-px w-full rounded-full border-0 bg-gray-6"
+                role="separator"
+                aria-hidden
+              />
+            ) : null}
             <ModelFamilyRow item={item} />
           </div>
         ))}
-        {items.length > 0 ? (
-          <hr
-            className="mt-1 h-px w-full rounded-full border-0 bg-gray-6"
-            role="separator"
-            aria-hidden
-          />
-        ) : null}
         {items.length === 0 && !isLoading && !isPending ? (
           <div className="flex w-full items-center justify-center rounded-xl border border-gray-6 bg-gray-2 px-4 py-6 md:py-6">
             <StateInfo

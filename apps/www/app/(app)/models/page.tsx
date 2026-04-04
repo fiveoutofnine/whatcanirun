@@ -6,14 +6,14 @@ import {
 } from '@/lib/queries/model-families-ranked';
 
 import ContainerLayout from '@/components/layouts/container';
-import { H2 } from '@/components/templates/mdx';
+import { H1 } from '@/components/templates/mdx';
 import ModelFamiliesList from '@/components/templates/model-family-list';
 
 // -----------------------------------------------------------------------------
 // Constants
 // -----------------------------------------------------------------------------
 
-const PAGE_SIZE = 30;
+const PAGE_SIZE = 15;
 
 // -----------------------------------------------------------------------------
 // Page
@@ -42,7 +42,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ q
   return (
     <ContainerLayout className="flex flex-col items-center">
       <div className="w-full max-w-3xl">
-        <H2 className="mb-2">Models</H2>
+        <H1 className="mb-2 md:mb-4">Models</H1>
         <ModelFamiliesList
           initialData={initialData}
           total={total}
