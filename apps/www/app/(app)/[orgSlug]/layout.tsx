@@ -1,5 +1,8 @@
 import type { Metadata } from 'next';
+import { unstable_cache as cache } from 'next/cache';
 import { Fragment } from 'react';
+
+import { db } from '@/lib/db';
 
 // -----------------------------------------------------------------------------
 // Metadata
@@ -12,8 +15,16 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { orgSlug } = await params;
 
-  const title = `${orgSlug} Models`;
-  const description = `Browse all benchmarked models from ${orgSlug}.`;
+  const org = await cache(
+    () => db.query.organizations.findFirst({ where: (o, { eq }) => eq(o.slug, orgSlug) }),
+    [`org-${orgSlug}`],
+    { revalidate: 3600 },
+  )();
+
+  if (!org) return {};
+
+  const title = `${org.name} Models`;
+  const description = `Browse all benchmarked models from ${org.name}.`;
 
   return {
     title,
