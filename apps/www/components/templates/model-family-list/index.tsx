@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState, useTransition } from 'react';
 
 import ModelFamilyRow from './row';
 import { useWindowVirtualizer } from '@tanstack/react-virtual';
+import clsx from 'clsx';
 import { Search } from 'lucide-react';
 import { useQueryState } from 'nuqs';
 
@@ -127,7 +128,7 @@ const ModelFamiliesList: React.FC<ModelFamiliesListProps> = ({
               transform: `translateY(${(virtualItems[0]?.start ?? 0) - virtualizer.options.scrollMargin}px)`,
             }}
           >
-            {virtualItems.map((virtualRow) => {
+            {virtualItems.map((virtualRow, i) => {
               const item = items[virtualRow.index];
               return (
                 <div
@@ -136,7 +137,10 @@ const ModelFamiliesList: React.FC<ModelFamiliesListProps> = ({
                   data-index={virtualRow.index}
                 >
                   <hr
-                    className="my-1 h-px w-full rounded-full border-0 bg-gray-6 first:mt-0 last:mb-0"
+                    className={clsx(
+                      'h-px w-full rounded-full border-0 bg-gray-6',
+                      i > 0 ? 'my-1' : 'mb-1',
+                    )}
                     role="separator"
                     aria-hidden
                   />
@@ -146,7 +150,7 @@ const ModelFamiliesList: React.FC<ModelFamiliesListProps> = ({
             })}
             {virtualItems.length > 0 ? (
               <hr
-                className="my-1 h-px w-full rounded-full border-0 bg-gray-6 first:mt-0 last:mb-0"
+                className="mt-1 h-px w-full rounded-full border-0 bg-gray-6"
                 role="separator"
                 aria-hidden
               />
