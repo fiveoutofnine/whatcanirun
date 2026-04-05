@@ -70,7 +70,7 @@ export default async function Layout({
               {[
                 {
                   icon: <Waypoints />,
-                  text: family.parameters,
+                  text: formatParameters(family.parameters),
                   label: 'Parameters',
                 },
                 {
@@ -117,4 +117,17 @@ export default async function Layout({
       </TabsNav>
     </div>
   );
+}
+
+// -----------------------------------------------------------------------------
+// Helpers
+// -----------------------------------------------------------------------------
+
+function formatParameters(params: string | null): string | null {
+  if (!params) return null;
+
+  const match = params.match(/^([\d.]+\s*[KMBT]?)[-–]A([\d.]+\s*[KMBT]?)$/i);
+  if (!match) return params;
+
+  return `${match[1]} (${match[2]} active)`;
 }
