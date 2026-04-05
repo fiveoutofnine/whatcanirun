@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-import { Computer, Layers, Play } from 'lucide-react';
+import { ArrowRight, Computer, Layers, Play } from 'lucide-react';
 
 import type { RankedModelFamily } from '@/lib/queries/model-families-ranked';
 import { formatValueToPrecision } from '@/lib/utils';
@@ -25,7 +25,7 @@ const ModelFamilyRow: React.FC<ModelFamilyRowProps> & {
   return (
     <Link
       href={`/${item.orgSlug}/${item.familySlug}`}
-      className="group/model-family-row -mx-2 flex w-[calc(100%+1rem)] rounded-xl p-3 transition-colors hover:bg-gray-4 md:-mx-4 md:w-[calc(100%+2rem)] md:p-4"
+      className="group/model-family-row relative -mx-2 flex w-[calc(100%+1rem)] rounded-xl p-3 transition-colors hover:bg-gray-4 focus-visible:bg-gray-4 md:-mx-4 md:w-[calc(100%+2rem)] md:p-4"
     >
       <div className="pt-0.5">
         <UserAvatar image={item.orgLogoUrl} name={item.orgName} size={40} />
@@ -37,7 +37,7 @@ const ModelFamilyRow: React.FC<ModelFamilyRowProps> & {
             <span className="hidden min-[560px]:block">/</span>
             <span className="line-clamp-1 tracking-tight text-gray-12">{item.familyName}</span>
           </div>
-          <div className="w-fit text-nowrap text-sm leading-5 text-gray-11">
+          <div className="w-fit text-nowrap text-sm leading-5 text-gray-11 transition-opacity group-hover/model-family-row:opacity-0 group-focus-visible/model-family-row:opacity-0">
             <span className="tabular-nums">
               {formatValueToPrecision(item.totalTokens, 1, true)}
             </span>{' '}
@@ -45,7 +45,7 @@ const ModelFamilyRow: React.FC<ModelFamilyRowProps> & {
           </div>
         </div>
 
-        <div className="flex flex-wrap gap-x-2.5 gap-y-1">
+        <div className="flex flex-wrap gap-x-2.5 gap-y-0">
           {[
             {
               Icon: Layers,
@@ -60,12 +60,17 @@ const ModelFamilyRow: React.FC<ModelFamilyRowProps> & {
               value: `${item.runCount.toLocaleString()} run${item.runCount > 1 ? 's' : ''}`,
             },
           ].map(({ Icon, value }, i) => (
-            <div key={i} className="flex items-center gap-1 text-gray-11">
+            <div key={i} className="flex min-w-fit items-center gap-1 text-nowrap text-gray-11">
               <Icon className="size-3.5" />
               <div className="text-sm tabular-nums leading-5 text-gray-11">{value}</div>
             </div>
           ))}
         </div>
+      </div>
+
+      <div className="top-4.5 gap absolute right-3 flex items-center gap-1 text-sm leading-5 text-gray-11 opacity-0 transition-opacity group-hover/model-family-row:opacity-100 group-focus-visible/model-family-row:opacity-100">
+        View
+        <ArrowRight className="size-4" />
       </div>
     </Link>
   );
