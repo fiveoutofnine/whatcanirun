@@ -193,6 +193,7 @@ export const modelFamilies = pgTable(
       .references(() => organizations.id),
     slug: text('slug').notNull(),
     name: text('name').notNull(),
+    parameters: text('parameters'),
     license: text('license'),
     releaseDate: timestamp('release_date'),
     tags: jsonb('tags'),

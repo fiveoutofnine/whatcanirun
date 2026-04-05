@@ -15,6 +15,10 @@ export const getModelFamily = cache(
         orgLogoUrl: organizations.logoUrl,
         orgSlug: organizations.slug,
         orgWebsiteUrl: organizations.websiteUrl,
+        parameters: modelFamilies.parameters,
+        license: modelFamilies.license,
+        releaseDate: modelFamilies.releaseDate,
+        tags: modelFamilies.tags,
       })
       .from(modelFamilies)
       .innerJoin(organizations, eq(modelFamilies.orgId, organizations.id))
