@@ -51,11 +51,10 @@ const H1: React.FC<React.HtmlHTMLAttributes<HTMLHeadingElement> & { link?: boole
   }
 
   return (
-    <h1
-      className="not-prose text-3xl font-medium tracking-tight text-gray-12 md:text-4xl"
-      {...rest}
-    >
-      {children}
+    <h1 {...rest}>
+      <span className="not-prose text-3xl font-medium tracking-tight text-gray-12 md:text-4xl">
+        {children}
+      </span>
     </h1>
   );
 };

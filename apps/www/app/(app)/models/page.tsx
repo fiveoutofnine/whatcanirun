@@ -42,7 +42,9 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ q
   return (
     <ContainerLayout className="flex flex-col items-center">
       <div className="w-full max-w-3xl">
-        <H1 className="mb-2 md:mb-4">Models</H1>
+        <H1 className="mb-2 md:mb-4" link={false}>
+          Models
+        </H1>
         <ModelFamiliesList
           initialData={initialData}
           total={total}

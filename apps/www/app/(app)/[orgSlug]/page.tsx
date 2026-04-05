@@ -56,7 +56,7 @@ export default async function Page({
   return (
     <ContainerLayout className="flex flex-col items-center">
       <div className="w-full max-w-3xl">
-        <H1 className="mb-2 md:mb-4">{orgName}</H1>
+        <H1 className="mb-2 md:mb-4" link={false}>{orgName}</H1>
         <ModelFamiliesList
           initialData={initialData}
           total={total}
