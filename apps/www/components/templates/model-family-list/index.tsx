@@ -3,13 +3,20 @@
 import { Fragment, useCallback, useEffect, useRef, useState, useTransition } from 'react';
 
 import ModelFamilyRow from './row';
-import { Search } from 'lucide-react';
+import { ChevronsUpDown, Search } from 'lucide-react';
 import { useQueryState } from 'nuqs';
 
 import type { RankedModelFamily } from '@/lib/queries/model-families-ranked';
+import { MODEL_FAMILY_SORT_OPTIONS, type ModelFamilySort } from '@/lib/queries/model-families-sort';
 
 import StateInfo from '@/components/templates/state-info';
-import { Input } from '@/components/ui';
+import { Button, Dropdown, Input } from '@/components/ui';
+
+const SORT_LABELS: Record<ModelFamilySort, string> = {
+  newest: 'Newest',
+  'most-tested': 'Most tested',
+  'least-tested': 'Least tested',
+};
 
 // -----------------------------------------------------------------------------
 // Props
@@ -35,6 +42,7 @@ const ModelFamiliesList: React.FC<ModelFamiliesListProps> = ({
   orgSlug,
 }) => {
   const [q, setQ] = useQueryState('q', { shallow: false, throttleMs: 300 });
+  const [sort, setSort] = useQueryState('sort', { shallow: false, defaultValue: 'newest' });
   const [localQuery, setLocalQuery] = useState(q ?? '');
   const [items, setItems] = useState<RankedModelFamily[]>(initialData);
   const [totalCount, setTotalCount] = useState(searchTotal);
@@ -60,10 +68,11 @@ const ModelFamiliesList: React.FC<ModelFamiliesListProps> = ({
       });
       if (query) params.set('q', query);
       if (orgSlug) params.set('orgSlug', orgSlug);
+      if (sort) params.set('sort', sort);
       const res = await fetch(`/api/model-families?${params}`);
       return res.json();
     },
-    [pageSize, orgSlug],
+    [pageSize, orgSlug, sort],
   );
 
   // Debounce local input → URL param
@@ -111,14 +120,35 @@ const ModelFamiliesList: React.FC<ModelFamiliesListProps> = ({
     </Fragment>
   );
   return (
-    <div className="flex flex-col gap-4 md:gap-6">
-      <Input
-        leftIcon={<Search />}
-        placeholder={`Search ${total} model${total > 1 ? 's' : ''}…`}
-        value={localQuery}
-        onChange={(e) => handleSearchChange(e.target.value)}
-        containerized={false}
-      />
+    <div className="flex flex-col gap-2 md:gap-4">
+      <div className="flex gap-2">
+        <Input
+          size="sm"
+          className="flex-1"
+          leftIcon={<Search />}
+          placeholder={`Search ${total} model${total > 1 ? 's' : ''}…`}
+          value={localQuery}
+          onChange={(e) => handleSearchChange(e.target.value)}
+          containerized={false}
+        />
+        <Dropdown.Root>
+          <Dropdown.Trigger asChild>
+            <Button className="h-9" variant="outline" rightIcon={<ChevronsUpDown />}>
+              {SORT_LABELS[(sort as ModelFamilySort) ?? 'newest']}
+            </Button>
+          </Dropdown.Trigger>
+          <Dropdown.Content align="end">
+            {MODEL_FAMILY_SORT_OPTIONS.map((option) => (
+              <Dropdown.Item
+                key={option}
+                onSelect={() => setSort(option === 'newest' ? null : option)}
+              >
+                {SORT_LABELS[option]}
+              </Dropdown.Item>
+            ))}
+          </Dropdown.Content>
+        </Dropdown.Root>
+      </div>
       <div>
         {items.map((item, i) => (
           <div key={i}>

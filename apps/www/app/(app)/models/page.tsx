@@ -3,6 +3,8 @@ import { unstable_cache as cache } from 'next/cache';
 import {
   getRankedModelFamilies,
   getRankedModelFamiliesCount,
+  MODEL_FAMILY_SORT_OPTIONS,
+  type ModelFamilySort,
 } from '@/lib/queries/model-families-ranked';
 
 import ContainerLayout from '@/components/layouts/container';
@@ -19,14 +21,22 @@ const PAGE_SIZE = 15;
 // Page
 // -----------------------------------------------------------------------------
 
-export default async function Page({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
-  const { q } = await searchParams;
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string; sort?: string }>;
+}) {
+  const { q, sort: sortParam } = await searchParams;
   const search = q?.trim() || undefined;
+  const sort: ModelFamilySort =
+    sortParam && MODEL_FAMILY_SORT_OPTIONS.includes(sortParam as ModelFamilySort)
+      ? (sortParam as ModelFamilySort)
+      : 'newest';
 
   const [initialData, searchTotal, total] = await Promise.all([
     cache(
-      () => getRankedModelFamilies(0, PAGE_SIZE, search),
-      [`model-families-ranked-0-30-${search ?? ''}`],
+      () => getRankedModelFamilies(0, PAGE_SIZE, search, undefined, sort),
+      [`model-families-ranked-0-30-${search ?? ''}-${sort}`],
       { revalidate: 600 },
     )(),
     cache(

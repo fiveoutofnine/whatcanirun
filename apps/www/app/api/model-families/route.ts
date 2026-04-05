@@ -4,6 +4,8 @@ import { type NextRequest, NextResponse } from 'next/server';
 import {
   getRankedModelFamilies,
   getRankedModelFamiliesCount,
+  MODEL_FAMILY_SORT_OPTIONS,
+  type ModelFamilySort,
 } from '@/lib/queries/model-families-ranked';
 
 // -----------------------------------------------------------------------------
@@ -26,11 +28,14 @@ export async function GET(request: NextRequest) {
   );
   const q = searchParams.get('q')?.trim() || undefined;
   const orgSlug = searchParams.get('orgSlug')?.trim() || undefined;
+  const sortParam = searchParams.get('sort')?.trim() as ModelFamilySort | undefined;
+  const sort: ModelFamilySort =
+    sortParam && MODEL_FAMILY_SORT_OPTIONS.includes(sortParam) ? sortParam : 'newest';
 
   const [data, total] = await Promise.all([
     cache(
-      () => getRankedModelFamilies(offset, limit, q, orgSlug),
-      [`model-families-ranked-${offset}-${limit}-${q ?? ''}-${orgSlug ?? ''}`],
+      () => getRankedModelFamilies(offset, limit, q, orgSlug, sort),
+      [`model-families-ranked-${offset}-${limit}-${q ?? ''}-${orgSlug ?? ''}-${sort}`],
       { revalidate: 600 },
     )(),
     cache(

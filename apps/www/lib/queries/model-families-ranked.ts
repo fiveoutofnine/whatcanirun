@@ -1,4 +1,5 @@
-import { and, count, countDistinct, desc, eq, ilike, or, sql } from 'drizzle-orm';
+import type { ModelFamilySort } from './model-families-sort';
+import { and, asc, count, countDistinct, desc, eq, ilike, or, sql } from 'drizzle-orm';
 
 import { db } from '@/lib/db';
 import {
@@ -10,6 +11,8 @@ import {
   runs,
   RunStatus,
 } from '@/lib/db/schema';
+
+export { MODEL_FAMILY_SORT_OPTIONS, type ModelFamilySort } from './model-families-sort';
 
 // -----------------------------------------------------------------------------
 // Types
@@ -37,6 +40,7 @@ export async function getRankedModelFamilies(
   limit: number,
   search?: string,
   orgSlug?: string,
+  sort: ModelFamilySort = 'newest',
 ): Promise<RankedModelFamily[]> {
   const pattern = search ? `%${search}%` : undefined;
   const conditions = [eq(runs.status, RunStatus.VERIFIED)];
@@ -79,7 +83,13 @@ export async function getRankedModelFamilies(
       organizations.slug,
       organizations.logoUrl,
     )
-    .orderBy(desc(sql`total_tokens`))
+    .orderBy(
+      ...(sort === 'newest'
+        ? [desc(sql`COALESCE(${modelFamilies.releaseDate}, ${modelFamilies.createdAt})`)]
+        : sort === 'most-tested'
+          ? [desc(sql`total_tokens`)]
+          : [asc(sql`total_tokens`)]),
+    )
     .limit(limit)
     .offset(offset);
 }

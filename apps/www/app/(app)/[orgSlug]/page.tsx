@@ -4,6 +4,8 @@ import { notFound } from 'next/navigation';
 import {
   getRankedModelFamilies,
   getRankedModelFamiliesCount,
+  MODEL_FAMILY_SORT_OPTIONS,
+  type ModelFamilySort,
 } from '@/lib/queries/model-families-ranked';
 
 import ContainerLayout from '@/components/layouts/container';
@@ -25,16 +27,20 @@ export default async function Page({
   searchParams,
 }: {
   params: Promise<{ orgSlug: string }>;
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{ q?: string; sort?: string }>;
 }) {
   const { orgSlug } = await params;
-  const { q } = await searchParams;
+  const { q, sort: sortParam } = await searchParams;
   const search = q?.trim() || undefined;
+  const sort: ModelFamilySort =
+    sortParam && MODEL_FAMILY_SORT_OPTIONS.includes(sortParam as ModelFamilySort)
+      ? (sortParam as ModelFamilySort)
+      : 'newest';
 
   const [initialData, searchTotal, total] = await Promise.all([
     cache(
-      () => getRankedModelFamilies(0, PAGE_SIZE, search, orgSlug),
-      [`model-families-ranked-0-${PAGE_SIZE}-${search ?? ''}-${orgSlug}`],
+      () => getRankedModelFamilies(0, PAGE_SIZE, search, orgSlug, sort),
+      [`model-families-ranked-0-${PAGE_SIZE}-${search ?? ''}-${orgSlug}-${sort}`],
       { revalidate: 600 },
     )(),
     cache(
@@ -56,7 +62,9 @@ export default async function Page({
   return (
     <ContainerLayout className="flex flex-col items-center">
       <div className="w-full max-w-3xl">
-        <H1 className="mb-2 md:mb-4" link={false}>{orgName}</H1>
+        <H1 className="mb-2 md:mb-4" link={false}>
+          {orgName}
+        </H1>
         <ModelFamiliesList
           initialData={initialData}
           total={total}
