@@ -85,7 +85,7 @@ const DeviceTableCell: React.FC<DeviceTableCellProps> & { Skeleton: React.FC } =
     const totalVram = vram != null ? vram * (gpuCount ?? 1) : null;
     const gpuCountBadge =
       gpuCount > 1 ? (
-        <Badge size="sm" variant="outline" intent="none" type="number">
+        <Badge className='min-w-fit' size="sm" variant="outline" intent="none" type="number">
           {gpuCount}×
         </Badge>
       ) : null;
@@ -103,8 +103,8 @@ const DeviceTableCell: React.FC<DeviceTableCellProps> & { Skeleton: React.FC } =
               </span>
             </ClickableTooltip>
           ) : null}
-          <span className="line-clamp-1 flex items-center gap-1.5">
-            <span className="overflow-ellipsis text-nowrap">{displayName}</span>
+          <span className="flex items-center gap-1.5">
+            <span className="line-clamp-1">{displayName}</span>
             {gpuCountBadge}
           </span>
         </span>
