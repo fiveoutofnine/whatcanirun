@@ -157,15 +157,26 @@ export async function POST(request: NextRequest) {
   const devCpu = truncate(dev.cpu)!;
   const devCpuCores = dev.cpu_cores ?? 0;
   const devGpu = truncate(dev.gpu)!;
-  const devGpuCores = dev.gpu_cores ?? 0;
+  const devGpuCoresRaw = dev.gpu_cores ?? 0;
   const devOsName = truncate(dev.os_name)!;
   const devOsVersion = truncate(dev.os_version)!;
   const isMac = devOsName.toLowerCase() === 'macos';
-  const hasGpu = devGpuCores > 0;
+  const isOldHarness = manifest.harness.version < '0.1.19';
+
+  // Old harness (< 0.1.19) stored GPU count in `gpu_cores`; real CUDA cores
+  // unknown. New harness sends real CUDA cores in `gpu_cores` and explicit
+  // `gpu_count`. macOS: `gpu_cores` is always real Metal cores; `gpu_count` is
+  // always 1.
+  const devGpuCores = isMac ? devGpuCoresRaw : isOldHarness ? 0 : devGpuCoresRaw;
+  const devGpuCount = isMac ? 1 : isOldHarness ? devGpuCoresRaw : (dev.gpu_count ?? 1);
+
+  const hasGpu = isMac ? devGpuCoresRaw > 0 : devGpu !== 'None';
   const devChipId = isMac
     ? `${devCpu}:${devCpuCores}:${devGpu}:${devGpuCores}:${dev.ram_gb}`
     : hasGpu
-      ? devGpu
+      ? devGpuCount > 1
+        ? `${devGpu}:${devGpuCount}x`
+        : devGpu
       : devCpu;
   await db
     .insert(devices)
@@ -174,6 +185,7 @@ export async function POST(request: NextRequest) {
       cpuCores: devCpuCores,
       gpu: devGpu,
       gpuCores: devGpuCores,
+      gpuCount: devGpuCount,
       ramGb: dev.ram_gb,
       chipId: devChipId,
       osName: devOsName,
@@ -190,6 +202,7 @@ export async function POST(request: NextRequest) {
         eq(devices.cpuCores, devCpuCores),
         eq(devices.gpu, devGpu),
         eq(devices.gpuCores, devGpuCores),
+        eq(devices.gpuCount, devGpuCount),
         eq(devices.ramGb, dev.ram_gb),
         eq(devices.osName, devOsName),
         eq(devices.osVersion, devOsVersion),

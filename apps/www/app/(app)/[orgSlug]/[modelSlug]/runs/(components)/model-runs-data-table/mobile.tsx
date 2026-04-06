@@ -38,6 +38,7 @@ const ModelRunsDataTableMobile: React.FC<ModelRunsDataTableInternalProps> = (tab
               cpuCores={device.cpuCores}
               gpu={device.gpu}
               gpuCores={device.gpuCores}
+              gpuCount={device.gpuCount}
               ramGb={device.ramGb}
               osName={device.osName}
             />

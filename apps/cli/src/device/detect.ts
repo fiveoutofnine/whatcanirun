@@ -11,6 +11,7 @@ export interface DeviceInfo {
   cpu_cores: number;
   gpu_model: string;
   gpu_cores: number;
+  gpu_count: number;
   ram_gb: number;
   os_name: string;
   os_version: string;
@@ -22,10 +23,11 @@ export interface DeviceInfo {
 // -----------------------------------------------------------------------------
 
 export function formatSysinfo(device: DeviceInfo): string {
+  const gpuPrefix = device.gpu_count > 1 ? `${device.gpu_count}x ` : '';
   const lines = [
     `uname: ${process.platform} ${process.arch}`,
     `cpu: ${device.cpu_model} (${device.cpu_cores} cores)`,
-    `gpu: ${device.gpu_model} (${device.gpu_cores} cores)`,
+    `gpu: ${gpuPrefix}${device.gpu_model} (${device.gpu_cores} cores)`,
     `ram: ${device.ram_gb} GB`,
     `os: ${device.os_name} ${device.os_version}`,
     `hostname: ${device.hostname}`,
@@ -112,6 +114,7 @@ async function detectMacOS(): Promise<DeviceInfo> {
     cpu_cores: parseInt(cpuCores || '0', 10),
     gpu_model: gpu,
     gpu_cores: gpuCores,
+    gpu_count: 1,
     ram_gb: Math.round(parseInt(memBytes || '0', 10) / 1024 / 1024 / 1024),
     os_name: 'macOS',
     os_version: osVersion || 'Unknown',
@@ -120,12 +123,13 @@ async function detectMacOS(): Promise<DeviceInfo> {
 }
 
 async function detectLinux(): Promise<DeviceInfo> {
-  const [cpuinfo, meminfo, osRelease, hostname, gpu, gpuCoresRaw] = await Promise.all([
+  const [cpuinfo, meminfo, osRelease, hostname, gpu, gpuCoresRaw, gpuCountRaw] = await Promise.all([
     exec(['cat', '/proc/cpuinfo']),
     exec(['cat', '/proc/meminfo']),
     exec(['cat', '/etc/os-release']),
     exec(['hostname']),
     exec(['nvidia-smi', '--query-gpu=name', '--format=csv,noheader']),
+    exec(['nvidia-smi', '--query-gpu=cuda_cores', '--format=csv,noheader']),
     exec(['nvidia-smi', '--query-gpu=count', '--format=csv,noheader']),
   ]);
 
@@ -141,7 +145,8 @@ async function detectLinux(): Promise<DeviceInfo> {
     cpu_model: cpuMatch?.[1]?.trim() || 'Unknown',
     cpu_cores: cpuCores,
     gpu_model: gpu?.split('\n')[0]?.trim() || 'None',
-    gpu_cores: parseInt(gpuCoresRaw || '0', 10),
+    gpu_cores: parseInt(gpuCoresRaw?.split('\n')[0] || '0', 10),
+    gpu_count: parseInt(gpuCountRaw?.split('\n')[0] || '1', 10) || 1,
     ram_gb: Math.round(parseInt(memMatch?.[1] || '0', 10) / 1024 / 1024),
     os_name: osNameMatch?.[1] || 'Linux',
     os_version: osVersionMatch?.[1] || 'Unknown',
