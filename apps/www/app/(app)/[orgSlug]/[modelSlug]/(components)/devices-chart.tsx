@@ -325,6 +325,7 @@ const ModelDevicesChartChart: React.FC<ModelDevicesChartProps> = ({ data, defaul
           />
           <Tooltip
             cursor={{ strokeDasharray: '3 3' }}
+            wrapperStyle={{ zIndex: 100 }}
             content={({ active, payload }) => {
               if (!active || !payload || !payload.length) return null;
               const d = payload[0].payload as ModelDevicesChartValue;
@@ -337,7 +338,7 @@ const ModelDevicesChartChart: React.FC<ModelDevicesChartProps> = ({ data, defaul
               const deviceStats: string[] = [];
               if (isApple) {
                 deviceStats.push(`${d.deviceCpuCores.toLocaleString()}-core CPU`);
-                deviceStats.push(`${d.deviceCpuCores.toLocaleString()}-core GPU`);
+                deviceStats.push(`${d.deviceGpuCores.toLocaleString()}-core GPU`);
               } else if (vram != null) {
                 deviceStats.push(`${vram} GB VRAM`);
               }
