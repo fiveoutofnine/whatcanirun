@@ -234,15 +234,19 @@ const RunsDataTableMobile: React.FC<RunsDataTableInternalProps> = (tableOptions)
 const RunsDataTableMobileSubComponent: React.FC<{ data: RunsDataTableValue }> = ({ data }) => {
   const { device } = data;
   const hasGpu = device.gpuCores > 0;
+  const gpuCount = device.gpuCount ?? 1;
   const devicePrimaryName = hasGpu ? device.gpu : device.cpu;
   const { manufacturer, displayName, logo: Icon } = parseManufacturer(devicePrimaryName);
+  const countPrefix = manufacturer !== 'apple' && gpuCount > 1 ? `${gpuCount}×` : '';
   const vram = getVramGb(device.gpu);
+  const totalVram = vram != null ? vram * gpuCount : null;
 
   return (
     <div className="grid grid-cols-2 gap-2 p-1">
       <Stat className="col-span-2">
         <Stat.Name>Device</Stat.Name>
         <Stat.Value className="flex items-center gap-1.5">
+          {countPrefix}
           {displayName}{' '}
           {manufacturer && Icon ? (
             <ClickableTooltip
@@ -274,8 +278,8 @@ const RunsDataTableMobileSubComponent: React.FC<{ data: RunsDataTableValue }> = 
       ) : hasGpu ? (
         <Stat className="col-span-2">
           <Stat.Name>VRAM</Stat.Name>
-          {vram ? (
-            <Stat.Value className="tabular-nums">{vram} GB</Stat.Value>
+          {totalVram ? (
+            <Stat.Value className="tabular-nums">{totalVram} GB</Stat.Value>
           ) : (
             <Stat.Value empty>Unknown</Stat.Value>
           )}

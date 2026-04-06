@@ -21,6 +21,7 @@ export type ChipOption = {
   cpuCores: number;
   gpu: string;
   gpuCores: number;
+  gpuCount: number;
   ramGb: number;
   modelCount: number;
 };
@@ -142,12 +143,15 @@ const HeroHeading: React.FC<{ chips: ChipOption[] }> = ({ chips }) => {
   // Apple: strip manufacturer from CPU name, show RAM.
   // Non-Apple GPU: strip manufacturer from GPU name.
   // Non-Apple CPU-only: strip manufacturer from CPU name.
+  const gpuCount = selected?.gpuCount ?? 1;
+  const countPrefix = !isApple && gpuCount > 1 ? `${gpuCount}×` : '';
   const displayName = selected
-    ? isApple
-      ? formatChipName(selected.cpu)
-      : hasGpu
-        ? formatChipName(selected.gpu)
-        : formatChipName(selected.cpu)
+    ? countPrefix +
+      (isApple
+        ? formatChipName(selected.cpu)
+        : hasGpu
+          ? formatChipName(selected.gpu)
+          : formatChipName(selected.cpu))
     : 'M1 Max';
   const displayRam = selected?.ramGb ?? 64;
 

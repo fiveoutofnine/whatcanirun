@@ -335,12 +335,14 @@ const ModelDevicesChartChart: React.FC<ModelDevicesChartProps> = ({ data, defaul
 
               const isApple = manufacturer === 'apple';
               const vram = !isApple ? getVramGb(d.deviceGpu) : null;
+              const gpuCount = d.deviceGpuCount ?? 1;
+              const totalVram = vram != null ? vram * gpuCount : null;
               const deviceStats: string[] = [];
               if (isApple) {
                 deviceStats.push(`${d.deviceCpuCores.toLocaleString()}-core CPU`);
                 deviceStats.push(`${d.deviceGpuCores.toLocaleString()}-core GPU`);
-              } else if (vram != null) {
-                deviceStats.push(`${vram} GB VRAM`);
+              } else if (totalVram != null) {
+                deviceStats.push(`${totalVram} GB VRAM`);
               }
 
               const statGroups = [
@@ -576,20 +578,28 @@ const FORMAT_LOGO: Record<string, React.FC<{ className?: string; size?: number }
   mlx: LogoImg.Mlx,
 };
 
+function hasDiscreteGpu(datum: ModelDevicesChartValue) {
+  return datum.deviceGpuCores > 0 || (datum.deviceGpuCount ?? 1) > 1;
+}
+
 function getManufacturerLogo(datum: ModelDevicesChartValue) {
   const isApple = datum.deviceGpu.toLowerCase().startsWith('apple');
-  const hasGpu = datum.deviceGpuCores > 0;
-  const primaryName = isApple ? datum.deviceGpu : hasGpu ? datum.deviceGpu : datum.deviceCpu;
+  const primaryName = isApple
+    ? datum.deviceGpu
+    : hasDiscreteGpu(datum)
+      ? datum.deviceGpu
+      : datum.deviceCpu;
   return parseManufacturer(primaryName);
 }
 
 function getDeviceDisplayName(datum: ModelDevicesChartValue) {
   const isApple = datum.deviceGpu.toLowerCase().startsWith('apple');
-  const hasGpu = datum.deviceGpuCores > 0;
+  const gpuCount = datum.deviceGpuCount ?? 1;
+  const countPrefix = !isApple && gpuCount > 1 ? `${gpuCount}×` : '';
   return isApple
     ? formatChipName(datum.deviceCpu)
-    : hasGpu
-      ? formatChipName(datum.deviceGpu)
+    : hasDiscreteGpu(datum)
+      ? countPrefix + formatChipName(datum.deviceGpu)
       : formatChipName(datum.deviceCpu);
 }
 

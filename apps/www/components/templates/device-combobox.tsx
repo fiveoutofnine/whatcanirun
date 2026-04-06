@@ -12,7 +12,7 @@ import { useMediaQuery } from '@/lib/hooks';
 
 import LogoImg from '@/components/common/logo-img';
 import { Code } from '@/components/templates/mdx';
-import { Command, Drawer, Popover } from '@/components/ui';
+import { Badge, Command, Drawer, Popover } from '@/components/ui';
 
 // -----------------------------------------------------------------------------
 // Types
@@ -24,6 +24,7 @@ type DeviceOption = {
   cpuCores: number;
   gpu: string;
   gpuCores: number;
+  gpuCount: number;
   ramGb: number;
 };
 
@@ -97,8 +98,8 @@ const DeviceCombobox: React.FC<DeviceComboboxProps> = ({ devices, value, onSelec
           const seriesA = getGpuSeriesRank(a.gpu);
           const seriesB = getGpuSeriesRank(b.gpu);
           if (seriesA !== seriesB) return seriesB - seriesA;
-          const vramA = getVramGb(a.gpu) ?? 0;
-          const vramB = getVramGb(b.gpu) ?? 0;
+          const vramA = (getVramGb(a.gpu) ?? 0) * (a.gpuCount ?? 1);
+          const vramB = (getVramGb(b.gpu) ?? 0) * (b.gpuCount ?? 1);
           if (vramA !== vramB) return vramB - vramA;
           if (a.gpuCores !== b.gpuCores) return b.gpuCores - a.gpuCores;
           return b.ramGb - a.ramGb;
@@ -236,14 +237,26 @@ const DeviceComboboxInternal: React.FC<DeviceComboboxInternalProps> = ({
                           </Fragment>
                         ) : (
                           <Fragment>
-                            <span className="line-clamp-1 flex w-full items-center gap-1.5 text-ellipsis text-nowrap leading-5">
-                              {d.gpu.replace(name, '').trim()}
+                            <span className="flex w-full max-w-full items-center gap-1.5 leading-5">
+                              <span className="line-clamp-1">{d.gpu.replace(name, '').trim()}</span>
+                              {d.gpuCount > 1 ? (
+                                <Badge
+                                  className="min-w-fit"
+                                  size="sm"
+                                  variant="outline"
+                                  intent="none"
+                                  type="number"
+                                >
+                                  {d.gpuCount}×
+                                </Badge>
+                              ) : null}
                             </span>
                             {(() => {
                               const vram = getVramGb(d.gpu);
-                              return vram != null ? (
+                              const totalVram = vram != null ? vram * (d.gpuCount ?? 1) : null;
+                              return totalVram != null ? (
                                 <span className="text-xs leading-4 text-gray-11">
-                                  {vram} GB VRAM
+                                  {totalVram} GB VRAM
                                 </span>
                               ) : null;
                             })()}

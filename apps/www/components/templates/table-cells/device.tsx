@@ -17,7 +17,7 @@ import { Badge } from '@/components/ui';
 
 type DeviceTableCellProps = Pick<
   Device,
-  'cpu' | 'cpuCores' | 'gpu' | 'gpuCores' | 'ramGb' | 'osName'
+  'cpu' | 'cpuCores' | 'gpu' | 'gpuCores' | 'gpuCount' | 'ramGb' | 'osName'
 >;
 
 // -----------------------------------------------------------------------------
@@ -29,6 +29,7 @@ const DeviceTableCell: React.FC<DeviceTableCellProps> & { Skeleton: React.FC } =
   cpuCores,
   gpu,
   gpuCores,
+  gpuCount,
   ramGb,
   osName,
 }) => {
@@ -81,6 +82,14 @@ const DeviceTableCell: React.FC<DeviceTableCellProps> & { Skeleton: React.FC } =
     }
 
     const vram = getVramGb(gpu);
+    const totalVram = vram != null ? vram * (gpuCount ?? 1) : null;
+    const gpuCountBadge =
+      gpuCount > 1 ? (
+        <Badge className="min-w-fit" size="sm" variant="outline" intent="none" type="number">
+          {gpuCount}×
+        </Badge>
+      ) : null;
+
     return (
       <div className="flex flex-col items-start">
         <span className="flex items-center gap-1.5 leading-5">
@@ -94,16 +103,19 @@ const DeviceTableCell: React.FC<DeviceTableCellProps> & { Skeleton: React.FC } =
               </span>
             </ClickableTooltip>
           ) : null}
-          <span className="line-clamp-1">{displayName}</span>
+          <span className="flex items-center gap-1.5">
+            <span className="line-clamp-1">{displayName}</span>
+            {gpuCountBadge}
+          </span>
         </span>
-        {vram != null ? (
+        {totalVram != null ? (
           <div className="mt-0 flex h-4 gap-2">
             <ClickableTooltip content="VRAM">
               <div className="flex w-fit items-center gap-1 whitespace-nowrap text-xs leading-4 text-gray-11 underline decoration-dotted transition-colors hover:text-gray-12">
                 <span className="flex size-3 items-center justify-center">
                   <MemoryStick />
                 </span>
-                <span>{vram} GB</span>
+                <span>{totalVram} GB</span>
               </div>
             </ClickableTooltip>
           </div>

@@ -16,7 +16,7 @@ import DeviceCombobox from '@/components/templates/device-combobox';
 
 export type ChipOption = Pick<
   Device,
-  'chipId' | 'cpu' | 'cpuCores' | 'gpu' | 'gpuCores' | 'ramGb'
+  'chipId' | 'cpu' | 'cpuCores' | 'gpu' | 'gpuCores' | 'gpuCount' | 'ramGb'
 > & {
   modelCount: number;
 };
@@ -60,12 +60,15 @@ const DeviceFloatingSelector: React.FC<DeviceFloatingSelectorProps> = ({ chips }
   const isApple = selected ? selected.gpu.toLowerCase().startsWith('apple') : true;
   const hasGpu = selected ? selected.gpuCores > 0 : false;
 
+  const gpuCount = selected?.gpuCount ?? 1;
+  const countPrefix = !isApple && gpuCount > 1 ? `${gpuCount}×` : '';
   const displayName = selected
-    ? isApple
-      ? formatChipName(selected.cpu)
-      : hasGpu
-        ? formatChipName(selected.gpu)
-        : formatChipName(selected.cpu)
+    ? countPrefix +
+      (isApple
+        ? formatChipName(selected.cpu)
+        : hasGpu
+          ? formatChipName(selected.gpu)
+          : formatChipName(selected.cpu))
     : '';
   const displayRam = selected?.ramGb ?? 0;
 

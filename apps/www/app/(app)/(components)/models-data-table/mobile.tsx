@@ -261,15 +261,19 @@ const ModelsDataTableMobile: React.FC<ModelsDataTableInternalProps> = (tableOpti
 
 const ModelsDataTableMobileSubComponent: React.FC<{ data: ModelsDataTableValue }> = ({ data }) => {
   const hasGpu = data.deviceGpuCores > 0;
+  const gpuCount = data.deviceGpuCount ?? 1;
   const devicePrimaryName = hasGpu ? data.deviceGpu : data.deviceCpu;
   const { manufacturer, displayName, logo: Icon } = parseManufacturer(devicePrimaryName);
+  const countPrefix = manufacturer !== 'apple' && gpuCount > 1 ? `${gpuCount}×` : '';
   const vram = getVramGb(data.deviceGpu);
+  const totalVram = vram != null ? vram * gpuCount : null;
 
   return (
     <div className="grid grid-cols-2 gap-2 p-1">
       <Stat className="col-span-2">
         <Stat.Name>Device</Stat.Name>
         <Stat.Value className="flex items-center gap-1.5">
+          {countPrefix}
           {displayName}{' '}
           {manufacturer && Icon ? (
             <ClickableTooltip
@@ -301,8 +305,8 @@ const ModelsDataTableMobileSubComponent: React.FC<{ data: ModelsDataTableValue }
       ) : hasGpu ? (
         <Stat className="col-span-2">
           <Stat.Name>VRAM</Stat.Name>
-          {vram ? (
-            <Stat.Value className="tabular-nums">{vram} GB</Stat.Value>
+          {totalVram ? (
+            <Stat.Value className="tabular-nums">{totalVram} GB</Stat.Value>
           ) : (
             <Stat.Value empty>Unknown</Stat.Value>
           )}

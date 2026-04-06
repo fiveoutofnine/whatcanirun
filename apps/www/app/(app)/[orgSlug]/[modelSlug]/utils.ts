@@ -41,6 +41,7 @@ export const getModelFamilyChips = cache(
         cpuCores: sql<number>`MIN(${v.deviceCpuCores})`.as('cpu_cores'),
         gpu: sql<string>`MIN(${v.deviceGpu})`.as('gpu'),
         gpuCores: sql<number>`MIN(${v.deviceGpuCores})`.as('gpu_cores'),
+        gpuCount: sql<number>`MIN(${v.deviceGpuCount})`.as('gpu_count'),
         ramGb: sql<number>`MIN(${v.deviceRamGb})`.as('ram_gb'),
         modelCount: countDistinct(v.modelId).as('model_count'),
       })
