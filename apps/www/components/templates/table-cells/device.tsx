@@ -85,7 +85,7 @@ const DeviceTableCell: React.FC<DeviceTableCellProps> & { Skeleton: React.FC } =
     const totalVram = vram != null ? vram * (gpuCount ?? 1) : null;
     const gpuCountBadge =
       gpuCount > 1 ? (
-        <Badge className='min-w-fit' size="sm" variant="outline" intent="none" type="number">
+        <Badge className="min-w-fit" size="sm" variant="outline" intent="none" type="number">
           {gpuCount}×
         </Badge>
       ) : null;

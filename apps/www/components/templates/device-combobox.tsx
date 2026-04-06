@@ -238,11 +238,15 @@ const DeviceComboboxInternal: React.FC<DeviceComboboxInternalProps> = ({
                         ) : (
                           <Fragment>
                             <span className="flex w-full max-w-full items-center gap-1.5 leading-5">
-                              <span className="line-clamp-1">
-                                {d.gpu.replace(name, '').trim()}
-                              </span>
+                              <span className="line-clamp-1">{d.gpu.replace(name, '').trim()}</span>
                               {d.gpuCount > 1 ? (
-                                <Badge className='min-w-fit' size="sm" variant="outline" intent="none" type="number">
+                                <Badge
+                                  className="min-w-fit"
+                                  size="sm"
+                                  variant="outline"
+                                  intent="none"
+                                  type="number"
+                                >
                                   {d.gpuCount}×
                                 </Badge>
                               ) : null}
