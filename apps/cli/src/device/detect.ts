@@ -66,7 +66,7 @@ export async function detectDevice(): Promise<DeviceInfo> {
 // Helpers
 // -----------------------------------------------------------------------------
 
-async function exec(cmd: string[]): Promise<string> {
+async function exec(cmd: string[], options?: { quietMissing?: boolean }): Promise<string> {
   try {
     const proc = Bun.spawn(cmd, { stdout: 'pipe', stderr: 'pipe' });
     const text = await new Response(proc.stdout).text();
@@ -78,7 +78,9 @@ async function exec(cmd: string[]): Promise<string> {
     return text.trim();
   } catch (e: unknown) {
     if (e instanceof Error && 'code' in e && (e as NodeJS.ErrnoException).code === 'ENOENT') {
-      warn(`Command not found: ${chalk.bold.cyan(cmd[0]!)}.`);
+      if (!options?.quietMissing) {
+        warn(`Command not found: ${chalk.bold.cyan(cmd[0]!)}.`);
+      }
     } else {
       warn(
         `${chalk.bold.cyan(cmd.join(' '))} failed: ${e instanceof Error ? e.message : String(e)}`
@@ -123,14 +125,12 @@ async function detectMacOS(): Promise<DeviceInfo> {
 }
 
 async function detectLinux(): Promise<DeviceInfo> {
-  const [cpuinfo, meminfo, osRelease, hostname, gpu, gpuCoresRaw, gpuCountRaw] = await Promise.all([
+  const [cpuinfo, meminfo, osRelease, hostname, gpu] = await Promise.all([
     exec(['cat', '/proc/cpuinfo']),
     exec(['cat', '/proc/meminfo']),
     exec(['cat', '/etc/os-release']),
     exec(['hostname']),
-    exec(['nvidia-smi', '--query-gpu=name', '--format=csv,noheader']),
-    exec(['nvidia-smi', '--query-gpu=cuda_cores', '--format=csv,noheader']),
-    exec(['nvidia-smi', '--query-gpu=count', '--format=csv,noheader']),
+    detectLinuxGpuInfo(),
   ]);
 
   const cpuMatch = cpuinfo.match(/model name\s*:\s*(.+)/);
@@ -144,12 +144,106 @@ async function detectLinux(): Promise<DeviceInfo> {
   return {
     cpu_model: cpuMatch?.[1]?.trim() || 'Unknown',
     cpu_cores: cpuCores,
-    gpu_model: gpu?.split('\n')[0]?.trim() || 'None',
-    gpu_cores: parseInt(gpuCoresRaw?.split('\n')[0] || '0', 10),
-    gpu_count: parseInt(gpuCountRaw?.split('\n')[0] || '1', 10) || 1,
+    gpu_model: gpu.model?.trim() || 'None',
+    gpu_cores: gpu.cores,
+    gpu_count: gpu.count,
     ram_gb: Math.round(parseInt(memMatch?.[1] || '0', 10) / 1024 / 1024),
     os_name: osNameMatch?.[1] || 'Linux',
     os_version: osVersionMatch?.[1] || 'Unknown',
     hostname: hostname || 'Unknown',
   };
+}
+
+type LinuxGpuInfo = {
+  model?: string;
+  cores: number;
+  count: number;
+};
+
+async function detectLinuxGpuInfo(): Promise<LinuxGpuInfo> {
+  const nvidia = await detectLinuxNvidiaGpuInfo();
+  if (nvidia) return nvidia;
+
+  const pci = await detectLinuxPciGpuInfo();
+  if (pci) return pci;
+
+  return { model: 'None', cores: 0, count: 0 };
+}
+
+async function detectLinuxNvidiaGpuInfo(): Promise<LinuxGpuInfo | null> {
+  const [namesRaw, coresRaw, countRaw] = await Promise.all([
+    exec(['nvidia-smi', '--query-gpu=name', '--format=csv,noheader'], { quietMissing: true }),
+    exec(['nvidia-smi', '--query-gpu=cuda_cores', '--format=csv,noheader'], { quietMissing: true }),
+    exec(['nvidia-smi', '--query-gpu=count', '--format=csv,noheader'], { quietMissing: true }),
+  ]);
+
+  const names = namesRaw
+    .split('\n')
+    .map((name) => name.trim())
+    .filter(Boolean);
+
+  if (names.length === 0) return null;
+
+  const cores = parseInt(coresRaw?.split('\n')[0] || '0', 10);
+  const count = parseInt(countRaw?.split('\n')[0] || '0', 10) || names.length;
+  return {
+    model: names[0]?.trim(),
+    cores,
+    count,
+  };
+}
+
+async function detectLinuxPciGpuInfo(): Promise<LinuxGpuInfo | null> {
+  const lspci = await exec(['lspci', '-nn']);
+  if (!lspci) return null;
+
+  const controllers = lspci
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(
+      (line) =>
+        /(?:VGA compatible controller|3D controller|Display controller)/i.test(line) &&
+        !/ASPEED/i.test(line)
+    );
+
+  if (controllers.length === 0) return null;
+
+  const model = parseLinuxPciGpuModel(controllers[0]!);
+  if (!model) return null;
+
+  return {
+    model,
+    cores: 0,
+    count: controllers.length,
+  };
+}
+
+function parseLinuxPciGpuModel(line: string): string | null {
+  const bracketValues = [...line.matchAll(/\[([^\]]+)\]/g)]
+    .map((match) => match[1]?.trim() ?? '')
+    .filter(Boolean);
+
+  const preferred = [...bracketValues]
+    .reverse()
+    .find(
+      (value) =>
+        !/^[\da-f]{4}$/i.test(value) &&
+        !/^[\da-f]{4}:[\da-f]{4}$/i.test(value) &&
+        !/^(AMD\/ATI|NVIDIA Corporation|Intel Corporation)$/i.test(value)
+    );
+
+  if (preferred) return preferred;
+
+  const [, description = ''] = line.split(/:\s+/, 2);
+  const cleaned = description
+    .replace(/\s*\([^)]*\)\s*$/u, '')
+    .replace(/\s*\[[\da-f]{4}(?::[\da-f]{4})?\]\s*/giu, ' ')
+    .replace(
+      /^(?:NVIDIA Corporation|Advanced Micro Devices, Inc\. \[AMD\/ATI\]|Advanced Micro Devices, Inc\.|AMD\/ATI|Intel Corporation)\s+/iu,
+      ''
+    )
+    .replace(/\s+/gu, ' ')
+    .trim();
+
+  return cleaned || null;
 }
