@@ -62,6 +62,16 @@ const FALLBACK_MODELS: FeaturedModel[] = [
     hfFileName: 'Qwen3.5-9B-Q4_K_M.gguf',
     runtime: 'llama.cpp',
   },
+  {
+    displayName: 'GLM 5.1 754B (4-bit)',
+    hfRepoId: 'mlx-community/GLM-5.1-4bit',
+    runtime: 'mlx_lm',
+  },
+  {
+    displayName: 'GLM 5.1 754B (8-bit)',
+    hfRepoId: 'mlx-community/GLM-5.1-8bit',
+    runtime: 'mlx_lm',
+  },
 ];
 
 // -----------------------------------------------------------------------------
