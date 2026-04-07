@@ -212,7 +212,7 @@ async function detectLinuxPciGpuInfo(): Promise<LinuxGpuInfo | null> {
   if (!model) return null;
 
   return {
-    model: model?.trim(),
+    model,
     cores: 0,
     count: controllers.length,
   };
