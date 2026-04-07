@@ -45,16 +45,18 @@ const RunsDataTableDesktop: React.FC<RunsDataTableInternalProps> = (tableOptions
             <ModelTableCell
               displayName={info?.name || model.displayName}
               quant={info?.quant || model.quant}
-              architecture={info?.architecture || model.architecture}
               source={info?.source || model.source}
               runtimeName={row.original.runtimeName}
               fileSizeBytes={info?.fileSizeBytes || model.fileSizeBytes}
+              labSlug={info?.lab?.slug}
+              familySlug={info?.family?.slug}
               lab={
                 info?.lab
                   ? {
                       name: info.lab.name,
                       logoUrl: info.lab.logoUrl,
                       websiteUrl: info.lab.websiteUrl,
+                      slug: info.lab.slug,
                     }
                   : undefined
               }
@@ -87,6 +89,7 @@ const RunsDataTableDesktop: React.FC<RunsDataTableInternalProps> = (tableOptions
               cpuCores={device.cpuCores}
               gpu={device.gpu}
               gpuCores={device.gpuCores}
+              gpuCount={device.gpuCount}
               ramGb={device.ramGb}
               osName={device.osName}
             />

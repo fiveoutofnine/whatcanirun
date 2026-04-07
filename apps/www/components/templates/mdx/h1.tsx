@@ -6,14 +6,18 @@ import { Link } from 'lucide-react';
 
 import { toast } from '@/components/ui';
 
-const H1: React.FC<React.HtmlHTMLAttributes<HTMLHeadingElement>> = ({ children, ...rest }) => {
+const H1: React.FC<React.HtmlHTMLAttributes<HTMLHeadingElement> & { link?: boolean }> = ({
+  children,
+  link = true,
+  ...rest
+}) => {
   const pathname = usePathname();
 
   const stringChildren: string[] = (
     Array.isArray(children) ? children : [typeof children === 'string' ? children : '']
   ).filter((child) => typeof child === 'string' && child.length > 0);
 
-  if (stringChildren.length > 0) {
+  if (stringChildren.length > 0 && link) {
     const id = stringChildren
       .join('-')
       .toLowerCase()
@@ -46,7 +50,13 @@ const H1: React.FC<React.HtmlHTMLAttributes<HTMLHeadingElement>> = ({ children, 
     );
   }
 
-  return <h1 {...rest}>{children}</h1>;
+  return (
+    <h1 {...rest}>
+      <span className="not-prose text-3xl font-medium tracking-tight text-gray-12 md:text-4xl">
+        {children}
+      </span>
+    </h1>
+  );
 };
 
 export default H1;

@@ -1,0 +1,1 @@
+ALTER TABLE "model_families" ADD COLUMN "parameters" text;

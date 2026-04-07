@@ -58,6 +58,7 @@ export async function createBundle(opts: BundleOpts): Promise<string> {
       cpu_cores: opts.device.cpu_cores,
       gpu: opts.device.gpu_model,
       gpu_cores: opts.device.gpu_cores,
+      gpu_count: opts.device.gpu_count,
       ram_gb: opts.device.ram_gb,
       os_name: opts.device.os_name,
       os_version: opts.device.os_version,

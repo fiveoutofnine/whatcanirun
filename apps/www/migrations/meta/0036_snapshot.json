@@ -1,0 +1,1538 @@
+{
+  "id": "024eeb1d-abc5-463a-a7ce-4465c3c3f141",
+  "prevId": "409479ae-9af3-4938-85be-1882f2877d10",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.accounts": {
+      "name": "accounts",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "account_id": {
+          "name": "account_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "provider_id": {
+          "name": "provider_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "access_token": {
+          "name": "access_token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "refresh_token": {
+          "name": "refresh_token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "id_token": {
+          "name": "id_token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "access_token_expires_at": {
+          "name": "access_token_expires_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "refresh_token_expires_at": {
+          "name": "refresh_token_expires_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "scope": {
+          "name": "scope",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "password": {
+          "name": "password",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "accounts_user_id_users_id_fk": {
+          "name": "accounts_user_id_users_id_fk",
+          "tableFrom": "accounts",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.api_tokens": {
+      "name": "api_tokens",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token_hash": {
+          "name": "token_hash",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "code": {
+          "name": "code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "code_expires_at": {
+          "name": "code_expires_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "last_used_at": {
+          "name": "last_used_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "api_tokens_user_code_idx": {
+          "name": "api_tokens_user_code_idx",
+          "columns": [
+            {
+              "expression": "user_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "code",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "api_tokens_user_id_users_id_fk": {
+          "name": "api_tokens_user_id_users_id_fk",
+          "tableFrom": "api_tokens",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "api_tokens_token_hash_unique": {
+          "name": "api_tokens_token_hash_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "token_hash"
+          ]
+        },
+        "api_tokens_code_unique": {
+          "name": "api_tokens_code_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "code"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.devices": {
+      "name": "devices",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "cpu": {
+          "name": "cpu",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "cpu_cores": {
+          "name": "cpu_cores",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "gpu": {
+          "name": "gpu",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "gpu_cores": {
+          "name": "gpu_cores",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ram_gb": {
+          "name": "ram_gb",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "chip_id": {
+          "name": "chip_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "os_name": {
+          "name": "os_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "os_version": {
+          "name": "os_version",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "devices_dedup_idx": {
+          "name": "devices_dedup_idx",
+          "columns": [
+            {
+              "expression": "cpu",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "cpu_cores",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "gpu",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "gpu_cores",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "ram_gb",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "os_name",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "os_version",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "devices_chip_id_idx": {
+          "name": "devices_chip_id_idx",
+          "columns": [
+            {
+              "expression": "chip_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.model_families": {
+      "name": "model_families",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "org_id": {
+          "name": "org_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "slug": {
+          "name": "slug",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "model_families_org_slug_idx": {
+          "name": "model_families_org_slug_idx",
+          "columns": [
+            {
+              "expression": "org_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "slug",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "model_families_org_id_idx": {
+          "name": "model_families_org_id_idx",
+          "columns": [
+            {
+              "expression": "org_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "model_families_org_id_organizations_id_fk": {
+          "name": "model_families_org_id_organizations_id_fk",
+          "tableFrom": "model_families",
+          "tableTo": "organizations",
+          "columnsFrom": [
+            "org_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.models": {
+      "name": "models",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "display_name": {
+          "name": "display_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "format": {
+          "name": "format",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "artifact_sha256": {
+          "name": "artifact_sha256",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "source": {
+          "name": "source",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "file_size_bytes": {
+          "name": "file_size_bytes",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "parameters": {
+          "name": "parameters",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "quant": {
+          "name": "quant",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "architecture": {
+          "name": "architecture",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "models_artifact_sha256_unique": {
+          "name": "models_artifact_sha256_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "artifact_sha256"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.models_info": {
+      "name": "models_info",
+      "schema": "",
+      "columns": {
+        "artifact_sha256": {
+          "name": "artifact_sha256",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "lab_id": {
+          "name": "lab_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "quantized_by_id": {
+          "name": "quantized_by_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "family_id": {
+          "name": "family_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "source": {
+          "name": "source",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "file_size_bytes": {
+          "name": "file_size_bytes",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "parameters": {
+          "name": "parameters",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "quant": {
+          "name": "quant",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "architecture": {
+          "name": "architecture",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "variant": {
+          "name": "variant",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "license": {
+          "name": "license",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "release_date": {
+          "name": "release_date",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tags": {
+          "name": "tags",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "models_info_lab_id_idx": {
+          "name": "models_info_lab_id_idx",
+          "columns": [
+            {
+              "expression": "lab_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "models_info_quantized_by_id_idx": {
+          "name": "models_info_quantized_by_id_idx",
+          "columns": [
+            {
+              "expression": "quantized_by_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "models_info_family_id_idx": {
+          "name": "models_info_family_id_idx",
+          "columns": [
+            {
+              "expression": "family_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "models_info_artifact_sha256_models_artifact_sha256_fk": {
+          "name": "models_info_artifact_sha256_models_artifact_sha256_fk",
+          "tableFrom": "models_info",
+          "tableTo": "models",
+          "columnsFrom": [
+            "artifact_sha256"
+          ],
+          "columnsTo": [
+            "artifact_sha256"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "models_info_lab_id_organizations_id_fk": {
+          "name": "models_info_lab_id_organizations_id_fk",
+          "tableFrom": "models_info",
+          "tableTo": "organizations",
+          "columnsFrom": [
+            "lab_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "models_info_quantized_by_id_organizations_id_fk": {
+          "name": "models_info_quantized_by_id_organizations_id_fk",
+          "tableFrom": "models_info",
+          "tableTo": "organizations",
+          "columnsFrom": [
+            "quantized_by_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "models_info_family_id_model_families_id_fk": {
+          "name": "models_info_family_id_model_families_id_fk",
+          "tableFrom": "models_info",
+          "tableTo": "model_families",
+          "columnsFrom": [
+            "family_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.organizations": {
+      "name": "organizations",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "logo_url": {
+          "name": "logo_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "website_url": {
+          "name": "website_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "slug": {
+          "name": "slug",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "organizations_slug_unique": {
+          "name": "organizations_slug_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "slug"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.runs": {
+      "name": "runs",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "device_id": {
+          "name": "device_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "model_id": {
+          "name": "model_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bundle_id": {
+          "name": "bundle_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "schema_version": {
+          "name": "schema_version",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "run_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'pending'"
+        },
+        "notes": {
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "bundle_sha256": {
+          "name": "bundle_sha256",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "runtime_name": {
+          "name": "runtime_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "runtime_version": {
+          "name": "runtime_version",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "runtime_build_flags": {
+          "name": "runtime_build_flags",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "harness_version": {
+          "name": "harness_version",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "harness_git_sha": {
+          "name": "harness_git_sha",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "context_length": {
+          "name": "context_length",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "prompt_tokens": {
+          "name": "prompt_tokens",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "completion_tokens": {
+          "name": "completion_tokens",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ip_hash": {
+          "name": "ip_hash",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ttft_p50_ms": {
+          "name": "ttft_p50_ms",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ttft_p95_ms": {
+          "name": "ttft_p95_ms",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "decode_tps_mean": {
+          "name": "decode_tps_mean",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "prefill_tps_mean": {
+          "name": "prefill_tps_mean",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "idle_rss_mb": {
+          "name": "idle_rss_mb",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "peak_rss_mb": {
+          "name": "peak_rss_mb",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "trials_passed": {
+          "name": "trials_passed",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "trials_total": {
+          "name": "trials_total",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "runs_leaderboard_idx": {
+          "name": "runs_leaderboard_idx",
+          "columns": [
+            {
+              "expression": "model_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "status",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "decode_tps_mean",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "runs_device_idx": {
+          "name": "runs_device_idx",
+          "columns": [
+            {
+              "expression": "device_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "runs_user_idx": {
+          "name": "runs_user_idx",
+          "columns": [
+            {
+              "expression": "user_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "runs_user_id_users_id_fk": {
+          "name": "runs_user_id_users_id_fk",
+          "tableFrom": "runs",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "runs_device_id_devices_id_fk": {
+          "name": "runs_device_id_devices_id_fk",
+          "tableFrom": "runs",
+          "tableTo": "devices",
+          "columnsFrom": [
+            "device_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "runs_model_id_models_id_fk": {
+          "name": "runs_model_id_models_id_fk",
+          "tableFrom": "runs",
+          "tableTo": "models",
+          "columnsFrom": [
+            "model_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "runs_bundle_id_unique": {
+          "name": "runs_bundle_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "bundle_id"
+          ]
+        },
+        "runs_bundle_sha256_unique": {
+          "name": "runs_bundle_sha256_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "bundle_sha256"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.sessions": {
+      "name": "sessions",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token": {
+          "name": "token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ip_address": {
+          "name": "ip_address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "user_agent": {
+          "name": "user_agent",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "sessions_user_id_users_id_fk": {
+          "name": "sessions_user_id_users_id_fk",
+          "tableFrom": "sessions",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "sessions_token_unique": {
+          "name": "sessions_token_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "token"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.trials": {
+      "name": "trials",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "run_id": {
+          "name": "run_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "trial_index": {
+          "name": "trial_index",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "input_tokens": {
+          "name": "input_tokens",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "output_tokens": {
+          "name": "output_tokens",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ttft_ms": {
+          "name": "ttft_ms",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "total_ms": {
+          "name": "total_ms",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "prefill_tps": {
+          "name": "prefill_tps",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "decode_tps": {
+          "name": "decode_tps",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "idle_rss_mb": {
+          "name": "idle_rss_mb",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "peak_rss_mb": {
+          "name": "peak_rss_mb",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "trials_run_trial_idx": {
+          "name": "trials_run_trial_idx",
+          "columns": [
+            {
+              "expression": "run_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "trial_index",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "trials_decode_tps_idx": {
+          "name": "trials_decode_tps_idx",
+          "columns": [
+            {
+              "expression": "decode_tps",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "trials_ttft_idx": {
+          "name": "trials_ttft_idx",
+          "columns": [
+            {
+              "expression": "ttft_ms",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "trials_run_id_runs_id_fk": {
+          "name": "trials_run_id_runs_id_fk",
+          "tableFrom": "trials",
+          "tableTo": "runs",
+          "columnsFrom": [
+            "run_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.users": {
+      "name": "users",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role": {
+          "name": "role",
+          "type": "role",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'user'"
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email_verified": {
+          "name": "email_verified",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "image": {
+          "name": "image",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "users_email_unique": {
+          "name": "users_email_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "email"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.verifications": {
+      "name": "verifications",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "identifier": {
+          "name": "identifier",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "value": {
+          "name": "value",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {
+    "public.run_status": {
+      "name": "run_status",
+      "schema": "public",
+      "values": [
+        "pending",
+        "verified",
+        "flagged",
+        "rejected"
+      ]
+    },
+    "public.role": {
+      "name": "role",
+      "schema": "public",
+      "values": [
+        "admin",
+        "moderator",
+        "user"
+      ]
+    }
+  },
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {
+    "public.view__model_stats_by_device": {
+      "columns": {
+        "format": {
+          "name": "format",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "chip_id": {
+          "name": "chip_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "runtime_name": {
+          "name": "runtime_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "definition": "select \"models\".\"id\" as \"model_id\", COALESCE(NULLIF(MIN(\"models_info\".\"name\"), ''), \"models\".\"display_name\") as \"model_display_name\", \"models\".\"format\", COALESCE(NULLIF(MIN(\"models_info\".\"file_size_bytes\"), 0), \"models\".\"file_size_bytes\") as \"model_file_size_bytes\", COALESCE(NULLIF(MIN(\"models_info\".\"parameters\"), ''), \"models\".\"parameters\") as \"model_parameters\", COALESCE(NULLIF(MIN(\"models_info\".\"quant\"), ''), \"models\".\"quant\") as \"model_quant\", COALESCE(NULLIF(MIN(\"models_info\".\"architecture\"), ''), \"models\".\"architecture\") as \"model_architecture\", COALESCE(NULLIF(MIN(\"models_info\".\"source\"), ''), \"models\".\"source\") as \"model_source\", MIN(\"lab_org\".\"name\") as \"lab_name\", MIN(\"lab_org\".\"logo_url\") as \"lab_logo_url\", MIN(\"lab_org\".\"website_url\") as \"lab_website_url\", MIN(\"lab_org\".\"slug\") as \"lab_slug\", MIN(\"model_families\".\"slug\") as \"family_slug\", MIN(\"quant_org\".\"name\") as \"quantized_by_name\", MIN(\"quant_org\".\"logo_url\") as \"quantized_by_logo_url\", MIN(\"quant_org\".\"website_url\") as \"quantized_by_website_url\", \"devices\".\"chip_id\", MIN(\"devices\".\"cpu\") as \"device_cpu\", MIN(\"devices\".\"cpu_cores\") as \"device_cpu_cores\", MIN(\"devices\".\"gpu\") as \"device_gpu\", MIN(\"devices\".\"gpu_cores\") as \"device_gpu_cores\", MIN(\"devices\".\"ram_gb\") as \"device_ram_gb\", \"runs\".\"runtime_name\", count(distinct \"runs\".\"id\") as \"run_count\", count(\"trials\".\"id\") as \"trial_count\", PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY \"trials\".\"ttft_ms\") as \"ttft_p50_ms\", PERCENTILE_CONT(0.95) WITHIN GROUP (ORDER BY \"trials\".\"ttft_ms\") as \"ttft_p95_ms\", AVG(\"trials\".\"decode_tps\") as \"avg_decode_tps\", AVG(\"trials\".\"prefill_tps\") as \"avg_prefill_tps\", \n          COALESCE(AVG(\n            CASE WHEN NOT (\"runs\".\"runtime_name\" = 'llama.cpp' AND \"runs\".\"harness_version\" <= '0.1.16')\n              AND NOT (LOWER(\"devices\".\"os_name\") != 'macos' AND \"runs\".\"harness_version\" < '0.1.19')\n              THEN \"trials\".\"idle_rss_mb\"\n            END\n          ), 0)\n         as \"avg_idle_rss_mb\", \n          COALESCE(AVG(\n            CASE WHEN NOT (\"runs\".\"runtime_name\" = 'llama.cpp' AND \"runs\".\"harness_version\" <= '0.1.16')\n              AND NOT (LOWER(\"devices\".\"os_name\") != 'macos' AND \"runs\".\"harness_version\" < '0.1.19')\n              THEN \"trials\".\"peak_rss_mb\"\n            END\n          ), 0)\n         as \"avg_peak_rss_mb\", (\n          CASE\n          -- When reliable memory data exists, use full formula (decode + prefill + memory)\n          WHEN AVG(\n            CASE WHEN NOT (\"runs\".\"runtime_name\" = 'llama.cpp' AND \"runs\".\"harness_version\" <= '0.1.16')\n              AND NOT (LOWER(\"devices\".\"os_name\") != 'macos' AND \"runs\".\"harness_version\" < '0.1.19')\n              THEN \"trials\".\"peak_rss_mb\"\n            END\n          ) IS NOT NULL THEN\n            0.45 * (CASE\n              WHEN AVG(\"trials\".\"decode_tps\") >= 100 THEN 1.0\n              WHEN AVG(\"trials\".\"decode_tps\") >= 40  THEN 0.8 + 0.2 * (AVG(\"trials\".\"decode_tps\") - 40) / 60.0\n              WHEN AVG(\"trials\".\"decode_tps\") >= 20  THEN 0.6 + 0.2 * (AVG(\"trials\".\"decode_tps\") - 20) / 20.0\n              WHEN AVG(\"trials\".\"decode_tps\") >= 10  THEN 0.4 + 0.2 * (AVG(\"trials\".\"decode_tps\") - 10) / 10.0\n              WHEN AVG(\"trials\".\"decode_tps\") >= 5   THEN 0.2 + 0.2 * (AVG(\"trials\".\"decode_tps\") - 5) / 5.0\n              ELSE 0.2 * AVG(\"trials\".\"decode_tps\") / 5.0\n            END)\n            + 0.25 * (CASE\n              WHEN AVG(\"trials\".\"prefill_tps\") >= 4000 THEN 1.0\n              WHEN AVG(\"trials\".\"prefill_tps\") >= 2000 THEN 0.8 + 0.2 * (AVG(\"trials\".\"prefill_tps\") - 2000) / 2000.0\n              WHEN AVG(\"trials\".\"prefill_tps\") >= 1000 THEN 0.6 + 0.2 * (AVG(\"trials\".\"prefill_tps\") - 1000) / 1000.0\n              WHEN AVG(\"trials\".\"prefill_tps\") >= 500  THEN 0.4 + 0.2 * (AVG(\"trials\".\"prefill_tps\") - 500) / 500.0\n              WHEN AVG(\"trials\".\"prefill_tps\") >= 200  THEN 0.2 + 0.2 * (AVG(\"trials\".\"prefill_tps\") - 200) / 300.0\n              ELSE 0.2 * AVG(\"trials\".\"prefill_tps\") / 200.0\n            END)\n            -- 716.8 = 0.7 * 1024: only ~70% of device RAM is usable headroom\n            -- Peak RSS falls back to file-size estimate when bugged readings are excluded\n            + 0.30 * GREATEST(0, 1.0 - COALESCE(\n                AVG(CASE WHEN NOT (\"runs\".\"runtime_name\" = 'llama.cpp' AND \"runs\".\"harness_version\" <= '0.1.16')\n                  AND NOT (LOWER(\"devices\".\"os_name\") != 'macos' AND \"runs\".\"harness_version\" < '0.1.19')\n                  THEN \"trials\".\"peak_rss_mb\"\n                END),\n                COALESCE(NULLIF(MIN(\"models_info\".\"file_size_bytes\"), 0), \"models\".\"file_size_bytes\")\n                  / (1024.0 * 1024.0) + 512.0\n              ) / (MIN(\"devices\".\"ram_gb\") * 716.8))\n          -- No reliable memory data (non-macOS < 0.1.19): score on speed only\n          ELSE\n            0.65 * (CASE\n              WHEN AVG(\"trials\".\"decode_tps\") >= 100 THEN 1.0\n              WHEN AVG(\"trials\".\"decode_tps\") >= 40  THEN 0.8 + 0.2 * (AVG(\"trials\".\"decode_tps\") - 40) / 60.0\n              WHEN AVG(\"trials\".\"decode_tps\") >= 20  THEN 0.6 + 0.2 * (AVG(\"trials\".\"decode_tps\") - 20) / 20.0\n              WHEN AVG(\"trials\".\"decode_tps\") >= 10  THEN 0.4 + 0.2 * (AVG(\"trials\".\"decode_tps\") - 10) / 10.0\n              WHEN AVG(\"trials\".\"decode_tps\") >= 5   THEN 0.2 + 0.2 * (AVG(\"trials\".\"decode_tps\") - 5) / 5.0\n              ELSE 0.2 * AVG(\"trials\".\"decode_tps\") / 5.0\n            END)\n            + 0.35 * (CASE\n              WHEN AVG(\"trials\".\"prefill_tps\") >= 4000 THEN 1.0\n              WHEN AVG(\"trials\".\"prefill_tps\") >= 2000 THEN 0.8 + 0.2 * (AVG(\"trials\".\"prefill_tps\") - 2000) / 2000.0\n              WHEN AVG(\"trials\".\"prefill_tps\") >= 1000 THEN 0.6 + 0.2 * (AVG(\"trials\".\"prefill_tps\") - 1000) / 1000.0\n              WHEN AVG(\"trials\".\"prefill_tps\") >= 500  THEN 0.4 + 0.2 * (AVG(\"trials\".\"prefill_tps\") - 500) / 500.0\n              WHEN AVG(\"trials\".\"prefill_tps\") >= 200  THEN 0.2 + 0.2 * (AVG(\"trials\".\"prefill_tps\") - 200) / 300.0\n              ELSE 0.2 * AVG(\"trials\".\"prefill_tps\") / 200.0\n            END)\n          END\n        ) as \"composite_score\" from \"trials\" inner join \"runs\" on \"trials\".\"run_id\" = \"runs\".\"id\" inner join \"models\" on \"runs\".\"model_id\" = \"models\".\"id\" inner join \"devices\" on \"runs\".\"device_id\" = \"devices\".\"id\" left join \"models_info\" on \"models\".\"artifact_sha256\" = \"models_info\".\"artifact_sha256\" left join \"organizations\" \"lab_org\" on \"models_info\".\"lab_id\" = \"lab_org\".\"id\" left join \"organizations\" \"quant_org\" on \"models_info\".\"quantized_by_id\" = \"quant_org\".\"id\" left join \"model_families\" on \"models_info\".\"family_id\" = \"model_families\".\"id\" where (\"runs\".\"status\" = 'verified' and \"trials\".\"input_tokens\" = 4096 and \"trials\".\"output_tokens\" = 1024) group by \"models\".\"id\", \"devices\".\"chip_id\", \"runs\".\"runtime_name\"",
+      "name": "view__model_stats_by_device",
+      "schema": "public",
+      "isExisting": false,
+      "materialized": true
+    }
+  },
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

@@ -63,6 +63,9 @@ export function validateManifest(manifest: unknown): string[] {
     requireNumber(m.device, 'cpu_cores', '`device.`', errors);
     requireString(m.device, 'gpu', '`device.`', errors);
     requireNumber(m.device, 'gpu_cores', '`device.`', errors);
+    if ('gpu_count' in m.device && typeof m.device.gpu_count !== 'number') {
+      errors.push('`device.gpu_count` must be a number.');
+    }
     requireNumber(m.device, 'ram_gb', '`device.`', errors);
     requireString(m.device, 'os_name', '`device.`', errors);
     requireString(m.device, 'os_version', '`device.`', errors);

@@ -15,6 +15,7 @@ export interface Manifest {
     cpu_cores: number;
     gpu: string;
     gpu_cores: number;
+    gpu_count?: number;
     ram_gb: number;
     os_name: string;
     os_version: string;

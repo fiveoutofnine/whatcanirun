@@ -82,6 +82,7 @@ export default async function Page({
                 with: {
                   lab: true,
                   quantizedBy: true,
+                  family: true,
                 },
               },
             },
@@ -98,7 +99,9 @@ export default async function Page({
 
   return (
     <ContainerLayout className="flex flex-col">
-      <H2 className="mb-1">Runs</H2>
+      <H2 className="mb-1" link={false}>
+        Runs
+      </H2>
       <p className="mb-4 text-sm leading-normal text-gray-11 md:text-base">
         Most recent benchmark runs across all devices and models.
       </p>

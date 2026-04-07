@@ -27,6 +27,7 @@ const Hero: React.FC = async () => {
           cpuCores: sql<number>`MIN(${view__model_stats_by_device.deviceCpuCores})`.as('cpu_cores'),
           gpu: sql<string>`MIN(${view__model_stats_by_device.deviceGpu})`.as('gpu'),
           gpuCores: sql<number>`MIN(${view__model_stats_by_device.deviceGpuCores})`.as('gpu_cores'),
+          gpuCount: sql<number>`MIN(${view__model_stats_by_device.deviceGpuCount})`.as('gpu_count'),
           ramGb: sql<number>`MIN(${view__model_stats_by_device.deviceRamGb})`.as('ram_gb'),
           modelCount: countDistinct(view__model_stats_by_device.modelId).as('model_count'),
         })
@@ -42,6 +43,7 @@ const Hero: React.FC = async () => {
     cpuCores: r.cpuCores,
     gpu: r.gpu,
     gpuCores: r.gpuCores,
+    gpuCount: r.gpuCount,
     ramGb: r.ramGb,
     modelCount: r.modelCount,
   }));
@@ -55,8 +57,8 @@ const Hero: React.FC = async () => {
         </Suspense>
         <div className="mt-4 flex gap-2 md:mt-6">
           <HeroCopyCommandButton />
-          <Button variant="ghost" href="/docs" rightIcon={<ArrowRight />}>
-            Docs
+          <Button variant="ghost" href="/models" rightIcon={<ArrowRight />}>
+            Models
           </Button>
         </div>
       </div>

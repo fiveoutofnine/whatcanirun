@@ -48,6 +48,7 @@ export default async function Page({
           cpuCores: sql<number>`MIN(${view__model_stats_by_device.deviceCpuCores})`.as('cpu_cores'),
           gpu: sql<string>`MIN(${view__model_stats_by_device.deviceGpu})`.as('gpu'),
           gpuCores: sql<number>`MIN(${view__model_stats_by_device.deviceGpuCores})`.as('gpu_cores'),
+          gpuCount: sql<number>`MIN(${view__model_stats_by_device.deviceGpuCount})`.as('gpu_count'),
           ramGb: sql<number>`MIN(${view__model_stats_by_device.deviceRamGb})`.as('ram_gb'),
           modelCount: countDistinct(view__model_stats_by_device.modelId).as('model_count'),
         })
@@ -95,7 +96,7 @@ export default async function Page({
           .from(view__model_stats_by_device)
           .where(deviceFilter)
           .orderBy(() => {
-            if (!sorting) return desc(view__model_stats_by_device.avgDecodeTps);
+            if (!sorting) return desc(view__model_stats_by_device.compositeScore);
 
             switch (sorting.id) {
               case 'model':

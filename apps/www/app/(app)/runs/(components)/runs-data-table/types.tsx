@@ -1,6 +1,13 @@
 import type { PaginationState, SortingState } from '@tanstack/react-table';
 
-import type { devices, models, modelsInfo, organizations, runs } from '@/lib/db/schema';
+import type {
+  devices,
+  modelFamilies,
+  models,
+  modelsInfo,
+  organizations,
+  runs,
+} from '@/lib/db/schema';
 
 // -----------------------------------------------------------------------------
 // Types
@@ -12,6 +19,7 @@ export type RunsDataTableValue = typeof runs.$inferSelect & {
       | (typeof modelsInfo.$inferSelect & {
           lab: typeof organizations.$inferSelect | null;
           quantizedBy: typeof organizations.$inferSelect | null;
+          family: typeof modelFamilies.$inferSelect | null;
         })
       | null;
   };

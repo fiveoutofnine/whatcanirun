@@ -13,6 +13,7 @@ export const GPU_VRAM: Record<string, number> = {
   'geforce rtx 5080': 16,
   'geforce rtx 5070 ti': 16,
   'geforce rtx 5070': 12,
+  'geforce rtx 5060 ti': 16,
   // NVIDIA GeForce RTX 50-series (laptop)
   'geforce rtx 5090 laptop gpu': 24,
   'geforce rtx 5080 laptop gpu': 16,
@@ -59,6 +60,8 @@ export const GPU_VRAM: Record<string, number> = {
   'geforce rtx 2070': 8,
   'geforce rtx 2060 super': 8,
   'geforce rtx 2060': 6,
+  // NVIDIA GeForce GTX 16-series (laptop)
+  'geforce gtx 1650 ti with max-q design': 4,
   // NVIDIA A-series (data center)
   'a100 80gb': 80,
   a100: 40,
@@ -164,3 +167,14 @@ export function getGpuSeriesRank(gpu: string): number {
   }
   return 0;
 }
+
+// -----------------------------------------------------------------------------
+// Manufacturer labels
+// -----------------------------------------------------------------------------
+
+export const MANUFACTURER_LABEL: Record<string, string> = {
+  nvidia: 'NVIDIA',
+  amd: 'AMD',
+  intel: 'Intel',
+  apple: 'Apple',
+};

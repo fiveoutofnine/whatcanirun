@@ -11,6 +11,7 @@ export interface DeviceInfo {
   cpu_cores: number;
   gpu_model: string;
   gpu_cores: number;
+  gpu_count: number;
   ram_gb: number;
   os_name: string;
   os_version: string;
@@ -22,10 +23,11 @@ export interface DeviceInfo {
 // -----------------------------------------------------------------------------
 
 export function formatSysinfo(device: DeviceInfo): string {
+  const gpuPrefix = device.gpu_count > 1 ? `${device.gpu_count}x ` : '';
   const lines = [
     `uname: ${process.platform} ${process.arch}`,
     `cpu: ${device.cpu_model} (${device.cpu_cores} cores)`,
-    `gpu: ${device.gpu_model} (${device.gpu_cores} cores)`,
+    `gpu: ${gpuPrefix}${device.gpu_model} (${device.gpu_cores} cores)`,
     `ram: ${device.ram_gb} GB`,
     `os: ${device.os_name} ${device.os_version}`,
     `hostname: ${device.hostname}`,
@@ -114,6 +116,7 @@ async function detectMacOS(): Promise<DeviceInfo> {
     cpu_cores: parseInt(cpuCores || '0', 10),
     gpu_model: gpu,
     gpu_cores: gpuCores,
+    gpu_count: 1,
     ram_gb: Math.round(parseInt(memBytes || '0', 10) / 1024 / 1024 / 1024),
     os_name: 'macOS',
     os_version: osVersion || 'Unknown',
@@ -142,7 +145,8 @@ async function detectLinux(): Promise<DeviceInfo> {
     cpu_model: cpuMatch?.[1]?.trim() || 'Unknown',
     cpu_cores: cpuCores,
     gpu_model: gpu.model,
-    gpu_cores: gpu.count,
+    gpu_cores: gpu.cores,
+    gpu_count: gpu.count,
     ram_gb: Math.round(parseInt(memMatch?.[1] || '0', 10) / 1024 / 1024),
     os_name: osNameMatch?.[1] || 'Linux',
     os_version: osVersionMatch?.[1] || 'Unknown',
@@ -151,8 +155,9 @@ async function detectLinux(): Promise<DeviceInfo> {
 }
 
 type LinuxGpuInfo = {
-  count: number;
   model: string;
+  cores: number;
+  count: number;
 };
 
 async function detectLinuxGpuInfo(): Promise<LinuxGpuInfo> {
@@ -162,12 +167,13 @@ async function detectLinuxGpuInfo(): Promise<LinuxGpuInfo> {
   const pci = await detectLinuxPciGpuInfo();
   if (pci) return pci;
 
-  return { model: 'None', count: 0 };
+  return { model: 'None', cores: 0, count: 0 };
 }
 
 async function detectLinuxNvidiaGpuInfo(): Promise<LinuxGpuInfo | null> {
-  const [namesRaw, countRaw] = await Promise.all([
+  const [namesRaw, coresRaw, countRaw] = await Promise.all([
     exec(['nvidia-smi', '--query-gpu=name', '--format=csv,noheader'], { quietMissing: true }),
+    exec(['nvidia-smi', '--query-gpu=cuda_cores', '--format=csv,noheader'], { quietMissing: true }),
     exec(['nvidia-smi', '--query-gpu=count', '--format=csv,noheader'], { quietMissing: true }),
   ]);
 
@@ -178,9 +184,11 @@ async function detectLinuxNvidiaGpuInfo(): Promise<LinuxGpuInfo | null> {
 
   if (names.length === 0) return null;
 
+  const cores = parseInt(coresRaw?.split('\n')[0] || '0', 10);
   const count = parseInt(countRaw || '0', 10) || names.length;
   return {
     model: names[0]!,
+    cores,
     count,
   };
 }
@@ -205,6 +213,7 @@ async function detectLinuxPciGpuInfo(): Promise<LinuxGpuInfo | null> {
 
   return {
     model,
+    cores: 0,
     count: controllers.length,
   };
 }

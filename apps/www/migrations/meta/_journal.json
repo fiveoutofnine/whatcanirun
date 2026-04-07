@@ -253,6 +253,62 @@
       "when": 1775019931082,
       "tag": "0035_friendly_namora",
       "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "7",
+      "when": 1775095270574,
+      "tag": "0036_demonic_giant_girl",
+      "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "7",
+      "when": 1775095707761,
+      "tag": "0037_redundant_katie_power",
+      "breakpoints": true
+    },
+    {
+      "idx": 38,
+      "version": "7",
+      "when": 1775095839904,
+      "tag": "0038_nice_hobgoblin",
+      "breakpoints": true
+    },
+    {
+      "idx": 39,
+      "version": "7",
+      "when": 1775210394915,
+      "tag": "0039_first_imperial_guard",
+      "breakpoints": true
+    },
+    {
+      "idx": 40,
+      "version": "7",
+      "when": 1775292512746,
+      "tag": "0040_broad_jasper_sitwell",
+      "breakpoints": true
+    },
+    {
+      "idx": 41,
+      "version": "7",
+      "when": 1775422978558,
+      "tag": "0041_fresh_jack_murdock",
+      "breakpoints": true
+    },
+    {
+      "idx": 42,
+      "version": "7",
+      "when": 1775426319451,
+      "tag": "0042_harsh_black_panther",
+      "breakpoints": true
+    },
+    {
+      "idx": 43,
+      "version": "7",
+      "when": 1775511749819,
+      "tag": "0043_cloudy_spyke",
+      "breakpoints": true
     }
   ]
 }
