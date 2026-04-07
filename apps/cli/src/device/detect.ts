@@ -185,7 +185,7 @@ async function detectLinuxNvidiaGpuInfo(): Promise<LinuxGpuInfo | null> {
   if (names.length === 0) return null;
 
   const cores = parseInt(coresRaw?.split('\n')[0] || '0', 10);
-  const count = parseInt(countRaw || '0', 10) || names.length;
+  const count = parseInt(countRaw?.split('\n')[0] || '0', 10) || names.length;
   return {
     model: names[0]!,
     cores,
