@@ -74,7 +74,8 @@ describe('detectDevice', () => {
     await expect(detectDevice()).resolves.toEqual({
       cpu_cores: 2,
       cpu_model: 'AMD Ryzen 9 7950X3D 16-Core Processor',
-      gpu_cores: 1,
+      gpu_cores: 0,
+      gpu_count: 1,
       gpu_model: 'Radeon RX 7900 XTX',
       hostname: 'phoenix',
       os_name: 'Ubuntu 24.04.2 LTS',
@@ -112,7 +113,8 @@ describe('detectDevice', () => {
     await expect(detectDevice()).resolves.toEqual({
       cpu_cores: 2,
       cpu_model: 'Intel(R) Xeon(R) CPU',
-      gpu_cores: 1,
+      gpu_cores: 0,
+      gpu_count: 1,
       gpu_model: 'NVIDIA H100 80GB HBM3',
       hostname: 'hopper',
       os_name: 'Ubuntu 22.04.5 LTS',
