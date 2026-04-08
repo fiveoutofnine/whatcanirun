@@ -5,7 +5,7 @@ import { Fragment, useMemo, useState } from 'react';
 import * as VisuallyHidden from '@radix-ui/react-visually-hidden';
 import clsx from 'clsx';
 import { defaultFilter } from 'cmdk';
-import { Check, CircleHelp } from 'lucide-react';
+import { Check, ChevronRight, CircleHelp, LocateFixed } from 'lucide-react';
 
 import { getGpuSeriesRank, getVramGb } from '@/lib/constants/gpu';
 import { useMediaQuery } from '@/lib/hooks';
@@ -39,6 +39,7 @@ type DeviceComboboxProps = {
 
 type DeviceComboboxInternalProps = {
   detectedDevice: (DeviceOption & { key: string }) | null;
+  detectedDeviceChipId: string | null;
   groups: { name: string; devices: (DeviceOption & { key: string })[] }[];
   value: string;
   // eslint-disable-next-line
@@ -68,11 +69,12 @@ const getDeviceItemValue = (device: DeviceOption & { key: string }, manufacturer
 
 const DeviceCommandItem: React.FC<{
   device: DeviceOption & { key: string };
+  detectedDeviceChipId: string | null;
   manufacturerName: string;
   selected: boolean;
   value: string;
   onSelect: () => void;
-}> = ({ device, manufacturerName, selected, value, onSelect }) => {
+}> = ({ device, detectedDeviceChipId, manufacturerName, selected, value, onSelect }) => {
   const isApple = device.gpu.toLowerCase().startsWith('apple');
 
   return (
@@ -88,9 +90,14 @@ const DeviceCommandItem: React.FC<{
       <div className="flex flex-col">
         {isApple ? (
           <Fragment>
-            <span className="line-clamp-1 flex w-full items-center gap-1.5 text-ellipsis text-nowrap leading-5">
+            <span className="line-clamp-1 flex w-full items-center text-ellipsis text-nowrap leading-5">
               {device.gpu.replace(manufacturerName, '')}
-              <Code>{device.ramGb} GB RAM</Code>
+              <Code className='ml-1.5'>{device.ramGb} GB RAM</Code>
+              {detectedDeviceChipId === device.key ? (
+                <Badge className='ml-1' size="xs" variant="outline" intent="info">
+                  Your device
+                </Badge>
+              ) : null}
             </span>
             <span className="text-xs leading-4 text-gray-11">
               {device.cpuCores}-core CPU / {device.gpuCores}-core GPU
@@ -200,12 +207,12 @@ const DeviceCombobox: React.FC<DeviceComboboxProps> = ({
     () =>
       detectedDeviceChipId
         ? groups.flatMap(({ devices: groupDevices }) => groupDevices).find((d) => d.key === detectedDeviceChipId) ??
-          null
+        null
         : null,
     [detectedDeviceChipId, groups],
   );
 
-  const internalProps = { groups, detectedDevice, value, onSelect, setOpen };
+  const internalProps = { groups, detectedDevice, detectedDeviceChipId, value, onSelect, setOpen };
 
   return (
     <Fragment>
@@ -235,6 +242,7 @@ const DeviceCombobox: React.FC<DeviceComboboxProps> = ({
 
 const DeviceComboboxInternal: React.FC<DeviceComboboxInternalProps> = ({
   detectedDevice,
+  detectedDeviceChipId,
   groups,
   value,
   onSelect,
@@ -263,22 +271,22 @@ const DeviceComboboxInternal: React.FC<DeviceComboboxInternalProps> = ({
         </Command.Empty>
 
         {detectedDevice ? (
-          <Command.Group heading="Auto-detected device">
-            <DeviceCommandItem
-              device={detectedDevice}
-              manufacturerName={detectedDevice.gpu.split(' ')[0] ?? ''}
-              selected={detectedDevice.key === value}
-              value={`auto-detected ${getDeviceItemValue(
-                detectedDevice,
-                detectedDevice.gpu.split(' ')[0] ?? '',
-              )}`}
+          <Command.Group>
+            <Command.Item
+              className="[&_[cmdk-item-content]]:flex [&_[cmdk-item-content]]:w-full [&_[cmdk-item-content]]:items-center [&_[cmdk-item-content]]:justify-between"
+              icon={<LocateFixed />}
+              value={`use auto detected device ${detectedDevice.key}`}
               onSelect={() => {
                 onSelect(detectedDevice.key);
                 setOpen(false);
               }}
-            />
+            >
+              <span>Use auto-detected device</span>
+              <ChevronRight className="size-4 text-gray-11" />
+            </Command.Item>
           </Command.Group>
         ) : null}
+        {detectedDevice && groups.length > 0 ? <Command.Separator /> : null}
 
         {groups.map(({ name, devices: devs }, i) => {
           let deviceCount = devs.length;
@@ -317,6 +325,7 @@ const DeviceComboboxInternal: React.FC<DeviceComboboxInternalProps> = ({
                     <DeviceCommandItem
                       key={d.key}
                       device={d}
+                      detectedDeviceChipId={detectedDeviceChipId}
                       manufacturerName={name}
                       selected={selected}
                       value={getDeviceItemValue(d, name)}
