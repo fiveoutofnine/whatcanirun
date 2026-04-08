@@ -55,9 +55,9 @@ const HeroHeading: React.FC<{ chips: ChipOption[] }> = ({ chips }) => {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    if (params.has('device') || !detectedChip) return;
+    if (params.has('device') || !detectedChip || device === detectedChip.chipId) return;
     setDevice(detectedChip.chipId);
-  }, [detectedChip, setDevice]);
+  }, [detectedChip, device, setDevice]);
 
   // Find selected device info for display.
   const selected = useMemo(
