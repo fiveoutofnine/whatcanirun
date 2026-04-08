@@ -20,6 +20,7 @@
       "dependsOn": ["^typecheck"],
       "outputs": []
     },
+    "lint": {},
     "//#__lint__": {
       "dependsOn": ["//#__check__"]
     },

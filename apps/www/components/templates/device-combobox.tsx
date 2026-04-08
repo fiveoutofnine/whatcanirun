@@ -5,7 +5,7 @@ import { Fragment, useMemo, useState } from 'react';
 import * as VisuallyHidden from '@radix-ui/react-visually-hidden';
 import clsx from 'clsx';
 import { defaultFilter } from 'cmdk';
-import { Check, CircleHelp } from 'lucide-react';
+import { Check, ChevronRight, CircleHelp, LocateFixed } from 'lucide-react';
 
 import { getGpuSeriesRank, getVramGb } from '@/lib/constants/gpu';
 import { useMediaQuery } from '@/lib/hooks';
@@ -30,6 +30,7 @@ type DeviceOption = {
 
 type DeviceComboboxProps = {
   devices: DeviceOption[];
+  detectedDeviceChipId?: string | null;
   value: string;
   // eslint-disable-next-line
   onSelect: (chipId: string) => void;
@@ -37,6 +38,8 @@ type DeviceComboboxProps = {
 };
 
 type DeviceComboboxInternalProps = {
+  detectedDevice: (DeviceOption & { key: string }) | null;
+  detectedDeviceChipId: string | null;
   groups: { name: string; devices: (DeviceOption & { key: string })[] }[];
   value: string;
   // eslint-disable-next-line
@@ -56,7 +59,89 @@ const MANUFACTURER_ICON: Map<string, React.FC<{ className?: string; size?: numbe
 // Component
 // -----------------------------------------------------------------------------
 
-const DeviceCombobox: React.FC<DeviceComboboxProps> = ({ devices, value, onSelect, children }) => {
+const getDeviceItemValue = (device: DeviceOption & { key: string }, manufacturerName: string) => {
+  if (device.gpu.toLowerCase().startsWith('apple')) {
+    return `${device.gpu}-${device.cpuCores}-${device.gpuCores}-${device.ramGb}`;
+  }
+
+  return manufacturerName ? device.key : `${device.gpu} ${device.cpu} ${device.key}`;
+};
+
+const DeviceCommandItem: React.FC<{
+  device: DeviceOption & { key: string };
+  detectedDeviceChipId: string | null;
+  manufacturerName: string;
+  selected: boolean;
+  value: string;
+  onSelect: () => void;
+}> = ({ device, detectedDeviceChipId, manufacturerName, selected, value, onSelect }) => {
+  const isApple = device.gpu.toLowerCase().startsWith('apple');
+
+  return (
+    <Command.Item
+      className={clsx(
+        'h-11 [&_[cmdk-item-content]]:flex [&_[cmdk-item-content]]:w-full [&_[cmdk-item-content]]:items-start [&_[cmdk-item-content]]:justify-between [&_[cmdk-item-content]]:gap-1.5',
+        !selected ? '[&_[cmdk-item-content]]:pl-6' : '',
+      )}
+      icon={selected ? <Check /> : null}
+      value={value}
+      onSelect={onSelect}
+    >
+      <div className="flex flex-col">
+        {isApple ? (
+          <Fragment>
+            <span className="line-clamp-1 flex w-full items-center text-ellipsis text-nowrap leading-5">
+              {device.gpu.replace(manufacturerName, '')}
+              <Code className="ml-1.5">{device.ramGb} GB RAM</Code>
+              {detectedDeviceChipId === device.key ? (
+                <Badge className="ml-1" size="xs" variant="outline" intent="info">
+                  Your device
+                </Badge>
+              ) : null}
+            </span>
+            <span className="text-xs leading-4 text-gray-11">
+              {device.cpuCores}-core CPU / {device.gpuCores}-core GPU
+            </span>
+          </Fragment>
+        ) : (
+          <Fragment>
+            <span className="flex w-full max-w-full items-center gap-1.5 leading-5">
+              <span className="line-clamp-1">
+                {device.gpu.replace(manufacturerName, '').trim()}
+              </span>
+              {device.gpuCount > 1 ? (
+                <Badge
+                  className="min-w-fit"
+                  size="sm"
+                  variant="outline"
+                  intent="none"
+                  type="number"
+                >
+                  {device.gpuCount}×
+                </Badge>
+              ) : null}
+            </span>
+            {(() => {
+              const vram = getVramGb(device.gpu);
+              const totalVram = vram != null ? vram * (device.gpuCount ?? 1) : null;
+              return totalVram != null ? (
+                <span className="text-xs leading-4 text-gray-11">{totalVram} GB VRAM</span>
+              ) : null;
+            })()}
+          </Fragment>
+        )}
+      </div>
+    </Command.Item>
+  );
+};
+
+const DeviceCombobox: React.FC<DeviceComboboxProps> = ({
+  devices,
+  detectedDeviceChipId = null,
+  value,
+  onSelect,
+  children,
+}) => {
   const [open, setOpen] = useState(false);
   const isSmallScreen = useMediaQuery('(max-width: 768px)');
 
@@ -120,7 +205,17 @@ const DeviceCombobox: React.FC<DeviceComboboxProps> = ({ devices, value, onSelec
       }));
   }, [devices]);
 
-  const internalProps = { groups, value, onSelect, setOpen };
+  const detectedDevice = useMemo(
+    () =>
+      detectedDeviceChipId
+        ? (groups
+            .flatMap(({ devices: groupDevices }) => groupDevices)
+            .find((d) => d.key === detectedDeviceChipId) ?? null)
+        : null,
+    [detectedDeviceChipId, groups],
+  );
+
+  const internalProps = { groups, detectedDevice, detectedDeviceChipId, value, onSelect, setOpen };
 
   return (
     <Fragment>
@@ -149,6 +244,8 @@ const DeviceCombobox: React.FC<DeviceComboboxProps> = ({ devices, value, onSelec
 };
 
 const DeviceComboboxInternal: React.FC<DeviceComboboxInternalProps> = ({
+  detectedDevice,
+  detectedDeviceChipId,
   groups,
   value,
   onSelect,
@@ -175,6 +272,24 @@ const DeviceComboboxInternal: React.FC<DeviceComboboxInternalProps> = ({
             Try a different search term.
           </div>
         </Command.Empty>
+
+        {detectedDevice ? (
+          <Command.Group>
+            <Command.Item
+              className="[&_[cmdk-item-content]]:flex [&_[cmdk-item-content]]:w-full [&_[cmdk-item-content]]:items-center [&_[cmdk-item-content]]:justify-between"
+              icon={<LocateFixed />}
+              value={`use auto detected device ${detectedDevice.key}`}
+              onSelect={() => {
+                onSelect(detectedDevice.key);
+                setOpen(false);
+              }}
+            >
+              <span>Use auto-detected device</span>
+              <ChevronRight className="size-4 text-gray-11" />
+            </Command.Item>
+          </Command.Group>
+        ) : null}
+        {detectedDevice && groups.length > 0 ? <Command.Separator /> : null}
 
         {groups.map(({ name, devices: devs }, i) => {
           let deviceCount = devs.length;
@@ -208,62 +323,20 @@ const DeviceComboboxInternal: React.FC<DeviceComboboxInternalProps> = ({
               >
                 {(search.trim() || i > 0 ? devs : devs.slice(0, 5)).map((d) => {
                   const selected = d.key === value;
-                  const isApple = d.gpu.toLowerCase().startsWith('apple');
 
                   return (
-                    <Command.Item
+                    <DeviceCommandItem
                       key={d.key}
-                      className={clsx(
-                        'h-11 [&_[cmdk-item-content]]:flex [&_[cmdk-item-content]]:w-full [&_[cmdk-item-content]]:items-start [&_[cmdk-item-content]]:justify-between [&_[cmdk-item-content]]:gap-1.5',
-                        !selected ? '[&_[cmdk-item-content]]:pl-6' : '',
-                      )}
-                      value={isApple ? `${d.gpu}-${d.cpuCores}-${d.gpuCores}-${d.ramGb}` : d.key}
-                      icon={selected ? <Check /> : null}
+                      device={d}
+                      detectedDeviceChipId={detectedDeviceChipId}
+                      manufacturerName={name}
+                      selected={selected}
+                      value={getDeviceItemValue(d, name)}
                       onSelect={() => {
                         onSelect(d.key);
                         setOpen(false);
                       }}
-                    >
-                      <div className="flex flex-col">
-                        {isApple ? (
-                          <Fragment>
-                            <span className="line-clamp-1 flex w-full items-center gap-1.5 text-ellipsis text-nowrap leading-5">
-                              {d.gpu.replace(name, '')}
-                              <Code>{d.ramGb} GB RAM</Code>
-                            </span>
-                            <span className="text-xs leading-4 text-gray-11">
-                              {d.cpuCores}-core CPU / {d.gpuCores}-core GPU
-                            </span>
-                          </Fragment>
-                        ) : (
-                          <Fragment>
-                            <span className="flex w-full max-w-full items-center gap-1.5 leading-5">
-                              <span className="line-clamp-1">{d.gpu.replace(name, '').trim()}</span>
-                              {d.gpuCount > 1 ? (
-                                <Badge
-                                  className="min-w-fit"
-                                  size="sm"
-                                  variant="outline"
-                                  intent="none"
-                                  type="number"
-                                >
-                                  {d.gpuCount}×
-                                </Badge>
-                              ) : null}
-                            </span>
-                            {(() => {
-                              const vram = getVramGb(d.gpu);
-                              const totalVram = vram != null ? vram * (d.gpuCount ?? 1) : null;
-                              return totalVram != null ? (
-                                <span className="text-xs leading-4 text-gray-11">
-                                  {totalVram} GB VRAM
-                                </span>
-                              ) : null;
-                            })()}
-                          </Fragment>
-                        )}
-                      </div>
-                    </Command.Item>
+                    />
                   );
                 })}
               </Command.Group>

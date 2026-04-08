@@ -11,7 +11,7 @@
     "build": "turbo build",
     "check": "turbo run __check__",
     "format": "turbo run __format__",
-    "lint": "turbo run __lint__",
+    "lint": "turbo run lint --filter=./apps/www --filter=./apps/cli --",
     "test": "turbo test",
     "typecheck": "turbo run typecheck"
   },

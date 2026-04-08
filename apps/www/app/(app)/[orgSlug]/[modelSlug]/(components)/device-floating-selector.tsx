@@ -6,6 +6,7 @@ import { ChevronsUpDown } from 'lucide-react';
 import { useQueryState } from 'nuqs';
 
 import type { Device } from '@/lib/db/schema';
+import { useDetectedDevice } from '@/lib/hooks';
 import { formatChipName, parseManufacturer } from '@/lib/utils';
 
 import DeviceCombobox from '@/components/templates/device-combobox';
@@ -39,6 +40,7 @@ const DeviceFloatingSelector: React.FC<DeviceFloatingSelectorProps> = ({ chips }
     defaultValue: defaultDevice,
     shallow: false,
   });
+  const detectedChip = useDetectedDevice(chips);
 
   const selected = useMemo(
     () => chips.find((c) => c.chipId === device) ?? chips[0],
@@ -95,7 +97,12 @@ const DeviceFloatingSelector: React.FC<DeviceFloatingSelectorProps> = ({ chips }
 
   return (
     <div className="pointer-events-none fixed inset-x-0 bottom-2 z-50 flex justify-center">
-      <DeviceCombobox devices={chipsSorted} value={device} onSelect={setDevice}>
+      <DeviceCombobox
+        devices={chipsSorted}
+        detectedDeviceChipId={detectedChip?.chipId ?? null}
+        value={device}
+        onSelect={setDevice}
+      >
         <button className="pointer-events-auto h-8 rounded-full border border-gray-7 bg-gray-3 shadow-lg backdrop-blur transition-colors hover:border-gray-8 hover:bg-gray-4 focus-visible:border-gray-8 focus-visible:bg-gray-4 active:bg-gray-5">
           <span className="flex items-center gap-1.5 pl-1 pr-2.5 text-base">
             {Logo ? <Logo size={24} className="rounded-full border border-gray-6" /> : null}
