@@ -1,6 +1,8 @@
 import { readFileSync } from 'node:fs';
 
 import { getWallet } from '../wallet/wallet';
+import chalk from 'chalk';
+import { binName } from '../utils/bin';
 
 // -----------------------------------------------------------------------------
 // Types
@@ -30,10 +32,12 @@ export async function uploadBundleRewarded(
 ): Promise<RewardedUploadResult> {
   const wallet = getWallet();
   if (!wallet) {
-    throw new Error('No rewards wallet found. Run `wcir rewards opt-in` first.');
+    throw new Error(
+      `No rewards wallet found. Run ${chalk.bold.cyan(`${binName()} rewards init`)} first.`
+    );
   }
 
-  // Lazy-import mppx client + viem to keep CLI startup fast
+  // Lazy-import mppx client + viem to keep CLI startup fast.
   const [{ Mppx, tempo }, { privateKeyToAccount }] = await Promise.all([
     import('mppx/client'),
     import('viem/accounts'),
@@ -45,7 +49,7 @@ export async function uploadBundleRewarded(
     polyfill: false,
   });
 
-  // Read and hash the bundle
+  // Read and hash the bundle.
   const zipBytes = readFileSync(bundlePath);
   const hashBuffer = await crypto.subtle.digest('SHA-256', zipBytes);
   const bundleSha256 = Array.from(new Uint8Array(hashBuffer))
@@ -53,13 +57,13 @@ export async function uploadBundleRewarded(
     .join('');
   const blob = new Blob([zipBytes], { type: 'application/zip' });
 
-  // Build multipart form
+  // Build multipart form.
   const form = new FormData();
   form.append('bundle', blob, bundlePath.split('/').pop() || 'bundle.zip');
   form.append('bundle_sha256', bundleSha256);
   form.append('wallet_address', wallet.address);
 
-  // Submit via mppx (handles 402 payment flow automatically)
+  // Submit via mppx (handles 402 payment flow automatically).
   const res = await mppx.fetch(`${API_BASE}/api/v0/runs/rewarded`, {
     method: 'POST',
     body: form,
