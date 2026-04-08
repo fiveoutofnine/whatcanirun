@@ -2,10 +2,9 @@ import chalk from 'chalk';
 import { defineCommand } from 'citty';
 
 import { validateBundle } from '../bundle/validate';
-import { uploadBundle } from '../upload/client';
+import { uploadBundle, uploadBundleWithReward } from '../upload/client';
 import { resolveBundlePath } from '../utils/id';
 import * as log from '../utils/log';
-import { getWallet } from '../wallet/wallet';
 
 const command = defineCommand({
   meta: {
@@ -18,9 +17,9 @@ const command = defineCommand({
       description: 'Bundle ID or path to zip file',
       required: true,
     },
-    rewarded: {
+    reward: {
       type: 'boolean',
-      description: 'Submit via rewarded route (requires opt-in wallet)',
+      description: 'Receive rewards for submitting runs',
       default: false,
     },
   },
@@ -37,13 +36,6 @@ const command = defineCommand({
       process.exit(130);
     };
     process.on('SIGINT', onSigint);
-
-    const useRewarded = args.rewarded as boolean;
-
-    if (useRewarded && !getWallet()) {
-      log.error(`No rewards wallet found. Run ${chalk.bold.cyan('wcir rewards opt-in')} first.`);
-      process.exit(1);
-    }
 
     let bundlePath;
     try {
@@ -70,18 +62,16 @@ const command = defineCommand({
     validationSpinner.stop(chalk.white(`[${chalk.green('✓')}] Bundle is valid.`));
 
     // Upload bundle.
-    const uploadLabel = useRewarded ? 'Uploading bundle (rewarded)…' : 'Uploading bundle…';
-    const uploadSpinner = new log.Spinner(chalk.dim(uploadLabel)).start();
+    const uploadSpinner = new log.Spinner(chalk.dim('Uploading bundle…')).start();
     activeSpinner = uploadSpinner;
     try {
-      if (useRewarded) {
-        const { uploadBundleRewarded } = await import('../upload/rewarded');
-        const result = await uploadBundleRewarded(bundlePath, { signal: controller.signal });
+      if (args.reward) {
+        const result = await uploadBundleWithReward(bundlePath, { signal: controller.signal });
         uploadSpinner.stop(
           chalk.white(`[${chalk.green('✓')}] Uploaded run: ${chalk.underline(result.run_url)}`)
         );
         console.log(
-          chalk.dim(` ↳ DID: ${chalk.cyan(result.did)} — reward granted on verification.`)
+          chalk.dim(` ↳  Reward will be paid out to ${chalk.cyan(result.did)} upon verification.`)
         );
       } else {
         const result = await uploadBundle(bundlePath, { signal: controller.signal });

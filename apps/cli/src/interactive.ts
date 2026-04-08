@@ -7,7 +7,6 @@ import type { RuntimeInfo } from './runtime/types';
 import { binName } from './utils/bin';
 import * as log from './utils/log';
 import { Spinner } from './utils/log';
-import { getWallet } from './wallet/wallet';
 
 // -----------------------------------------------------------------------------
 // Types
@@ -295,28 +294,15 @@ export async function runInteractive(): Promise<void> {
 
   // Ask to submit before running.
   const auth = getAuth();
-  const wallet = getWallet();
   const submitHint = auth
     ? `  (as ${chalk.cyan(auth.user.name)} (${chalk.cyan(auth.user.email)}), publicly visible)`
-    : '  (anonymous, publicly visible)';
+    : '  (anonymous)';
   const wcirLink = `\x1b]8;;https://whatcani.run\x07${chalk.underline('whatcani.run')}\x1b]8;;\x07`;
   console.log(chalk.white(`Submit results to ${wcirLink}?`) + chalk.dim(submitHint));
 
-  const submitOptions = wallet
-    ? ['Yes, submit (rewarded — earn up to $1.28)', 'Yes, submit (standard)', 'No, submit later']
-    : ['Yes, submit', 'No, submit later'];
-  const submitChoice = await pick(submitOptions);
+  const submitChoice = await pick(['Yes, submit', 'No, submit later']);
   if (submitChoice < 0) process.exit(0);
-
-  let shouldSubmit: boolean;
-  let shouldReward: boolean;
-  if (wallet) {
-    shouldSubmit = submitChoice <= 1;
-    shouldReward = submitChoice === 0;
-  } else {
-    shouldSubmit = submitChoice === 0;
-    shouldReward = false;
-  }
+  const shouldSubmit = submitChoice === 0;
 
   // Build model ref — for GGUF repos with a specific file, use "repoId:fileName"
   // so that resolveModel handles the download during benchmark execution.
@@ -344,7 +330,6 @@ export async function runInteractive(): Promise<void> {
       model: modelRef,
       runtime: selected.runtime,
       submit: shouldSubmit,
-      rewarded: shouldReward,
     });
   } catch {
     process.exit(1);

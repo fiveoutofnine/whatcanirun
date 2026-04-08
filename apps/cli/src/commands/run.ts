@@ -19,7 +19,7 @@ import {
 } from '../model/resolve';
 import { resolveRuntime } from '../runtime/resolve';
 import type { BenchResult } from '../runtime/types';
-import { uploadBundle } from '../upload/client';
+import { uploadBundle, uploadBundleWithReward } from '../upload/client';
 import { binName } from '../utils/bin';
 import { DEFAULT_BUNDLES_DIR } from '../utils/id';
 import * as log from '../utils/log';
@@ -37,8 +37,8 @@ export interface BenchmarkOpts {
   trials?: number;
   notes?: string;
   submit?: boolean;
-  rewarded?: boolean;
   output?: string;
+  reward?: boolean;
 }
 
 // -----------------------------------------------------------------------------
@@ -426,19 +426,17 @@ export async function executeBenchmark(opts: BenchmarkOpts): Promise<string> {
 
     // Upload bundle.
     if (opts.submit) {
-      const useRewarded = opts.rewarded ?? false;
-      const uploadLabel = useRewarded ? 'Uploading bundle (rewarded)…' : 'Uploading bundle…';
-      const uploadSpinner = new log.Spinner(chalk.dim(uploadLabel)).start();
+      const useRewarded = opts.reward ?? false;
+      const uploadSpinner = new log.Spinner(chalk.dim('Uploading bundle…')).start();
       activeSpinner = uploadSpinner;
       try {
         if (useRewarded) {
-          const { uploadBundleRewarded } = await import('../upload/rewarded');
-          const result = await uploadBundleRewarded(bundlePath, { signal: controller.signal });
+          const result = await uploadBundleWithReward(bundlePath, { signal: controller.signal });
           uploadSpinner.stop(
             chalk.white(`[${chalk.green('✓')}] Uploaded run: ${chalk.underline(result.run_url)}`)
           );
           console.log(
-            chalk.dim(` ↳ DID: ${chalk.cyan(result.did)} — reward granted on verification.`)
+            chalk.dim(` ↳  Reward will be paid out to ${chalk.cyan(result.did)} upon verification.`)
           );
         } else {
           const result = await uploadBundle(bundlePath, { signal: controller.signal });
@@ -509,14 +507,14 @@ const command = defineCommand({
       description: 'Upload results after benchmark',
       default: false,
     },
-    rewarded: {
-      type: 'boolean',
-      description: 'Submit via rewarded route (requires opt-in wallet)',
-      default: false,
-    },
     output: {
       type: 'string',
       description: 'Bundle output directory (default: ~/.whatcanirun/bundles)',
+    },
+    reward: {
+      type: 'boolean',
+      description: 'Receive rewards for submitting runs',
+      default: false,
     },
   },
   async run({ args }) {
@@ -532,8 +530,8 @@ const command = defineCommand({
         trials: parsePositiveInt((args.trials as string) || '10', 'trials'),
         notes: args.notes as string | undefined,
         submit: args.submit as boolean,
-        rewarded: args.rewarded as boolean,
         output: args.output as string | undefined,
+        reward: args.reward as boolean,
       });
       process.exit(0);
     } catch {
