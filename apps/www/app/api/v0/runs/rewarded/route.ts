@@ -16,6 +16,10 @@ const RECIPIENT_ADDRESS = '0x8831C0C0CCB2E45c187A4e3fA92D683c52170407';
 // MPPX setup
 // -----------------------------------------------------------------------------
 
+// MPP is used here solely for wallet identity verification — the 0.00 charge
+// proves the caller controls the wallet (via signature) without moving funds.
+// The recipient address is unused in practice; actual reward payouts are
+// handled separately (see lib/rewards/grant.ts).
 const IS_TESTNET = process.env.NODE_ENV !== 'production';
 
 const mppx = Mppx.create({
