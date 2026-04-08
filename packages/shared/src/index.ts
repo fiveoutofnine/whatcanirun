@@ -1,4 +1,9 @@
-export { APP_DIR_NAME, HARNESS_VERSION } from './constants';
+export {
+  APP_DIR_NAME,
+  HARNESS_VERSION,
+  TEMPO_MAINNET_CHAIN_ID,
+  TEMPO_TESTNET_CHAIN_ID,
+} from './constants';
 export type {
   AggregateMetrics,
   DerivedMetrics,

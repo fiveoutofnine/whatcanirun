@@ -2,7 +2,7 @@ import chalk from 'chalk';
 import { defineCommand } from 'citty';
 
 import { validateBundle } from '../bundle/validate';
-import { uploadBundle } from '../upload/client';
+import { uploadBundle, uploadBundleWithReward } from '../upload/client';
 import { resolveBundlePath } from '../utils/id';
 import * as log from '../utils/log';
 
@@ -16,6 +16,11 @@ const command = defineCommand({
       type: 'positional',
       description: 'Bundle ID or path to zip file',
       required: true,
+    },
+    reward: {
+      type: 'boolean',
+      description: 'Receive rewards for submitting runs',
+      default: false,
     },
   },
   async run({ args }) {
@@ -60,10 +65,20 @@ const command = defineCommand({
     const uploadSpinner = new log.Spinner(chalk.dim('Uploading bundle…')).start();
     activeSpinner = uploadSpinner;
     try {
-      const result = await uploadBundle(bundlePath, { signal: controller.signal });
-      uploadSpinner.stop(
-        chalk.white(`[${chalk.green('✓')}] Uploaded run: ${chalk.underline(result.run_url)}`)
-      );
+      if (args.reward) {
+        const result = await uploadBundleWithReward(bundlePath, { signal: controller.signal });
+        uploadSpinner.stop(
+          chalk.white(`[${chalk.green('✓')}] Uploaded run: ${chalk.underline(result.run_url)}`)
+        );
+        console.log(
+          chalk.dim(` ↳  Reward will be paid out to ${chalk.cyan(result.did)} upon verification.`)
+        );
+      } else {
+        const result = await uploadBundle(bundlePath, { signal: controller.signal });
+        uploadSpinner.stop(
+          chalk.white(`[${chalk.green('✓')}] Uploaded run: ${chalk.underline(result.run_url)}`)
+        );
+      }
     } catch (e: unknown) {
       uploadSpinner.stop(chalk.white(`[${chalk.red('✖')}] Run upload failed.`));
       log.error(chalk.dim(e instanceof Error ? e.message : String(e)), {

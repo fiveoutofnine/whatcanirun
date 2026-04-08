@@ -257,6 +257,7 @@ export const runs = pgTable(
       .notNull()
       .references(() => models.id),
     bundleId: text('bundle_id').notNull().unique(),
+    did: text('did'),
     schemaVersion: text('schema_version').notNull(),
     status: runStatusEnum('status').notNull().default(RunStatus.PENDING),
     notes: text('notes'),
@@ -565,6 +566,37 @@ export const view__model_device_summary = pgMaterializedView('view__model_device
 );
 
 // -----------------------------------------------------------------------------
+// Rewards
+// -----------------------------------------------------------------------------
+
+export const rewards = pgTable(
+  'rewards',
+  {
+    id: text('id')
+      .primaryKey()
+      .$defaultFn(() => `rwd_${crypto.randomUUID()}`),
+    runId: text('run_id')
+      .notNull()
+      .references(() => runs.id, { onDelete: 'cascade' }),
+    modelId: text('model_id')
+      .notNull()
+      .references(() => models.id),
+    deviceChipId: text('device_chip_id').notNull(),
+    did: text('did').notNull(),
+    modelReward: real('model_reward').notNull(),
+    deviceReward: real('device_reward').notNull(),
+    totalReward: real('total_reward').notNull(),
+    paymentRef: text('payment_ref'), // `${chainId}:${txHash}`
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+  },
+  (t) => [
+    index('rewards_did_idx').on(t.did),
+    index('rewards_model_idx').on(t.modelId),
+    index('rewards_device_chip_idx').on(t.deviceChipId),
+  ],
+);
+
+// -----------------------------------------------------------------------------
 // Relations
 // -----------------------------------------------------------------------------
 
@@ -617,6 +649,11 @@ export const trialsRelations = relations(trials, ({ one }) => ({
   run: one(runs, { fields: [trials.runId], references: [runs.id] }),
 }));
 
+export const rewardsRelations = relations(rewards, ({ one }) => ({
+  run: one(runs, { fields: [rewards.runId], references: [runs.id] }),
+  model: one(models, { fields: [rewards.modelId], references: [models.id] }),
+}));
+
 // -----------------------------------------------------------------------------
 // Types
 // -----------------------------------------------------------------------------
@@ -631,6 +668,7 @@ export type ModelFamily = typeof modelFamilies.$inferSelect;
 export type ModelInfo = typeof modelsInfo.$inferSelect;
 export type Run = typeof runs.$inferSelect;
 export type Trial = typeof trials.$inferSelect;
+export type Reward = typeof rewards.$inferSelect;
 // Views
 export type ModelStatsByDevice = typeof view__model_stats_by_device.$inferSelect;
 export type ModelDeviceSummary = typeof view__model_device_summary.$inferSelect;
