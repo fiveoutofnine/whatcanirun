@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 
+import { TEMPO_MAINNET_CHAIN_ID, TEMPO_TESTNET_CHAIN_ID } from '@whatcanirun/shared';
 import { processBundle } from '../process-bundle';
 import { Credential } from 'mppx';
 import { Mppx, tempo } from 'mppx/nextjs';
@@ -9,7 +10,6 @@ import { isAddress } from 'viem';
 // Constants
 // -----------------------------------------------------------------------------
 
-const TEMPO_CHAIN_ID = 42431;
 const TEMPO_USDC_E_ADDRESS = '0x20C000000000000000000000b9537d11c60E8b50';
 const RECIPIENT_ADDRESS = '0x8831C0C0CCB2E45c187A4e3fA92D683c52170407';
 const TEMPO_DID_RE = /^did:pkh:eip155:(0|[1-9]\d*):(0x[a-fA-F0-9]{40})$/;
@@ -23,6 +23,7 @@ const TEMPO_DID_RE = /^did:pkh:eip155:(0|[1-9]\d*):(0x[a-fA-F0-9]{40})$/;
 // The recipient address is unused in practice; actual reward payouts are
 // handled separately (see lib/rewards/grant.ts).
 const IS_TESTNET = process.env.NODE_ENV !== 'production';
+const TEMPO_CHAIN_ID = IS_TESTNET ? TEMPO_TESTNET_CHAIN_ID : TEMPO_MAINNET_CHAIN_ID;
 
 const mppx = Mppx.create({
   methods: [
@@ -50,20 +51,6 @@ export const POST = mppx.charge({ amount: '0.00' })(async (request: Request) => 
   const identity = extractVerifiedIdentity(request);
   if (!identity) {
     return NextResponse.json({ error: 'Missing or invalid verified wallet identity.' }, { status: 400 });
-  }
-
-  const walletAddress = formData.get('wallet_address') as string | null;
-  if (walletAddress) {
-    if (!isAddress(walletAddress)) {
-      return NextResponse.json({ error: 'Invalid `wallet_address`.' }, { status: 400 });
-    }
-
-    if (walletAddress.toLowerCase() !== identity.address.toLowerCase()) {
-      return NextResponse.json(
-        { error: '`wallet_address` does not match the verified MPPX wallet.' },
-        { status: 400 },
-      );
-    }
   }
 
   // Resolve client IP for spam detection.
@@ -97,7 +84,7 @@ export const POST = mppx.charge({ amount: '0.00' })(async (request: Request) => 
 
 function extractVerifiedIdentity(
   request: Request,
-): { address: string; did: string } | null {
+): { did: string } | null {
   try {
     const credential = Credential.fromRequest(request);
     if (!credential.source) return null;
@@ -111,7 +98,6 @@ function extractVerifiedIdentity(
     }
 
     return {
-      address,
       did: `did:pkh:eip155:${chainIdText}:${address}`,
     };
   } catch {

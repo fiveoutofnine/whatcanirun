@@ -2,6 +2,7 @@ import chalk from 'chalk';
 import { readFileSync } from 'node:fs';
 
 import { getToken } from '../auth/token';
+import { API_BASE } from '../rewards/network';
 import { binName } from '../utils/bin';
 import { getWallet } from '../wallet/wallet';
 
@@ -22,12 +23,6 @@ export interface UploadeWithRewardResult {
   run_url: string;
   reward: string;
 }
-
-// -----------------------------------------------------------------------------
-// Constants
-// -----------------------------------------------------------------------------
-
-const API_BASE = process.env.WCIR_API_URL || 'https://whatcani.run';
 
 // -----------------------------------------------------------------------------
 // Functions
@@ -105,7 +100,6 @@ export async function uploadBundleWithReward(
   const form = new FormData();
   form.append('bundle', blob, bundlePath.split('/').pop() || 'bundle.zip');
   form.append('bundle_sha256', bundleSha256);
-  form.append('wallet_address', wallet.address);
 
   // Submit via mppx (handles 402 payment flow automatically).
   const res = await mppx.fetch(`${API_BASE}/api/v0/runs/rewarded`, {

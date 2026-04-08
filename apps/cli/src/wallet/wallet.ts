@@ -2,6 +2,8 @@ import * as fs from 'node:fs';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 
+import { getRewardsTempoChainId } from '../rewards/network';
+
 // -----------------------------------------------------------------------------
 // Types
 // -----------------------------------------------------------------------------
@@ -17,7 +19,6 @@ export interface WalletData {
 // -----------------------------------------------------------------------------
 
 const BASE_DIRECTORY = join(homedir(), '.agentcash');
-const TEMPO_CHAIN_ID = 42431;
 
 // -----------------------------------------------------------------------------
 // Paths
@@ -65,7 +66,7 @@ export function getWalletAddress(): string | null {
 export function getDid(): string | null {
   const address = getWalletAddress();
   if (!address) return null;
-  return `did:pkh:eip155:${TEMPO_CHAIN_ID}:${address}`;
+  return `did:pkh:eip155:${getRewardsTempoChainId()}:${address}`;
 }
 
 export async function createWallet(): Promise<WalletData> {
