@@ -92,9 +92,9 @@ const DeviceCommandItem: React.FC<{
           <Fragment>
             <span className="line-clamp-1 flex w-full items-center text-ellipsis text-nowrap leading-5">
               {device.gpu.replace(manufacturerName, '')}
-              <Code className='ml-1.5'>{device.ramGb} GB RAM</Code>
+              <Code className="ml-1.5">{device.ramGb} GB RAM</Code>
               {detectedDeviceChipId === device.key ? (
-                <Badge className='ml-1' size="xs" variant="outline" intent="info">
+                <Badge className="ml-1" size="xs" variant="outline" intent="info">
                   Your device
                 </Badge>
               ) : null}
@@ -106,7 +106,9 @@ const DeviceCommandItem: React.FC<{
         ) : (
           <Fragment>
             <span className="flex w-full max-w-full items-center gap-1.5 leading-5">
-              <span className="line-clamp-1">{device.gpu.replace(manufacturerName, '').trim()}</span>
+              <span className="line-clamp-1">
+                {device.gpu.replace(manufacturerName, '').trim()}
+              </span>
               {device.gpuCount > 1 ? (
                 <Badge
                   className="min-w-fit"
@@ -206,8 +208,9 @@ const DeviceCombobox: React.FC<DeviceComboboxProps> = ({
   const detectedDevice = useMemo(
     () =>
       detectedDeviceChipId
-        ? groups.flatMap(({ devices: groupDevices }) => groupDevices).find((d) => d.key === detectedDeviceChipId) ??
-        null
+        ? (groups
+            .flatMap(({ devices: groupDevices }) => groupDevices)
+            .find((d) => d.key === detectedDeviceChipId) ?? null)
         : null,
     [detectedDeviceChipId, groups],
   );

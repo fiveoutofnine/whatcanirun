@@ -13,6 +13,7 @@ const IS_TESTNET = process.env.NODE_ENV !== 'production';
 // Types
 // -----------------------------------------------------------------------------
 
+// eslint-disable-next-line no-unused-vars
 type RequestHandler = (request: Request) => Promise<Response> | Response;
 
 // -----------------------------------------------------------------------------

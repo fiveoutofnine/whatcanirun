@@ -25,7 +25,10 @@ export const POST = withTempoIdentityVerification(async (request: Request) => {
 
   const identity = extractVerifiedIdentity(request);
   if (!identity) {
-    return NextResponse.json({ error: 'Missing or invalid verified wallet identity.' }, { status: 400 });
+    return NextResponse.json(
+      { error: 'Missing or invalid verified wallet identity.' },
+      { status: 400 },
+    );
   }
 
   // Resolve client IP for spam detection.
@@ -57,9 +60,7 @@ export const POST = withTempoIdentityVerification(async (request: Request) => {
 // Helpers
 // -----------------------------------------------------------------------------
 
-function extractVerifiedIdentity(
-  request: Request,
-): { did: string } | null {
+function extractVerifiedIdentity(request: Request): { did: string } | null {
   try {
     const credential = Credential.fromRequest(request);
     if (!credential.source) return null;

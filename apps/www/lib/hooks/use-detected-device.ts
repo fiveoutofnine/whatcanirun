@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 
 // -----------------------------------------------------------------------------
 // Types
@@ -54,24 +54,18 @@ const detectHardware = (): DetectedHardware => {
 // -----------------------------------------------------------------------------
 
 const useDetectedDevice = <T extends DetectableDevice>(devices: T[]) => {
-  const [detectedDevice, setDetectedDevice] = useState<T | null>(null);
+  return useMemo(() => {
+    if (typeof window === 'undefined') return null;
 
-  useEffect(() => {
     const hw = detectHardware();
 
-    if (!hw.gpu) {
-      setDetectedDevice(null);
-      return;
-    }
+    if (!hw.gpu) return null;
 
     let candidates = devices.filter((device) =>
       hw.gpu!.toLowerCase().includes(device.gpu.toLowerCase()),
     );
 
-    if (candidates.length === 0) {
-      setDetectedDevice(null);
-      return;
-    }
+    if (candidates.length === 0) return null;
 
     if (hw.cores) {
       const coreMatch = candidates.filter((device) => device.cpuCores === hw.cores);
@@ -86,10 +80,8 @@ const useDetectedDevice = <T extends DetectableDevice>(devices: T[]) => {
 
     candidates.sort((a, b) => (b.modelCount ?? 0) - (a.modelCount ?? 0));
 
-    setDetectedDevice(candidates[0] ?? null);
+    return candidates[0] ?? null;
   }, [devices]);
-
-  return detectedDevice;
 };
 
 export default useDetectedDevice;
