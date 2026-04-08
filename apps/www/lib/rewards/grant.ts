@@ -17,9 +17,9 @@ const DECAY_PER_USE = 0.01;
 /**
  * Compute and record a reward for a verified run that has a DID.
  *
- * Call this when a run transitions to `verified`. It is a no-op if the run
- * has no DID (wasn't submitted through the rewarded route) or if a reward
- * has already been recorded for that run.
+ * Call this when a run transitions to `verified`. It is a no-op if the run has
+ * no DID (wasn't submitted through the rewarded route) or if a reward has
+ * already been recorded for that run.
  *
  * Returns the reward row if one was created, or `null` otherwise.
  */
