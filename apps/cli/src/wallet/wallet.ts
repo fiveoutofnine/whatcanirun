@@ -1,6 +1,6 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import * as fs from 'node:fs';
 import { homedir } from 'node:os';
-import { dirname, join } from 'node:path';
+import { join } from 'node:path';
 
 // -----------------------------------------------------------------------------
 // Types
@@ -9,24 +9,49 @@ import { dirname, join } from 'node:path';
 export interface WalletData {
   address: string;
   privateKey: string;
+  createdAt: string;
 }
 
 // -----------------------------------------------------------------------------
 // Constants
 // -----------------------------------------------------------------------------
 
-const WALLET_FILE = join(homedir(), '.agentcash', 'wallet.json');
+const BASE_DIRECTORY = join(homedir(), '.agentcash');
 const TEMPO_CHAIN_ID = 42431;
+
+// -----------------------------------------------------------------------------
+// Paths
+// -----------------------------------------------------------------------------
+
+function ensureBaseDir(): void {
+  if (!fs.existsSync(BASE_DIRECTORY)) {
+    fs.mkdirSync(BASE_DIRECTORY, { recursive: true });
+  }
+}
+
+function configFile(name: `${string}.${string}`): string {
+  ensureBaseDir();
+  return join(BASE_DIRECTORY, name);
+}
+
+const WALLET_FILE = configFile('wallet.json');
 
 // -----------------------------------------------------------------------------
 // Functions
 // -----------------------------------------------------------------------------
 
 export function getWallet(): WalletData | null {
-  if (!existsSync(WALLET_FILE)) return null;
+  if (!fs.existsSync(WALLET_FILE)) return null;
   try {
-    const data = JSON.parse(readFileSync(WALLET_FILE, 'utf-8')) as WalletData;
-    if (data.address && data.privateKey) return data;
+    const data = JSON.parse(fs.readFileSync(WALLET_FILE, 'utf-8')) as WalletData;
+    if (
+      typeof data.privateKey === 'string' &&
+      /^0x[a-fA-F0-9]{64}$/.test(data.privateKey) &&
+      typeof data.address === 'string' &&
+      /^0x[a-fA-F0-9]{40}$/.test(data.address)
+    ) {
+      return data;
+    }
     return null;
   } catch {
     return null;
@@ -47,26 +72,20 @@ export async function createWallet(): Promise<WalletData> {
   const existing = getWallet();
   if (existing) return existing;
 
-  // Generate a random private key using crypto.
-  const privateKeyBytes = new Uint8Array(32);
-  crypto.getRandomValues(privateKeyBytes);
-  const privateKey =
-    '0x' +
-    Array.from(privateKeyBytes)
-      .map((b) => b.toString(16).padStart(2, '0'))
-      .join('');
-
-  // Derive address using viem (lazy import to keep startup fast).
-  const { privateKeyToAccount } = await import('viem/accounts');
-  const account = privateKeyToAccount(privateKey as `0x${string}`);
+  const { generatePrivateKey, privateKeyToAccount } = await import('viem/accounts');
+  const privateKey = generatePrivateKey();
+  const account = privateKeyToAccount(privateKey);
 
   const wallet: WalletData = {
-    address: account.address,
     privateKey,
+    address: account.address,
+    createdAt: new Date().toISOString(),
   };
 
-  mkdirSync(dirname(WALLET_FILE), { recursive: true });
-  writeFileSync(WALLET_FILE, JSON.stringify(wallet, null, 2) + '\n', { mode: 0o600 });
+  const content = JSON.stringify(wallet, null, 2) + '\n';
+  fs.writeFileSync(WALLET_FILE, content, { mode: 0o600 });
+  fs.chmodSync(WALLET_FILE, 0o600);
+
   return wallet;
 }
 
