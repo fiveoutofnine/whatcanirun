@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 
 import { processBundle } from '../process-bundle';
 import { Mppx, tempo } from 'mppx/nextjs';
+import { isAddress } from 'viem';
 
 // -----------------------------------------------------------------------------
 // Constants
@@ -42,11 +43,8 @@ export const POST = mppx.charge({ amount: '0.00' })(async (request: Request) => 
 
   // Wallet address is required for reward identity.
   const walletAddress = formData.get('wallet_address') as string | null;
-  if (!walletAddress || !/^0x[a-fA-F0-9]{40}$/.test(walletAddress)) {
-    return NextResponse.json(
-      { error: 'Missing or invalid wallet_address (expected 0x-prefixed 40-hex-char address).' },
-      { status: 400 },
-    );
+  if (!walletAddress || !isAddress(walletAddress)) {
+    return NextResponse.json({ error: 'Missing or invalid `wallet_address`.' }, { status: 400 });
   }
 
   const did = `did:pkh:eip155:${TEMPO_CHAIN_ID}:${walletAddress}`;
@@ -70,7 +68,7 @@ export const POST = mppx.charge({ amount: '0.00' })(async (request: Request) => 
       did,
       status: result.status,
       run_url: result.runUrl,
-      reward: 'pending — reward is granted when the run is verified',
+      reward: 'Pending — reward is granted when the run is verified.',
     },
     { status: 201 },
   );
