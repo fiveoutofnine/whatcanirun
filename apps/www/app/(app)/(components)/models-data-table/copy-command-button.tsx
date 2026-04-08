@@ -33,7 +33,7 @@ const CopyCommandButton: React.FC<CopyCommandButtonProps> = ({
   const copy = () => {
     if (copied) return;
 
-    const command = `npx whatcanirun@latest run --model ${source} --runtime ${row.runtimeName} --submit`;
+    const command = `bunx whatcanirun@latest run --model ${source} --runtime ${row.runtimeName} --submit`;
     navigator.clipboard.writeText(command);
     setCopied(true);
     toast({

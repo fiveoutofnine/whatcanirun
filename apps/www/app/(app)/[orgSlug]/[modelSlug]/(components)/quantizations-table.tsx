@@ -172,7 +172,7 @@ const ModelQuantizationsTableCopyButton: React.FC<{ source: string; format: stri
   const copy = () => {
     if (copied) return;
 
-    const command = `npx whatcanirun@latest run --model ${source} --runtime ${runtimeName} --submit`;
+    const command = `bunx whatcanirun@latest run --model ${source} --runtime ${runtimeName} --submit`;
     navigator.clipboard.writeText(command);
     setCopied(true);
     toast({
