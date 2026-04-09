@@ -93,7 +93,7 @@ const SizeCharts: React.FC<SizeChartsProps> = ({ data }) => {
 
   return (
     <Fragment>
-      <div className="flex items-center gap-1 flex-wrap px-4 md:px-0 mb-2 md:mb-4">
+      <div className="flex items-center gap-1 flex-wrap px-4 md:px-0 mb-4">
         {formats.map((format) => {
           const config = FORMAT_CONFIG[format];
           const Logo = FORMAT_LOGO[format];
