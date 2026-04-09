@@ -3,8 +3,8 @@ import { ArrowRight, Computer, Layers, Play } from 'lucide-react';
 import type { RankedModelFamily } from '@/lib/queries/model-families-ranked';
 import { formatValueToPrecision } from '@/lib/utils';
 
-import UserAvatar from '@/components/templates/user-avatar';
 import PreservedDeviceLink from '@/components/common/preserved-device-link';
+import UserAvatar from '@/components/templates/user-avatar';
 
 // -----------------------------------------------------------------------------
 // Props

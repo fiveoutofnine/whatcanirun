@@ -2,7 +2,6 @@ import { unstable_cache as cache } from 'next/cache';
 import { notFound } from 'next/navigation';
 import { Fragment } from 'react';
 
-import DeviceFloatingSelector from './(components)/device-floating-selector';
 import DevicesChart from './(components)/devices-chart';
 import type { ModelDevicesChartValue } from './(components)/devices-chart';
 import ModelQuantizationsTable from './(components)/quantizations-table';
@@ -14,6 +13,7 @@ import { File } from 'lucide-react';
 import { db } from '@/lib/db';
 import { modelsInfo, view__model_device_summary } from '@/lib/db/schema';
 
+import DeviceFloatingSelector from '@/components/common/device-floating-selector';
 import { H2 } from '@/components/templates/mdx';
 import StateInfo from '@/components/templates/state-info';
 

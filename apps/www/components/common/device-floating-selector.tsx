@@ -105,10 +105,10 @@ const DeviceFloatingSelector: React.FC<DeviceFloatingSelectorProps> = ({ chips }
         value={effectiveDevice}
         onSelect={setDevice}
       >
-        <button className="pointer-events-auto h-8 rounded-full border border-gray-7 bg-gray-3 shadow-lg backdrop-blur transition-colors hover:border-gray-8 hover:bg-gray-4 focus-visible:border-gray-8 focus-visible:bg-gray-4 active:bg-gray-5">
+        <button className="pointer-events-auto h-8 max-w-[calc(100%-1rem)] rounded-full border border-gray-7 bg-gray-3 shadow-lg backdrop-blur transition-colors hover:border-gray-8 hover:bg-gray-4 focus-visible:border-gray-8 focus-visible:bg-gray-4 active:bg-gray-5">
           <span className="flex items-center gap-1.5 pl-1 pr-2.5 text-base">
-            {Logo ? <Logo size={24} className="rounded-full border border-gray-6" /> : null}
-            <span className="font-medium text-gray-12">{buttonContent}</span>
+            {Logo ? <Logo size={24} className="min-w-6 rounded-full border border-gray-6" /> : null}
+            <span className="line-clamp-1 font-medium text-gray-12">{buttonContent}</span>
             <ChevronsUpDown className="size-4 text-gray-11" />
           </span>
         </button>

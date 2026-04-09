@@ -7,9 +7,9 @@ import { twMerge } from 'tailwind-merge';
 import type { Model, Organization, Run } from '@/lib/db/schema';
 import { formatBytes } from '@/lib/utils';
 
+import PreservedDeviceLink from '@/components/common/preserved-device-link';
 import ClickableTooltip from '@/components/templates/clickable-tooltip';
 import UserAvatar from '@/components/templates/user-avatar';
-import PreservedDeviceLink from '@/components/common/preserved-device-link';
 
 // -----------------------------------------------------------------------------
 // Props

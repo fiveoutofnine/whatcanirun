@@ -25,7 +25,6 @@ import { twMerge } from 'tailwind-merge';
 import { isExternalHref } from '@/lib/preserved-device-navigation';
 
 import PreservedDeviceLink from '@/components/common/preserved-device-link';
-
 import { Badge } from '@/components/ui';
 
 // -----------------------------------------------------------------------------

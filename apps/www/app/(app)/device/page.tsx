@@ -6,10 +6,9 @@ import { and, countDistinct, eq, sql } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { devices, runs, RunStatus, view__model_stats_by_device } from '@/lib/db/schema';
 
+import DeviceFloatingSelector from '@/components/common/device-floating-selector';
+import type { ChipOption } from '@/components/common/device-floating-selector';
 import { H2 } from '@/components/templates/mdx';
-
-import DeviceFloatingSelector from '@/app/(app)/[orgSlug]/[modelSlug]/(components)/device-floating-selector';
-import type { ChipOption } from '@/app/(app)/[orgSlug]/[modelSlug]/(components)/device-floating-selector';
 
 // -----------------------------------------------------------------------------
 // Constants

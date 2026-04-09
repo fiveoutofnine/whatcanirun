@@ -7,10 +7,10 @@ import TabsNav from './tabs';
 import { getModelFamily } from './utils';
 import { Calendar, Scale, Waypoints } from 'lucide-react';
 
+import PreservedDeviceLink from '@/components/common/preserved-device-link';
 import ClickableTooltip from '@/components/templates/clickable-tooltip';
 import RelativeDate from '@/components/templates/relative-date';
 import UserAvatar from '@/components/templates/user-avatar';
-import PreservedDeviceLink from '@/components/common/preserved-device-link';
 
 // -----------------------------------------------------------------------------
 // Metadata

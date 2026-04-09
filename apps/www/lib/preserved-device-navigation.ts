@@ -5,7 +5,15 @@
 type Listener = () => void;
 
 const listeners = new Set<Listener>();
-const MODEL_ROUTE_BLOCKLIST = new Set(['api', 'cli-auth', 'docs', 'legal', 'login', 'models', 'runs']);
+const MODEL_ROUTE_BLOCKLIST = new Set([
+  'api',
+  'cli-auth',
+  'docs',
+  'legal',
+  'login',
+  'models',
+  'runs',
+]);
 const SINGLE_SEGMENT_PRESERVE_ROUTES = new Set(['device']);
 const TARGET_BLOCKLIST = ['/api', '/cli-auth', '/login'];
 
@@ -29,7 +37,9 @@ export const setPreservedNavigationDevice = (device: string | null) => {
 // -----------------------------------------------------------------------------
 
 export const isExternalHref = (href: string) =>
-  /^(?:[a-z][a-z\d+.-]*:|\/\/)/i.test(href) || href.startsWith('mailto:') || href.startsWith('tel:');
+  /^(?:[a-z][a-z\d+.-]*:|\/\/)/i.test(href) ||
+  href.startsWith('mailto:') ||
+  href.startsWith('tel:');
 
 export const shouldPreserveDeviceForPath = (pathname: string | null) => {
   if (!pathname) return false;

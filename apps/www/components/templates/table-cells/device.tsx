@@ -8,8 +8,8 @@ import { getVramGb, MANUFACTURER_LABEL } from '@/lib/constants/gpu';
 import type { Device } from '@/lib/db/schema';
 import { parseManufacturer } from '@/lib/utils';
 
-import ClickableTooltip from '@/components/templates/clickable-tooltip';
 import PreservedDeviceLink from '@/components/common/preserved-device-link';
+import ClickableTooltip from '@/components/templates/clickable-tooltip';
 import { Badge } from '@/components/ui';
 
 // -----------------------------------------------------------------------------
@@ -57,7 +57,10 @@ const DeviceTableCell: React.FC<DeviceTableCellProps> & { Skeleton: React.FC } =
                 </span>
               </ClickableTooltip>
             ) : null}
-            <PreservedDeviceLink className="flex items-center gap-1.5 hover:underline" href={deviceHref}>
+            <PreservedDeviceLink
+              className="flex items-center gap-1.5 hover:underline"
+              href={deviceHref}
+            >
               <span className="line-clamp-1">{displayName}</span>
               <Badge size="sm" variant="outline" intent="info">
                 CPU

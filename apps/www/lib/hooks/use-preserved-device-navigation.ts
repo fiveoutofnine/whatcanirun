@@ -1,7 +1,7 @@
 'use client';
 
-import { useLayoutEffect, useMemo, useSyncExternalStore } from 'react';
 import { usePathname } from 'next/navigation';
+import { useLayoutEffect, useMemo, useSyncExternalStore } from 'react';
 
 import {
   getPreservedNavigationDevice,
