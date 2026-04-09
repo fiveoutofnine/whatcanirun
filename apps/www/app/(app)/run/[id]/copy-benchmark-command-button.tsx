@@ -11,11 +11,13 @@ import { toast } from '@/components/ui';
 type CopyBenchmarkCommandButtonProps = {
   className?: string;
   command: string;
+  label?: string;
 };
 
 const CopyBenchmarkCommandButton: React.FC<CopyBenchmarkCommandButtonProps> = ({
   className,
   command,
+  label,
 }) => {
   const [copied, setCopied] = useState<boolean>(false);
 
@@ -44,7 +46,7 @@ const CopyBenchmarkCommandButton: React.FC<CopyBenchmarkCommandButtonProps> = ({
       )}
       onClick={copy}
     >
-      <span>Copy benchmark command</span>
+      <span>{label ?? 'Copy benchmark command'}</span>
       {copied ? (
         <Check className="size-3.5 animate-in fade-in zoom-in" />
       ) : (

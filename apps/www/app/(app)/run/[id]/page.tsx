@@ -182,28 +182,8 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 
           <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm md:text-base">
             <PreservedDeviceLink className={INTERACTIVE_TEXT_CLASSNAME} href="/runs">
-              ← Runs
+              {'<- Runs'}
             </PreservedDeviceLink>
-            <StatusBadge status={run.status} />
-            {runnabilityScore != null ? (
-              <div className="flex min-w-fit items-center gap-1.5">
-                <span className="text-sm text-gray-11 md:text-base">
-                  Runnability {formatScore(runnabilityScore)}
-                </span>
-                <ScoreBadge score={runnabilityScore} />
-              </div>
-            ) : null}
-            {benchmarkCommand ? <CopyBenchmarkCommandButton command={benchmarkCommand} /> : null}
-            <CopyRunIdButton id={run.id} label="Copy run ID" />
-          </div>
-
-          <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 md:gap-x-3">
-            <div className="flex min-w-fit items-center gap-1 text-nowrap text-gray-11 md:gap-1.5">
-              <span className="flex size-3.5 items-center justify-center md:size-4">
-                <Calendar />
-              </span>
-              <RelativeDate date={run.createdAt} type="absolute" />
-            </div>
             {runtimePresentation.href ? (
               <a
                 className={`flex min-w-fit items-center gap-1 text-nowrap md:gap-1.5 ${INTERACTIVE_TEXT_CLASSNAME}`}
@@ -250,6 +230,16 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
                 Harness {run.harnessVersion} · {run.harnessGitSha.slice(0, 8)}
               </span>
             </a>
+            <div className="flex min-w-fit items-center gap-1 text-nowrap text-gray-11 md:gap-1.5">
+              <span className="flex size-3.5 items-center justify-center md:size-4">
+                <Calendar />
+              </span>
+              <RelativeDate date={run.createdAt} type="absolute" />
+            </div>
+            {benchmarkCommand ? (
+              <CopyBenchmarkCommandButton command={benchmarkCommand} label="Run" />
+            ) : null}
+            <CopyRunIdButton id={run.id} label="Run ID" />
           </div>
 
           {run.runtimeBuildFlags ? (
@@ -261,13 +251,14 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       </header>
 
       <div className="mx-auto flex w-full max-w-5xl grow flex-col px-4 py-4 md:px-0 md:py-6">
-        <section className="grid grid-cols-2 gap-2 md:grid-cols-3">
+        <section className="grid grid-cols-2 gap-2 md:grid-cols-4">
           <MetricCard label="Prompt tokens" value={formatMetricValue(inputTokenSummary)} />
           <MetricCard label="Generation tokens" value={formatMetricValue(outputTokenSummary)} />
           <MetricCard
             label="Trials"
             value={`${run.trialsPassed.toLocaleString()} / ${run.trialsTotal.toLocaleString()} passed`}
           />
+          <MetricCard label="Status" value={<StatusBadge status={run.status} />} />
           <MetricCard label="Decode" value={`${formatNumber(run.decodeTpsMean)} tok/s`} />
           <MetricCard
             label="Prefill"
@@ -276,6 +267,21 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
           <MetricCard
             label="Peak memory"
             value={`${formatGb(run.peakRssMb)} GB (${formatPercent(run.peakRssMb / 1024 / run.device.ramGb)})`}
+          />
+          <MetricCard
+            label="Runnability"
+            value={
+              runnabilityScore != null ? (
+                <div className="flex flex-col items-start gap-2">
+                  <span className="text-lg font-medium leading-6 text-gray-12 md:text-xl">
+                    {formatScore(runnabilityScore)}
+                  </span>
+                  <ScoreBadge score={runnabilityScore} />
+                </div>
+              ) : (
+                '—'
+              )
+            }
           />
         </section>
 
@@ -358,13 +364,13 @@ function ModelAvatar({
   return null;
 }
 
-function MetricCard({ label, value }: { label: string; value: string }) {
+function MetricCard({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="rounded-xl border border-gray-6 bg-gray-2 p-4">
       <h2 className="text-sm font-medium leading-[1.125rem] text-gray-11">{label}</h2>
-      <span className="mt-1 block text-lg font-medium leading-6 text-gray-12 md:text-xl">
+      <div className="mt-1 block text-lg font-medium leading-6 text-gray-12 md:text-xl">
         {value}
-      </span>
+      </div>
     </div>
   );
 }
