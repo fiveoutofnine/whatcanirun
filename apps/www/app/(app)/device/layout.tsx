@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import { Fragment } from 'react';
 
 // -----------------------------------------------------------------------------
 // Metadata
@@ -57,5 +56,16 @@ export const metadata: Metadata = {
 // -----------------------------------------------------------------------------
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  return <Fragment>{children}</Fragment>;
+  return (
+    <div className="flex grow flex-col">
+      <header className="w-full border-b border-gray-6 bg-black px-4 py-4 md:px-6 md:py-8">
+        <div className="mx-auto flex w-full max-w-7xl items-center">
+          <h1 className="text-3xl font-medium tracking-tight text-gray-12 md:pb-2 md:text-4xl">
+            Device
+          </h1>
+        </div>
+      </header>
+      {children}
+    </div>
+  );
 }
