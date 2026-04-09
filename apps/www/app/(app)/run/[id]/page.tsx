@@ -4,12 +4,11 @@ import { Fragment } from 'react';
 
 import CopyBenchmarkCommandButton from './copy-benchmark-command-button';
 import CopyRunIdButton from './copy-run-id-button';
-import { asc, eq } from 'drizzle-orm';
 import { ArrowUpRight, Calendar } from 'lucide-react';
 
 import { db } from '@/lib/db';
-import { rewards, runs, RunStatus, trials } from '@/lib/db/schema';
-import { formatBytes, parseManufacturer } from '@/lib/utils';
+import { RunStatus } from '@/lib/db/schema';
+import { parseManufacturer } from '@/lib/utils';
 
 import PreservedDeviceLink from '@/components/common/preserved-device-link';
 import { H2 } from '@/components/templates/mdx';
@@ -36,32 +35,50 @@ const STATUS_BADGE_INTENT = {
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
-  const [run, trialRows, reward] = await Promise.all([
-    db.query.runs.findFirst({
-      where: eq(runs.id, id),
-      with: {
-        model: {
-          with: {
-            info: {
-              with: {
-                family: true,
-                lab: true,
-                quantizedBy: true,
-              },
+  const run = await db.query.runs.findFirst({
+    columns: {
+      id: true,
+      deviceId: true,
+      modelId: true,
+      bundleId: true,
+      did: true,
+      schemaVersion: true,
+      status: true,
+      notes: true,
+      bundleSha256: true,
+      runtimeName: true,
+      runtimeVersion: true,
+      runtimeBuildFlags: true,
+      harnessVersion: true,
+      harnessGitSha: true,
+      contextLength: true,
+      promptTokens: true,
+      completionTokens: true,
+      ttftP50Ms: true,
+      decodeTpsMean: true,
+      prefillTpsMean: true,
+      idleRssMb: true,
+      peakRssMb: true,
+      trialsPassed: true,
+      trialsTotal: true,
+      createdAt: true,
+    },
+    where: (run, { eq }) => eq(run.id, id),
+    with: {
+      model: {
+        with: {
+          info: {
+            with: {
+              family: true,
+              lab: true,
+              quantizedBy: true,
             },
           },
         },
-        device: true,
       },
-    }),
-    db.query.trials.findMany({
-      where: eq(trials.runId, id),
-      orderBy: asc(trials.trialIndex),
-    }),
-    db.query.rewards.findFirst({
-      where: eq(rewards.runId, id),
-    }),
-  ]);
+      device: true,
+    },
+  });
 
   if (!run) return notFound();
 
@@ -92,7 +109,6 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
   const deviceHref = `/device?device=${encodeURIComponent(run.device.chipId)}`;
   const deviceCountPrefix =
     manufacturer !== 'apple' && run.device.gpuCount > 1 ? `${run.device.gpuCount}× ` : '';
-  const deviceLabel = `${deviceCountPrefix}${deviceDisplayName} · ${run.device.ramGb.toLocaleString()} GB`;
 
   // Indefinite article
   const benchmarkOnLabel = (() => {
@@ -159,61 +175,46 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
     return 0.45 * decodeScore + 0.25 * prefillScore + 0.3 * memoryScore;
   })();
 
-  // Token summaries
-  const summarizeTokens = (key: 'inputTokens' | 'outputTokens') => {
-    if (trialRows.length === 0) return null;
-    const values = trialRows.map((t) => t[key]);
-    const first = values[0];
-    if (values.every((v) => v === first)) return { kind: 'uniform' as const, value: first };
-    return { kind: 'range' as const, min: Math.min(...values), max: Math.max(...values) };
-  };
-  const inputTokenSummary = summarizeTokens('inputTokens');
-  const outputTokenSummary = summarizeTokens('outputTokens');
-
-  const formatTokenSummary = (
-    s: { kind: 'uniform'; value: number } | { kind: 'range'; min: number; max: number } | null,
-  ) => {
-    if (!s) return '—';
-    if (s.kind === 'uniform') return s.value.toLocaleString();
-    return `${s.min.toLocaleString()}-${s.max.toLocaleString()}`;
-  };
-
   // Metadata JSON
   const fileSizeBytes = run.model.info?.fileSizeBytes || run.model.fileSizeBytes || null;
   const metadataJson = JSON.stringify(
     {
       runId: run.id,
-      status: run.status,
-      createdAt: run.createdAt,
       bundleId: run.bundleId,
-      bundleSha256: run.bundleSha256,
-      schemaVersion: run.schemaVersion,
+      status: run.status,
+      promptTokens: run.promptTokens,
+      completionTokens: run.completionTokens,
       contextLength: run.contextLength,
-      tokenShape: {
-        inputTokens:
-          inputTokenSummary?.kind === 'uniform'
-            ? inputTokenSummary.value
-            : inputTokenSummary
-              ? { min: inputTokenSummary.min, max: inputTokenSummary.max }
-              : null,
-        outputTokens:
-          outputTokenSummary?.kind === 'uniform'
-            ? outputTokenSummary.value
-            : outputTokenSummary
-              ? { min: outputTokenSummary.min, max: outputTokenSummary.max }
-              : null,
-        trialCount: trialRows.length,
+      harness: {
+        version: run.harnessVersion,
+        gitSha: run.harnessGitSha,
+      },
+      runtime: {
+        name: run.runtimeName,
+        version: run.runtimeVersion,
+        buildFlags: run.runtimeBuildFlags,
       },
       model: {
         displayName: modelDisplayName,
-        quant: run.model.info?.quant || run.model.quant,
         format: run.model.format,
+        quant: run.model.info?.quant || run.model.quant,
+        architecture: run.model.info?.architecture || run.model.architecture,
         source: modelSource,
-        fileSize: fileSizeBytes,
-        fileSizeFormatted: fileSizeBytes ? formatBytes(fileSizeBytes) : null,
+        fileSizeBytes,
+        lab: modelInfo.lab
+          ? {
+              name: modelInfo.lab.name,
+              slug: modelInfo.lab.slug,
+            }
+          : null,
+        quantizedBy: modelInfo.quantizedBy
+          ? {
+              name: modelInfo.quantizedBy.name,
+              slug: modelInfo.quantizedBy.slug,
+            }
+          : null,
       },
       device: {
-        chipId: run.device.chipId,
         cpu: run.device.cpu,
         cpuCores: run.device.cpuCores,
         gpu: run.device.gpu,
@@ -223,38 +224,16 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
         osName: run.device.osName,
         osVersion: run.device.osVersion,
       },
-      runtime: {
-        name: run.runtimeName,
-        version: run.runtimeVersion,
-        buildFlags: run.runtimeBuildFlags,
-      },
-      harness: {
-        version: run.harnessVersion,
-        gitSha: run.harnessGitSha,
-      },
+      decodeTpsMean: run.decodeTpsMean,
+      prefillTpsMean: run.prefillTpsMean,
+      ttftP50Ms: run.ttftP50Ms,
+      idleTpsMean: run.idleRssMb,
+      peakRssMb: run.peakRssMb,
+      trialsPassed: run.trialsPassed,
+      trialsTotal: run.trialsTotal,
       runnabilityScore,
-      benchmarkCommand,
-      ...(run.did
-        ? {
-            did: run.did,
-            reward: reward
-              ? {
-                  status: 'granted',
-                  modelReward: reward.modelReward,
-                  deviceReward: reward.deviceReward,
-                  totalReward: reward.totalReward,
-                  paymentRef: reward.paymentRef,
-                }
-              : {
-                  status:
-                    run.status === RunStatus.PENDING
-                      ? 'pending_until_verification'
-                      : run.status === RunStatus.VERIFIED
-                        ? 'not_recorded'
-                        : 'not_eligible',
-                },
-          }
-        : {}),
+      bundleSha256: run.bundleSha256,
+      createdAt: run.createdAt,
     },
     null,
     2,
@@ -347,7 +326,19 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
                     </span>
                   </Fragment>
                 ) : null}
-                <span>{deviceLabel}</span>
+                {manufacturer === 'apple' ? (
+                  <span>
+                    {deviceCountPrefix}
+                    {deviceDisplayName}
+                    <span className="text-gray-11"> · </span>
+                    {run.device.ramGb.toLocaleString()} GB
+                  </span>
+                ) : (
+                  <span>
+                    {deviceCountPrefix}
+                    {deviceDisplayName}
+                  </span>
+                )}
               </PreservedDeviceLink>
             </h1>
             <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 pl-0 text-sm md:gap-x-3 md:pl-[2.375rem] md:text-base">
@@ -375,17 +366,20 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       <div className="mx-auto flex w-full max-w-5xl grow flex-col px-4 py-4 md:px-0 md:py-6">
         <section className="grid grid-cols-2 gap-2 md:grid-cols-4">
           {[
-            { label: 'Prompt tokens', value: <span>{formatTokenSummary(inputTokenSummary)}</span> },
             {
-              label: 'Generation tokens',
-              value: <span>{formatTokenSummary(outputTokenSummary)}</span>,
+              label: 'Prompt tokens',
+              value: <span>{Number(run.promptTokens).toLocaleString()}</span>,
             },
             {
-              label: 'Trials',
+              label: 'Generation tokens',
+              value: <span>{Number(run.completionTokens).toLocaleString()}</span>,
+            },
+            {
+              label: 'Trials passed',
               value: (
                 <span>
                   {run.trialsTotal.toLocaleString()}
-                  <span className="text-gray-11">/{run.trialsPassed.toLocaleString()} passed</span>
+                  <span className="text-gray-11">/{run.trialsPassed.toLocaleString()}</span>
                 </span>
               ),
             },
@@ -449,7 +443,6 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
                     maximumFractionDigits: 2,
                     minimumFractionDigits: 2,
                   })}
-                  <span className="text-gray-11"> GB</span>
                   <span className="text-gray-11">/{run.device.ramGb.toLocaleString()} GB</span>
                 </span>
               ),
@@ -473,7 +466,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
           ].map((card) => (
             <div key={card.label} className="rounded-xl border border-gray-6 bg-gray-2 p-4">
               <h2 className="text-sm font-medium leading-[1.125rem] text-gray-11">{card.label}</h2>
-              <div className="mt-1 block text-lg font-medium tabular-nums leading-6 text-gray-12 md:text-xl">
+              <div className="mt-1 line-clamp-1 block text-lg font-medium tabular-nums leading-6 text-gray-12 md:text-xl">
                 {card.value}
               </div>
             </div>
