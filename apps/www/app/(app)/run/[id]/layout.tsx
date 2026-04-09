@@ -1,13 +1,29 @@
 import type { Metadata } from 'next';
 import { Fragment } from 'react';
 
-const title = 'Run Details';
-const description = 'View benchmark run details, technical metadata, and trial outputs.';
+// -----------------------------------------------------------------------------
+// Metadata
+// -----------------------------------------------------------------------------
 
-export const metadata: Metadata = {
-  title,
-  description,
+export const generateMetadata = async ({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> => {
+  const { id } = await params;
+
+  const title = `Run Details`;
+  const description = `View details for run ${id}.`;
+
+  return {
+    title,
+    description,
+  };
 };
+
+// -----------------------------------------------------------------------------
+// Layout
+// -----------------------------------------------------------------------------
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return <Fragment>{children}</Fragment>;
