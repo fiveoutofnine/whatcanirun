@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 
+import TrialsDataTable from './(components)/trials-data-table';
 import CopyRunIdButton from './copy-run-id-button';
 import { asc, eq } from 'drizzle-orm';
 import { ChevronRight } from 'lucide-react';
@@ -22,7 +23,7 @@ import PreservedDeviceLink from '@/components/common/preserved-device-link';
 import ContainerLayout from '@/components/layouts/container';
 import { H2 } from '@/components/templates/mdx';
 import RelativeDate from '@/components/templates/relative-date';
-import { Badge, Button, CodeBlock, Table } from '@/components/ui';
+import { Badge, Button, CodeBlock } from '@/components/ui';
 
 const STATUS_BADGE_INTENT = {
   [RunStatus.VERIFIED]: 'success',
@@ -88,6 +89,7 @@ export default async function Page({ params }: { params: Promise<{ runId: string
   const inputTokenSummary = summarizeTrialTokens(trialRows, 'inputTokens');
   const outputTokenSummary = summarizeTrialTokens(trialRows, 'outputTokens');
   const metadataJson = JSON.stringify(buildMetadata(run, trialRows, reward), null, 2);
+  const trialTableData = trialRows.map((trial) => ({ ...trial, deviceRamGb: run.device.ramGb }));
 
   return (
     <ContainerLayout className="flex flex-col">
@@ -178,12 +180,9 @@ export default async function Page({ params }: { params: Promise<{ runId: string
       </section>
 
       <section className="mt-8">
-        <H2 className="mb-3" link={false}>
-          Technical Metadata
-        </H2>
+        <H2 className="mb-3">Technical Metadata</H2>
         <CodeBlock
-          className="-mx-4 w-[calc(100%+2rem)] rounded-none border-x-0 md:-mx-16 md:w-[calc(100%+8rem)] [&_[code-block-pre]]:max-h-80 [&_[code-block-pre]]:overflow-y-auto"
-          containerized={false}
+          className="-mx-4 w-[calc(100%+2rem)] rounded-none border-x-0 md:mx-0 md:w-full md:rounded-xl md:border-x [&_[code-block-header]]:rounded-none md:[&_[code-block-header]]:rounded-t-xl [&_[code-block-pre]]:max-h-80 [&_[code-block-pre]]:overflow-y-auto [&_[code-block-pre]]:rounded-none md:[&_[code-block-pre]]:rounded-b-[0.6875rem]"
           fileName="metadata.json"
           language="none"
           showLineNumbers={false}
@@ -193,60 +192,8 @@ export default async function Page({ params }: { params: Promise<{ runId: string
       </section>
 
       <section className="mt-8">
-        <H2 className="mb-3" link={false}>
-          Trials
-        </H2>
-        <Table.Root containerClassName="-mx-4 w-[calc(100%+2rem)] hide-scrollbar md:-mx-16 md:w-[calc(100%+8rem)]">
-          <Table.Header>
-            <Table.Row>
-              <Table.Head className="first:pl-4 md:first:pl-16">#</Table.Head>
-              <Table.Head>Input</Table.Head>
-              <Table.Head>Output</Table.Head>
-              <Table.Head>TTFT</Table.Head>
-              <Table.Head>Total</Table.Head>
-              <Table.Head>Prefill</Table.Head>
-              <Table.Head>Decode</Table.Head>
-              <Table.Head className="last:pr-4 md:last:pr-16">Peak RSS</Table.Head>
-            </Table.Row>
-          </Table.Header>
-          <Table.Body>
-            {trialRows.length > 0 ? (
-              trialRows.map((trial) => (
-                <Table.Row key={trial.id}>
-                  <Table.Cell className="tabular-nums first:pl-4 md:first:pl-16">
-                    {trial.trialIndex + 1}
-                  </Table.Cell>
-                  <Table.Cell className="tabular-nums">
-                    {trial.inputTokens.toLocaleString()}
-                  </Table.Cell>
-                  <Table.Cell className="tabular-nums">
-                    {trial.outputTokens.toLocaleString()}
-                  </Table.Cell>
-                  <Table.Cell className="tabular-nums">{formatDuration(trial.ttftMs)}</Table.Cell>
-                  <Table.Cell className="tabular-nums">{formatDuration(trial.totalMs)}</Table.Cell>
-                  <Table.Cell className="tabular-nums">
-                    {formatNumber(trial.prefillTps)} tok/s
-                  </Table.Cell>
-                  <Table.Cell className="tabular-nums">
-                    {formatNumber(trial.decodeTps)} tok/s
-                  </Table.Cell>
-                  <Table.Cell className="tabular-nums last:pr-4 md:last:pr-16">
-                    {formatGb(trial.peakRssMb)} GB
-                  </Table.Cell>
-                </Table.Row>
-              ))
-            ) : (
-              <Table.Row>
-                <Table.Cell
-                  className="px-4 py-6 text-center text-sm text-gray-11 md:px-16"
-                  colSpan={8}
-                >
-                  No trial data available for this run.
-                </Table.Cell>
-              </Table.Row>
-            )}
-          </Table.Body>
-        </Table.Root>
+        <H2 className="mb-3">Trials</H2>
+        <TrialsDataTable data={trialTableData} />
       </section>
     </ContainerLayout>
   );
@@ -309,11 +256,6 @@ function formatNumber(value: number, fractionDigits = 1) {
     minimumFractionDigits: fractionDigits,
     maximumFractionDigits: fractionDigits,
   });
-}
-
-function formatDuration(ms: number) {
-  if (ms >= 1000) return `${formatNumber(ms / 1000, 1)} s`;
-  return `${formatNumber(ms, 0)} ms`;
 }
 
 function formatGb(mb: number) {
