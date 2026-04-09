@@ -93,7 +93,13 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
   const trials = await cache(
     async () =>
       db.query.trials.findMany({
-        columns: { prefillTps: true, decodeTps: true },
+        columns: {
+          prefillTps: true,
+          decodeTps: true,
+          totalMs: true,
+          idleRssMb: true,
+          peakRssMb: true,
+        },
         where: (t, { eq }) => eq(t.runId, id),
         orderBy: (t, { asc }) => asc(t.trialIndex),
       }),
@@ -102,8 +108,15 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
   )();
 
   const trialsChartData = trials.filter(
-    (t): t is { prefillTps: number; decodeTps: number } =>
-      t.prefillTps != null && t.decodeTps != null && t.prefillTps > 0 && t.decodeTps > 0,
+    (
+      t,
+    ): t is {
+      prefillTps: number;
+      decodeTps: number;
+      totalMs: number;
+      idleRssMb: number;
+      peakRssMb: number;
+    } => t.prefillTps != null && t.decodeTps != null && t.prefillTps > 0 && t.decodeTps > 0,
   );
 
   const modelInfo = run.model.info;

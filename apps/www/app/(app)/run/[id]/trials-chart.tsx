@@ -17,6 +17,9 @@ import {
 type Trial = {
   prefillTps: number;
   decodeTps: number;
+  totalMs: number;
+  idleRssMb: number;
+  peakRssMb: number;
 };
 
 // -----------------------------------------------------------------------------
@@ -82,6 +85,13 @@ const RunDetailsTrialsChart: React.FC<{ data: Trial[] }> = ({ data }) => {
                     <div className="flex flex-col gap-1">
                       <span className="h-4 whitespace-nowrap text-right text-gray-11">Prefill</span>
                       <span className="h-4 whitespace-nowrap text-right text-gray-11">Decode</span>
+                      <span className="h-4 whitespace-nowrap text-right text-gray-11">Length</span>
+                      <span className="h-4 whitespace-nowrap text-right text-gray-11">
+                        Idle RSS
+                      </span>
+                      <span className="h-4 whitespace-nowrap text-right text-gray-11">
+                        Peak RSS
+                      </span>
                     </div>
                     <div className="flex w-full flex-col gap-1">
                       <span className="h-4 text-right font-mono">
@@ -97,6 +107,27 @@ const RunDetailsTrialsChart: React.FC<{ data: Trial[] }> = ({ data }) => {
                           maximumFractionDigits: 1,
                         })}
                         <span className="text-gray-11"> tok/s</span>
+                      </span>
+                      <span className="h-4 text-right font-mono">
+                        {d.totalMs.toLocaleString(undefined, {
+                          minimumFractionDigits: 0,
+                          maximumFractionDigits: 0,
+                        })}
+                        <span className="text-gray-11"> ms</span>
+                      </span>
+                      <span className="h-4 text-right font-mono">
+                        {d.idleRssMb.toLocaleString(undefined, {
+                          minimumFractionDigits: 0,
+                          maximumFractionDigits: 0,
+                        })}
+                        <span className="text-gray-11"> MB</span>
+                      </span>
+                      <span className="h-4 text-right font-mono">
+                        {d.peakRssMb.toLocaleString(undefined, {
+                          minimumFractionDigits: 0,
+                          maximumFractionDigits: 0,
+                        })}
+                        <span className="text-gray-11"> MB</span>
                       </span>
                     </div>
                   </div>
