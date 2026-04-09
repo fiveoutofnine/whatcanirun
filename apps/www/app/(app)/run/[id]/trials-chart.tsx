@@ -28,7 +28,7 @@ type Trial = {
 
 const RunDetailsTrialsChart: React.FC<{ data: Trial[] }> = ({ data }) => {
   return (
-    <div className="flex h-[32rem] w-full flex-col rounded-none border-y border-gray-6 bg-gray-2 p-4 md:rounded-xl md:border-x">
+    <div className="flex h-[32rem] w-full flex-col rounded-none border-y border-gray-6 bg-gray-2 p-4 md:rounded-xl md:border-x [&_svg_*]:outline-none">
       <h3 className="text-base font-medium tracking-tight text-gray-12">Decode / Prefill Speeds</h3>
       <ResponsiveContainer className="mt-2" width="100%" height="100%">
         <ScatterChart
@@ -139,6 +139,7 @@ const RunDetailsTrialsChart: React.FC<{ data: Trial[] }> = ({ data }) => {
             name="Trials"
             data={data}
             className="fill-gray-9"
+            tabIndex={-1}
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             shape={(props: any) => {
               const { cx, cy } = props as { cx: number; cy: number };
@@ -147,8 +148,7 @@ const RunDetailsTrialsChart: React.FC<{ data: Trial[] }> = ({ data }) => {
                   cx={cx}
                   cy={cy}
                   r={8}
-                  className="fill-gray-9 opacity-50 transition-opacity hover:opacity-100"
-                  tabIndex={-1}
+                  className="pointer-events-auto fill-gray-9 opacity-50 transition-opacity hover:opacity-100"
                 />
               );
             }}
