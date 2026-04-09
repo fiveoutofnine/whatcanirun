@@ -6,7 +6,7 @@ import { ChevronsUpDown } from 'lucide-react';
 import { useQueryState } from 'nuqs';
 
 import type { Device } from '@/lib/db/schema';
-import { useDetectedDevice } from '@/lib/hooks';
+import { useDetectedDevice, usePreservedNavigationDevice } from '@/lib/hooks';
 import { formatChipName, parseManufacturer } from '@/lib/utils';
 
 import DeviceCombobox from '@/components/templates/device-combobox';
@@ -43,9 +43,11 @@ const DeviceFloatingSelector: React.FC<DeviceFloatingSelectorProps> = ({ chips }
   const detectedChip = useDetectedDevice(chips);
 
   const selected = useMemo(
-    () => chips.find((c) => c.chipId === device) ?? chips[0],
-    [chips, device],
+    () => chips.find((c) => c.chipId === device) ?? chips.find((c) => c.chipId === defaultDevice),
+    [chips, defaultDevice, device],
   );
+  const effectiveDevice = selected?.chipId ?? defaultDevice;
+  usePreservedNavigationDevice(selected?.chipId ?? null);
 
   const chipsSorted = useMemo(
     () =>
@@ -100,7 +102,7 @@ const DeviceFloatingSelector: React.FC<DeviceFloatingSelectorProps> = ({ chips }
       <DeviceCombobox
         devices={chipsSorted}
         detectedDeviceChipId={detectedChip?.chipId ?? null}
-        value={device}
+        value={effectiveDevice}
         onSelect={setDevice}
       >
         <button className="pointer-events-auto h-8 rounded-full border border-gray-7 bg-gray-3 shadow-lg backdrop-blur transition-colors hover:border-gray-8 hover:bg-gray-4 focus-visible:border-gray-8 focus-visible:bg-gray-4 active:bg-gray-5">

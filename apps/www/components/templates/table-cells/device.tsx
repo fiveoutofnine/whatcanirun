@@ -9,6 +9,7 @@ import type { Device } from '@/lib/db/schema';
 import { parseManufacturer } from '@/lib/utils';
 
 import ClickableTooltip from '@/components/templates/clickable-tooltip';
+import PreservedDeviceLink from '@/components/common/preserved-device-link';
 import { Badge } from '@/components/ui';
 
 // -----------------------------------------------------------------------------
@@ -17,7 +18,7 @@ import { Badge } from '@/components/ui';
 
 type DeviceTableCellProps = Pick<
   Device,
-  'cpu' | 'cpuCores' | 'gpu' | 'gpuCores' | 'gpuCount' | 'ramGb' | 'osName'
+  'chipId' | 'cpu' | 'cpuCores' | 'gpu' | 'gpuCores' | 'gpuCount' | 'ramGb' | 'osName'
 >;
 
 // -----------------------------------------------------------------------------
@@ -25,6 +26,7 @@ type DeviceTableCellProps = Pick<
 // -----------------------------------------------------------------------------
 
 const DeviceTableCell: React.FC<DeviceTableCellProps> & { Skeleton: React.FC } = ({
+  chipId,
   cpu,
   cpuCores,
   gpu,
@@ -33,6 +35,7 @@ const DeviceTableCell: React.FC<DeviceTableCellProps> & { Skeleton: React.FC } =
   ramGb,
   osName,
 }) => {
+  const deviceHref = `/device?device=${encodeURIComponent(chipId)}`;
   const isMac = osName?.toLowerCase() === 'macos';
 
   if (!isMac) {
@@ -54,10 +57,12 @@ const DeviceTableCell: React.FC<DeviceTableCellProps> & { Skeleton: React.FC } =
                 </span>
               </ClickableTooltip>
             ) : null}
-            <span className="line-clamp-1">{displayName}</span>
-            <Badge size="sm" variant="outline" intent="info">
-              CPU
-            </Badge>
+            <PreservedDeviceLink className="flex items-center gap-1.5 hover:underline" href={deviceHref}>
+              <span className="line-clamp-1">{displayName}</span>
+              <Badge size="sm" variant="outline" intent="info">
+                CPU
+              </Badge>
+            </PreservedDeviceLink>
           </span>
           <div className="mt-0 flex h-4 gap-2">
             <ClickableTooltip content="CPU cores">
@@ -103,10 +108,13 @@ const DeviceTableCell: React.FC<DeviceTableCellProps> & { Skeleton: React.FC } =
               </span>
             </ClickableTooltip>
           ) : null}
-          <span className="flex items-center gap-1.5">
+          <PreservedDeviceLink
+            className="flex items-center gap-1.5 hover:underline"
+            href={deviceHref}
+          >
             <span className="line-clamp-1">{displayName}</span>
             {gpuCountBadge}
-          </span>
+          </PreservedDeviceLink>
         </span>
         {totalVram != null ? (
           <div className="mt-0 flex h-4 gap-2">
@@ -140,7 +148,9 @@ const DeviceTableCell: React.FC<DeviceTableCellProps> & { Skeleton: React.FC } =
             </span>
           </ClickableTooltip>
         ) : null}
-        <span className="line-clamp-1">{displayName}</span>
+        <PreservedDeviceLink className="line-clamp-1 hover:underline" href={deviceHref}>
+          {displayName}
+        </PreservedDeviceLink>
       </span>
       <div className="mt-0 flex h-4 gap-2">
         {[

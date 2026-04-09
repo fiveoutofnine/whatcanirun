@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Fragment } from 'react';
 
@@ -11,6 +10,7 @@ import { Calendar, Scale, Waypoints } from 'lucide-react';
 import ClickableTooltip from '@/components/templates/clickable-tooltip';
 import RelativeDate from '@/components/templates/relative-date';
 import UserAvatar from '@/components/templates/user-avatar';
+import PreservedDeviceLink from '@/components/common/preserved-device-link';
 
 // -----------------------------------------------------------------------------
 // Metadata
@@ -47,7 +47,7 @@ export default async function Layout({
         <div className="mx-auto flex w-full max-w-5xl items-center">
           <div className="flex flex-col gap-1 md:gap-2">
             <h1 className="flex items-center gap-1.5 text-2xl font-medium text-gray-11 md:text-3xl">
-              <Link
+              <PreservedDeviceLink
                 href={`/${family.orgSlug}`}
                 className="flex items-center gap-2 font-normal underline decoration-dotted transition-colors hover:text-gray-12"
               >
@@ -62,7 +62,7 @@ export default async function Layout({
                   </Fragment>
                 ) : null}
                 <span>{family.orgName}</span>
-              </Link>
+              </PreservedDeviceLink>
               <span>/</span>
               <span className="line-clamp-1 tracking-tight text-gray-12">{family.familyName}</span>
             </h1>

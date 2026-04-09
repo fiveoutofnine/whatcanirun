@@ -1,11 +1,10 @@
-import Link from 'next/link';
-
 import { ArrowRight, Computer, Layers, Play } from 'lucide-react';
 
 import type { RankedModelFamily } from '@/lib/queries/model-families-ranked';
 import { formatValueToPrecision } from '@/lib/utils';
 
 import UserAvatar from '@/components/templates/user-avatar';
+import PreservedDeviceLink from '@/components/common/preserved-device-link';
 
 // -----------------------------------------------------------------------------
 // Props
@@ -23,7 +22,7 @@ const ModelFamilyRow: React.FC<ModelFamilyRowProps> & {
   Skeleton: React.FC;
 } = ({ item }) => {
   return (
-    <Link
+    <PreservedDeviceLink
       href={`/${item.orgSlug}/${item.familySlug}`}
       className="group/model-family-row relative -mx-2 flex w-[calc(100%+1rem)] rounded-xl p-3 transition-colors hover:bg-gray-4 focus-visible:bg-gray-4 md:-mx-4 md:w-[calc(100%+2rem)] md:p-4"
     >
@@ -72,7 +71,7 @@ const ModelFamilyRow: React.FC<ModelFamilyRowProps> & {
         View
         <ArrowRight className="size-4" />
       </div>
-    </Link>
+    </PreservedDeviceLink>
   );
 };
 

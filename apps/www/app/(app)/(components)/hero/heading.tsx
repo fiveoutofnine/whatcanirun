@@ -1,11 +1,11 @@
 'use client';
 
-import { Fragment, useEffect, useMemo } from 'react';
+import { Fragment, useEffect, useMemo, useRef } from 'react';
 
 import { ChevronsUpDown } from 'lucide-react';
 import { useQueryState } from 'nuqs';
 
-import { useDetectedDevice } from '@/lib/hooks';
+import { useDetectedDevice, usePreservedNavigationDevice } from '@/lib/hooks';
 import { formatChipName } from '@/lib/utils';
 
 import Logo from '@/components/common/logo';
@@ -40,6 +40,7 @@ const FALLBACK_DEVICE = 'Apple M1 Max:10:Apple M1 Max:32:64';
 const HeroHeading: React.FC<{ chips: ChipOption[] }> = ({ chips }) => {
   const [, setPagination] = useQueryState('pagination', { shallow: false });
   const [, setSorting] = useQueryState('sorting', { shallow: false });
+  const shouldAutoDetectRef = useRef(false);
 
   // Fallback to the chip with the most models, then hardcoded fallback.
   const defaultDevice = useMemo(() => {
@@ -54,16 +55,22 @@ const HeroHeading: React.FC<{ chips: ChipOption[] }> = ({ chips }) => {
   const detectedChip = useDetectedDevice(chips);
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.has('device') || !detectedChip || device === detectedChip.chipId) return;
+    shouldAutoDetectRef.current = !new URLSearchParams(window.location.search).has('device');
+  }, []);
+
+  useEffect(() => {
+    if (!shouldAutoDetectRef.current || !detectedChip || device === detectedChip.chipId) return;
+    shouldAutoDetectRef.current = false;
     setDevice(detectedChip.chipId);
   }, [detectedChip, device, setDevice]);
 
   // Find selected device info for display.
   const selected = useMemo(
-    () => chips.find((c) => c.chipId === device) ?? chips[0],
-    [chips, device],
+    () => chips.find((c) => c.chipId === device) ?? chips.find((c) => c.chipId === defaultDevice),
+    [chips, defaultDevice, device],
   );
+  const effectiveDevice = selected?.chipId ?? defaultDevice;
+  usePreservedNavigationDevice(selected?.chipId ?? null);
 
   // Sort by GPU (primary), gpu cores, CPU, cpu cores, RAM, then model count (last tie-breaker).
   const chipsSorted = useMemo(
@@ -111,8 +118,9 @@ const HeroHeading: React.FC<{ chips: ChipOption[] }> = ({ chips }) => {
       <DeviceCombobox
         devices={chipsSorted}
         detectedDeviceChipId={detectedChip?.chipId ?? null}
-        value={device}
+        value={effectiveDevice}
         onSelect={(chipId: string) => {
+          shouldAutoDetectRef.current = false;
           setDevice(chipId);
           setPagination(null);
           setSorting(null);

@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { forwardRef } from 'react';
 
 import {
@@ -22,6 +21,10 @@ import type {
 import * as TabsPrimitive from '@radix-ui/react-tabs';
 import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
+
+import { isExternalHref } from '@/lib/preserved-device-navigation';
+
+import PreservedDeviceLink from '@/components/common/preserved-device-link';
 
 import { Badge } from '@/components/ui';
 
@@ -59,6 +62,8 @@ const TabsTrigger = forwardRef(
     const { className, icon, stat, href, newTab, children, asChild, type, ...rest } = props;
 
     if (href) {
+      const linkProps = newTab ? { target: '_blank', rel: 'noopener noreferrer' } : {};
+
       return (
         <TabsPrimitive.Trigger
           className={twMerge(clsx(tabsTriggerStyles, className))}
@@ -67,27 +72,51 @@ const TabsTrigger = forwardRef(
           asChild
           {...rest}
         >
-          <Link
-            className={clsx(tabsTriggerLinkStyles, rest.disabled ? 'pointer-events-none' : '')}
-            href={href}
-            {...(newTab ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-          >
-            <span className={clsx(tabsTriggerContentStyles)}>
-              {icon ? <span className={clsx(tabsTriggerIconStyles)}>{icon}</span> : null}
-              <span>{children}</span>
-              {stat !== undefined ? (
-                <Badge
-                  className={clsx(tabsTriggerStatStyles)}
-                  size="sm"
-                  variant="secondary"
-                  intent="none"
-                  type="number"
-                >
-                  {stat}
-                </Badge>
-              ) : null}
-            </span>
-          </Link>
+          {isExternalHref(href) ? (
+            <a
+              className={clsx(tabsTriggerLinkStyles, rest.disabled ? 'pointer-events-none' : '')}
+              href={href}
+              {...linkProps}
+            >
+              <span className={clsx(tabsTriggerContentStyles)}>
+                {icon ? <span className={clsx(tabsTriggerIconStyles)}>{icon}</span> : null}
+                <span>{children}</span>
+                {stat !== undefined ? (
+                  <Badge
+                    className={clsx(tabsTriggerStatStyles)}
+                    size="sm"
+                    variant="secondary"
+                    intent="none"
+                    type="number"
+                  >
+                    {stat}
+                  </Badge>
+                ) : null}
+              </span>
+            </a>
+          ) : (
+            <PreservedDeviceLink
+              className={clsx(tabsTriggerLinkStyles, rest.disabled ? 'pointer-events-none' : '')}
+              href={href}
+              {...linkProps}
+            >
+              <span className={clsx(tabsTriggerContentStyles)}>
+                {icon ? <span className={clsx(tabsTriggerIconStyles)}>{icon}</span> : null}
+                <span>{children}</span>
+                {stat !== undefined ? (
+                  <Badge
+                    className={clsx(tabsTriggerStatStyles)}
+                    size="sm"
+                    variant="secondary"
+                    intent="none"
+                    type="number"
+                  >
+                    {stat}
+                  </Badge>
+                ) : null}
+              </span>
+            </PreservedDeviceLink>
+          )}
         </TabsPrimitive.Trigger>
       );
     }
