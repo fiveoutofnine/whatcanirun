@@ -5,6 +5,7 @@ import { Fragment } from 'react';
 
 import CopyBenchmarkCommandButton from './copy-benchmark-command-button';
 import ShareButton from './share-button';
+import RunDetailsTrialsChart from './trials-chart';
 import { ArrowUpRight, Calendar, Layers } from 'lucide-react';
 
 import { db } from '@/lib/db';
@@ -88,6 +89,22 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
   )();
 
   if (!run) return notFound();
+
+  const trials = await cache(
+    async () =>
+      db.query.trials.findMany({
+        columns: { prefillTps: true, decodeTps: true },
+        where: (t, { eq }) => eq(t.runId, id),
+        orderBy: (t, { asc }) => asc(t.trialIndex),
+      }),
+    [`run-trials-${id}`],
+    { revalidate: 600 },
+  )();
+
+  const trialsChartData = trials.filter(
+    (t): t is { prefillTps: number; decodeTps: number } =>
+      t.prefillTps != null && t.decodeTps != null && t.prefillTps > 0 && t.decodeTps > 0,
+  );
 
   const modelInfo = run.model.info;
   const modelDisplayName = modelInfo?.name || run.model.displayName;
@@ -489,6 +506,15 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
             </div>
           ))}
         </section>
+
+        {trialsChartData.length > 0 ? (
+          <Fragment>
+            <H2 className="mb-2 mt-4 md:mt-8">Trials</H2>
+            <div className="-mx-4 md:mx-0">
+              <RunDetailsTrialsChart data={trialsChartData} />
+            </div>
+          </Fragment>
+        ) : null}
 
         <H2 className="mb-2 mt-4 md:mt-8">Metadata</H2>
         <CodeBlock
