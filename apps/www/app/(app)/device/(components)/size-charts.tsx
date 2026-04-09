@@ -95,8 +95,8 @@ type SizeChartProps = {
 
 const DeviceSizeChart: React.FC<SizeChartProps> = ({ title, data, yKey }) => {
   const chartRef = useRef<HTMLDivElement>(null);
-  const [, setChartDimensions] = useState({ width: 600, height: 400 });
-  const [logScale, setLogScale] = useState(false);
+  const [, setChartDimensions] = useState({ width: 603, height: 383 });
+  const [logScale, setLogScale] = useState<boolean>(true);
   const [hiddenFormats, setHiddenFormats] = useState<Set<string>>(new Set());
 
   const formats = useMemo(() => {
@@ -198,7 +198,7 @@ const DeviceSizeChart: React.FC<SizeChartProps> = ({ title, data, yKey }) => {
               </Button>
             );
           })}
-          <ToggleButton pressed={logScale} onPressedChange={setLogScale}>
+          <ToggleButton defaultPressed pressed={logScale} onPressedChange={setLogScale}>
             Log
           </ToggleButton>
         </div>
