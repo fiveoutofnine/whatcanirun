@@ -1,6 +1,6 @@
 'use client';
 
-import { Fragment, useEffect, useMemo } from 'react';
+import { Fragment, useEffect, useMemo, useRef } from 'react';
 
 import { ChevronsUpDown } from 'lucide-react';
 import { useQueryState } from 'nuqs';
@@ -40,6 +40,7 @@ const FALLBACK_DEVICE = 'Apple M1 Max:10:Apple M1 Max:32:64';
 const HeroHeading: React.FC<{ chips: ChipOption[] }> = ({ chips }) => {
   const [, setPagination] = useQueryState('pagination', { shallow: false });
   const [, setSorting] = useQueryState('sorting', { shallow: false });
+  const shouldAutoDetectRef = useRef(false);
 
   // Fallback to the chip with the most models, then hardcoded fallback.
   const defaultDevice = useMemo(() => {
@@ -55,8 +56,12 @@ const HeroHeading: React.FC<{ chips: ChipOption[] }> = ({ chips }) => {
   usePreservedNavigationDevice(device);
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.has('device') || !detectedChip || device === detectedChip.chipId) return;
+    shouldAutoDetectRef.current = !new URLSearchParams(window.location.search).has('device');
+  }, []);
+
+  useEffect(() => {
+    if (!shouldAutoDetectRef.current || !detectedChip || device === detectedChip.chipId) return;
+    shouldAutoDetectRef.current = false;
     setDevice(detectedChip.chipId);
   }, [detectedChip, device, setDevice]);
 
@@ -114,6 +119,7 @@ const HeroHeading: React.FC<{ chips: ChipOption[] }> = ({ chips }) => {
         detectedDeviceChipId={detectedChip?.chipId ?? null}
         value={device}
         onSelect={(chipId: string) => {
+          shouldAutoDetectRef.current = false;
           setDevice(chipId);
           setPagination(null);
           setSorting(null);
