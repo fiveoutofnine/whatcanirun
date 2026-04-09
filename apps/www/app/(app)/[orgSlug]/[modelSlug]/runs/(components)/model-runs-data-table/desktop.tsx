@@ -33,6 +33,7 @@ const ModelRunsDataTableDesktop: React.FC<ModelRunsDataTableInternalProps> = (ta
           const { device } = row.original;
           return (
             <DeviceTableCell
+              chipId={device.chipId}
               cpu={device.cpu}
               cpuCores={device.cpuCores}
               gpu={device.gpu}

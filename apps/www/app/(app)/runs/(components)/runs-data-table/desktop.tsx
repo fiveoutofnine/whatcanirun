@@ -85,6 +85,7 @@ const RunsDataTableDesktop: React.FC<RunsDataTableInternalProps> = (tableOptions
           const { device } = row.original;
           return (
             <DeviceTableCell
+              chipId={device.chipId}
               cpu={device.cpu}
               cpuCores={device.cpuCores}
               gpu={device.gpu}
