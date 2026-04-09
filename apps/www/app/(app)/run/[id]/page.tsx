@@ -5,13 +5,14 @@ import { Fragment } from 'react';
 
 import CopyBenchmarkCommandButton from './copy-benchmark-command-button';
 import ShareButton from './share-button';
-import { ArrowUpRight, Calendar } from 'lucide-react';
+import { ArrowUpRight, Calendar, Layers } from 'lucide-react';
 
 import { db } from '@/lib/db';
 import { RunStatus } from '@/lib/db/schema';
 import { parseManufacturer } from '@/lib/utils';
 
 import PreservedDeviceLink from '@/components/common/preserved-device-link';
+import ClickableTooltip from '@/components/templates/clickable-tooltip';
 import { H2 } from '@/components/templates/mdx';
 import RelativeDate from '@/components/templates/relative-date';
 import ScoreBadge from '@/components/templates/score-badge';
@@ -354,6 +355,16 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
               >
                 &lt;- Runs
               </Link>
+              {modelInfo?.quant || run.model.quant ? (
+                <ClickableTooltip content="Quantization">
+                  <div className="flex min-w-fit items-center gap-1 text-nowrap text-gray-11 underline decoration-dotted transition-colors hover:text-gray-12 md:gap-1.5">
+                    <span className="flex size-3.5 items-center justify-center text-gray-11 md:size-4">
+                      <Layers />
+                    </span>
+                    <span>{modelInfo?.quant || run.model.quant}</span>
+                  </div>
+                </ClickableTooltip>
+              ) : null}
               <div className="flex min-w-fit items-center gap-1 text-nowrap text-gray-11 md:gap-1.5">
                 <span className="flex size-3.5 items-center justify-center md:size-4">
                   <Calendar />
