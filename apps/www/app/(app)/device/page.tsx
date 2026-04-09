@@ -1,15 +1,16 @@
 import { unstable_cache as cache } from 'next/cache';
 
-import SizeCharts from './(components)/size-charts';
+import DeviceSizeCharts from './(components)/size-charts';
 import type { SizeChartValue } from './(components)/size-charts';
 import { countDistinct, eq, sql } from 'drizzle-orm';
 
 import { db } from '@/lib/db';
 import { view__model_stats_by_device } from '@/lib/db/schema';
 
+import { H2 } from '@/components/templates/mdx';
+
 import DeviceFloatingSelector from '@/app/(app)/[orgSlug]/[modelSlug]/(components)/device-floating-selector';
 import type { ChipOption } from '@/app/(app)/[orgSlug]/[modelSlug]/(components)/device-floating-selector';
-import { H2 } from '@/components/templates/mdx';
 
 // -----------------------------------------------------------------------------
 // Constants
@@ -92,7 +93,7 @@ export default async function Page({
           Results include trials with <span className="tabular-nums">4,096</span> input tokens and{' '}
           <span className="tabular-nums">1,024</span> output tokens only.
         </p>
-        <SizeCharts data={data} />
+        <DeviceSizeCharts data={data} />
       </div>
       <DeviceFloatingSelector chips={chipRows} />
     </div>

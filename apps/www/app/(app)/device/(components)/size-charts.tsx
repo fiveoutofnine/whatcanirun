@@ -37,7 +37,7 @@ export type SizeChartValue = {
   avgPrefillTps: number;
 };
 
-type SizeChartsProps = {
+type DeviceSizeChartsProps = {
   data: SizeChartValue[];
 };
 
@@ -47,10 +47,22 @@ type SizeChartsProps = {
 
 const FORMAT_CONFIG: Record<
   string,
-  { label: string; border: string; intent: 'orange' | 'info' }
+  { label: string; intent: 'orange' | 'info'; border: string; activeStyles: string }
 > = {
-  gguf: { label: 'GGUF', border: 'border-orange-9', intent: 'orange' },
-  mlx: { label: 'MLX', border: 'border-blue-9', intent: 'info' },
+  gguf: {
+    label: 'GGUF',
+    intent: 'orange',
+    border: 'border-orange-9',
+    activeStyles:
+      'bg-orange-5 data-[variant=outline]:text-orange-12 data-[variant=outline]:active:bg-orange-5',
+  },
+  mlx: {
+    label: 'MLX',
+    intent: 'info',
+    border: 'border-blue-9',
+    activeStyles:
+      'bg-blue-5 data-[variant=outline]:text-blue-12 data-[variant=outline]:active:bg-blue-5',
+  },
 };
 
 const FORMAT_LOGO: Record<string, React.FC<{ className?: string; size?: number }>> = {
@@ -62,7 +74,7 @@ const FORMAT_LOGO: Record<string, React.FC<{ className?: string; size?: number }
 // Component
 // -----------------------------------------------------------------------------
 
-const SizeCharts: React.FC<SizeChartsProps> = ({ data }) => {
+const DeviceSizeCharts: React.FC<DeviceSizeChartsProps> = ({ data }) => {
   const [logScale, setLogScale] = useState(false);
   const [hiddenFormats, setHiddenFormats] = useState<Set<string>>(new Set());
 
@@ -93,7 +105,7 @@ const SizeCharts: React.FC<SizeChartsProps> = ({ data }) => {
 
   return (
     <Fragment>
-      <div className="flex items-center gap-1 flex-wrap px-4 md:px-0 mb-4">
+      <div className="mb-4 flex flex-wrap items-center gap-1 px-4 md:px-0">
         {formats.map((format) => {
           const config = FORMAT_CONFIG[format];
           const Logo = FORMAT_LOGO[format];
@@ -103,8 +115,9 @@ const SizeCharts: React.FC<SizeChartsProps> = ({ data }) => {
             <Button
               key={format}
               size="sm"
+              className={active ? config?.activeStyles : ''}
               variant="outline"
-              intent={active ? (config?.intent ?? 'none') : 'none'}
+              intent={config?.intent ?? 'none'}
               onClick={() => toggleFormat(format)}
               leftIcon={Logo ? <Logo size={14} /> : undefined}
             >
@@ -118,14 +131,14 @@ const SizeCharts: React.FC<SizeChartsProps> = ({ data }) => {
       </div>
       <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
         <SizeChart
-          title="Decode Speed vs. Model Size"
+          title="Decode Speed vs. Size"
           data={filteredData}
           yKey="avgDecodeTps"
           yLabel="Decode (tok/s)"
           logScale={logScale}
         />
         <SizeChart
-          title="Prefill Speed vs. Model Size"
+          title="Prefill Speed vs. Size"
           data={filteredData}
           yKey="avgPrefillTps"
           yLabel="Prefill (tok/s)"
@@ -304,9 +317,7 @@ const SizeChart: React.FC<SizeChartProps> = ({ title, data, yKey, logScale }) =>
                   <div className="flex gap-2 p-2 text-xs leading-4">
                     <div className="flex flex-col gap-1">
                       <span className="h-4 whitespace-nowrap text-right text-gray-11">Decode</span>
-                      <span className="h-4 whitespace-nowrap text-right text-gray-11">
-                        Prefill
-                      </span>
+                      <span className="h-4 whitespace-nowrap text-right text-gray-11">Prefill</span>
                     </div>
                     <div className="flex w-full flex-col gap-1">
                       <span className="h-4 text-right font-mono">
@@ -399,4 +410,4 @@ const LabIcon: React.FC<{
   );
 };
 
-export default SizeCharts;
+export default DeviceSizeCharts;
