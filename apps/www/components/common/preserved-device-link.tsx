@@ -3,7 +3,7 @@
 import Link, { type LinkProps } from 'next/link';
 import { forwardRef } from 'react';
 
-import { usePreservedDeviceHref } from '@/lib/preserved-device-navigation';
+import { usePreservedDeviceHref } from '@/lib/hooks';
 
 type PreservedDeviceLinkProps = Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, 'href'> &
   Omit<LinkProps, 'href'> & {

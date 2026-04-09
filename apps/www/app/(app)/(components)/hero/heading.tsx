@@ -5,8 +5,7 @@ import { Fragment, useEffect, useMemo } from 'react';
 import { ChevronsUpDown } from 'lucide-react';
 import { useQueryState } from 'nuqs';
 
-import { useDetectedDevice } from '@/lib/hooks';
-import { usePreservedNavigationDevice } from '@/lib/preserved-device-navigation';
+import { useDetectedDevice, usePreservedNavigationDevice } from '@/lib/hooks';
 import { formatChipName } from '@/lib/utils';
 
 import Logo from '@/components/common/logo';

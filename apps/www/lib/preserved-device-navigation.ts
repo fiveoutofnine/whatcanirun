@@ -1,8 +1,3 @@
-'use client';
-
-import { useLayoutEffect, useMemo, useSyncExternalStore } from 'react';
-import { usePathname, useSearchParams } from 'next/navigation';
-
 // -----------------------------------------------------------------------------
 // Store
 // -----------------------------------------------------------------------------
@@ -15,12 +10,12 @@ const TARGET_BLOCKLIST = ['/api', '/cli-auth', '/login'];
 
 let navigationDevice: string | null = null;
 
-const subscribe = (listener: Listener) => {
+export const subscribePreservedNavigationDevice = (listener: Listener) => {
   listeners.add(listener);
   return () => listeners.delete(listener);
 };
 
-const getSnapshot = () => navigationDevice;
+export const getPreservedNavigationDevice = () => navigationDevice;
 
 export const setPreservedNavigationDevice = (device: string | null) => {
   if (navigationDevice === device) return;
@@ -35,7 +30,7 @@ export const setPreservedNavigationDevice = (device: string | null) => {
 export const isExternalHref = (href: string) =>
   /^(?:[a-z][a-z\d+.-]*:|\/\/)/i.test(href) || href.startsWith('mailto:') || href.startsWith('tel:');
 
-const shouldPreserveDeviceForPath = (pathname: string | null) => {
+export const shouldPreserveDeviceForPath = (pathname: string | null) => {
   if (!pathname) return false;
   if (pathname === '/') return true;
 
@@ -48,7 +43,7 @@ const shouldPreserveDeviceForPath = (pathname: string | null) => {
 const shouldPreserveDeviceForTarget = (pathname: string) =>
   !TARGET_BLOCKLIST.some((blocked) => pathname === blocked || pathname.startsWith(`${blocked}/`));
 
-const withDeviceSearchParam = (href: string, device: string) => {
+export const withDeviceSearchParam = (href: string, device: string) => {
   if (isExternalHref(href) || href.startsWith('#')) return href;
 
   const url = new URL(href, 'http://whatcani.run');
@@ -56,30 +51,4 @@ const withDeviceSearchParam = (href: string, device: string) => {
 
   url.searchParams.set('device', device);
   return `${url.pathname}${url.search}${url.hash}`;
-};
-
-// -----------------------------------------------------------------------------
-// Hooks
-// -----------------------------------------------------------------------------
-
-export const usePreservedDeviceHref = (href: string) => {
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const storedDevice = useSyncExternalStore(subscribe, getSnapshot, () => null);
-  const device = searchParams.get('device') ?? storedDevice;
-
-  return useMemo(() => {
-    if (!shouldPreserveDeviceForPath(pathname) || !device) return href;
-    return withDeviceSearchParam(href, device);
-  }, [device, href, pathname]);
-};
-
-export const usePreservedNavigationDevice = (device: string | null) => {
-  useLayoutEffect(() => {
-    setPreservedNavigationDevice(device);
-
-    return () => {
-      if (navigationDevice === device) setPreservedNavigationDevice(null);
-    };
-  }, [device]);
 };
