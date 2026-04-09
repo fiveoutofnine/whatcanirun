@@ -6,6 +6,7 @@ type Listener = () => void;
 
 const listeners = new Set<Listener>();
 const MODEL_ROUTE_BLOCKLIST = new Set(['api', 'cli-auth', 'docs', 'legal', 'login', 'models', 'runs']);
+const SINGLE_SEGMENT_PRESERVE_ROUTES = new Set(['device']);
 const TARGET_BLOCKLIST = ['/api', '/cli-auth', '/login'];
 
 let navigationDevice: string | null = null;
@@ -35,6 +36,7 @@ export const shouldPreserveDeviceForPath = (pathname: string | null) => {
   if (pathname === '/') return true;
 
   const segments = pathname.split('/').filter(Boolean);
+  if (segments.length === 1) return SINGLE_SEGMENT_PRESERVE_ROUTES.has(segments[0] ?? '');
   if (segments.length < 2) return false;
 
   return !MODEL_ROUTE_BLOCKLIST.has(segments[0] ?? '');
