@@ -107,9 +107,9 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
   const deviceCountPrefix =
     manufacturer !== 'apple' && run.device.gpuCount > 1 ? `${run.device.gpuCount}× ` : '';
   const deviceLabel = `${deviceCountPrefix}${deviceDisplayName} · ${run.device.ramGb.toLocaleString()} GB`;
-  const benchmarkOnPrefix = deviceCountPrefix
-    ? ' benchmark on '
-    : ` benchmark on ${getIndefiniteArticle(deviceDisplayName)} `;
+  const benchmarkOnLabel = deviceCountPrefix
+    ? 'benchmark on'
+    : `benchmark on ${getIndefiniteArticle(deviceDisplayName)}`;
   const runtimePresentation = getRuntimePresentation(run.runtimeName);
   const RuntimeLogo = runtimePresentation.Icon;
   const harnessHref = `https://github.com/fiveoutofnine/whatcanirun/commit/${run.harnessGitSha}`;
@@ -127,7 +127,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
     <div className="flex grow flex-col">
       <header className="w-full border-b border-gray-6 bg-black px-4 py-4 md:px-6 md:py-8">
         <div className="mx-auto flex w-full max-w-5xl flex-col gap-3">
-          <h1 className="text-2xl font-medium leading-tight tracking-tight text-gray-12 md:text-3xl">
+          <h1 className="flex flex-wrap items-center gap-x-1.5 gap-y-2 text-2xl font-normal leading-snug tracking-tight text-gray-11 md:text-3xl">
             {modelHref ? (
               isExternalHref(modelHref) ? (
                 <a
@@ -155,7 +155,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
                 </PreservedDeviceLink>
               )
             ) : (
-              <span className="inline-flex max-w-full items-center gap-2 align-middle text-gray-11">
+              <span className="inline-flex max-w-full items-center gap-2 align-middle text-gray-12">
                 <ModelAvatar
                   lab={modelInfo?.lab ?? null}
                   quantizedBy={modelInfo?.quantizedBy ?? null}
@@ -163,17 +163,17 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
                 <span>{modelDisplayName}</span>
               </span>
             )}
-            <span className="text-gray-12">{benchmarkOnPrefix}</span>
+            <span className="font-normal text-gray-11">{benchmarkOnLabel}</span>
             <PreservedDeviceLink
               className={`inline-flex max-w-full items-center gap-1.5 align-middle ${INTERACTIVE_TEXT_CLASSNAME}`}
               href={deviceHref}
             >
               {ManufacturerLogo && manufacturer ? (
                 <span
-                  className="flex size-4 items-center justify-center rounded"
+                  className="flex size-5 items-center justify-center rounded"
                   title={MANUFACTURER_LABEL[manufacturer]}
                 >
-                  <ManufacturerLogo className="border-gray-7" size={14} />
+                  <ManufacturerLogo className="border-gray-7" size={16} />
                 </span>
               ) : null}
               <span>{deviceLabel}</span>
@@ -198,9 +198,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
                     <FileQuestionMark className="size-3.5" />
                   )}
                 </span>
-                <span className="text-sm md:text-base">
-                  {run.runtimeName} {run.runtimeVersion}
-                </span>
+                <span className="text-sm md:text-base">Runtime</span>
                 <ArrowUpRight className="size-3 text-gray-11" />
               </a>
             ) : (
@@ -212,9 +210,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
                     <FileQuestionMark className="size-3.5" />
                   )}
                 </span>
-                <span className="text-sm md:text-base">
-                  {run.runtimeName} {run.runtimeVersion}
-                </span>
+                <span className="text-sm md:text-base">Runtime</span>
               </div>
             )}
             <a
@@ -226,9 +222,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
               <span className="flex size-3.5 items-center justify-center md:size-4">
                 <Hammer />
               </span>
-              <span className="text-sm md:text-base">
-                Harness {run.harnessVersion} · {run.harnessGitSha.slice(0, 8)}
-              </span>
+              <span className="text-sm md:text-base">Harness</span>
             </a>
             <div className="flex min-w-fit items-center gap-1 text-nowrap text-gray-11 md:gap-1.5">
               <span className="flex size-3.5 items-center justify-center md:size-4">
@@ -241,46 +235,81 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
             ) : null}
             <CopyRunIdButton id={run.id} label="Run ID" />
           </div>
-
-          {run.runtimeBuildFlags ? (
-            <p className="text-sm leading-normal text-gray-11 md:text-base">
-              {run.runtimeBuildFlags}
-            </p>
-          ) : null}
         </div>
       </header>
 
       <div className="mx-auto flex w-full max-w-5xl grow flex-col px-4 py-4 md:px-0 md:py-6">
+        <div className="mb-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm font-normal leading-normal text-gray-11 md:text-base">
+          <span>
+            Runtime {run.runtimeName} {run.runtimeVersion}
+          </span>
+          <span>·</span>
+          <span>
+            Harness {run.harnessVersion} {'·'}
+            <span className="tabular-nums">{run.harnessGitSha.slice(0, 8)}</span>
+          </span>
+          {run.runtimeBuildFlags ? (
+            <>
+              <span>·</span>
+              <span>{run.runtimeBuildFlags}</span>
+            </>
+          ) : null}
+        </div>
+
         <section className="grid grid-cols-2 gap-2 md:grid-cols-4">
-          <MetricCard label="Prompt tokens" value={formatMetricValue(inputTokenSummary)} />
-          <MetricCard label="Generation tokens" value={formatMetricValue(outputTokenSummary)} />
+          <MetricCard
+            label="Prompt tokens"
+            value={<span>{formatMetricValue(inputTokenSummary)}</span>}
+          />
+          <MetricCard
+            label="Generation tokens"
+            value={<span>{formatMetricValue(outputTokenSummary)}</span>}
+          />
           <MetricCard
             label="Trials"
-            value={`${run.trialsPassed.toLocaleString()} / ${run.trialsTotal.toLocaleString()} passed`}
+            value={
+              <span>
+                {run.trialsTotal.toLocaleString()}
+                <span className="text-gray-11">/{run.trialsPassed.toLocaleString()} passed</span>
+              </span>
+            }
           />
           <MetricCard label="Status" value={<StatusBadge status={run.status} />} />
-          <MetricCard label="Decode" value={`${formatNumber(run.decodeTpsMean)} tok/s`} />
+          <MetricCard
+            label="Decode"
+            value={
+              <span>
+                {formatNumber(run.decodeTpsMean)}
+                <span className="text-gray-11"> tok/s</span>
+              </span>
+            }
+          />
           <MetricCard
             label="Prefill"
-            value={run.prefillTpsMean != null ? `${formatNumber(run.prefillTpsMean)} tok/s` : '—'}
+            value={
+              run.prefillTpsMean != null ? (
+                <span>
+                  {formatNumber(run.prefillTpsMean)}
+                  <span className="text-gray-11"> tok/s</span>
+                </span>
+              ) : (
+                '—'
+              )
+            }
           />
           <MetricCard
             label="Peak memory"
-            value={`${formatGb(run.peakRssMb)} GB (${formatPercent(run.peakRssMb / 1024 / run.device.ramGb)})`}
+            value={
+              <span>
+                {formatGb(run.peakRssMb)} GB
+                <span className="text-gray-11">/{run.device.ramGb.toLocaleString()} GB</span>
+              </span>
+            }
           />
           <MetricCard
             label="Runnability"
             value={
-              runnabilityScore != null ? (
-                <div className="flex flex-col items-start gap-2">
-                  <span className="text-lg font-medium leading-6 text-gray-12 md:text-xl">
-                    {formatScore(runnabilityScore)}
-                  </span>
-                  <ScoreBadge score={runnabilityScore} />
-                </div>
-              ) : (
-                '—'
-              )
+              runnabilityScore != null ? <ScoreBadge score={runnabilityScore} size="lg" /> : '—'
             }
           />
         </section>
@@ -296,7 +325,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 
         <section className="mt-8">
           <H2 className="mb-3" link>
-            Technical Metadata
+            Metadata
           </H2>
           <CodeBlock
             className="-mx-4 w-[calc(100%+2rem)] rounded-none border-x-0 md:mx-0 md:w-full md:rounded-xl md:border-x [&_[code-block-header]]:rounded-none md:[&_[code-block-header]]:rounded-t-xl [&_[code-block-pre]]:max-h-80 [&_[code-block-pre]]:overflow-y-auto [&_[code-block-pre]]:rounded-none md:[&_[code-block-pre]]:rounded-b-[0.6875rem]"
@@ -321,7 +350,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 
 function StatusBadge({ status }: { status: RunStatus }) {
   return (
-    <Badge variant="outline" size="sm" type="text" intent={STATUS_BADGE_INTENT[status]}>
+    <Badge variant="outline" size="lg" type="text" intent={STATUS_BADGE_INTENT[status]}>
       {status.charAt(0).toUpperCase() + status.slice(1)}
     </Badge>
   );
@@ -340,12 +369,12 @@ function ModelAvatar({
         className="border-gray-7"
         icon={
           quantizedBy?.logoUrl ? (
-            <UserAvatar image={quantizedBy.logoUrl} name={quantizedBy.name} size={12} />
+            <UserAvatar image={quantizedBy.logoUrl} name={quantizedBy.name} size={14} />
           ) : undefined
         }
         image={lab.logoUrl}
         name={lab.name}
-        size={22}
+        size={24}
       />
     );
   }
@@ -356,7 +385,7 @@ function ModelAvatar({
         className="border-gray-7"
         image={quantizedBy.logoUrl}
         name={quantizedBy.name}
-        size={22}
+        size={24}
       />
     );
   }
@@ -368,7 +397,7 @@ function MetricCard({ label, value }: { label: string; value: React.ReactNode })
   return (
     <div className="rounded-xl border border-gray-6 bg-gray-2 p-4">
       <h2 className="text-sm font-medium leading-[1.125rem] text-gray-11">{label}</h2>
-      <div className="mt-1 block text-lg font-medium leading-6 text-gray-12 md:text-xl">
+      <div className="mt-1 block text-lg font-medium tabular-nums leading-6 text-gray-12 md:text-xl">
         {value}
       </div>
     </div>
@@ -417,17 +446,6 @@ function formatNumber(value: number, fractionDigits = 1) {
 
 function formatGb(mb: number) {
   return formatNumber(mb / 1024, 2);
-}
-
-function formatPercent(value: number) {
-  return `${formatNumber(value * 100, 1)}%`;
-}
-
-function formatScore(score: number) {
-  return score.toLocaleString(undefined, {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
 }
 
 function getIndefiniteArticle(value: string) {
