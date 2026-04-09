@@ -1,3 +1,4 @@
+import { unstable_cache as cache } from 'next/cache';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Fragment } from 'react';
@@ -35,50 +36,55 @@ const STATUS_BADGE_INTENT = {
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
-  const run = await db.query.runs.findFirst({
-    columns: {
-      id: true,
-      deviceId: true,
-      modelId: true,
-      bundleId: true,
-      did: true,
-      schemaVersion: true,
-      status: true,
-      notes: true,
-      bundleSha256: true,
-      runtimeName: true,
-      runtimeVersion: true,
-      runtimeBuildFlags: true,
-      harnessVersion: true,
-      harnessGitSha: true,
-      contextLength: true,
-      promptTokens: true,
-      completionTokens: true,
-      ttftP50Ms: true,
-      decodeTpsMean: true,
-      prefillTpsMean: true,
-      idleRssMb: true,
-      peakRssMb: true,
-      trialsPassed: true,
-      trialsTotal: true,
-      createdAt: true,
-    },
-    where: (run, { eq }) => eq(run.id, id),
-    with: {
-      model: {
+  const run = await cache(
+    async () =>
+      db.query.runs.findFirst({
+        columns: {
+          id: true,
+          deviceId: true,
+          modelId: true,
+          bundleId: true,
+          did: true,
+          schemaVersion: true,
+          status: true,
+          notes: true,
+          bundleSha256: true,
+          runtimeName: true,
+          runtimeVersion: true,
+          runtimeBuildFlags: true,
+          harnessVersion: true,
+          harnessGitSha: true,
+          contextLength: true,
+          promptTokens: true,
+          completionTokens: true,
+          ttftP50Ms: true,
+          decodeTpsMean: true,
+          prefillTpsMean: true,
+          idleRssMb: true,
+          peakRssMb: true,
+          trialsPassed: true,
+          trialsTotal: true,
+          createdAt: true,
+        },
+        where: (run, { eq }) => eq(run.id, id),
         with: {
-          info: {
+          model: {
             with: {
-              family: true,
-              lab: true,
-              quantizedBy: true,
+              info: {
+                with: {
+                  family: true,
+                  lab: true,
+                  quantizedBy: true,
+                },
+              },
             },
           },
+          device: true,
         },
-      },
-      device: true,
-    },
-  });
+      }),
+    [`run-detail-${id}`],
+    { revalidate: 600 },
+  )();
 
   if (!run) return notFound();
 
