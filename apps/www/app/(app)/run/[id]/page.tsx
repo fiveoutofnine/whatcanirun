@@ -1,16 +1,16 @@
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { Fragment } from 'react';
 
 import CopyBenchmarkCommandButton from './copy-benchmark-command-button';
 import CopyRunIdButton from './copy-run-id-button';
 import { asc, eq } from 'drizzle-orm';
-import { ArrowUpRight, Calendar, FileQuestionMark, Hammer } from 'lucide-react';
+import { ArrowUpRight, Calendar } from 'lucide-react';
 
-import { MANUFACTURER_LABEL } from '@/lib/constants/gpu';
 import { db } from '@/lib/db';
 import { rewards, runs, RunStatus, trials } from '@/lib/db/schema';
 import { formatBytes, parseManufacturer } from '@/lib/utils';
 
-import LogoImg from '@/components/common/logo-img';
 import PreservedDeviceLink from '@/components/common/preserved-device-link';
 import { H2 } from '@/components/templates/mdx';
 import RelativeDate from '@/components/templates/relative-date';
@@ -18,19 +18,15 @@ import ScoreBadge from '@/components/templates/score-badge';
 import UserAvatar from '@/components/templates/user-avatar';
 import { Badge, CodeBlock } from '@/components/ui';
 
+// -----------------------------------------------------------------------------
+// Constants
+// -----------------------------------------------------------------------------
+
 const STATUS_BADGE_INTENT = {
   [RunStatus.VERIFIED]: 'success',
   [RunStatus.PENDING]: 'warning',
   [RunStatus.FLAGGED]: 'orange',
   [RunStatus.REJECTED]: 'fail',
-} as const;
-
-const INTERACTIVE_TEXT_CLASSNAME =
-  'text-gray-11 underline decoration-dotted transition-colors hover:text-gray-12';
-
-const RUNTIME_PRESENTATION = {
-  'llama.cpp': { href: 'https://github.com/ggerganov/llama.cpp', Icon: LogoImg.Ggml },
-  mlx_lm: { href: 'https://github.com/ml-explore/mlx-lm', Icon: LogoImg.Mlx },
 } as const;
 
 // -----------------------------------------------------------------------------
@@ -79,7 +75,6 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
     manufacturer,
   } = parseManufacturer(primaryDeviceName);
 
-  // Model href
   const modelHref = (() => {
     if (modelInfo?.lab?.slug && modelInfo.family?.slug)
       return `/${modelInfo.lab.slug}/${modelInfo.family.slug}`;
@@ -122,14 +117,6 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
     return 'benchmark on a';
   })();
 
-  const runtimePresentation = RUNTIME_PRESENTATION[
-    run.runtimeName as keyof typeof RUNTIME_PRESENTATION
-  ] ?? {
-    href: null,
-    Icon: null,
-  };
-  const RuntimeLogo = runtimePresentation.Icon;
-  const harnessHref = `https://github.com/fiveoutofnine/whatcanirun/commit/${run.harnessGitSha}`;
   const benchmarkCommand = modelSource
     ? `bunx whatcanirun@latest run --model ${modelSource} --runtime ${run.runtimeName} --submit`
     : null;
@@ -273,156 +260,119 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
     2,
   );
 
-  // Model avatar
-  const lab = modelInfo?.lab ?? null;
-  const quantizedBy = modelInfo?.quantizedBy ?? null;
-  const modelAvatar = lab?.logoUrl ? (
-    <UserAvatar
-      className="border-gray-7"
-      icon={
-        quantizedBy?.logoUrl ? (
-          <UserAvatar image={quantizedBy.logoUrl} name={quantizedBy.name} size={14} />
-        ) : undefined
-      }
-      image={lab.logoUrl}
-      name={lab.name}
-      size={24}
-    />
-  ) : quantizedBy?.logoUrl ? (
-    <UserAvatar
-      className="border-gray-7"
-      image={quantizedBy.logoUrl}
-      name={quantizedBy.name}
-      size={24}
-    />
+  const ModelAvatar = modelInfo.lab?.logoUrl ? (
+    <Fragment>
+      <span className="md:hidden">
+        <UserAvatar
+          icon={
+            modelInfo.quantizedBy?.logoUrl ? (
+              <UserAvatar
+                image={modelInfo.quantizedBy.logoUrl}
+                name={modelInfo.quantizedBy.name}
+                size={14}
+              />
+            ) : undefined
+          }
+          image={modelInfo.lab.logoUrl}
+          name={modelInfo.lab.name}
+          size={24}
+        />
+      </span>
+      <span className="hidden md:block">
+        <UserAvatar
+          icon={
+            modelInfo.quantizedBy?.logoUrl ? (
+              <UserAvatar
+                image={modelInfo.quantizedBy.logoUrl}
+                name={modelInfo.quantizedBy.name}
+                size={14}
+              />
+            ) : undefined
+          }
+          image={modelInfo.lab.logoUrl}
+          name={modelInfo.lab.name}
+          size={30}
+        />
+      </span>
+    </Fragment>
   ) : null;
-
-  const isExternal = modelHref?.startsWith('http://') || modelHref?.startsWith('https://');
 
   return (
     <div className="flex grow flex-col">
       <header className="w-full border-b border-gray-6 bg-black px-4 py-4 md:px-6 md:py-8">
-        <div className="mx-auto flex w-full max-w-5xl flex-col gap-3">
-          <h1 className="flex flex-wrap items-center gap-x-1.5 gap-y-2 text-2xl font-normal leading-snug tracking-tight text-gray-11 md:text-3xl">
-            {modelHref ? (
-              isExternal ? (
-                <a
-                  className={`inline-flex max-w-full items-center gap-2 align-middle ${INTERACTIVE_TEXT_CLASSNAME}`}
-                  href={modelHref}
-                  rel="noreferrer"
-                  target="_blank"
-                >
-                  {modelAvatar}
-                  <span>{modelDisplayName}</span>
-                </a>
+        <div className="mx-auto flex w-full max-w-5xl items-center">
+          <div className="flex flex-col gap-1 md:gap-2">
+            <h1 className="text-wrap text-2xl font-medium leading-snug tracking-tight text-gray-11 md:text-3xl">
+              {modelHref ? (
+                modelHref?.startsWith('http://') || modelHref?.startsWith('https://') ? (
+                  <a
+                    className="inline-flex max-w-full items-center gap-2 align-[-0.125em] text-gray-12 hover:underline"
+                    href={modelHref}
+                    rel="noreferrer"
+                    target="_blank"
+                  >
+                    {ModelAvatar}
+                    <span className="flex">
+                      {modelDisplayName}
+                      <ArrowUpRight className="size-4 text-gray-11" />
+                    </span>
+                  </a>
+                ) : (
+                  <PreservedDeviceLink
+                    className="inline-flex max-w-full items-center gap-2 align-[-0.125em] text-gray-12 hover:underline"
+                    href={modelHref}
+                  >
+                    {ModelAvatar}
+                    <span>{modelDisplayName}</span>
+                  </PreservedDeviceLink>
+                )
               ) : (
-                <PreservedDeviceLink
-                  className={`inline-flex max-w-full items-center gap-2 align-middle ${INTERACTIVE_TEXT_CLASSNAME}`}
-                  href={modelHref}
-                >
-                  {modelAvatar}
+                <span className="inline-flex max-w-full items-center gap-2 align-[-0.125em] text-gray-12">
+                  {ModelAvatar}
                   <span>{modelDisplayName}</span>
-                </PreservedDeviceLink>
-              )
-            ) : (
-              <span className="inline-flex max-w-full items-center gap-2 align-middle text-gray-12">
-                {modelAvatar}
-                <span>{modelDisplayName}</span>
-              </span>
-            )}
-            <span className="font-normal text-gray-11">{benchmarkOnLabel}</span>
-            <PreservedDeviceLink
-              className={`inline-flex max-w-full items-center gap-1.5 align-middle ${INTERACTIVE_TEXT_CLASSNAME}`}
-              href={deviceHref}
-            >
-              {ManufacturerLogo && manufacturer ? (
-                <span
-                  className="flex size-5 items-center justify-center rounded"
-                  title={MANUFACTURER_LABEL[manufacturer]}
-                >
-                  <ManufacturerLogo className="border-gray-7" size={16} />
                 </span>
-              ) : null}
-              <span>{deviceLabel}</span>
-            </PreservedDeviceLink>
-          </h1>
-
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm md:text-base">
-            <PreservedDeviceLink className={INTERACTIVE_TEXT_CLASSNAME} href="/runs">
-              {'<- Runs'}
-            </PreservedDeviceLink>
-            {runtimePresentation.href ? (
-              <a
-                className={`flex min-w-fit items-center gap-1 text-nowrap md:gap-1.5 ${INTERACTIVE_TEXT_CLASSNAME}`}
-                href={runtimePresentation.href}
-                rel="noreferrer"
-                target="_blank"
+              )}
+              <span className="font-normal text-gray-11"> {benchmarkOnLabel} </span>
+              <PreservedDeviceLink
+                className="inline-flex max-w-full items-center gap-2 align-[-0.125em] text-gray-12 hover:underline"
+                href={deviceHref}
               >
-                <span className="flex size-3.5 items-center justify-center rounded md:size-4">
-                  {RuntimeLogo ? (
-                    <RuntimeLogo className="border-gray-7" size={16} />
-                  ) : (
-                    <FileQuestionMark className="size-3.5" />
-                  )}
-                </span>
-                <span className="text-sm md:text-base">Runtime</span>
-                <ArrowUpRight className="size-3 text-gray-11" />
-              </a>
-            ) : (
+                {ManufacturerLogo && manufacturer ? (
+                  <Fragment>
+                    <span className="md:hidden">
+                      <ManufacturerLogo className="rounded-full" size={24} />
+                    </span>
+                    <span className="hidden md:block">
+                      <ManufacturerLogo className="rounded-full" size={30} />
+                    </span>
+                  </Fragment>
+                ) : null}
+                <span>{deviceLabel}</span>
+              </PreservedDeviceLink>
+            </h1>
+            <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 pl-0 text-sm md:gap-x-3 md:pl-[2.375rem] md:text-base">
+              <Link
+                className="text-gray-11 underline decoration-dotted transition-colors hover:text-gray-12"
+                href="/runs"
+              >
+                &lt;- Runs
+              </Link>
               <div className="flex min-w-fit items-center gap-1 text-nowrap text-gray-11 md:gap-1.5">
-                <span className="flex size-3.5 items-center justify-center rounded md:size-4">
-                  {RuntimeLogo ? (
-                    <RuntimeLogo className="border-gray-7" size={16} />
-                  ) : (
-                    <FileQuestionMark className="size-3.5" />
-                  )}
+                <span className="flex size-3.5 items-center justify-center md:size-4">
+                  <Calendar />
                 </span>
-                <span className="text-sm md:text-base">Runtime</span>
+                <RelativeDate date={run.createdAt} type="absolute" />
               </div>
-            )}
-            <a
-              className={`flex min-w-fit items-center gap-1 text-nowrap md:gap-1.5 ${INTERACTIVE_TEXT_CLASSNAME}`}
-              href={harnessHref}
-              rel="noreferrer"
-              target="_blank"
-            >
-              <span className="flex size-3.5 items-center justify-center md:size-4">
-                <Hammer />
-              </span>
-              <span className="text-sm md:text-base">Harness</span>
-            </a>
-            <div className="flex min-w-fit items-center gap-1 text-nowrap text-gray-11 md:gap-1.5">
-              <span className="flex size-3.5 items-center justify-center md:size-4">
-                <Calendar />
-              </span>
-              <RelativeDate date={run.createdAt} type="absolute" />
+              {benchmarkCommand ? (
+                <CopyBenchmarkCommandButton command={benchmarkCommand} label="Command" />
+              ) : null}
+              <CopyRunIdButton id={run.id} label="Run ID" />
             </div>
-            {benchmarkCommand ? (
-              <CopyBenchmarkCommandButton command={benchmarkCommand} label="Run" />
-            ) : null}
-            <CopyRunIdButton id={run.id} label="Run ID" />
           </div>
         </div>
       </header>
 
       <div className="mx-auto flex w-full max-w-5xl grow flex-col px-4 py-4 md:px-0 md:py-6">
-        <div className="mb-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm font-normal leading-normal text-gray-11 md:text-base">
-          <span>
-            Runtime {run.runtimeName} {run.runtimeVersion}
-          </span>
-          <span>·</span>
-          <span>
-            Harness {run.harnessVersion} {'·'}
-            <span className="tabular-nums">{run.harnessGitSha.slice(0, 8)}</span>
-          </span>
-          {run.runtimeBuildFlags ? (
-            <>
-              <span>·</span>
-              <span>{run.runtimeBuildFlags}</span>
-            </>
-          ) : null}
-        </div>
-
         <section className="grid grid-cols-2 gap-2 md:grid-cols-4">
           {[
             { label: 'Prompt tokens', value: <span>{formatTokenSummary(inputTokenSummary)}</span> },
@@ -442,14 +392,26 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
             {
               label: 'Status',
               value: (
-                <Badge
-                  variant="outline"
-                  size="lg"
-                  type="text"
-                  intent={STATUS_BADGE_INTENT[run.status]}
-                >
-                  {run.status.charAt(0).toUpperCase() + run.status.slice(1)}
-                </Badge>
+                <Fragment>
+                  <Badge
+                    className="hidden h-7 md:block"
+                    variant="outline"
+                    size="lg"
+                    type="text"
+                    intent={STATUS_BADGE_INTENT[run.status]}
+                  >
+                    {run.status.charAt(0).toUpperCase() + run.status.slice(1)}
+                  </Badge>
+                  <Badge
+                    className="md:hidden"
+                    variant="outline"
+                    size="md"
+                    type="text"
+                    intent={STATUS_BADGE_INTENT[run.status]}
+                  >
+                    {run.status.charAt(0).toUpperCase() + run.status.slice(1)}
+                  </Badge>
+                </Fragment>
               ),
             },
             {
@@ -495,7 +457,18 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
             {
               label: 'Runnability',
               value:
-                runnabilityScore != null ? <ScoreBadge score={runnabilityScore} size="lg" /> : '—',
+                runnabilityScore != null ? (
+                  <Fragment>
+                    <ScoreBadge
+                      className="hidden h-7 md:block"
+                      score={runnabilityScore}
+                      size="lg"
+                    />
+                    <ScoreBadge className="md:hidden" score={runnabilityScore} size="md" />
+                  </Fragment>
+                ) : (
+                  '—'
+                ),
             },
           ].map((card) => (
             <div key={card.label} className="rounded-xl border border-gray-6 bg-gray-2 p-4">

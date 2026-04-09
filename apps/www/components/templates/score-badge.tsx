@@ -17,14 +17,16 @@ const TIERS = [
 // Component
 // -----------------------------------------------------------------------------
 
-const ScoreBadge: React.FC<{ score: number; size?: BadgeProps['size'] }> = ({
+const ScoreBadge: React.FC<Omit<BadgeProps, 'variant' | 'intent'> & { score: number }> = ({
+  className,
   score,
   size = 'sm',
+  ...rest
 }) => {
   const tier = TIERS.find((t) => score >= t.min) ?? TIERS[TIERS.length - 1];
 
   return (
-    <Badge size={size} variant="outline" intent={tier.intent}>
+    <Badge className={className} size={size} variant="outline" intent={tier.intent} {...rest}>
       {tier.label}
     </Badge>
   );

@@ -51,7 +51,7 @@ export default async function Layout({
                 href={`/${family.orgSlug}`}
                 className="flex items-center gap-2 font-normal underline decoration-dotted transition-colors hover:text-gray-12"
               >
-                {family.orgWebsiteUrl ? (
+                {family.orgLogoUrl ? (
                   <Fragment>
                     <span className="md:hidden">
                       <UserAvatar image={family.orgLogoUrl} name={family.orgName} size={24} />
@@ -61,7 +61,7 @@ export default async function Layout({
                     </span>
                   </Fragment>
                 ) : null}
-                <span>{family.orgName}</span>
+                <span className="line-clamp-1">{family.orgName}</span>
               </PreservedDeviceLink>
               <span>/</span>
               <span className="line-clamp-1 tracking-tight text-gray-12">{family.familyName}</span>
