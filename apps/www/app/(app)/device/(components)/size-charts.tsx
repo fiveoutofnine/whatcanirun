@@ -169,7 +169,10 @@ const DeviceSizeChart: React.FC<SizeChartProps> = ({ title, data, yKey }) => {
     };
   }, [updateDimensions]);
 
-  useEffect(() => updateDimensions(), [logScale, updateDimensions]);
+  useEffect(() => {
+    const timer = setTimeout(updateDimensions, 0);
+    return () => clearTimeout(timer);
+  }, [logScale, updateDimensions]);
 
   return (
     <div
