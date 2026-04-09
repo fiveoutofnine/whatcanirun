@@ -7,6 +7,7 @@ import { useQueryState } from 'nuqs';
 
 import type { Device } from '@/lib/db/schema';
 import { useDetectedDevice } from '@/lib/hooks';
+import { usePreservedNavigationDevice } from '@/lib/preserved-device-navigation';
 import { formatChipName, parseManufacturer } from '@/lib/utils';
 
 import DeviceCombobox from '@/components/templates/device-combobox';
@@ -41,6 +42,7 @@ const DeviceFloatingSelector: React.FC<DeviceFloatingSelectorProps> = ({ chips }
     shallow: false,
   });
   const detectedChip = useDetectedDevice(chips);
+  usePreservedNavigationDevice(device);
 
   const selected = useMemo(
     () => chips.find((c) => c.chipId === device) ?? chips[0],

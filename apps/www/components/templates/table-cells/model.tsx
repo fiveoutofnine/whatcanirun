@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { Fragment } from 'react';
 
 import clsx from 'clsx';
@@ -10,6 +9,7 @@ import { formatBytes } from '@/lib/utils';
 
 import ClickableTooltip from '@/components/templates/clickable-tooltip';
 import UserAvatar from '@/components/templates/user-avatar';
+import PreservedDeviceLink from '@/components/common/preserved-device-link';
 
 // -----------------------------------------------------------------------------
 // Props
@@ -53,9 +53,9 @@ const ModelTableCell: React.FC<ModelTableCellProps> & { Skeleton: React.FC } = (
     <div className="flex flex-col items-start">
       <div className="flex h-5 items-center gap-1">
         {familyHref ? (
-          <Link className="flex h-5 hover:underline" href={familyHref}>
+          <PreservedDeviceLink className="flex h-5 hover:underline" href={familyHref}>
             <span className="line-clamp-1 leading-5">{displayName}</span>
-          </Link>
+          </PreservedDeviceLink>
         ) : source && url ? (
           <a
             className="flex h-5 hover:underline"
@@ -76,13 +76,13 @@ const ModelTableCell: React.FC<ModelTableCellProps> & { Skeleton: React.FC } = (
               <span className="whitespace-nowrap text-gray-11">
                 Base model by{' '}
                 {lab.slug ? (
-                  <Link
+                  <PreservedDeviceLink
                     className="inline-flex items-center gap-1 align-[-2px] text-gray-11 underline decoration-dotted transition-colors hover:text-gray-12"
                     href={`/${lab.slug}`}
                   >
                     <UserAvatar image={lab.logoUrl} name={lab.name} size={16} />
                     {lab.name}
-                  </Link>
+                  </PreservedDeviceLink>
                 ) : (
                   <span className="inline-flex items-center gap-1 align-[-2px] text-gray-11">
                     <UserAvatar image={lab.logoUrl} name={lab.name} size={16} />
@@ -128,13 +128,13 @@ const ModelTableCell: React.FC<ModelTableCellProps> & { Skeleton: React.FC } = (
               <span className="text-gray-11">
                 Base model by{' '}
                 {lab.slug ? (
-                  <Link
+                  <PreservedDeviceLink
                     className="inline-flex items-center gap-1 align-[-2px] text-gray-11 underline decoration-dotted transition-colors hover:text-gray-12"
                     href={`/${lab.slug}`}
                   >
                     <UserAvatar image={lab.logoUrl} name={lab.name} size={16} />
                     {lab.name}
-                  </Link>
+                  </PreservedDeviceLink>
                 ) : (
                   <span className="inline-flex items-center gap-1 align-[-2px] text-gray-11">
                     <UserAvatar image={lab.logoUrl} name={lab.name} size={16} />

@@ -6,6 +6,7 @@ import { ChevronsUpDown } from 'lucide-react';
 import { useQueryState } from 'nuqs';
 
 import { useDetectedDevice } from '@/lib/hooks';
+import { usePreservedNavigationDevice } from '@/lib/preserved-device-navigation';
 import { formatChipName } from '@/lib/utils';
 
 import Logo from '@/components/common/logo';
@@ -52,6 +53,7 @@ const HeroHeading: React.FC<{ chips: ChipOption[] }> = ({ chips }) => {
     shallow: false,
   });
   const detectedChip = useDetectedDevice(chips);
+  usePreservedNavigationDevice(device);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);

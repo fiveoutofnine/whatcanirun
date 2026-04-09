@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { forwardRef } from 'react';
 
 import { buttonGroupStyles, buttonIconVariants, buttonVariants } from './styles';
@@ -6,6 +5,10 @@ import type { ButtonGroupProps, ButtonProps } from './types';
 import { Slot } from '@radix-ui/react-slot';
 import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
+
+import { isExternalHref } from '@/lib/preserved-device-navigation';
+
+import PreservedDeviceLink from '@/components/common/preserved-device-link';
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (
@@ -46,21 +49,39 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const { ref: _, ...restWithoutRef } = props;
 
     if (href && !disabled) {
+      const linkProps = newTab ? { target: '_blank', rel: 'noopener noreferrer' } : {};
+
       return (
         <Slot ref={ref} {...restWithoutRef}>
-          <Link href={href} {...(newTab ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
-            {leftIcon && variant !== 'text' ? (
-              <span className={buttonIconVariants({ size })} button-left-icon="">
-                {leftIcon}
-              </span>
-            ) : null}
-            <span button-content="">{children}</span>
-            {rightIcon && variant !== 'text' ? (
-              <span className={buttonIconVariants({ size })} button-right-icon="">
-                {rightIcon}
-              </span>
-            ) : null}
-          </Link>
+          {isExternalHref(href) ? (
+            <a href={href} {...linkProps}>
+              {leftIcon && variant !== 'text' ? (
+                <span className={buttonIconVariants({ size })} button-left-icon="">
+                  {leftIcon}
+                </span>
+              ) : null}
+              <span button-content="">{children}</span>
+              {rightIcon && variant !== 'text' ? (
+                <span className={buttonIconVariants({ size })} button-right-icon="">
+                  {rightIcon}
+                </span>
+              ) : null}
+            </a>
+          ) : (
+            <PreservedDeviceLink href={href} {...linkProps}>
+              {leftIcon && variant !== 'text' ? (
+                <span className={buttonIconVariants({ size })} button-left-icon="">
+                  {leftIcon}
+                </span>
+              ) : null}
+              <span button-content="">{children}</span>
+              {rightIcon && variant !== 'text' ? (
+                <span className={buttonIconVariants({ size })} button-right-icon="">
+                  {rightIcon}
+                </span>
+              ) : null}
+            </PreservedDeviceLink>
+          )}
         </Slot>
       );
     }
