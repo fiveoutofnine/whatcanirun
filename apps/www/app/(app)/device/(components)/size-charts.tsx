@@ -1,6 +1,6 @@
 'use client';
 
-import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import BoringAvatar from 'boring-avatars';
 import clsx from 'clsx';
@@ -75,6 +75,27 @@ const FORMAT_LOGO: Record<string, React.FC<{ className?: string; size?: number }
 // -----------------------------------------------------------------------------
 
 const DeviceSizeCharts: React.FC<DeviceSizeChartsProps> = ({ data }) => {
+  return (
+    <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+      <DeviceSizeChart title="Decode vs. Size" data={data} yKey="avgDecodeTps" />
+      <DeviceSizeChart title="Prefill vs. Size" data={data} yKey="avgPrefillTps" />
+    </div>
+  );
+};
+
+// -----------------------------------------------------------------------------
+// Individual chart
+// -----------------------------------------------------------------------------
+
+type SizeChartProps = {
+  title: string;
+  data: SizeChartValue[];
+  yKey: 'avgDecodeTps' | 'avgPrefillTps';
+};
+
+const DeviceSizeChart: React.FC<SizeChartProps> = ({ title, data, yKey }) => {
+  const chartRef = useRef<HTMLDivElement>(null);
+  const [, setChartDimensions] = useState({ width: 600, height: 400 });
   const [logScale, setLogScale] = useState(false);
   const [hiddenFormats, setHiddenFormats] = useState<Set<string>>(new Set());
 
@@ -95,7 +116,6 @@ const DeviceSizeCharts: React.FC<DeviceSizeChartsProps> = ({ data }) => {
       if (next.has(format)) {
         next.delete(format);
       } else {
-        // Don't allow hiding all formats.
         if (next.size + 1 >= formats.length) return prev;
         next.add(format);
       }
@@ -103,78 +123,16 @@ const DeviceSizeCharts: React.FC<DeviceSizeChartsProps> = ({ data }) => {
     });
   };
 
-  return (
-    <Fragment>
-      <div className="mb-4 flex flex-wrap items-center gap-1 px-4 md:px-0">
-        {formats.map((format) => {
-          const config = FORMAT_CONFIG[format];
-          const Logo = FORMAT_LOGO[format];
-          const active = !hiddenFormats.has(format);
-
-          return (
-            <Button
-              key={format}
-              size="sm"
-              className={active ? config?.activeStyles : ''}
-              variant="outline"
-              intent={config?.intent ?? 'none'}
-              onClick={() => toggleFormat(format)}
-              leftIcon={Logo ? <Logo size={14} /> : undefined}
-            >
-              {config?.label ?? format.toUpperCase()}
-            </Button>
-          );
-        })}
-        <ToggleButton pressed={logScale} onPressedChange={setLogScale}>
-          Log scale
-        </ToggleButton>
-      </div>
-      <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
-        <SizeChart
-          title="Decode Speed vs. Size"
-          data={filteredData}
-          yKey="avgDecodeTps"
-          yLabel="Decode (tok/s)"
-          logScale={logScale}
-        />
-        <SizeChart
-          title="Prefill Speed vs. Size"
-          data={filteredData}
-          yKey="avgPrefillTps"
-          yLabel="Prefill (tok/s)"
-          logScale={logScale}
-        />
-      </div>
-    </Fragment>
-  );
-};
-
-// -----------------------------------------------------------------------------
-// Individual chart
-// -----------------------------------------------------------------------------
-
-type SizeChartProps = {
-  title: string;
-  data: SizeChartValue[];
-  yKey: 'avgDecodeTps' | 'avgPrefillTps';
-  yLabel: string;
-  logScale: boolean;
-};
-
-const SizeChart: React.FC<SizeChartProps> = ({ title, data, yKey, logScale }) => {
-  const chartRef = useRef<HTMLDivElement>(null);
-  const [, setChartDimensions] = useState({ width: 600, height: 400 });
-
   const chartData = useMemo(
     () =>
-      data
+      filteredData
         .filter((d) => d.modelFileSizeBytes != null && d.modelFileSizeBytes > 0 && d[yKey] > 0)
         .map((d) => ({
           ...d,
           fileSizeGb: d.modelFileSizeBytes! / 1_073_741_824,
           logFileSizeGb: Math.log10(d.modelFileSizeBytes! / 1_073_741_824),
         })),
-    [data, yKey],
+    [filteredData, yKey],
   );
 
   const maxSizePowerOf10 = useMemo(() => {
@@ -219,10 +177,31 @@ const SizeChart: React.FC<SizeChartProps> = ({ title, data, yKey, logScale }) =>
       className="flex h-[28rem] w-full flex-col rounded-none border-y border-gray-6 bg-gray-2 p-4 md:rounded-xl md:border-x"
     >
       <div className="flex items-center gap-1.5">
-        <h3 className="text-base font-medium tracking-tight text-gray-12">{title}</h3>
-        <span className="font-mono text-xs text-gray-11">
-          {chartData.length.toLocaleString()} model{chartData.length !== 1 ? 's' : ''}
-        </span>
+        <h3 className="text-base font-medium tracking-tight text-gray-12 line-clamp-1">{title}</h3>
+        <div className="ml-auto flex items-center gap-1">
+          {formats.map((format) => {
+            const config = FORMAT_CONFIG[format];
+            const Logo = FORMAT_LOGO[format];
+            const active = !hiddenFormats.has(format);
+
+            return (
+              <Button
+                key={format}
+                size="sm"
+                className={active ? config?.activeStyles : ''}
+                variant="outline"
+                intent={config?.intent ?? 'none'}
+                onClick={() => toggleFormat(format)}
+                leftIcon={Logo ? <Logo size={14} /> : undefined}
+              >
+                {config?.label ?? format.toUpperCase()}
+              </Button>
+            );
+          })}
+          <ToggleButton pressed={logScale} onPressedChange={setLogScale}>
+            Log
+          </ToggleButton>
+        </div>
       </div>
       <ResponsiveContainer className="mt-2" width="100%" height="100%">
         <ScatterChart
