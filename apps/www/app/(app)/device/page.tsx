@@ -45,7 +45,7 @@ export default async function Page({
         })
         .from(v)
         .groupBy(v.deviceChipId),
-    ['size-chip-options'],
+    ['device-chip-options'],
     { revalidate: 600 },
   )();
 
@@ -80,7 +80,7 @@ export default async function Page({
           r.avgDecodeTps > 0 &&
           r.avgPrefillTps > 0,
       ),
-    [`size-chart-data-${effectiveDevice}`],
+    [`device-chart-data-${effectiveDevice}`],
     { revalidate: 600 },
   )();
 

@@ -5,8 +5,8 @@ import { Fragment } from 'react';
 // Metadata
 // -----------------------------------------------------------------------------
 
-const title = 'Size';
-const description = 'Compare model decode and prefill speeds against file size.';
+const title = 'Device';
+const description = 'Explore model benchmark stats for a specific device.';
 const images = [
   {
     url: 'https://whatcani.run/images/og/home.png',
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     title,
     description,
     images,
-    url: 'https://whatcani.run/size',
+    url: 'https://whatcani.run/device',
     siteName: 'whatcani.run',
     locale: 'en_US',
     type: 'website',
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     creatorId: '1269561030272643076',
   },
   alternates: {
-    canonical: 'https://whatcani.run/size',
+    canonical: 'https://whatcani.run/device',
   },
   manifest: '/manifest.json',
 };
