@@ -483,7 +483,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
         <CodeBlock
           className="-mx-4 w-[calc(100%+2rem)] rounded-none border-x-0 md:mx-0 md:w-full md:rounded-xl md:border-x [&_[code-block-header]]:rounded-none md:[&_[code-block-header]]:rounded-t-xl [&_[code-block-pre]]:max-h-80 [&_[code-block-pre]]:overflow-y-auto [&_[code-block-pre]]:rounded-none md:[&_[code-block-pre]]:rounded-b-[0.6875rem]"
           fileName="metadata.json"
-          language="none"
+          language="json"
           showLineNumbers={false}
         >
           {metadataJson}
