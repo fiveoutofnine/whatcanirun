@@ -53,7 +53,6 @@ const HeroHeading: React.FC<{ chips: ChipOption[] }> = ({ chips }) => {
     shallow: false,
   });
   const detectedChip = useDetectedDevice(chips);
-  usePreservedNavigationDevice(device);
 
   useEffect(() => {
     shouldAutoDetectRef.current = !new URLSearchParams(window.location.search).has('device');
@@ -67,9 +66,11 @@ const HeroHeading: React.FC<{ chips: ChipOption[] }> = ({ chips }) => {
 
   // Find selected device info for display.
   const selected = useMemo(
-    () => chips.find((c) => c.chipId === device) ?? chips[0],
-    [chips, device],
+    () => chips.find((c) => c.chipId === device) ?? chips.find((c) => c.chipId === defaultDevice),
+    [chips, defaultDevice, device],
   );
+  const effectiveDevice = selected?.chipId ?? defaultDevice;
+  usePreservedNavigationDevice(selected?.chipId ?? null);
 
   // Sort by GPU (primary), gpu cores, CPU, cpu cores, RAM, then model count (last tie-breaker).
   const chipsSorted = useMemo(
@@ -117,7 +118,7 @@ const HeroHeading: React.FC<{ chips: ChipOption[] }> = ({ chips }) => {
       <DeviceCombobox
         devices={chipsSorted}
         detectedDeviceChipId={detectedChip?.chipId ?? null}
-        value={device}
+        value={effectiveDevice}
         onSelect={(chipId: string) => {
           shouldAutoDetectRef.current = false;
           setDevice(chipId);
