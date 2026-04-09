@@ -89,7 +89,7 @@ export default async function Page({
     <div className="flex grow md:px-6">
       <div className="mx-auto flex w-full max-w-7xl grow flex-col py-4 md:py-6">
         <H2 className="mb-1 px-4 md:px-0">Model Speeds</H2>
-        <p className="mb-2 px-4 text-sm tabular-nums leading-normal text-gray-11 md:px-0 md:text-base">
+        <p className="mb-4 px-4 text-sm tabular-nums leading-normal text-gray-11 md:px-0 md:text-base">
           Results include trials with <span className="tabular-nums">4,096</span> input tokens and{' '}
           <span className="tabular-nums">1,024</span> output tokens only.
         </p>
