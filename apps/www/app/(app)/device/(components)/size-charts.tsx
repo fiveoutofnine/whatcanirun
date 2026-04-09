@@ -177,7 +177,7 @@ const DeviceSizeChart: React.FC<SizeChartProps> = ({ title, data, yKey }) => {
       className="flex h-[28rem] w-full flex-col rounded-none border-y border-gray-6 bg-gray-2 p-4 md:rounded-xl md:border-x"
     >
       <div className="flex items-center gap-1.5">
-        <h3 className="text-base font-medium tracking-tight text-gray-12 line-clamp-1">{title}</h3>
+        <h3 className="line-clamp-1 text-base font-medium tracking-tight text-gray-12">{title}</h3>
         <div className="ml-auto flex items-center gap-1">
           {formats.map((format) => {
             const config = FORMAT_CONFIG[format];
@@ -225,9 +225,9 @@ const DeviceSizeChart: React.FC<SizeChartProps> = ({ title, data, yKey }) => {
             ticks={
               logScale
                 ? Array.from(
-                  { length: maxSizePowerOf10 - minSizePowerOf10 + 1 },
-                  (_, i) => minSizePowerOf10 + i,
-                )
+                    { length: maxSizePowerOf10 - minSizePowerOf10 + 1 },
+                    (_, i) => minSizePowerOf10 + i,
+                  )
                 : undefined
             }
             tickFormatter={(x) =>
