@@ -268,7 +268,6 @@ const SizeChart: React.FC<SizeChartProps> = ({ title, data, yKey, logScale }) =>
             content={({ active, payload }) => {
               if (!active || !payload || !payload.length) return null;
               const d = payload[0].payload as SizeChartValue & { fileSizeGb: number };
-              const FormatLogo = FORMAT_LOGO[d.modelFormat];
 
               return (
                 <div
@@ -294,10 +293,7 @@ const SizeChart: React.FC<SizeChartProps> = ({ title, data, yKey, logScale }) =>
                     <div className="flex w-full flex-col gap-1">
                       <span className="h-4 text-right font-mono">{d.modelQuant ?? '—'}</span>
                       <span className="h-4 text-right font-mono">
-                        <span className="inline-flex items-center gap-1">
-                          {d.modelFormat.toUpperCase()}
-                          {FormatLogo ? <FormatLogo size={14} /> : null}
-                        </span>
+                        {d.modelFormat.toUpperCase()}
                       </span>
                       <span className="h-4 text-right font-mono">
                         {d.modelFileSizeBytes != null ? formatBytes(d.modelFileSizeBytes) : '—'}
