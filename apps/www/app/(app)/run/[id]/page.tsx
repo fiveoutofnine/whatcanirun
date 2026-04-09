@@ -5,6 +5,7 @@ import { Fragment } from 'react';
 
 import CopyBenchmarkCommandButton from './copy-benchmark-command-button';
 import CopyRunIdButton from './copy-run-id-button';
+import ShareButton from './share-button';
 import { ArrowUpRight, Calendar } from 'lucide-react';
 
 import { db } from '@/lib/db';
@@ -364,6 +365,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
                 <CopyBenchmarkCommandButton command={benchmarkCommand} label="Command" />
               ) : null}
               <CopyRunIdButton id={run.id} label="Run ID" />
+              <ShareButton label="Share" />
             </div>
           </div>
         </div>
