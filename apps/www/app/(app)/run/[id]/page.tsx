@@ -1,6 +1,5 @@
 import { notFound } from 'next/navigation';
 
-import TrialsDataTable from './(components)/trials-data-table';
 import CopyBenchmarkCommandButton from './copy-benchmark-command-button';
 import CopyRunIdButton from './copy-run-id-button';
 import { asc, eq } from 'drizzle-orm';
@@ -192,12 +191,6 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
     return `${s.min.toLocaleString()}-${s.max.toLocaleString()}`;
   };
 
-  const fmtNum = (value: number, fd = 1) =>
-    Number(value).toLocaleString(undefined, {
-      minimumFractionDigits: fd,
-      maximumFractionDigits: fd,
-    });
-
   // Metadata JSON
   const fileSizeBytes = run.model.info?.fileSizeBytes || run.model.fileSizeBytes || null;
   const metadataJson = JSON.stringify(
@@ -256,31 +249,29 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       benchmarkCommand,
       ...(run.did
         ? {
-          did: run.did,
-          reward: reward
-            ? {
-              status: 'granted',
-              modelReward: reward.modelReward,
-              deviceReward: reward.deviceReward,
-              totalReward: reward.totalReward,
-              paymentRef: reward.paymentRef,
-            }
-            : {
-              status:
-                run.status === RunStatus.PENDING
-                  ? 'pending_until_verification'
-                  : run.status === RunStatus.VERIFIED
-                    ? 'not_recorded'
-                    : 'not_eligible',
-            },
-        }
+            did: run.did,
+            reward: reward
+              ? {
+                  status: 'granted',
+                  modelReward: reward.modelReward,
+                  deviceReward: reward.deviceReward,
+                  totalReward: reward.totalReward,
+                  paymentRef: reward.paymentRef,
+                }
+              : {
+                  status:
+                    run.status === RunStatus.PENDING
+                      ? 'pending_until_verification'
+                      : run.status === RunStatus.VERIFIED
+                        ? 'not_recorded'
+                        : 'not_eligible',
+                },
+          }
         : {}),
     },
     null,
     2,
   );
-
-  const trialTableData = trialRows.map((trial) => ({ ...trial, deviceRamGb: run.device.ramGb }));
 
   // Model avatar
   const lab = modelInfo?.lab ?? null;
@@ -435,7 +426,10 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
         <section className="grid grid-cols-2 gap-2 md:grid-cols-4">
           {[
             { label: 'Prompt tokens', value: <span>{formatTokenSummary(inputTokenSummary)}</span> },
-            { label: 'Generation tokens', value: <span>{formatTokenSummary(outputTokenSummary)}</span> },
+            {
+              label: 'Generation tokens',
+              value: <span>{formatTokenSummary(outputTokenSummary)}</span>,
+            },
             {
               label: 'Trials',
               value: (
@@ -448,7 +442,12 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
             {
               label: 'Status',
               value: (
-                <Badge variant="outline" size="lg" type="text" intent={STATUS_BADGE_INTENT[run.status]}>
+                <Badge
+                  variant="outline"
+                  size="lg"
+                  type="text"
+                  intent={STATUS_BADGE_INTENT[run.status]}
+                >
                   {run.status.charAt(0).toUpperCase() + run.status.slice(1)}
                 </Badge>
               ),
@@ -457,7 +456,10 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
               label: 'Decode',
               value: (
                 <span>
-                  {fmtNum(run.decodeTpsMean)}
+                  {Number(run.decodeTpsMean).toLocaleString(undefined, {
+                    maximumFractionDigits: 1,
+                    minimumFractionDigits: 1,
+                  })}
                   <span className="text-gray-11"> tok/s</span>
                 </span>
               ),
@@ -467,7 +469,10 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
               value:
                 run.prefillTpsMean != null ? (
                   <span>
-                    {fmtNum(run.prefillTpsMean)}
+                    {Number(run.prefillTpsMean).toLocaleString(undefined, {
+                      maximumFractionDigits: 1,
+                      minimumFractionDigits: 1,
+                    })}
                     <span className="text-gray-11"> tok/s</span>
                   </span>
                 ) : (
@@ -478,14 +483,19 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
               label: 'Peak memory',
               value: (
                 <span>
-                  {fmtNum(run.peakRssMb / 1024, 2)} GB
+                  {Number(run.peakRssMb / 1024).toLocaleString(undefined, {
+                    maximumFractionDigits: 2,
+                    minimumFractionDigits: 2,
+                  })}
+                  <span className="text-gray-11"> GB</span>
                   <span className="text-gray-11">/{run.device.ramGb.toLocaleString()} GB</span>
                 </span>
               ),
             },
             {
               label: 'Runnability',
-              value: runnabilityScore != null ? <ScoreBadge score={runnabilityScore} size="lg" /> : '—',
+              value:
+                runnabilityScore != null ? <ScoreBadge score={runnabilityScore} size="lg" /> : '—',
             },
           ].map((card) => (
             <div key={card.label} className="rounded-xl border border-gray-6 bg-gray-2 p-4">
@@ -506,9 +516,6 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
         >
           {metadataJson}
         </CodeBlock>
-
-        <H2 className="mb-2 mt-4 md:mt-8">Trials</H2>
-        <TrialsDataTable data={trialTableData} />
       </div>
     </div>
   );
