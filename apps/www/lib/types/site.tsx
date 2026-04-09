@@ -13,16 +13,14 @@ export type ExternalLink = {
 /**
  * Type for a page slug on [**whatcani.run**](https://whatcani.run).
  */
-export type PageSlug = '/' | '/models' | '/runs' | '/docs';
+export type PageSlug = '/' | '/models' | '/device' | '/runs' | '/docs';
 
 /**
  * Type for an external page linked on [**whatcani.run**](https://whatcani.run),
  * intended to be part of configuration files (e.g. for the navigation bar
  * component).
  */
-export type PageExternalLink =
-  | 'https://github.com/fiveoutofnine/whatcanirun'
-  | 'https://x.com/fiveoutofnine';
+export type PageExternalLink = 'https://github.com/fiveoutofnine/whatcanirun';
 
 /**
  * Type for a page on [**whatcani.run**](https://whatcani.run), intended to be
