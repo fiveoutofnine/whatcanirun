@@ -22,18 +22,28 @@ export const generateMetadata = async ({
         columns: {
           modelId: true,
           deviceId: true,
+          decodeTpsMean: true,
+          prefillTpsMean: true,
         },
         with: {
           model: {
             columns: {
               displayName: true,
               quant: true,
+              format: true,
             },
             with: {
               info: {
                 columns: {
                   name: true,
                   quant: true,
+                },
+                with: {
+                  lab: {
+                    columns: {
+                      logoUrl: true,
+                    },
+                  },
                 },
               },
             },
@@ -56,19 +66,40 @@ export const generateMetadata = async ({
 
   const modelName = run.model?.info?.name ?? run.model.displayName;
   const quant = run.model?.info?.quant ?? run.model.quant;
+  const format = run.model?.format;
   const { manufacturer, displayName } = parseManufacturer(run.device.gpu);
   const isApple = manufacturer === 'apple';
   const article = isApple || 'aeiou'.includes(displayName.charAt(0).toLowerCase()) ? 'an' : 'a';
 
+  const modelLabLogoUrl = run.model?.info?.lab?.logoUrl;
+  const ogLogoBase = 'https://daimon-assets.fiveoutofnine.com/org_logos';
+  const toOgLogoUrl = (url: string) => {
+    const slug = url
+      .split('/')
+      .pop()
+      ?.replace(/\.\w+$/, '');
+    return slug ? `${ogLogoBase}/${slug}.jpg` : undefined;
+  };
+
+  const ogParams = new URLSearchParams();
+  ogParams.set('model', modelName);
+  if (quant) ogParams.set('modelQuant', quant + (format ? `(${format})` : ''));
+  const ogModelLabLogoUrl = modelLabLogoUrl ? toOgLogoUrl(modelLabLogoUrl) : undefined;
+  if (ogModelLabLogoUrl) ogParams.set('modelLabLogoUrl', ogModelLabLogoUrl);
+  if (manufacturer) ogParams.set('deviceManufacturerLogoUrl', `${ogLogoBase}/${manufacturer}.jpg`);
+  if (run.decodeTpsMean) ogParams.set('decode', String(run.decodeTpsMean));
+  if (run.prefillTpsMean) ogParams.set('prefill', String(run.prefillTpsMean));
+  ogParams.set('device', displayName || run.device.gpu);
+
   const title = `Run Details`;
   const description =
-    `View details for a benchmark run of ${modelName} ${quant ? `(${quant} quant) ` : ''}` +
+    `View details for a benchmark run of ${modelName} ${quant ? ` (${quant} quant) ` : ''}` +
     (displayName ? `on ${article} ${displayName}.` : '.');
   const url = `https://whatcani.run/run/${id}`;
   const images = [
     {
-      url: 'https://whatcani.run/images/og/home.png',
-      alt: 'whatcani.run OpenGraph image',
+      url: `https://whatcani.run/api/og/run?${ogParams.toString()}`,
+      alt: `${modelName} benchmark results on ${displayName || run.device.gpu}`,
       width: 1200,
       height: 630,
     },
