@@ -83,7 +83,7 @@ export const generateMetadata = async ({
 
   const ogParams = new URLSearchParams();
   ogParams.set('model', modelName);
-  if (quant) ogParams.set('modelQuant', quant + (format ? `(${format})` : ''));
+  if (quant) ogParams.set('modelQuant', quant + (format ? ` (${format})` : ''));
   const ogModelLabLogoUrl = modelLabLogoUrl ? toOgLogoUrl(modelLabLogoUrl) : undefined;
   if (ogModelLabLogoUrl) ogParams.set('modelLabLogoUrl', ogModelLabLogoUrl);
   if (manufacturer) ogParams.set('deviceManufacturerLogoUrl', `${ogLogoBase}/${manufacturer}.jpg`);
