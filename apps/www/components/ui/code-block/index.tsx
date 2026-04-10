@@ -40,6 +40,8 @@ require('prismjs/components/prism-python');
 require('prismjs/components/prism-bash');
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 require('prismjs/components/prism-diff');
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+require('prismjs/components/prism-json');
 
 const CodeBlock: React.FC<CodeBlockProps> = ({
   className,

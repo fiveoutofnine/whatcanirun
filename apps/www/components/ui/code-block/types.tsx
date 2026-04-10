@@ -36,6 +36,7 @@ export type CodeBlockLanguage =
   | 'bash'
   | 'sh'
   | 'diff'
+  | 'json'
   | 'none';
 
 export type CodeBlockProps = Omit<React.HTMLAttributes<HTMLPreElement>, 'children'> &
