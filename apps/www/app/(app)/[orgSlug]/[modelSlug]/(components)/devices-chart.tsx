@@ -449,6 +449,7 @@ const ModelDevicesChartChart: React.FC<ModelDevicesChartProps> = ({ data, defaul
             name="Devices"
             data={chartData}
             className="fill-gray-9"
+            tabIndex={-1}
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             shape={(props: any) => {
               const { cx, cy } = props as { cx: number; cy: number } & ModelDevicesChartValue;

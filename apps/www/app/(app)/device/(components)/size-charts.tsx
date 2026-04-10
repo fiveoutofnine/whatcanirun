@@ -15,6 +15,7 @@ import {
 } from 'recharts';
 
 import formatBytes from '@/lib/utils/format-bytes';
+import formatValueToPrecision from '@/lib/utils/format-value-to-precision';
 
 import LogoImg from '@/components/common/logo-img';
 import ToggleButton from '@/components/templates/toggle-button';
@@ -253,7 +254,7 @@ const DeviceSizeChart: React.FC<SizeChartProps> = ({ title, data, yKey }) => {
               fontSize: 14,
               strokeWidth: 0,
             }}
-            tickFormatter={(x) => x.toLocaleString()}
+            tickFormatter={(x) => formatValueToPrecision(x, 1, false)}
             tickLine={false}
             tickSize={4}
           />
@@ -326,6 +327,7 @@ const DeviceSizeChart: React.FC<SizeChartProps> = ({ title, data, yKey }) => {
             name="Models"
             data={chartData}
             className="fill-gray-9"
+            tabIndex={-1}
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             shape={(props: any) => {
               const { cx, cy } = props as { cx: number; cy: number };
