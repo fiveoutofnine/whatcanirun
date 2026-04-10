@@ -59,20 +59,20 @@ const ModelsDataTableMobile: React.FC<ModelsDataTableInternalProps> = (tableOpti
             lab={
               row.original.labName && row.original.labSlug
                 ? {
-                    name: row.original.labName,
-                    logoUrl: row.original.labLogoUrl,
-                    websiteUrl: row.original.labWebsiteUrl,
-                    slug: row.original.labSlug,
-                  }
+                  name: row.original.labName,
+                  logoUrl: row.original.labLogoUrl,
+                  websiteUrl: row.original.labWebsiteUrl,
+                  slug: row.original.labSlug,
+                }
                 : undefined
             }
             quantizedBy={
               row.original.quantizedByName
                 ? {
-                    name: row.original.quantizedByName,
-                    logoUrl: row.original.quantizedByLogoUrl,
-                    websiteUrl: row.original.quantizedByWebsiteUrl,
-                  }
+                  name: row.original.quantizedByName,
+                  logoUrl: row.original.quantizedByLogoUrl,
+                  websiteUrl: row.original.quantizedByWebsiteUrl,
+                }
                 : undefined
             }
             labSlug={row.original.labSlug}
@@ -381,15 +381,13 @@ const ModelsDataTableMobileSubComponent: React.FC<{ data: ModelsDataTableValue }
       </Stat>
       <Stat className="col-span-1">
         <Stat.Name>
-          <Vocab word="trial" />
-          Trials
+          <Vocab word="trial">Trials</Vocab>
         </Stat.Name>
         <Stat.Value className="tabular-nums">{Number(data.trialCount).toLocaleString()}</Stat.Value>
       </Stat>
       <Stat className="col-span-1">
         <Stat.Name>
-          <Vocab word="run" />
-          Runs
+          <Vocab word="run">Runs</Vocab>
         </Stat.Name>
         <Stat.Value className="tabular-nums">{Number(data.runCount).toLocaleString()}</Stat.Value>
       </Stat>
