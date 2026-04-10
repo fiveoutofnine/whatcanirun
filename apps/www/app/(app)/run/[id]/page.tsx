@@ -10,7 +10,7 @@ import { ArrowUpRight, Calendar, Layers } from 'lucide-react';
 
 import { db } from '@/lib/db';
 import { RunStatus } from '@/lib/db/schema';
-import { parseManufacturer } from '@/lib/utils';
+import { getRunnabilityScore, parseManufacturer } from '@/lib/utils';
 
 import PreservedDeviceLink from '@/components/common/preserved-device-link';
 import ClickableTooltip from '@/components/templates/clickable-tooltip';
@@ -148,69 +148,26 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
     manufacturer !== 'apple' && run.device.gpuCount > 1 ? `${run.device.gpuCount}× ` : '';
 
   // Indefinite article
-  const benchmarkOnLabel = (() => {
-    if (deviceCountPrefix) return 'benchmark on';
-    const firstToken = deviceDisplayName.trim().split(/\s+/)[0] ?? '';
-    const acronymAnLetters = new Set(['A', 'E', 'F', 'H', 'I', 'L', 'M', 'N', 'O', 'R', 'S', 'X']);
-    if (
-      firstToken.length > 0 &&
-      /^[A-Z0-9]+$/.test(firstToken) &&
-      acronymAnLetters.has(firstToken[0]!)
-    )
-      return 'benchmark on an';
-    const lower = deviceDisplayName.trim().toLowerCase();
-    if (
-      lower.startsWith('apple') ||
-      lower.startsWith('amd') ||
-      lower.startsWith('intel') ||
-      lower.startsWith('nvidia') ||
-      /^[aeiou]/.test(lower)
-    )
-      return 'benchmark on an';
-    return 'benchmark on a';
-  })();
+  const article =
+    manufacturer === 'apple' || 'aeiou'.includes(deviceDisplayName.charAt(0).toLowerCase())
+      ? 'an'
+      : 'a';
+  const benchmarkOnLabel = `benchmark on ${article}`;
 
   const benchmarkCommand = modelSource
     ? `bunx whatcanirun@latest run --model ${modelSource} --runtime ${run.runtimeName} --submit`
     : null;
 
-  // Runnability score
-  const runnabilityScore = (() => {
-    if (run.prefillTpsMean == null) return null;
-
-    const normalizeDecode = (v: number) => {
-      if (v >= 100) return 1;
-      if (v >= 40) return 0.8 + (0.2 * (v - 40)) / 60;
-      if (v >= 20) return 0.6 + (0.2 * (v - 20)) / 20;
-      if (v >= 10) return 0.4 + (0.2 * (v - 10)) / 10;
-      if (v >= 5) return 0.2 + (0.2 * (v - 5)) / 5;
-      return (0.2 * v) / 5;
-    };
-    const normalizePrefill = (v: number) => {
-      if (v >= 4000) return 1;
-      if (v >= 2000) return 0.8 + (0.2 * (v - 2000)) / 2000;
-      if (v >= 1000) return 0.6 + (0.2 * (v - 1000)) / 1000;
-      if (v >= 500) return 0.4 + (0.2 * (v - 500)) / 500;
-      if (v >= 200) return 0.2 + (0.2 * (v - 200)) / 300;
-      return (0.2 * v) / 200;
-    };
-
-    const decodeScore = normalizeDecode(run.decodeTpsMean);
-    const prefillScore = normalizePrefill(run.prefillTpsMean);
-
-    const unreliableMemory =
-      (run.runtimeName === 'llama.cpp' && run.harnessVersion.localeCompare('0.1.16') <= 0) ||
-      (run.device.osName.toLowerCase() !== 'macos' &&
-        run.harnessVersion.localeCompare('0.1.19') < 0);
-    if (unreliableMemory) return 0.65 * decodeScore + 0.35 * prefillScore;
-
-    const estimatedPeakRssMb =
-      (run.model.info?.fileSizeBytes || run.model.fileSizeBytes || 0) / (1024 * 1024) + 512;
-    const effectivePeakRssMb = run.peakRssMb || estimatedPeakRssMb;
-    const memoryScore = Math.max(0, 1 - effectivePeakRssMb / (run.device.ramGb * 716.8));
-
-    return 0.45 * decodeScore + 0.25 * prefillScore + 0.3 * memoryScore;
-  })();
+  const runnabilityScore = getRunnabilityScore({
+    decodeTpsMean: run.decodeTpsMean,
+    prefillTpsMean: run.prefillTpsMean,
+    peakRssMb: run.peakRssMb,
+    ramGb: run.device.ramGb,
+    fileSizeBytes: run.model.info?.fileSizeBytes || run.model.fileSizeBytes || null,
+    runtimeName: run.runtimeName,
+    harnessVersion: run.harnessVersion,
+    osName: run.device.osName,
+  });
 
   // Metadata JSON
   const fileSizeBytes = run.model.info?.fileSizeBytes || run.model.fileSizeBytes || null;
