@@ -59,20 +59,20 @@ const ModelsDataTableMobile: React.FC<ModelsDataTableInternalProps> = (tableOpti
             lab={
               row.original.labName && row.original.labSlug
                 ? {
-                  name: row.original.labName,
-                  logoUrl: row.original.labLogoUrl,
-                  websiteUrl: row.original.labWebsiteUrl,
-                  slug: row.original.labSlug,
-                }
+                    name: row.original.labName,
+                    logoUrl: row.original.labLogoUrl,
+                    websiteUrl: row.original.labWebsiteUrl,
+                    slug: row.original.labSlug,
+                  }
                 : undefined
             }
             quantizedBy={
               row.original.quantizedByName
                 ? {
-                  name: row.original.quantizedByName,
-                  logoUrl: row.original.quantizedByLogoUrl,
-                  websiteUrl: row.original.quantizedByWebsiteUrl,
-                }
+                    name: row.original.quantizedByName,
+                    logoUrl: row.original.quantizedByLogoUrl,
+                    websiteUrl: row.original.quantizedByWebsiteUrl,
+                  }
                 : undefined
             }
             labSlug={row.original.labSlug}
