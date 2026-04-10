@@ -134,7 +134,7 @@ export async function GET(request: NextRequest) {
             ) : null}
             <div
               style={{
-                display: 'flex',
+                display: 'block',
                 fontSize: 56,
                 fontWeight: 600,
                 lineHeight: '100%',
@@ -148,13 +148,14 @@ export async function GET(request: NextRequest) {
             {modelQuant ? (
               <span
                 style={{
-                  display: 'flex',
+                  display: 'block',
                   fontSize: 56,
                   fontWeight: 400,
                   lineHeight: '100%',
                   letterSpacing: '-0.025em',
                   whiteSpace: 'pre',
                   color: GRAY_11,
+                  lineClamp: 1,
                 }}
               >
                 {` / ${modelQuant}`}
@@ -277,6 +278,7 @@ export async function GET(request: NextRequest) {
             <div
               style={{
                 display: 'flex',
+                flex: 1,
                 flexDirection: 'row',
                 alignItems: 'center',
               }}
@@ -307,7 +309,7 @@ export async function GET(request: NextRequest) {
               ) : null}
               <div
                 style={{
-                  display: 'flex',
+                  display: 'block',
                   fontSize: 40,
                   fontWeight: 600,
                   lineHeight: '100%',
@@ -321,10 +323,11 @@ export async function GET(request: NextRequest) {
             </div>
             <div
               style={{
-                display: 'flex',
+                display: 'block',
                 flexDirection: 'row',
                 alignItems: 'center',
                 background: 'red',
+                marginLeft: 24,
               }}
             >
               hi
