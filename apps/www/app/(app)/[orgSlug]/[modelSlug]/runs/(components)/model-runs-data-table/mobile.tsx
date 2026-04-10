@@ -17,6 +17,7 @@ import {
   QuantTableCell,
   RuntimeTableCell,
 } from '@/components/templates/table-cells';
+import Vocab, { GLOSSARY } from '@/components/templates/vocab';
 import { IconButton, Table, Tooltip } from '@/components/ui';
 
 const ModelRunsDataTableMobile: React.FC<ModelRunsDataTableInternalProps> = (tableOptions) => {
@@ -70,6 +71,8 @@ const ModelRunsDataTableMobile: React.FC<ModelRunsDataTableInternalProps> = (tab
           <DataTableSortHeader
             className="ml-auto w-fit"
             column={column}
+            tooltipTitle={GLOSSARY.decode.label}
+            tooltipDescription={GLOSSARY.decode.description}
             lowLabel="Slow"
             highLabel="Fast"
           >
@@ -232,7 +235,9 @@ const ModelRunsDataTableMobileSubComponent: React.FC<{ data: ModelRunsDataTableV
         </Stat.Value>
       </Stat>
       <Stat className="col-span-1">
-        <Stat.Name>Prefill</Stat.Name>
+        <Stat.Name>
+          <Vocab word="prefill" />
+        </Stat.Name>
         <Stat.Value className="tabular-nums">
           {data.prefillTpsMean != null
             ? `${Number(data.prefillTpsMean).toLocaleString(undefined, {
@@ -257,11 +262,15 @@ const ModelRunsDataTableMobileSubComponent: React.FC<{ data: ModelRunsDataTableV
         </Stat.Value>
       </Stat>
       <Stat className="col-span-1">
-        <Stat.Name>Trials passed</Stat.Name>
+        <Stat.Name>
+          <Vocab word="trial">Trials</Vocab> passed
+        </Stat.Name>
         <Stat.Value className="tabular-nums">{data.trialsPassed}</Stat.Value>
       </Stat>
       <Stat className="col-span-1">
-        <Stat.Name>Trials total</Stat.Name>
+        <Stat.Name>
+          <Vocab word="trial">Trials</Vocab> total
+        </Stat.Name>
         <Stat.Value className="tabular-nums">{data.trialsTotal}</Stat.Value>
       </Stat>
       <Stat className="col-span-1">

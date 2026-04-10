@@ -7,7 +7,7 @@ import CopyCommandButton from './copy-command-button';
 import type { ModelsDataTableValue } from './types';
 import { type ColumnDef, flexRender, useReactTable } from '@tanstack/react-table';
 import clsx from 'clsx';
-import { Check, ChevronRight, Copy, FileText, Info } from 'lucide-react';
+import { Check, ChevronRight, Copy, FileText } from 'lucide-react';
 
 import { RUN_COMMAND } from '@/lib/constants/cli';
 import { getVramGb, MANUFACTURER_LABEL } from '@/lib/constants/gpu';
@@ -19,6 +19,8 @@ import ScoreBadge from '@/components/templates/score-badge';
 import Stat from '@/components/templates/stat';
 import StateInfo from '@/components/templates/state-info';
 import { ModelTableCell, RuntimeTableCell } from '@/components/templates/table-cells';
+import Vocab from '@/components/templates/vocab';
+import { GLOSSARY } from '@/components/templates/vocab';
 import { Button, IconButton, Table, toast, Tooltip } from '@/components/ui';
 
 const ModelsDataTableMobile: React.FC<ModelsDataTableInternalProps> = (tableOptions) => {
@@ -85,6 +87,8 @@ const ModelsDataTableMobile: React.FC<ModelsDataTableInternalProps> = (tableOpti
           <DataTableSortHeader
             className="ml-auto w-fit"
             column={column}
+            tooltipTitle={GLOSSARY.decode.label}
+            tooltipDescription={GLOSSARY.decode.description}
             lowLabel="Slow"
             highLabel="Fast"
           >
@@ -108,14 +112,8 @@ const ModelsDataTableMobile: React.FC<ModelsDataTableInternalProps> = (tableOpti
           <DataTableSortHeader
             className="ml-auto w-fit"
             column={column}
-            description={
-              <div className="flex flex-col">
-                <span className="text-sm font-medium text-gray-12">Score</span>
-                <span className="text-xs leading-normal text-gray-11">
-                  Weighted blend of decode/prefill throughput and memory usage.
-                </span>
-              </div>
-            }
+            tooltipTitle="Score"
+            tooltipDescription={GLOSSARY.runnability.description}
           >
             Score
           </DataTableSortHeader>
@@ -331,7 +329,9 @@ const ModelsDataTableMobileSubComponent: React.FC<{ data: ModelsDataTableValue }
         />
       </Stat>
       <Stat className="col-span-1">
-        <Stat.Name>Prefill</Stat.Name>
+        <Stat.Name>
+          <Vocab word="prefill" />
+        </Stat.Name>
         <Stat.Value className="tabular-nums">
           {Number(data.avgPrefillTps).toLocaleString(undefined, {
             minimumFractionDigits: 1,
@@ -341,22 +341,8 @@ const ModelsDataTableMobileSubComponent: React.FC<{ data: ModelsDataTableValue }
         </Stat.Value>
       </Stat>
       <Stat className="col-span-1">
-        <Stat.Name className="w-fit transition-colors hover:text-gray-12">
-          <ClickableTooltip
-            content={
-              <div className="flex flex-col">
-                <span className="text-sm font-medium text-gray-12">Time to first token</span>
-                <span className="text-xs leading-normal text-gray-11">
-                  p50 time taken to generate the first output token.
-                </span>
-              </div>
-            }
-          >
-            <div className="flex items-center gap-1">
-              <span className="leading-4">TTFT</span>
-              <Info className="size-3" />
-            </div>
-          </ClickableTooltip>
+        <Stat.Name>
+          <Vocab word="ttft" />
         </Stat.Name>
         {data.ttftP50Ms < 4_000 ? (
           <Stat.Value className="tabular-nums">
@@ -394,11 +380,17 @@ const ModelsDataTableMobileSubComponent: React.FC<{ data: ModelsDataTableValue }
         )}
       </Stat>
       <Stat className="col-span-1">
-        <Stat.Name>Trials</Stat.Name>
+        <Stat.Name>
+          <Vocab word="trial" />
+          Trials
+        </Stat.Name>
         <Stat.Value className="tabular-nums">{Number(data.trialCount).toLocaleString()}</Stat.Value>
       </Stat>
       <Stat className="col-span-1">
-        <Stat.Name>Runs</Stat.Name>
+        <Stat.Name>
+          <Vocab word="run" />
+          Runs
+        </Stat.Name>
         <Stat.Value className="tabular-nums">{Number(data.runCount).toLocaleString()}</Stat.Value>
       </Stat>
       <CopyCommandButton className="col-span-2 w-full" row={data} iconButton={false} />

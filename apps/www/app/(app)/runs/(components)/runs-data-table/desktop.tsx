@@ -18,6 +18,7 @@ import {
   ModelTableCell,
   RuntimeTableCell,
 } from '@/components/templates/table-cells';
+import Vocab, { GLOSSARY } from '@/components/templates/vocab';
 import { Badge, Table } from '@/components/ui';
 
 const STATUS_BADGE_INTENT = {
@@ -124,6 +125,8 @@ const RunsDataTableDesktop: React.FC<RunsDataTableInternalProps> = (tableOptions
           <DataTableSortHeader
             className="ml-auto w-fit"
             column={column}
+            tooltipTitle={GLOSSARY.decode.label}
+            tooltipDescription={GLOSSARY.decode.description}
             lowLabel="Slow"
             highLabel="Fast"
           >
@@ -147,6 +150,8 @@ const RunsDataTableDesktop: React.FC<RunsDataTableInternalProps> = (tableOptions
           <DataTableSortHeader
             className="ml-auto w-fit"
             column={column}
+            tooltipTitle={GLOSSARY.prefill.label}
+            tooltipDescription={GLOSSARY.prefill.description}
             lowLabel="Slow"
             highLabel="Fast"
           >
@@ -185,7 +190,11 @@ const RunsDataTableDesktop: React.FC<RunsDataTableInternalProps> = (tableOptions
         id: 'status',
         accessorKey: 'status',
         enableSorting: false,
-        header: () => <div className="flex justify-end">Status</div>,
+        header: () => (
+          <div className="flex justify-end">
+            <Vocab word="status" />
+          </div>
+        ),
         cell: ({ row }) => (
           <div className="flex justify-end">
             <Badge

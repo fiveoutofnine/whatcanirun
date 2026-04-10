@@ -16,6 +16,7 @@ import {
   QuantTableCell,
   RuntimeTableCell,
 } from '@/components/templates/table-cells';
+import { GLOSSARY } from '@/components/templates/vocab';
 import { Table } from '@/components/ui';
 
 const ModelRunsDataTableDesktop: React.FC<ModelRunsDataTableInternalProps> = (tableOptions) => {
@@ -89,6 +90,8 @@ const ModelRunsDataTableDesktop: React.FC<ModelRunsDataTableInternalProps> = (ta
           <DataTableSortHeader
             className="ml-auto w-fit"
             column={column}
+            tooltipTitle={GLOSSARY.decode.label}
+            tooltipDescription={GLOSSARY.decode.description}
             lowLabel="Slow"
             highLabel="Fast"
           >
@@ -112,6 +115,8 @@ const ModelRunsDataTableDesktop: React.FC<ModelRunsDataTableInternalProps> = (ta
           <DataTableSortHeader
             className="ml-auto w-fit"
             column={column}
+            tooltipTitle={GLOSSARY.prefill.label}
+            tooltipDescription={GLOSSARY.prefill.description}
             lowLabel="Slow"
             highLabel="Fast"
           >

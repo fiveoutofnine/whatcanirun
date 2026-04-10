@@ -18,6 +18,7 @@ import {
   ModelTableCell,
   RuntimeTableCell,
 } from '@/components/templates/table-cells';
+import { GLOSSARY } from '@/components/templates/vocab';
 import { Button, IconButton, Table, toast } from '@/components/ui';
 
 const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOptions) => {
@@ -98,6 +99,8 @@ const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOpt
         header: ({ column }) => (
           <DataTableSortHeader
             className="ml-auto w-fit"
+            tooltipTitle={GLOSSARY.decode.label}
+            tooltipDescription={GLOSSARY.decode.description}
             column={column}
             lowLabel="Slow"
             highLabel="Fast"
@@ -122,6 +125,8 @@ const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOpt
           <DataTableSortHeader
             className="ml-auto w-fit"
             column={column}
+            tooltipTitle={GLOSSARY.prefill.label}
+            tooltipDescription={GLOSSARY.prefill.description}
             lowLabel="Slow"
             highLabel="Fast"
           >
@@ -145,14 +150,8 @@ const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOpt
           <DataTableSortHeader
             className="ml-auto w-fit"
             column={column}
-            description={
-              <div className="flex flex-col">
-                <span className="text-sm font-medium text-gray-12">Time to first token</span>
-                <span className="text-xs leading-normal text-gray-11">
-                  p50 time taken to generate the first output token.
-                </span>
-              </div>
-            }
+            tooltipTitle={GLOSSARY.ttft.label}
+            tooltipDescription={GLOSSARY.ttft.description}
             lowLabel="Fast"
             highLabel="Slow"
           >
@@ -197,7 +196,12 @@ const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOpt
         id: 'trials',
         accessorKey: 'trials',
         header: ({ column }) => (
-          <DataTableSortHeader className="ml-auto w-fit" column={column}>
+          <DataTableSortHeader
+            className="ml-auto w-fit"
+            column={column}
+            tooltipTitle="Trials"
+            tooltipDescription="Number of trials run for the model."
+          >
             Trials
           </DataTableSortHeader>
         ),
@@ -218,14 +222,8 @@ const ModelsDataTableDesktop: React.FC<ModelsDataTableInternalProps> = (tableOpt
           <DataTableSortHeader
             className="ml-auto w-fit"
             column={column}
-            description={
-              <div className="flex flex-col">
-                <span className="text-sm font-medium text-gray-12">Score</span>
-                <span className="text-xs leading-normal text-gray-11">
-                  Weighted blend of decode/prefill throughput and memory usage.
-                </span>
-              </div>
-            }
+            tooltipTitle="Score"
+            tooltipDescription={GLOSSARY.runnability.description}
           >
             Score
           </DataTableSortHeader>

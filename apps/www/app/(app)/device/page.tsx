@@ -9,6 +9,7 @@ import { devices, runs, RunStatus, view__model_stats_by_device } from '@/lib/db/
 import DeviceFloatingSelector from '@/components/common/device-floating-selector';
 import type { ChipOption } from '@/components/common/device-floating-selector';
 import { H2 } from '@/components/templates/mdx';
+import Vocab, { GLOSSARY } from '@/components/templates/vocab';
 
 // -----------------------------------------------------------------------------
 // Constants
@@ -100,15 +101,22 @@ export default async function Page({
       const totalTrials = Number(aggRow?.trials ?? 0);
       const totalTokens = totalTrials * (4096 + 1024);
 
-      return [
-        filtered,
-        [
-          { label: 'Models', value: (aggRow?.models ?? 0).toLocaleString() },
-          { label: 'Tokens', value: totalTokens.toLocaleString() },
-          { label: 'Runs', value: Number(aggRow?.runs ?? 0).toLocaleString() },
-          { label: 'Contributors', value: (contribRow?.contributors ?? 0).toLocaleString() },
-        ],
-      ] as const;
+      const overview: { label: string; term?: keyof typeof GLOSSARY; value: string }[] = [
+        { label: 'Models tested', value: (aggRow?.models ?? 0).toLocaleString() },
+        { label: 'Tokens', value: totalTokens.toLocaleString() },
+        {
+          label: 'Runs',
+          term: 'run',
+          value: Number(aggRow?.runs ?? 0).toLocaleString(),
+        },
+        {
+          label: 'Contributors',
+          term: 'contributors',
+          value: (contribRow?.contributors ?? 0).toLocaleString(),
+        },
+      ];
+
+      return [filtered, overview] as const;
     },
     [`device-chart-data-${effectiveDevice}`],
     { revalidate: 600 },
@@ -120,12 +128,14 @@ export default async function Page({
         className="hide-scrollbar scroll-overflow-indicators mx-auto flex w-full max-w-[83rem] snap-x scroll-px-4 gap-2 overflow-x-scroll px-4 md:scroll-px-6 md:px-6"
         tabIndex={-1}
       >
-        {overview.map(({ label, value }, i) => (
+        {overview.map(({ label, term, value }, i) => (
           <div
             key={i}
             className="flex w-full min-w-48 snap-start flex-col rounded-xl border border-gray-6 bg-gray-2 p-4"
           >
-            <h2 className="mb-1 text-sm font-medium leading-[1.125rem] text-gray-11">{label}</h2>
+            <h2 className="mb-1 text-sm font-medium leading-[1.125rem] text-gray-11">
+              {term ? <Vocab word={term}>{label}</Vocab> : label}
+            </h2>
             <span className="line-clamp-1 text-xl font-medium leading-6 text-gray-12">
               <span className="tabular-nums">{value}</span>
             </span>

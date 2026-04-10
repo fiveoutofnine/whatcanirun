@@ -18,6 +18,7 @@ import { H2 } from '@/components/templates/mdx';
 import RelativeDate from '@/components/templates/relative-date';
 import ScoreBadge from '@/components/templates/score-badge';
 import UserAvatar from '@/components/templates/user-avatar';
+import Vocab from '@/components/templates/vocab';
 import { Badge, CodeBlock } from '@/components/ui';
 
 // -----------------------------------------------------------------------------
@@ -388,7 +389,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
               ),
             },
             {
-              label: 'Status',
+              label: <Vocab word="status" />,
               value: (
                 <Fragment>
                   <Badge
@@ -413,7 +414,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
               ),
             },
             {
-              label: 'Decode',
+              label: <Vocab word="decode" />,
               value: (
                 <span>
                   {Number(run.decodeTpsMean).toLocaleString(undefined, {
@@ -425,7 +426,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
               ),
             },
             {
-              label: 'Prefill',
+              label: <Vocab word="prefill" />,
               value:
                 run.prefillTpsMean != null ? (
                   <span>
@@ -452,7 +453,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
               ),
             },
             {
-              label: 'Runnability',
+              label: <Vocab word="runnability" />,
               value:
                 runnabilityScore != null ? (
                   <Fragment>
@@ -467,8 +468,8 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
                   '—'
                 ),
             },
-          ].map((card) => (
-            <div key={card.label} className="rounded-xl border border-gray-6 bg-gray-2 p-4">
+          ].map((card, i) => (
+            <div key={i} className="rounded-xl border border-gray-6 bg-gray-2 p-4">
               <h2 className="text-sm font-medium leading-[1.125rem] text-gray-11">{card.label}</h2>
               <div className="mt-1 line-clamp-1 block text-lg font-medium tabular-nums leading-6 text-gray-12 md:text-xl">
                 {card.value}

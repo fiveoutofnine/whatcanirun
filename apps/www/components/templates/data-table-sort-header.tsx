@@ -13,7 +13,8 @@ import { Dropdown } from '@/components/ui';
 
 interface DataTableSortHeaderProps<TData, TValue> extends React.HTMLAttributes<HTMLDivElement> {
   column: Column<TData, TValue>;
-  description?: React.ReactNode;
+  tooltipTitle?: string;
+  tooltipDescription?: string;
   lowLabel?: string;
   highLabel?: string;
 }
@@ -25,7 +26,8 @@ interface DataTableSortHeaderProps<TData, TValue> extends React.HTMLAttributes<H
 const DataTableSortHeader = <TData, TValue>({
   className,
   column,
-  description,
+  tooltipTitle,
+  tooltipDescription,
   lowLabel,
   highLabel,
   children,
@@ -48,14 +50,25 @@ const DataTableSortHeader = <TData, TValue>({
     <div className={className}>
       <Dropdown.Root>
         <Dropdown.Trigger className="-mx-1 -my-0.5 flex items-center justify-start gap-1 rounded px-1 py-0.5 transition-colors hover:bg-gray-4 focus:outline-none focus-visible:bg-gray-5 focus-visible:ring-2 focus-visible:ring-blue-9 data-[state=open]:bg-gray-5">
-          {description ? <Info className="size-3 text-gray-11" /> : null}
+          {tooltipTitle || tooltipDescription ? <Info className="size-3 text-gray-11" /> : null}
           {children}
           <Icon className="size-3 text-gray-11" />
         </Dropdown.Trigger>
         <Dropdown.Content className="max-w-48 [&_[dropdown-item-content]]:mr-1.5" align="center">
-          {description ? (
+          {tooltipTitle || tooltipDescription ? (
             <Fragment>
-              <div className="w-full p-2 text-sm">{description}</div>
+              <div className="w-full p-2 text-sm">
+                <div className="flex flex-col">
+                  {tooltipTitle ? (
+                    <span className="text-sm font-medium text-gray-12">{tooltipTitle}</span>
+                  ) : null}
+                  {tooltipDescription ? (
+                    <span className="text-xs leading-normal text-gray-11">
+                      {tooltipDescription}
+                    </span>
+                  ) : null}
+                </div>
+              </div>
               <Dropdown.Separator />
             </Fragment>
           ) : null}

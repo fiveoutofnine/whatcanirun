@@ -18,6 +18,7 @@ import RelativeDate from '@/components/templates/relative-date';
 import Stat from '@/components/templates/stat';
 import StateInfo from '@/components/templates/state-info';
 import { ModelTableCell, RuntimeTableCell } from '@/components/templates/table-cells';
+import Vocab, { GLOSSARY } from '@/components/templates/vocab';
 import { Badge, IconButton, Table, Tooltip } from '@/components/ui';
 
 const STATUS_BADGE_INTENT = {
@@ -80,6 +81,8 @@ const RunsDataTableMobile: React.FC<RunsDataTableInternalProps> = (tableOptions)
           <DataTableSortHeader
             className="ml-auto w-fit"
             column={column}
+            tooltipTitle={GLOSSARY.decode.label}
+            tooltipDescription={GLOSSARY.decode.description}
             lowLabel="Slow"
             highLabel="Fast"
           >
@@ -100,7 +103,11 @@ const RunsDataTableMobile: React.FC<RunsDataTableInternalProps> = (tableOptions)
         id: 'status',
         accessorKey: 'status',
         enableSorting: false,
-        header: () => <div className="flex justify-end">Status</div>,
+        header: () => (
+          <div className="flex justify-end">
+            <Vocab word="status" />
+          </div>
+        ),
         cell: ({ row }) => (
           <div className="flex justify-end">
             <Badge
@@ -320,7 +327,9 @@ const RunsDataTableMobileSubComponent: React.FC<{ data: RunsDataTableValue }> = 
         </Stat.Value>
       </Stat>
       <Stat className="col-span-1">
-        <Stat.Name>Prefill</Stat.Name>
+        <Stat.Name>
+          <Vocab word="prefill" />
+        </Stat.Name>
         <Stat.Value className="tabular-nums">
           {data.prefillTpsMean != null
             ? `${Number(data.prefillTpsMean).toLocaleString(undefined, {
@@ -345,15 +354,21 @@ const RunsDataTableMobileSubComponent: React.FC<{ data: RunsDataTableValue }> = 
         </Stat.Value>
       </Stat>
       <Stat className="col-span-1">
-        <Stat.Name>Trials passed</Stat.Name>
+        <Stat.Name>
+          <Vocab word="trial">Trials</Vocab> passed
+        </Stat.Name>
         <Stat.Value className="tabular-nums">{data.trialsPassed}</Stat.Value>
       </Stat>
       <Stat className="col-span-1">
-        <Stat.Name>Trials total</Stat.Name>
+        <Stat.Name>
+          <Vocab word="trial">Trials</Vocab> total
+        </Stat.Name>
         <Stat.Value className="tabular-nums">{data.trialsTotal}</Stat.Value>
       </Stat>
       <Stat className="col-span-1">
-        <Stat.Name>Status</Stat.Name>
+        <Stat.Name>
+          <Vocab word="status" />
+        </Stat.Name>
         <Badge variant="outline" size="sm" type="text" intent={STATUS_BADGE_INTENT[data.status]}>
           {data.status.charAt(0).toUpperCase() + data.status.slice(1)}
         </Badge>
