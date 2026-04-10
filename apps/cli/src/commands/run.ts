@@ -108,6 +108,7 @@ export async function executeBenchmark(opts: BenchmarkOpts): Promise<string> {
         const installHints: Record<string, string> = {
           mlx_lm: `Install with ${chalk.bold.cyan('brew install mlx-lm')} or ${chalk.bold.cyan('pip install mlx-lm')}.`,
           'llama.cpp': `Install with ${chalk.bold.cyan('brew install llama.cpp')}.`,
+          ollama: `Install with ${chalk.bold.cyan('brew install ollama')} or download from ${chalk.bold.cyan('https://ollama.com')}.`,
         };
         const hint = installHints[opts.runtime];
         if (hint) console.log(chalk.dim(` ↳ ${hint}`));
@@ -483,7 +484,7 @@ const command = defineCommand({
     },
     runtime: {
       type: 'string',
-      description: 'Runtime to use (mlx_lm, llama.cpp)',
+      description: 'Runtime to use (mlx_lm, llama.cpp, ollama)',
       required: true,
     },
     'prompt-tokens': {

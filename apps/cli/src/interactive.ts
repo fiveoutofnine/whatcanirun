@@ -16,7 +16,7 @@ interface FeaturedModel {
   displayName: string;
   hfRepoId: string;
   hfFileName?: string;
-  runtime: 'mlx_lm' | 'llama.cpp';
+  runtime: 'mlx_lm' | 'llama.cpp' | 'ollama';
 }
 
 // -----------------------------------------------------------------------------
@@ -62,6 +62,21 @@ const FALLBACK_MODELS: FeaturedModel[] = [
     hfFileName: 'Qwen3.5-9B-Q4_K_M.gguf',
     runtime: 'llama.cpp',
   },
+  {
+    displayName: 'Qwen 3.5 0.8B',
+    hfRepoId: 'ollama:qwen3.5:0.6b',
+    runtime: 'ollama',
+  },
+  {
+    displayName: 'Qwen 3.5 4B',
+    hfRepoId: 'ollama:qwen3.5:4b',
+    runtime: 'ollama',
+  },
+  {
+    displayName: 'Qwen 3.5 9B',
+    hfRepoId: 'ollama:qwen3.5:8b',
+    runtime: 'ollama',
+  },
 ];
 
 // -----------------------------------------------------------------------------
@@ -77,7 +92,7 @@ function isFeaturedModel(item: unknown): item is FeaturedModel {
     typeof obj.displayName === 'string' &&
     typeof obj.hfRepoId === 'string' &&
     (obj.hfFileName === undefined || typeof obj.hfFileName === 'string') &&
-    (obj.runtime === 'mlx_lm' || obj.runtime === 'llama.cpp')
+    (obj.runtime === 'mlx_lm' || obj.runtime === 'llama.cpp' || obj.runtime === 'ollama')
   );
 }
 
@@ -176,11 +191,12 @@ interface DetectedRuntime {
   info: RuntimeInfo;
 }
 
-const RUNTIME_NAMES = ['mlx_lm', 'llama.cpp'] as const;
+const RUNTIME_NAMES = ['mlx_lm', 'llama.cpp', 'ollama'] as const;
 
 const INSTALL_HINTS: Record<string, string> = {
   mlx_lm: `${chalk.bold.cyan('brew install mlx-lm')} or ${chalk.bold.cyan('pip install mlx-lm')}`,
   'llama.cpp': `${chalk.bold.cyan('brew install llama.cpp')}`,
+  ollama: `${chalk.bold.cyan('brew install ollama')} or download from ${chalk.bold.cyan('https://ollama.com')}`,
 };
 
 async function detectRuntimes(): Promise<DetectedRuntime[]> {

@@ -6,8 +6,10 @@ import { homedir } from 'os';
 import { basename, extname, join, resolve } from 'path';
 import { pipeline } from 'stream/promises';
 
+import { ollamaFetch } from '../runtime/ollama';
 import * as log from '../utils/log';
 import { readGgufMetadata } from './gguf';
+import { isOllamaModel, ollamaModelName } from './ollama';
 
 // -----------------------------------------------------------------------------
 // Types
@@ -291,6 +293,12 @@ export interface ResolveModelOpts {
  *   - mlx_lm accepts bare repo IDs (it handles download internally)
  */
 export async function resolveModel(modelRef: string, opts?: ResolveModelOpts): Promise<string> {
+  // Ollama models — managed by the Ollama server, not downloaded.
+  if (opts?.runtime === 'ollama' && !isOllamaModel(modelRef)) {
+    return `ollama:${modelRef}`;
+  }
+  if (isOllamaModel(modelRef)) return modelRef;
+
   // Direct file path or directory (mlx model dir or gguf file).
   const resolved = resolve(modelRef);
   if (existsSync(resolved)) return resolved;
@@ -416,6 +424,18 @@ function readParameters(dirPath: string, config?: Record<string, unknown>): stri
  * the model is downloaded or cached.
  */
 export function inferModelFromName(modelRef: string): ModelInfo {
+  if (isOllamaModel(modelRef)) {
+    const name = ollamaModelName(modelRef);
+    return {
+      display_name: name,
+      path: modelRef,
+      format: 'gguf',
+      quant: inferQuant(name),
+      artifact_sha256: '',
+      source: `ollama:${name}`,
+    };
+  }
+
   const isHfFile = isHuggingFaceFileRef(modelRef);
   const isHfRepo = isHfFile || isHuggingFaceRepoId(modelRef);
 
@@ -454,6 +474,10 @@ export function inferModelFromName(modelRef: string): ModelInfo {
  * files to be present on disk (downloaded / cached).
  */
 export async function inspectModel(modelRef: string): Promise<ModelInfo> {
+  if (isOllamaModel(modelRef)) {
+    return inspectOllamaModel(modelRef);
+  }
+
   const base = inferModelFromName(modelRef);
   const isHfRepo = isHuggingFaceRepoId(modelRef);
 
@@ -544,6 +568,109 @@ export async function inspectModel(modelRef: string): Promise<ModelInfo> {
     file_size_bytes: fileSizeBytes,
     parameters,
     architecture,
+  };
+}
+
+/**
+ * Inspect an Ollama model by querying the API and reading the GGUF blob.
+ */
+async function inspectOllamaModel(modelRef: string): Promise<ModelInfo> {
+  const base = inferModelFromName(modelRef);
+  const name = ollamaModelName(modelRef);
+
+  let apiFamily: string | undefined;
+  let apiParams: string | undefined;
+  let apiQuant: string | undefined;
+  let digest = '';
+  let fileSizeBytes: number | undefined;
+
+  const [showResult, tagsResult] = await Promise.allSettled([
+    ollamaFetch<{
+      details?: {
+        family?: string;
+        parameter_size?: string;
+        quantization_level?: string;
+      };
+    }>('/api/show', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name }),
+    }),
+    ollamaFetch<{
+      models?: Array<{
+        name: string;
+        model: string;
+        digest: string;
+        size: number;
+      }>;
+    }>('/api/tags'),
+  ]);
+
+  if (showResult.status === 'fulfilled') {
+    apiFamily = showResult.value.details?.family;
+    apiParams = showResult.value.details?.parameter_size;
+    apiQuant = showResult.value.details?.quantization_level?.toLowerCase();
+  } else {
+    log.warn(`Could not query Ollama /api/show: ${showResult.reason}`);
+  }
+
+  if (tagsResult.status === 'fulfilled') {
+    const entry = tagsResult.value.models?.find((m) => m.name === name || m.model === name);
+    if (entry) {
+      digest = entry.digest.replace(/^sha256:/, '');
+      fileSizeBytes = entry.size;
+    }
+  } else {
+    log.warn(`Could not query Ollama /api/tags: ${tagsResult.reason}`);
+  }
+
+  // Skip the expensive GGUF blob read if the API provided all fields.
+  let ggufArch: string | undefined;
+  let ggufQuant: string | undefined;
+  let ggufSizeLabel: string | undefined;
+
+  if (!apiFamily || !apiQuant || !apiParams) {
+    try {
+      const proc = Bun.spawn(['ollama', 'show', '--modelfile', name], {
+        stdout: 'pipe',
+        stderr: 'pipe',
+      });
+      const stdout = await new Response(proc.stdout).text();
+      await proc.exited;
+
+      const fromMatch = stdout.match(/^FROM\s+(.+)$/m);
+      if (fromMatch) {
+        const blobPath = fromMatch[1]!.trim();
+        try {
+          const stat = statSync(blobPath);
+          if (!fileSizeBytes) fileSizeBytes = stat.size;
+
+          const meta = await readGgufMetadata(blobPath);
+          if (meta) {
+            if (meta.architecture) ggufArch = meta.architecture;
+            if (meta.quant) ggufQuant = meta.quant;
+            if (meta.sizeLabel) ggufSizeLabel = meta.sizeLabel;
+          }
+        } catch (e: unknown) {
+          log.warn(
+            `Could not read GGUF blob: ${e instanceof Error ? e.message : String(e)}`
+          );
+        }
+      }
+    } catch (e: unknown) {
+      log.warn(
+        `Could not run 'ollama show --modelfile': ${e instanceof Error ? e.message : String(e)}`
+      );
+    }
+  }
+
+  return {
+    ...base,
+    quant: ggufQuant ?? apiQuant ?? base.quant,
+    artifact_sha256: digest,
+    file_size_bytes: fileSizeBytes,
+    parameters: ggufSizeLabel ?? apiParams,
+    architecture: ggufArch ?? apiFamily,
   };
 }
 
