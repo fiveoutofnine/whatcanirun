@@ -63,9 +63,7 @@ export const generateMetadata = async ({
   const title = `Run Details`;
   const description =
     `View details for a benchmark run of ${modelName} ${quant ? `(${quant} quant) ` : ''}` +
-    displayName
-      ? `on ${article} ${displayName}.`
-      : '.';
+    (displayName ? `on ${article} ${displayName}.` : '.');
   const url = `https://whatcani.run/run/${id}`;
   const images = [
     {
