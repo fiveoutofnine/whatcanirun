@@ -34,9 +34,10 @@ export async function GET(request: NextRequest) {
   const device = searchParams.get('device') ?? 'Device';
   const deviceManufacturerLogoUrl = searchParams.get('deviceManufacturerLogoUrl');
 
-  const [interRegularFont, interSemiBoldFont] = await Promise.all([
-    readFile(join(process.cwd(), 'public/static/fonts/Inter-Regular-Subset.otf')),
+  const [interMediumFont, interSemiBoldFont, serpentineFont] = await Promise.all([
+    readFile(join(process.cwd(), 'public/static/fonts/Inter-Medium-Subset.otf')),
     readFile(join(process.cwd(), 'public/static/fonts/Inter-SemiBold-Subset.otf')),
+    readFile(join(process.cwd(), 'public/static/fonts/Serpentine-Subset.otf')),
   ]);
 
   return new ImageResponse(
@@ -150,7 +151,7 @@ export async function GET(request: NextRequest) {
                 style={{
                   display: 'block',
                   fontSize: 56,
-                  fontWeight: 400,
+                  fontWeight: 500,
                   lineHeight: '100%',
                   letterSpacing: '-0.025em',
                   whiteSpace: 'pre',
@@ -186,7 +187,7 @@ export async function GET(request: NextRequest) {
               <div
                 style={{
                   fontSize: 40,
-                  fontWeight: 400,
+                  fontWeight: 500,
                   lineHeight: '120%',
                   color: GRAY_11,
                 }}
@@ -209,8 +210,8 @@ export async function GET(request: NextRequest) {
                 <div
                   style={{
                     fontSize: 72,
-                    fontWeight: 400,
-                    lineHeight: '110%',
+                    fontWeight: 500,
+                    lineHeight: '115%',
                     color: GRAY_11,
                     whiteSpace: 'pre',
                   }}
@@ -230,7 +231,7 @@ export async function GET(request: NextRequest) {
               <div
                 style={{
                   fontSize: 40,
-                  fontWeight: 400,
+                  fontWeight: 500,
                   lineHeight: '120%',
                   color: GRAY_11,
                 }}
@@ -253,8 +254,8 @@ export async function GET(request: NextRequest) {
                 <div
                   style={{
                     fontSize: 72,
-                    fontWeight: 400,
-                    lineHeight: '110%',
+                    fontWeight: 500,
+                    lineHeight: '115%',
                     color: GRAY_11,
                     whiteSpace: 'pre',
                   }}
@@ -323,14 +324,17 @@ export async function GET(request: NextRequest) {
             </div>
             <div
               style={{
-                display: 'block',
+                display: 'flex',
+                fontSize: 40,
+                lineHeight: 40,
+                fontFamily: 'Serpentine',
                 flexDirection: 'row',
                 alignItems: 'center',
-                background: 'red',
                 marginLeft: 24,
+                color: GRAY_12,
               }}
             >
-              hi
+              whatcani.run
             </div>
           </div>
         </div>
@@ -377,14 +381,20 @@ export async function GET(request: NextRequest) {
       fonts: [
         {
           name: 'Inter',
-          data: interRegularFont,
+          data: interMediumFont,
           style: 'normal',
-          weight: 400,
+          weight: 500,
         },
         {
           name: 'Inter',
           data: interSemiBoldFont,
           style: 'normal',
+          weight: 600,
+        },
+        {
+          name: 'Serpentine',
+          data: serpentineFont,
+          style: 'italic',
           weight: 600,
         },
       ],
