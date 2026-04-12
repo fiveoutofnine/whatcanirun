@@ -18,6 +18,11 @@ export interface FeaturedModelsRequest {
   runtime?: FeaturedRuntime;
 }
 
+export interface FeaturedModelsResult {
+  models: FeaturedModel[];
+  source: 'api' | 'fallback';
+}
+
 // -----------------------------------------------------------------------------
 // Helpers
 // -----------------------------------------------------------------------------
@@ -86,7 +91,7 @@ export function getFallbackFeaturedModels(request: FeaturedModelsRequest = {}): 
 
 export async function fetchFeaturedModels(
   request: FeaturedModelsRequest = {},
-): Promise<FeaturedModel[]> {
+): Promise<FeaturedModelsResult> {
   const fallback = getFallbackFeaturedModels(request);
 
   try {
@@ -98,16 +103,20 @@ export async function fetchFeaturedModels(
         signal: controller.signal,
       });
 
-      if (!response.ok) return fallback;
+      if (!response.ok) {
+        return { models: fallback, source: 'fallback' };
+      }
 
       const data: unknown = await response.json();
-      if (!Array.isArray(data) || !data.every(isFeaturedModel)) return fallback;
+      if (!Array.isArray(data) || !data.every(isFeaturedModel)) {
+        return { models: fallback, source: 'fallback' };
+      }
 
-      return data;
+      return { models: data, source: 'api' };
     } finally {
       clearTimeout(timeout);
     }
   } catch {
-    return fallback;
+    return { models: fallback, source: 'fallback' };
   }
 }

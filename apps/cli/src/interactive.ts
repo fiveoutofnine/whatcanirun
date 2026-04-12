@@ -180,7 +180,7 @@ export async function runInteractive(): Promise<void> {
   }
 
   // Fetch and filter models for this runtime.
-  const fetchSpinner = new Spinner(chalk.dim('Fetching models…')).start();
+  const fetchSpinner = new Spinner(chalk.dim('Detecting device…')).start();
   activeSpinner = fetchSpinner;
   let featuredDevice: FeaturedDeviceInfo | undefined;
   try {
@@ -194,12 +194,19 @@ export async function runInteractive(): Promise<void> {
   } catch {
     featuredDevice = undefined;
   }
-  const models = await fetchFeaturedModels({
+  fetchSpinner.update(chalk.dim('Fetching featured models…'));
+  const featured = await fetchFeaturedModels({
     device: featuredDevice,
     runtime: selectedRuntime.name,
   });
   activeSpinner = null;
-  fetchSpinner.stop();
+  fetchSpinner.stop(chalk.white(`[${chalk.green('✓')}] Loaded featured models.`));
+  if (featured.source === 'fallback') {
+    console.log(
+      chalk.dim(' ↳ Using the bundled wishlist because the featured models API was unavailable.')
+    );
+  }
+  const models = featured.models;
 
   if (models.length === 0) {
     if (runtimes.length > 1) console.log();
