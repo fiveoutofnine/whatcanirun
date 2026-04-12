@@ -28,6 +28,7 @@ export type {
   FeaturedModel,
   FeaturedMlxInput,
   FeaturedRuntime,
+  FeaturedWishlistGoals,
   FeaturedWishlistInput,
   FeaturedWishlistEntry,
 } from './featured';

@@ -16,7 +16,13 @@ export interface FeaturedModel {
   runtime: FeaturedRuntime;
 }
 
-export interface FeaturedWishlistEntry extends FeaturedModel {
+export interface FeaturedWishlistGoals {
+  minimumDistinctDevices: number;
+  minimumRunsPerDevice: number;
+  priority: number;
+}
+
+export interface FeaturedWishlistEntry extends FeaturedModel, FeaturedWishlistGoals {
   modelRef: string;
   deviceTypes: readonly FeaturedDeviceType[];
 }
@@ -28,7 +34,7 @@ export interface FeaturedDeviceInfo {
   osName?: string | null;
 }
 
-export interface FeaturedWishlistInput {
+export interface FeaturedWishlistInput extends Partial<FeaturedWishlistGoals> {
   deviceTypes: readonly FeaturedDeviceType[];
   displayName: string;
   hfRepoId: string;
@@ -44,6 +50,9 @@ export interface FeaturedGgufInput extends FeaturedWishlistInput {
 // Constants
 // -----------------------------------------------------------------------------
 
+const DEFAULT_FEATURED_PRIORITY = 1;
+const DEFAULT_MINIMUM_DISTINCT_DEVICES = 4;
+const DEFAULT_MINIMUM_RUNS_PER_DEVICE = 2;
 const GPU_VENDOR_PREFIX = /^(?:nvidia(?: corporation)?|advanced micro devices,? inc\.?(?: \[amd\/ati\])?|amd\/ati|intel(?: corporation)?|apple)\s+/i;
 const TRAILING_PCI_CODES = /\s*\[[\da-f]{4}(?::[\da-f]{4})?\]\s*/gi;
 const APPLE_CHIP_PATTERN = /\b(?:apple\s+)?(m\d+)(?:[\s-]*(ultra|max|pro))?\b/i;
@@ -120,20 +129,59 @@ function hasUsableGpu(gpu?: string | null): gpu is string {
   return !/^(?:none|unknown|n\/a)$/i.test(gpu.trim());
 }
 
+function normalizeFeaturedGoal(
+  value: number | undefined,
+  {
+    fallback,
+    minimum,
+    name,
+  }: {
+    fallback: number;
+    minimum: number;
+    name: string;
+  },
+): number {
+  const normalized = value ?? fallback;
+
+  if (!Number.isInteger(normalized) || normalized < minimum) {
+    throw new Error(`Invalid featured wishlist ${name}: ${String(value)}`);
+  }
+
+  return normalized;
+}
+
 function createFeaturedEntry(
-  displayName: string,
-  hfRepoId: string,
-  runtime: FeaturedRuntime,
-  deviceTypes: readonly FeaturedDeviceType[],
-  hfFileName?: string,
+  input: FeaturedWishlistInput & {
+    runtime: FeaturedRuntime;
+    hfFileName?: string;
+  },
 ): FeaturedWishlistEntry {
+  const minimumDistinctDevices = normalizeFeaturedGoal(input.minimumDistinctDevices, {
+    fallback: DEFAULT_MINIMUM_DISTINCT_DEVICES,
+    minimum: 0,
+    name: 'minimumDistinctDevices',
+  });
+  const minimumRunsPerDevice = normalizeFeaturedGoal(input.minimumRunsPerDevice, {
+    fallback: DEFAULT_MINIMUM_RUNS_PER_DEVICE,
+    minimum: 1,
+    name: 'minimumRunsPerDevice',
+  });
+  const priority = normalizeFeaturedGoal(input.priority, {
+    fallback: DEFAULT_FEATURED_PRIORITY,
+    minimum: 1,
+    name: 'priority',
+  });
+
   return {
-    displayName,
-    hfRepoId,
-    ...(hfFileName ? { hfFileName } : {}),
-    runtime,
-    modelRef: getFeaturedModelRef({ hfRepoId, hfFileName }),
-    deviceTypes: [...deviceTypes],
+    displayName: input.displayName,
+    hfRepoId: input.hfRepoId,
+    ...(input.hfFileName ? { hfFileName: input.hfFileName } : {}),
+    runtime: input.runtime,
+    modelRef: getFeaturedModelRef({ hfRepoId: input.hfRepoId, hfFileName: input.hfFileName }),
+    deviceTypes: [...input.deviceTypes],
+    minimumDistinctDevices,
+    minimumRunsPerDevice,
+    priority,
   };
 }
 
@@ -157,8 +205,19 @@ export function featuredMlx({
   deviceTypes,
   displayName,
   hfRepoId,
+  minimumDistinctDevices,
+  minimumRunsPerDevice,
+  priority,
 }: FeaturedMlxInput): FeaturedWishlistEntry {
-  return createFeaturedEntry(displayName, hfRepoId, 'mlx_lm', deviceTypes);
+  return createFeaturedEntry({
+    deviceTypes,
+    displayName,
+    hfRepoId,
+    minimumDistinctDevices,
+    minimumRunsPerDevice,
+    priority,
+    runtime: 'mlx_lm',
+  });
 }
 
 export function featuredGguf({
@@ -166,8 +225,20 @@ export function featuredGguf({
   displayName,
   hfFileName,
   hfRepoId,
+  minimumDistinctDevices,
+  minimumRunsPerDevice,
+  priority,
 }: FeaturedGgufInput): FeaturedWishlistEntry {
-  return createFeaturedEntry(displayName, hfRepoId, 'llama.cpp', deviceTypes, hfFileName);
+  return createFeaturedEntry({
+    deviceTypes,
+    displayName,
+    hfFileName,
+    hfRepoId,
+    minimumDistinctDevices,
+    minimumRunsPerDevice,
+    priority,
+    runtime: 'llama.cpp',
+  });
 }
 
 export function defineFeaturedWishlist(

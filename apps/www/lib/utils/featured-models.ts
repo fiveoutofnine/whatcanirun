@@ -1,6 +1,5 @@
 import type {
   FeaturedDeviceInfo,
-  FeaturedDeviceType,
   FeaturedDeviceTarget,
   FeaturedModel,
   FeaturedRuntime,
@@ -42,7 +41,7 @@ interface FeaturedModelSizeRow {
 
 interface SelectFeaturedWishlistEntriesOptions {
   coverage: ReadonlyMap<string, number>;
-  coverageByType: ReadonlyMap<string, number>;
+  distinctTargets: ReadonlyMap<string, readonly FeaturedDeviceTarget[]>;
   deviceTarget?: FeaturedDeviceTarget | null;
   limit?: number | null;
   runtime?: FeaturedRuntime;
@@ -124,12 +123,11 @@ export function getFeaturedCoverageKey(
   return `${runtime}::${modelRef}::${target}`;
 }
 
-export function getFeaturedCoverageTypeKey(
+export function getFeaturedModelCoverageKey(
   runtime: FeaturedRuntime,
   modelRef: string,
-  deviceType: FeaturedDeviceType,
 ): string {
-  return `${runtime}::${modelRef}::${deviceType}`;
+  return `${runtime}::${modelRef}`;
 }
 
 export function buildFeaturedCoverageMap(
@@ -156,10 +154,10 @@ export function buildFeaturedCoverageMap(
   return coverage;
 }
 
-export function buildFeaturedCoverageByTypeMap(
+export function buildFeaturedDistinctTargetsMap(
   rows: readonly HistoricalFeaturedCoverageRow[],
-): Map<string, number> {
-  const coverage = new Map<string, number>();
+): Map<string, readonly FeaturedDeviceTarget[]> {
+  const distinctTargets = new Map<string, Set<FeaturedDeviceTarget>>();
 
   for (const row of rows) {
     if (!isFeaturedRuntime(row.runtime) || !row.modelRef) continue;
@@ -173,15 +171,20 @@ export function buildFeaturedCoverageByTypeMap(
 
     if (!deviceTarget) continue;
 
-    const key = getFeaturedCoverageTypeKey(
-      row.runtime,
-      row.modelRef,
-      getFeaturedDeviceType(deviceTarget),
-    );
-    coverage.set(key, (coverage.get(key) ?? 0) + Number(row.runCount));
+    const key = getFeaturedModelCoverageKey(row.runtime, row.modelRef);
+    let targets = distinctTargets.get(key);
+
+    if (!targets) {
+      targets = new Set<FeaturedDeviceTarget>();
+      distinctTargets.set(key, targets);
+    }
+
+    targets.add(deviceTarget);
   }
 
-  return coverage;
+  return new Map(
+    [...distinctTargets.entries()].map(([key, targets]) => [key, Object.freeze([...targets])]),
+  );
 }
 
 function getFeaturedEntryCoverage(
@@ -192,16 +195,44 @@ function getFeaturedEntryCoverage(
   return coverage.get(getFeaturedCoverageKey(entry.runtime, entry.modelRef, target)) ?? 0;
 }
 
-function getMinimumFeaturedEntryCoverage(
+function getFeaturedEntryCoveredTargets(
   entry: FeaturedWishlistEntry,
-  coverageByType: ReadonlyMap<string, number>,
+  distinctTargets: ReadonlyMap<string, readonly FeaturedDeviceTarget[]>,
+): readonly FeaturedDeviceTarget[] {
+  const targets = distinctTargets.get(getFeaturedModelCoverageKey(entry.runtime, entry.modelRef));
+  if (!targets) return [];
+
+  return targets.filter((target) => entry.deviceTypes.includes(getFeaturedDeviceType(target)));
+}
+
+function getFeaturedEntryDistinctTargetCount(
+  entry: FeaturedWishlistEntry,
+  distinctTargets: ReadonlyMap<string, readonly FeaturedDeviceTarget[]>,
 ): number {
-  if (entry.deviceTypes.length === 0) return 0;
+  return getFeaturedEntryCoveredTargets(entry, distinctTargets).length;
+}
+
+function getFeaturedEntryUnderfilledTargetCount(
+  entry: FeaturedWishlistEntry,
+  coverage: ReadonlyMap<string, number>,
+  distinctTargets: ReadonlyMap<string, readonly FeaturedDeviceTarget[]>,
+): number {
+  return getFeaturedEntryCoveredTargets(entry, distinctTargets).filter(
+    (target) => getFeaturedEntryCoverage(entry, target, coverage) < entry.minimumRunsPerDevice,
+  ).length;
+}
+
+function getFeaturedEntryWeakestTargetCoverage(
+  entry: FeaturedWishlistEntry,
+  coverage: ReadonlyMap<string, number>,
+  distinctTargets: ReadonlyMap<string, readonly FeaturedDeviceTarget[]>,
+): number {
+  const targets = getFeaturedEntryCoveredTargets(entry, distinctTargets);
+  if (targets.length === 0) return 0;
 
   let minimum = Number.POSITIVE_INFINITY;
-  for (const deviceType of entry.deviceTypes) {
-    const key = getFeaturedCoverageTypeKey(entry.runtime, entry.modelRef, deviceType);
-    minimum = Math.min(minimum, coverageByType.get(key) ?? 0);
+  for (const target of targets) {
+    minimum = Math.min(minimum, getFeaturedEntryCoverage(entry, target, coverage));
   }
 
   return Number.isFinite(minimum) ? minimum : 0;
@@ -212,7 +243,7 @@ export function selectFeaturedWishlistEntries(
 ): FeaturedWishlistEntry[] {
   const wishlist = options.wishlist ?? FEATURED_WISHLIST;
   const coverage = options.coverage;
-  const coverageByType = options.coverageByType;
+  const distinctTargets = options.distinctTargets;
   const deviceTarget = options.deviceTarget ?? null;
   const deviceType = deviceTarget ? getFeaturedDeviceType(deviceTarget) : null;
   const limit = clampFeaturedLimit(options.limit);
@@ -228,14 +259,54 @@ export function selectFeaturedWishlistEntries(
 
   const scoredEntries = entries.map((entry) => ({
     entry,
-    score:
+    breadthGap: Math.max(
+      0,
+      entry.minimumDistinctDevices - getFeaturedEntryDistinctTargetCount(entry, distinctTargets),
+    ),
+    exactCoverage:
+      useTargetedEntries && deviceTarget ? getFeaturedEntryCoverage(entry, deviceTarget, coverage) : 0,
+    exactGap:
       useTargetedEntries && deviceTarget
-        ? getFeaturedEntryCoverage(entry, deviceTarget, coverage)
-        : getMinimumFeaturedEntryCoverage(entry, coverageByType),
+        ? Math.max(
+            0,
+            entry.minimumRunsPerDevice - getFeaturedEntryCoverage(entry, deviceTarget, coverage),
+          )
+        : 0,
     index: wishlist.indexOf(entry),
+    distinctCoveredTargets: getFeaturedEntryDistinctTargetCount(entry, distinctTargets),
+    underfilledTargetCount: getFeaturedEntryUnderfilledTargetCount(
+      entry,
+      coverage,
+      distinctTargets,
+    ),
+    weakestTargetCoverage: getFeaturedEntryWeakestTargetCoverage(
+      entry,
+      coverage,
+      distinctTargets,
+    ),
   }));
 
-  scoredEntries.sort((left, right) => left.score - right.score || left.index - right.index);
+  if (useTargetedEntries) {
+    scoredEntries.sort(
+      (left, right) =>
+        right.exactGap - left.exactGap ||
+        right.breadthGap - left.breadthGap ||
+        right.entry.priority - left.entry.priority ||
+        left.exactCoverage - right.exactCoverage ||
+        left.distinctCoveredTargets - right.distinctCoveredTargets ||
+        left.index - right.index,
+    );
+  } else {
+    scoredEntries.sort(
+      (left, right) =>
+        right.breadthGap - left.breadthGap ||
+        right.underfilledTargetCount - left.underfilledTargetCount ||
+        right.entry.priority - left.entry.priority ||
+        left.distinctCoveredTargets - right.distinctCoveredTargets ||
+        left.weakestTargetCoverage - right.weakestTargetCoverage ||
+        left.index - right.index,
+    );
+  }
 
   return scoredEntries
     .slice(0, limit ?? scoredEntries.length)
@@ -336,10 +407,10 @@ export async function getFeaturedModels(query: FeaturedModelsQuery = {}): Promis
   const wishlist = filterFeaturedWishlistByGpuBudget(runtimeWishlist, fileSizes, gpuBudgetBytes);
   const rows = await getHistoricalFeaturedCoverageRows(wishlist, runtime);
   const coverage = buildFeaturedCoverageMap(rows);
-  const coverageByType = buildFeaturedCoverageByTypeMap(rows);
+  const distinctTargets = buildFeaturedDistinctTargetsMap(rows);
   const entries = selectFeaturedWishlistEntries({
     coverage,
-    coverageByType,
+    distinctTargets,
     deviceTarget,
     limit: query.limit,
     runtime,
