@@ -14,7 +14,6 @@ import { db } from '@/lib/db';
 import { modelsInfo, view__model_device_summary } from '@/lib/db/schema';
 
 import DeviceFloatingSelector from '@/components/common/device-floating-selector';
-import ShareButton from '@/components/common/share-button';
 import { H2 } from '@/components/templates/mdx';
 import StateInfo from '@/components/templates/state-info';
 
@@ -54,10 +53,6 @@ export default async function Page({
   if (members.length === 0 || stats.length === 0) {
     return (
       <div className="flex grow flex-col p-4 md:px-0 md:py-6">
-        <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-3 pb-4">
-          <H2 className="mb-0">Quantizations</H2>
-          <ShareButton className="shrink-0" label="Share" />
-        </div>
         <div className="mx-auto flex w-full max-w-5xl items-center justify-center rounded-xl border border-gray-6 bg-gray-2 px-4 py-12">
           <StateInfo
             size="sm"
@@ -149,10 +144,7 @@ export default async function Page({
         aria-labelledby={`trigger-${rootPath}`}
       >
         <div className="mx-auto flex w-full max-w-5xl grow flex-col py-4 md:py-6">
-          <div className="mb-2 flex items-center justify-between gap-3 px-4 md:px-0">
-            <H2 className="mb-0">Quantizations</H2>
-            <ShareButton className="shrink-0" label="Share" />
-          </div>
+          <H2 className="mb-2 px-4 md:px-0">Quantizations</H2>
           <ModelQuantizationsTable quants={quants} />
           {devicesChartData.length > 0 ? (
             <Fragment>

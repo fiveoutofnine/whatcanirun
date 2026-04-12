@@ -11,9 +11,10 @@ import { toast } from '@/components/ui';
 type ShareButtonProps = {
   className?: string;
   label?: string;
+  title?: string;
 };
 
-const ShareButton: React.FC<ShareButtonProps> = ({ className, label }) => {
+const ShareButton: React.FC<ShareButtonProps> = ({ className, label, title }) => {
   const [copied, setCopied] = useState<boolean>(false);
 
   const copy = async (url: string) => {
@@ -40,10 +41,14 @@ const ShareButton: React.FC<ShareButtonProps> = ({ className, label }) => {
 
   const handleClick = async () => {
     const url = window.location.href;
+    const shareData = title ? { title, url } : { url };
 
-    if (typeof navigator.share === 'function' && (!navigator.canShare || navigator.canShare({ url }))) {
+    if (
+      typeof navigator.share === 'function' &&
+      (!navigator.canShare || navigator.canShare(shareData))
+    ) {
       try {
-        await navigator.share({ url });
+        await navigator.share(shareData);
         return;
       } catch (error) {
         if (error instanceof DOMException && error.name === 'AbortError') return;

@@ -8,6 +8,7 @@ import { getModelFamily } from './utils';
 import { Calendar, Scale, Waypoints } from 'lucide-react';
 
 import PreservedDeviceLink from '@/components/common/preserved-device-link';
+import ShareButton from '@/components/common/share-button';
 import ClickableTooltip from '@/components/templates/clickable-tooltip';
 import RelativeDate from '@/components/templates/relative-date';
 import UserAvatar from '@/components/templates/user-avatar';
@@ -108,6 +109,7 @@ export default async function Layout({
                   )
                 ) : null,
               )}
+              <ShareButton label="Share" title={`${family.orgName} / ${family.familyName}`} />
             </div>
           </div>
         </div>

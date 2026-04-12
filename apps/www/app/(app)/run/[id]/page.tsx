@@ -362,7 +362,10 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
               {benchmarkCommand ? (
                 <CopyBenchmarkCommandButton command={benchmarkCommand} label="Command" />
               ) : null}
-              <ShareButton label="Share" />
+              <ShareButton
+                label="Share"
+                title={`${modelDisplayName} benchmark on ${deviceDisplayName}`}
+              />
             </div>
           </div>
         </div>
