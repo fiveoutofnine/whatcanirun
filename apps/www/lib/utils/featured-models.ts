@@ -113,22 +113,21 @@ export function selectFeaturedWishlistEntries(
 ): FeaturedWishlistEntry[] {
   const wishlist = options.wishlist ?? FEATURED_WISHLIST;
   const coverage = options.coverage;
+  const deviceTarget = options.deviceTarget ?? null;
   const limit = clampFeaturedLimit(options.limit);
   const runtimeEntries = options.runtime
     ? wishlist.filter((entry) => entry.runtime === options.runtime)
     : [...wishlist];
   const targetedEntries =
-    options.deviceTarget == null
-      ? []
-      : runtimeEntries.filter((entry) => entry.targets.includes(options.deviceTarget));
-  const useTargetedEntries = options.deviceTarget != null && targetedEntries.length > 0;
+    deviceTarget == null ? [] : runtimeEntries.filter((entry) => entry.targets.includes(deviceTarget));
+  const useTargetedEntries = deviceTarget != null && targetedEntries.length > 0;
   const entries = useTargetedEntries ? targetedEntries : runtimeEntries;
 
   const scoredEntries = entries.map((entry) => ({
     entry,
     score:
-      useTargetedEntries && options.deviceTarget
-        ? getFeaturedEntryCoverage(entry, options.deviceTarget, coverage)
+      useTargetedEntries && deviceTarget
+        ? getFeaturedEntryCoverage(entry, deviceTarget, coverage)
         : getMinimumFeaturedEntryCoverage(entry, coverage),
     index: wishlist.indexOf(entry),
   }));
