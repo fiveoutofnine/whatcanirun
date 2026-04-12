@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import type { ModelRunsDataTableInternalProps } from '.';
 import type { ModelRunsDataTableValue } from './types';
 import { type ColumnDef, flexRender, useReactTable } from '@tanstack/react-table';
-import { FileText } from 'lucide-react';
+import { ChevronRight, FileText } from 'lucide-react';
 
 import DataTableSortHeader from '@/components/templates/data-table-sort-header';
 import RelativeDate from '@/components/templates/relative-date';
@@ -17,7 +17,7 @@ import {
   RuntimeTableCell,
 } from '@/components/templates/table-cells';
 import { GLOSSARY } from '@/components/templates/vocab';
-import { Table } from '@/components/ui';
+import { IconButton, Table } from '@/components/ui';
 
 const ModelRunsDataTableDesktop: React.FC<ModelRunsDataTableInternalProps> = (tableOptions) => {
   const columns: ColumnDef<ModelRunsDataTableValue>[] = useMemo(
@@ -175,6 +175,22 @@ const ModelRunsDataTableDesktop: React.FC<ModelRunsDataTableInternalProps> = (ta
           </div>
         ),
       },
+      {
+        id: 'actions',
+        enableSorting: false,
+        header: () => <div className="flex justify-end">Actions</div>,
+        cell: ({ row }) => (
+          <div className="flex justify-end">
+            <IconButton
+              aria-label="View run"
+              href={`/run/${row.original.id}`}
+              variant="outline"
+            >
+              <ChevronRight />
+            </IconButton>
+          </div>
+        ),
+      },
     ],
     [],
   );
@@ -239,7 +255,11 @@ const ModelRunsDataTableDesktop: React.FC<ModelRunsDataTableInternalProps> = (ta
                     className="ml-auto h-[1.125rem] w-24 animate-pulse rounded bg-gray-9"
                   />,
                   <MemoryTableCell.Skeleton key={5} align="left" />,
-                  <div key={6} className="ml-auto h-5 w-20 animate-pulse rounded bg-gray-9" />,
+                  <div key={6} className="flex justify-end">
+                    <IconButton variant="outline" disabled>
+                      <ChevronRight />
+                    </IconButton>
+                  </div>,
                 ].map((skeleton, i) => (
                   <Table.Cell key={i} className="first:pl-4 last:pr-4 md:first:pl-6 md:last:pr-6">
                     {skeleton}

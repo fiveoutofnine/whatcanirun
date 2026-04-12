@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import type { RunsDataTableInternalProps } from '.';
 import type { RunsDataTableValue } from './types';
 import { type ColumnDef, flexRender, useReactTable } from '@tanstack/react-table';
-import { FileText } from 'lucide-react';
+import { ChevronRight, FileText } from 'lucide-react';
 
 import { RunStatus } from '@/lib/db/schema';
 
@@ -19,7 +19,7 @@ import {
   RuntimeTableCell,
 } from '@/components/templates/table-cells';
 import Vocab, { GLOSSARY } from '@/components/templates/vocab';
-import { Badge, Table } from '@/components/ui';
+import { Badge, IconButton, Table } from '@/components/ui';
 
 const STATUS_BADGE_INTENT = {
   [RunStatus.VERIFIED]: 'success',
@@ -232,6 +232,22 @@ const RunsDataTableDesktop: React.FC<RunsDataTableInternalProps> = (tableOptions
           </div>
         ),
       },
+      {
+        id: 'actions',
+        enableSorting: false,
+        header: () => <div className="flex justify-end">Actions</div>,
+        cell: ({ row }) => (
+          <div className="flex justify-end">
+            <IconButton
+              aria-label="View run"
+              href={`/run/${row.original.id}`}
+              variant="outline"
+            >
+              <ChevronRight />
+            </IconButton>
+          </div>
+        ),
+      },
     ],
     [],
   );
@@ -297,7 +313,11 @@ const RunsDataTableDesktop: React.FC<RunsDataTableInternalProps> = (tableOptions
                   />,
                   <MemoryTableCell.Skeleton key={5} align="left" />,
                   <div key={6} className="ml-auto h-5 w-16 animate-pulse rounded-full bg-gray-9" />,
-                  <div key={7} className="ml-auto h-5 w-20 animate-pulse rounded bg-gray-9" />,
+                  <div key={7} className="flex justify-end">
+                    <IconButton variant="outline" disabled>
+                      <ChevronRight />
+                    </IconButton>
+                  </div>,
                 ].map((skeleton, i) => (
                   <Table.Cell key={i} className="first:pl-4 last:pr-4 md:first:pl-6 md:last:pr-6">
                     {skeleton}
