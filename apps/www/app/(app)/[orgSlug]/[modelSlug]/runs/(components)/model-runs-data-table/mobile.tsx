@@ -18,7 +18,7 @@ import {
   RuntimeTableCell,
 } from '@/components/templates/table-cells';
 import Vocab, { GLOSSARY } from '@/components/templates/vocab';
-import { IconButton, Table, Tooltip } from '@/components/ui';
+import { Button, IconButton, Table, Tooltip } from '@/components/ui';
 
 const ModelRunsDataTableMobile: React.FC<ModelRunsDataTableInternalProps> = (tableOptions) => {
   const columns: ColumnDef<ModelRunsDataTableValue>[] = useMemo(
@@ -282,6 +282,15 @@ const ModelRunsDataTableMobileSubComponent: React.FC<{ data: ModelRunsDataTableV
           clickable
         />
       </Stat>
+      <Button
+        className="w-full col-span-2"
+        href={`/run/${data.id}`}
+        size="md"
+        variant="outline"
+        rightIcon={<ChevronRight />}
+      >
+        View run
+      </Button>
     </div>
   );
 };

@@ -20,7 +20,7 @@ import Stat from '@/components/templates/stat';
 import StateInfo from '@/components/templates/state-info';
 import { ModelTableCell, RuntimeTableCell } from '@/components/templates/table-cells';
 import Vocab, { GLOSSARY } from '@/components/templates/vocab';
-import { Badge, IconButton, Table, Tooltip } from '@/components/ui';
+import { Badge, Button, IconButton, Table, Tooltip } from '@/components/ui';
 
 const STATUS_BADGE_INTENT = {
   [RunStatus.VERIFIED]: 'success',
@@ -389,6 +389,15 @@ const RunsDataTableMobileSubComponent: React.FC<{ data: RunsDataTableValue }> = 
           clickable
         />
       </Stat>
+      <Button
+        className="w-full col-span-2"
+        href={`/run/${data.id}`}
+        size="md"
+        variant="outline"
+        rightIcon={<ChevronRight />}
+      >
+        View run
+      </Button>
     </div>
   );
 };
