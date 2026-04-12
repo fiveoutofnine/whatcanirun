@@ -19,7 +19,7 @@ import {
   RuntimeTableCell,
 } from '@/components/templates/table-cells';
 import Vocab, { GLOSSARY } from '@/components/templates/vocab';
-import { Badge, IconButton, Table } from '@/components/ui';
+import { Badge, IconButton, Table, Tooltip } from '@/components/ui';
 
 const STATUS_BADGE_INTENT = {
   [RunStatus.VERIFIED]: 'success',
@@ -238,13 +238,15 @@ const RunsDataTableDesktop: React.FC<RunsDataTableInternalProps> = (tableOptions
         header: () => <div className="flex justify-end">Actions</div>,
         cell: ({ row }) => (
           <div className="flex justify-end">
-            <IconButton
-              aria-label="View run"
-              href={`/run/${row.original.id}`}
-              variant="outline"
-            >
-              <ArrowRight />
-            </IconButton>
+            <Tooltip side="left" content="View run details" triggerProps={{ asChild: true }}>
+              <IconButton
+                aria-label="View run"
+                href={`/run/${row.original.id}`}
+                variant="outline"
+              >
+                <ArrowRight />
+              </IconButton>
+            </Tooltip>
           </div>
         ),
       },

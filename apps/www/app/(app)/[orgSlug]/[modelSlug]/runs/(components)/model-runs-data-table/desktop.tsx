@@ -17,7 +17,7 @@ import {
   RuntimeTableCell,
 } from '@/components/templates/table-cells';
 import { GLOSSARY } from '@/components/templates/vocab';
-import { IconButton, Table } from '@/components/ui';
+import { IconButton, Table, Tooltip } from '@/components/ui';
 
 const ModelRunsDataTableDesktop: React.FC<ModelRunsDataTableInternalProps> = (tableOptions) => {
   const columns: ColumnDef<ModelRunsDataTableValue>[] = useMemo(
@@ -181,13 +181,15 @@ const ModelRunsDataTableDesktop: React.FC<ModelRunsDataTableInternalProps> = (ta
         header: () => <div className="flex justify-end">Actions</div>,
         cell: ({ row }) => (
           <div className="flex justify-end">
-            <IconButton
-              aria-label="View run"
-              href={`/run/${row.original.id}`}
-              variant="outline"
-            >
-              <ArrowRight />
-            </IconButton>
+            <Tooltip side="left" content="View run details" triggerProps={{ asChild: true }}>
+              <IconButton
+                aria-label="View run"
+                href={`/run/${row.original.id}`}
+                variant="outline"
+              >
+                <ArrowRight />
+              </IconButton>
+            </Tooltip>
           </div>
         ),
       },

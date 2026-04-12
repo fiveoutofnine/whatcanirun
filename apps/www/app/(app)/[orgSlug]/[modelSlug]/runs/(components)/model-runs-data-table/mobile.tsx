@@ -285,7 +285,7 @@ const ModelRunsDataTableMobileSubComponent: React.FC<{ data: ModelRunsDataTableV
       <Button
         className="w-full col-span-2"
         href={`/run/${data.id}`}
-        size="sm"
+        size="md"
         variant="outline"
         rightIcon={<ChevronRight />}
       >
