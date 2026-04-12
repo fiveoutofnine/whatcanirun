@@ -95,7 +95,7 @@ export const generateMetadata = async ({
   ogParams.set('device', deviceName);
 
   const title =
-    modelName && deviceName ? `Run Details for ${modelName} on ${deviceName}` : 'Run Details';
+    modelName && deviceName ? `${modelName} Run Details on ${deviceName}` : 'Run Details';
   const description =
     `View details for a benchmark run of ${modelName} ${quant ? ` (${quant} quant) ` : ''}` +
     (deviceName ? `on ${article} ${deviceName}.` : '.');
