@@ -16,17 +16,41 @@ type ShareButtonProps = {
 const ShareButton: React.FC<ShareButtonProps> = ({ className, label }) => {
   const [copied, setCopied] = useState<boolean>(false);
 
-  const copy = () => {
+  const copy = async (url: string) => {
     if (copied) return;
 
-    navigator.clipboard.writeText(window.location.href);
-    setCopied(true);
-    toast({
-      title: 'Copied link to clipboard.',
-      intent: 'success',
-      hasCloseButton: true,
-    });
-    setTimeout(() => setCopied(false), 3000);
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      toast({
+        title: 'Copied link to clipboard.',
+        intent: 'success',
+        hasCloseButton: true,
+      });
+      setTimeout(() => setCopied(false), 3000);
+    } catch {
+      toast({
+        title: 'Unable to share link.',
+        description: 'Your browser did not allow clipboard access.',
+        intent: 'fail',
+        hasCloseButton: true,
+      });
+    }
+  };
+
+  const handleClick = async () => {
+    const url = window.location.href;
+
+    if (typeof navigator.share === 'function' && (!navigator.canShare || navigator.canShare({ url }))) {
+      try {
+        await navigator.share({ url });
+        return;
+      } catch (error) {
+        if (error instanceof DOMException && error.name === 'AbortError') return;
+      }
+    }
+
+    await copy(url);
   };
 
   return (
@@ -38,7 +62,7 @@ const ShareButton: React.FC<ShareButtonProps> = ({ className, label }) => {
           className,
         ),
       )}
-      onClick={copy}
+      onClick={handleClick}
     >
       <span>{label ?? 'Share'}</span>
       {copied ? (

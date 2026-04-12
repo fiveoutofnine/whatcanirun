@@ -4,7 +4,6 @@ import { notFound } from 'next/navigation';
 import { Fragment } from 'react';
 
 import CopyBenchmarkCommandButton from './copy-benchmark-command-button';
-import ShareButton from './share-button';
 import RunDetailsTrialsChart from './trials-chart';
 import { ArrowUpRight, Calendar, Layers } from 'lucide-react';
 
@@ -13,6 +12,7 @@ import { RunStatus } from '@/lib/db/schema';
 import { getRunnabilityScore, parseManufacturer } from '@/lib/utils';
 
 import PreservedDeviceLink from '@/components/common/preserved-device-link';
+import ShareButton from '@/components/common/share-button';
 import ClickableTooltip from '@/components/templates/clickable-tooltip';
 import { H2 } from '@/components/templates/mdx';
 import RelativeDate from '@/components/templates/relative-date';
