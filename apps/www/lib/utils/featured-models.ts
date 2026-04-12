@@ -64,11 +64,23 @@ function clampFeaturedLimit(limit?: number | null): number | undefined {
   return Math.max(1, Math.min(MAX_FEATURED_LIMIT, Math.trunc(limit)));
 }
 
-function getFeaturedGpuBudgetBytes(
+function getFeaturedMemoryBudgetBytes(
   query: FeaturedModelsQuery,
   deviceTarget: FeaturedDeviceTarget | null,
 ): number | null {
-  if (!deviceTarget || getFeaturedDeviceType(deviceTarget) !== 'gpu' || !query.gpu?.trim()) {
+  if (!deviceTarget) return null;
+
+  const deviceType = getFeaturedDeviceType(deviceTarget);
+
+  if (deviceType === 'apple') {
+    if (query.ramGb == null || !Number.isFinite(query.ramGb) || query.ramGb <= 0) {
+      return null;
+    }
+
+    return Math.trunc(query.ramGb) * 1024 * 1024 * 1024;
+  }
+
+  if (deviceType !== 'gpu' || !query.gpu?.trim()) {
     return null;
   }
 
@@ -81,38 +93,6 @@ function getFeaturedGpuBudgetBytes(
       : 1;
 
   return vramGb * gpuCount * 1024 * 1024 * 1024;
-}
-
-function buildFeaturedModelFileSizeMap(
-  rows: readonly FeaturedModelSizeRow[],
-): Map<string, number> {
-  const fileSizes = new Map<string, number>();
-
-  for (const row of rows) {
-    if (!row.modelRef || row.fileSizeBytes == null || row.fileSizeBytes <= 0) continue;
-
-    const existing = fileSizes.get(row.modelRef);
-    if (existing == null || row.fileSizeBytes < existing) {
-      fileSizes.set(row.modelRef, row.fileSizeBytes);
-    }
-  }
-
-  return fileSizes;
-}
-
-function filterFeaturedWishlistByGpuBudget(
-  wishlist: readonly FeaturedWishlistEntry[],
-  fileSizes: ReadonlyMap<string, number>,
-  gpuBudgetBytes: number | null,
-): FeaturedWishlistEntry[] {
-  if (gpuBudgetBytes == null) return [...wishlist];
-
-  return wishlist.filter((entry) => {
-    const fileSizeBytes = fileSizes.get(entry.modelRef);
-    if (fileSizeBytes == null) return true;
-
-    return fileSizeBytes + FEATURED_MEMORY_OVERHEAD_BYTES <= gpuBudgetBytes;
-  });
 }
 
 export function getFeaturedCoverageKey(
@@ -130,33 +110,28 @@ export function getFeaturedModelCoverageKey(
   return `${runtime}::${modelRef}`;
 }
 
-export function buildFeaturedCoverageMap(
-  rows: readonly HistoricalFeaturedCoverageRow[],
-): Map<string, number> {
-  const coverage = new Map<string, number>();
+export function getFeaturedModelsCacheKey(query: FeaturedModelsQuery = {}): string[] {
+  const runtime = query.runtime && isFeaturedRuntime(query.runtime) ? query.runtime : undefined;
+  const limit = clampFeaturedLimit(query.limit);
+  const deviceTarget = normalizeFeaturedDeviceTarget(query);
+  const memoryBudgetBytes = getFeaturedMemoryBudgetBytes(query, deviceTarget);
 
-  for (const row of rows) {
-    if (!isFeaturedRuntime(row.runtime) || !row.modelRef) continue;
-
-    const deviceTarget = normalizeFeaturedDeviceTarget({
-      cpu: row.cpu,
-      gpu: row.gpu,
-      gpuCount: row.gpuCount,
-      osName: row.osName,
-    });
-
-    if (!deviceTarget) continue;
-
-    const key = getFeaturedCoverageKey(row.runtime, row.modelRef, deviceTarget);
-    coverage.set(key, (coverage.get(key) ?? 0) + Number(row.runCount));
-  }
-
-  return coverage;
+  return [
+    'featured-models',
+    runtime ?? 'all',
+    deviceTarget ?? 'any',
+    String(memoryBudgetBytes ?? ''),
+    String(limit ?? ''),
+  ];
 }
 
-export function buildFeaturedDistinctTargetsMap(
+function buildFeaturedCoverageIndex(
   rows: readonly HistoricalFeaturedCoverageRow[],
-): Map<string, readonly FeaturedDeviceTarget[]> {
+): {
+  coverage: Map<string, number>;
+  distinctTargets: Map<string, readonly FeaturedDeviceTarget[]>;
+} {
+  const coverage = new Map<string, number>();
   const distinctTargets = new Map<string, Set<FeaturedDeviceTarget>>();
 
   for (const row of rows) {
@@ -171,79 +146,32 @@ export function buildFeaturedDistinctTargetsMap(
 
     if (!deviceTarget) continue;
 
-    const key = getFeaturedModelCoverageKey(row.runtime, row.modelRef);
-    let targets = distinctTargets.get(key);
+    const coverageKey = getFeaturedCoverageKey(row.runtime, row.modelRef, deviceTarget);
+    coverage.set(coverageKey, (coverage.get(coverageKey) ?? 0) + Number(row.runCount));
+
+    const modelKey = getFeaturedModelCoverageKey(row.runtime, row.modelRef);
+    let targets = distinctTargets.get(modelKey);
 
     if (!targets) {
       targets = new Set<FeaturedDeviceTarget>();
-      distinctTargets.set(key, targets);
+      distinctTargets.set(modelKey, targets);
     }
 
     targets.add(deviceTarget);
   }
 
-  return new Map(
-    [...distinctTargets.entries()].map(([key, targets]) => [key, Object.freeze([...targets])]),
-  );
-}
-
-function getFeaturedEntryCoverage(
-  entry: FeaturedWishlistEntry,
-  target: FeaturedDeviceTarget,
-  coverage: ReadonlyMap<string, number>,
-): number {
-  return coverage.get(getFeaturedCoverageKey(entry.runtime, entry.modelRef, target)) ?? 0;
-}
-
-function getFeaturedEntryCoveredTargets(
-  entry: FeaturedWishlistEntry,
-  distinctTargets: ReadonlyMap<string, readonly FeaturedDeviceTarget[]>,
-): readonly FeaturedDeviceTarget[] {
-  const targets = distinctTargets.get(getFeaturedModelCoverageKey(entry.runtime, entry.modelRef));
-  if (!targets) return [];
-
-  return targets.filter((target) => entry.deviceTypes.includes(getFeaturedDeviceType(target)));
-}
-
-function getFeaturedEntryDistinctTargetCount(
-  entry: FeaturedWishlistEntry,
-  distinctTargets: ReadonlyMap<string, readonly FeaturedDeviceTarget[]>,
-): number {
-  return getFeaturedEntryCoveredTargets(entry, distinctTargets).length;
-}
-
-function getFeaturedEntryUnderfilledTargetCount(
-  entry: FeaturedWishlistEntry,
-  coverage: ReadonlyMap<string, number>,
-  distinctTargets: ReadonlyMap<string, readonly FeaturedDeviceTarget[]>,
-): number {
-  return getFeaturedEntryCoveredTargets(entry, distinctTargets).filter(
-    (target) => getFeaturedEntryCoverage(entry, target, coverage) < entry.minimumRunsPerDevice,
-  ).length;
-}
-
-function getFeaturedEntryWeakestTargetCoverage(
-  entry: FeaturedWishlistEntry,
-  coverage: ReadonlyMap<string, number>,
-  distinctTargets: ReadonlyMap<string, readonly FeaturedDeviceTarget[]>,
-): number {
-  const targets = getFeaturedEntryCoveredTargets(entry, distinctTargets);
-  if (targets.length === 0) return 0;
-
-  let minimum = Number.POSITIVE_INFINITY;
-  for (const target of targets) {
-    minimum = Math.min(minimum, getFeaturedEntryCoverage(entry, target, coverage));
-  }
-
-  return Number.isFinite(minimum) ? minimum : 0;
+  return {
+    coverage,
+    distinctTargets: new Map(
+      [...distinctTargets.entries()].map(([key, targets]) => [key, Object.freeze([...targets])]),
+    ),
+  };
 }
 
 export function selectFeaturedWishlistEntries(
   options: SelectFeaturedWishlistEntriesOptions,
 ): FeaturedWishlistEntry[] {
   const wishlist = options.wishlist ?? FEATURED_WISHLIST;
-  const coverage = options.coverage;
-  const distinctTargets = options.distinctTargets;
   const deviceTarget = options.deviceTarget ?? null;
   const deviceType = deviceTarget ? getFeaturedDeviceType(deviceTarget) : null;
   const limit = clampFeaturedLimit(options.limit);
@@ -257,34 +185,55 @@ export function selectFeaturedWishlistEntries(
   const useTargetedEntries = deviceTarget != null && targetedEntries.length > 0;
   const entries = useTargetedEntries ? targetedEntries : runtimeEntries;
 
-  const scoredEntries = entries.map((entry) => ({
-    entry,
-    breadthGap: Math.max(
-      0,
-      entry.minimumDistinctDevices - getFeaturedEntryDistinctTargetCount(entry, distinctTargets),
-    ),
-    exactCoverage:
-      useTargetedEntries && deviceTarget ? getFeaturedEntryCoverage(entry, deviceTarget, coverage) : 0,
-    exactGap:
+  const scoredEntries = entries.map((entry) => {
+    const coveredTargets = (
+      options.distinctTargets.get(getFeaturedModelCoverageKey(entry.runtime, entry.modelRef)) ?? []
+    ).filter((target) => entry.deviceTypes.includes(getFeaturedDeviceType(target)));
+
+    let weakestTargetCoverage = 0;
+    let underfilledTargetCount = 0;
+
+    if (coveredTargets.length > 0) {
+      weakestTargetCoverage = Number.POSITIVE_INFINITY;
+
+      for (const target of coveredTargets) {
+        const targetCoverage =
+          options.coverage.get(getFeaturedCoverageKey(entry.runtime, entry.modelRef, target)) ?? 0;
+
+        if (targetCoverage < entry.minimumRunsPerDevice) {
+          underfilledTargetCount += 1;
+        }
+
+        weakestTargetCoverage = Math.min(weakestTargetCoverage, targetCoverage);
+      }
+
+      if (!Number.isFinite(weakestTargetCoverage)) {
+        weakestTargetCoverage = 0;
+      }
+    }
+
+    const exactCoverage =
       useTargetedEntries && deviceTarget
-        ? Math.max(
-            0,
-            entry.minimumRunsPerDevice - getFeaturedEntryCoverage(entry, deviceTarget, coverage),
-          )
-        : 0,
-    index: wishlist.indexOf(entry),
-    distinctCoveredTargets: getFeaturedEntryDistinctTargetCount(entry, distinctTargets),
-    underfilledTargetCount: getFeaturedEntryUnderfilledTargetCount(
+        ? options.coverage.get(
+            getFeaturedCoverageKey(entry.runtime, entry.modelRef, deviceTarget),
+          ) ?? 0
+        : 0;
+    const distinctCoveredTargets = coveredTargets.length;
+
+    return {
       entry,
-      coverage,
-      distinctTargets,
-    ),
-    weakestTargetCoverage: getFeaturedEntryWeakestTargetCoverage(
-      entry,
-      coverage,
-      distinctTargets,
-    ),
-  }));
+      breadthGap: Math.max(0, entry.minimumDistinctDevices - distinctCoveredTargets),
+      exactCoverage,
+      exactGap:
+        useTargetedEntries && deviceTarget
+          ? Math.max(0, entry.minimumRunsPerDevice - exactCoverage)
+          : 0,
+      index: wishlist.indexOf(entry),
+      distinctCoveredTargets,
+      underfilledTargetCount,
+      weakestTargetCoverage,
+    };
+  });
 
   if (useTargetedEntries) {
     scoredEntries.sort(
@@ -398,24 +347,44 @@ async function getFeaturedModelSizeRows(
 
 export async function getFeaturedModels(query: FeaturedModelsQuery = {}): Promise<FeaturedModel[]> {
   const runtime = query.runtime && isFeaturedRuntime(query.runtime) ? query.runtime : undefined;
+  const limit = clampFeaturedLimit(query.limit);
   const deviceTarget = normalizeFeaturedDeviceTarget(query);
   const runtimeWishlist = runtime
     ? FEATURED_WISHLIST.filter((entry) => entry.runtime === runtime)
     : FEATURED_WISHLIST;
-  const gpuBudgetBytes = getFeaturedGpuBudgetBytes(query, deviceTarget);
-  const fileSizes = buildFeaturedModelFileSizeMap(await getFeaturedModelSizeRows(runtimeWishlist));
-  const wishlist = filterFeaturedWishlistByGpuBudget(runtimeWishlist, fileSizes, gpuBudgetBytes);
-  const rows = await getHistoricalFeaturedCoverageRows(wishlist, runtime);
-  const coverage = buildFeaturedCoverageMap(rows);
-  const distinctTargets = buildFeaturedDistinctTargetsMap(rows);
-  const entries = selectFeaturedWishlistEntries({
+  const memoryBudgetBytes = getFeaturedMemoryBudgetBytes(query, deviceTarget);
+  const fileSizes = new Map<string, number>();
+
+  for (const row of await getFeaturedModelSizeRows(runtimeWishlist)) {
+    if (!row.modelRef || row.fileSizeBytes == null || row.fileSizeBytes <= 0) continue;
+
+    const existing = fileSizes.get(row.modelRef);
+    if (existing == null || row.fileSizeBytes < existing) {
+      fileSizes.set(row.modelRef, row.fileSizeBytes);
+    }
+  }
+
+  const wishlist =
+    memoryBudgetBytes == null
+      ? [...runtimeWishlist]
+      : runtimeWishlist.filter((entry) => {
+          const fileSizeBytes = fileSizes.get(entry.modelRef);
+          return (
+            fileSizeBytes == null ||
+            fileSizeBytes + FEATURED_MEMORY_OVERHEAD_BYTES <= memoryBudgetBytes
+          );
+        });
+
+  const { coverage, distinctTargets } = buildFeaturedCoverageIndex(
+    await getHistoricalFeaturedCoverageRows(wishlist, runtime),
+  );
+
+  return selectFeaturedWishlistEntries({
     coverage,
     distinctTargets,
     deviceTarget,
-    limit: query.limit,
+    limit,
     runtime,
     wishlist,
-  });
-
-  return entries.map(toFeaturedModel);
+  }).map(toFeaturedModel);
 }

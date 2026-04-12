@@ -31,6 +31,7 @@ export interface FeaturedDeviceInfo {
   cpu?: string | null;
   gpu?: string | null;
   gpuCount?: number | null;
+  ramGb?: number | null;
   osName?: string | null;
 }
 
@@ -275,16 +276,23 @@ export function normalizeFeaturedDeviceTarget(
   if (appleTarget) return appleTarget;
 
   if (hasUsableGpu(device.gpu)) {
-    return `gpu/${normalizeGpuTarget(device.gpu)}`;
+    const normalizedGpu = normalizeGpuTarget(device.gpu);
+    if (normalizedGpu) {
+      return `gpu/${normalizedGpu}`;
+    }
   }
 
   if (device.cpu?.trim()) {
-    return `cpu/${normalizeCpuTarget(device.cpu)}`;
+    const normalizedCpu = normalizeCpuTarget(device.cpu);
+    if (normalizedCpu) {
+      return `cpu/${normalizedCpu}`;
+    }
   }
 
   return null;
 }
 
 export function getFeaturedDeviceType(target: FeaturedDeviceTarget): FeaturedDeviceType {
-  return target.split('/', 1)[0] as FeaturedDeviceType;
+  const separatorIndex = target.indexOf('/');
+  return (separatorIndex >= 0 ? target.slice(0, separatorIndex) : target) as FeaturedDeviceType;
 }

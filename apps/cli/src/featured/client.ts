@@ -58,6 +58,10 @@ export function buildFeaturedModelsUrl(request: FeaturedModelsRequest = {}): str
     url.searchParams.set('gpuCount', String(request.device.gpuCount));
   }
 
+  if (request.device?.ramGb != null) {
+    url.searchParams.set('ramGb', String(request.device.ramGb));
+  }
+
   if (request.device?.osName) {
     url.searchParams.set('osName', request.device.osName);
   }

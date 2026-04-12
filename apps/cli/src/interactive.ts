@@ -189,6 +189,7 @@ export async function runInteractive(): Promise<void> {
       cpu: device.cpu_model,
       gpu: device.gpu_model,
       gpuCount: device.gpu_count,
+      ramGb: device.ram_gb,
       osName: device.os_name,
     };
   } catch {
