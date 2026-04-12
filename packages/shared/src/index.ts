@@ -9,7 +9,6 @@ export {
   cpu,
   defineFeaturedWishlist,
   FEATURED_RUNTIMES,
-  FEATURED_WISHLIST,
   featuredGguf,
   featuredMlx,
   getFeaturedModelRef,
@@ -18,6 +17,7 @@ export {
   normalizeFeaturedDeviceTarget,
   toFeaturedModel,
 } from './featured';
+export { FEATURED_WISHLIST } from './wishlist';
 export type {
   FeaturedDeviceInfo,
   FeaturedDeviceTarget,
