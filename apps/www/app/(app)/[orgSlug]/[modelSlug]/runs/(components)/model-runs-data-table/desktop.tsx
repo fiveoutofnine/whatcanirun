@@ -181,7 +181,12 @@ const ModelRunsDataTableDesktop: React.FC<ModelRunsDataTableInternalProps> = (ta
         header: () => <div className="flex justify-end">Actions</div>,
         cell: ({ row }) => (
           <div className="flex justify-end">
-            <Tooltip side="left" content="View run details" triggerProps={{ asChild: true }}>
+            <Tooltip
+              side="left"
+              content="View run details"
+              inverted={false}
+              triggerProps={{ asChild: true }}
+            >
               <IconButton
                 aria-label="View run"
                 href={`/run/${row.original.id}`}
