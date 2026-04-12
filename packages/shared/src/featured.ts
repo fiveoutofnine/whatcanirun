@@ -3,9 +3,11 @@
 // -----------------------------------------------------------------------------
 
 export const FEATURED_RUNTIMES = ['mlx_lm', 'llama.cpp'] as const;
+export const FEATURED_DEVICE_TYPES = ['apple', 'gpu', 'cpu'] as const;
 
 export type FeaturedRuntime = (typeof FEATURED_RUNTIMES)[number];
-export type FeaturedDeviceTarget = `apple/${string}` | `gpu/${string}` | `cpu/${string}`;
+export type FeaturedDeviceType = (typeof FEATURED_DEVICE_TYPES)[number];
+export type FeaturedDeviceTarget = `${FeaturedDeviceType}/${string}`;
 
 export interface FeaturedModel {
   displayName: string;
@@ -16,7 +18,7 @@ export interface FeaturedModel {
 
 export interface FeaturedWishlistEntry extends FeaturedModel {
   modelRef: string;
-  targets: readonly FeaturedDeviceTarget[];
+  deviceTypes: readonly FeaturedDeviceType[];
 }
 
 export interface FeaturedDeviceInfo {
@@ -110,7 +112,7 @@ function createFeaturedEntry(
   displayName: string,
   hfRepoId: string,
   runtime: FeaturedRuntime,
-  targets: readonly FeaturedDeviceTarget[],
+  deviceTypes: readonly FeaturedDeviceType[],
   hfFileName?: string,
 ): FeaturedWishlistEntry {
   return {
@@ -119,7 +121,7 @@ function createFeaturedEntry(
     ...(hfFileName ? { hfFileName } : {}),
     runtime,
     modelRef: getFeaturedModelRef({ hfRepoId, hfFileName }),
-    targets: [...targets],
+    deviceTypes: [...deviceTypes],
   };
 }
 
@@ -127,33 +129,33 @@ function createFeaturedEntry(
 // DSL
 // -----------------------------------------------------------------------------
 
-export function apple(target: string): FeaturedDeviceTarget {
-  return `apple/${normalizeAppleTarget(target)}`;
+export function apple(): FeaturedDeviceType {
+  return 'apple';
 }
 
-export function gpu(target: string): FeaturedDeviceTarget {
-  return `gpu/${normalizeGpuTarget(target)}`;
+export function gpu(): FeaturedDeviceType {
+  return 'gpu';
 }
 
-export function cpu(target: string): FeaturedDeviceTarget {
-  return `cpu/${normalizeCpuTarget(target)}`;
+export function cpu(): FeaturedDeviceType {
+  return 'cpu';
 }
 
 export function featuredMlx(
   displayName: string,
   hfRepoId: string,
-  targets: readonly FeaturedDeviceTarget[],
+  deviceTypes: readonly FeaturedDeviceType[],
 ): FeaturedWishlistEntry {
-  return createFeaturedEntry(displayName, hfRepoId, 'mlx_lm', targets);
+  return createFeaturedEntry(displayName, hfRepoId, 'mlx_lm', deviceTypes);
 }
 
 export function featuredGguf(
   displayName: string,
   hfRepoId: string,
   hfFileName: string,
-  targets: readonly FeaturedDeviceTarget[],
+  deviceTypes: readonly FeaturedDeviceType[],
 ): FeaturedWishlistEntry {
-  return createFeaturedEntry(displayName, hfRepoId, 'llama.cpp', targets, hfFileName);
+  return createFeaturedEntry(displayName, hfRepoId, 'llama.cpp', deviceTypes, hfFileName);
 }
 
 export function defineFeaturedWishlist(
@@ -163,8 +165,8 @@ export function defineFeaturedWishlist(
 
   return Object.freeze(
     entries.map((entry) => {
-      for (const target of entry.targets) {
-        const key = `${entry.runtime}::${entry.modelRef}::${target}`;
+      for (const deviceType of entry.deviceTypes) {
+        const key = `${entry.runtime}::${entry.modelRef}::${deviceType}`;
         if (seen.has(key)) {
           throw new Error(`Duplicate featured wishlist tuple: ${key}`);
         }
@@ -173,7 +175,7 @@ export function defineFeaturedWishlist(
 
       return Object.freeze({
         ...entry,
-        targets: Object.freeze([...entry.targets]),
+        deviceTypes: Object.freeze([...entry.deviceTypes]),
       });
     }),
   );
@@ -198,4 +200,8 @@ export function normalizeFeaturedDeviceTarget(
   }
 
   return null;
+}
+
+export function getFeaturedDeviceType(target: FeaturedDeviceTarget): FeaturedDeviceType {
+  return target.split('/', 1)[0] as FeaturedDeviceType;
 }

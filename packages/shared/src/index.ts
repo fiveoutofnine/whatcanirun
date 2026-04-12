@@ -8,9 +8,11 @@ export {
   apple,
   cpu,
   defineFeaturedWishlist,
+  FEATURED_DEVICE_TYPES,
   FEATURED_RUNTIMES,
   featuredGguf,
   featuredMlx,
+  getFeaturedDeviceType,
   getFeaturedModelRef,
   gpu,
   isFeaturedRuntime,
@@ -20,6 +22,7 @@ export {
 export { FEATURED_WISHLIST } from './wishlist';
 export type {
   FeaturedDeviceInfo,
+  FeaturedDeviceType,
   FeaturedDeviceTarget,
   FeaturedModel,
   FeaturedRuntime,

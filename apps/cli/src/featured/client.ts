@@ -1,6 +1,7 @@
 import type { FeaturedDeviceInfo, FeaturedModel, FeaturedRuntime } from '@whatcanirun/shared';
 import {
   FEATURED_WISHLIST,
+  getFeaturedDeviceType,
   normalizeFeaturedDeviceTarget,
   toFeaturedModel,
 } from '@whatcanirun/shared';
@@ -69,10 +70,11 @@ export function getFallbackFeaturedModels(request: FeaturedModelsRequest = {}): 
     : FEATURED_WISHLIST;
   const deviceTarget =
     request.device == null ? null : normalizeFeaturedDeviceTarget(request.device);
+  const deviceType = deviceTarget ? getFeaturedDeviceType(deviceTarget) : null;
   const targetedEntries =
-    deviceTarget == null
+    deviceType == null
       ? []
-      : runtimeEntries.filter((entry) => entry.targets.includes(deviceTarget));
+      : runtimeEntries.filter((entry) => entry.deviceTypes.includes(deviceType));
   const entries = targetedEntries.length > 0 ? targetedEntries : runtimeEntries;
 
   return entries.map(toFeaturedModel);

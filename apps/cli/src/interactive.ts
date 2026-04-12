@@ -1,4 +1,4 @@
-import type { FeaturedDeviceInfo } from '@whatcanirun/shared';
+import type { FeaturedDeviceInfo, FeaturedRuntime } from '@whatcanirun/shared';
 import chalk from 'chalk';
 
 import { getAuth } from './auth/token';
@@ -85,7 +85,7 @@ function pick(items: string[], defaultIndex = 0): Promise<number> {
 // -----------------------------------------------------------------------------
 
 interface DetectedRuntime {
-  name: string;
+  name: FeaturedRuntime;
   info: RuntimeInfo;
 }
 

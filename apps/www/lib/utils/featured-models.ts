@@ -1,5 +1,6 @@
 import type {
   FeaturedDeviceInfo,
+  FeaturedDeviceType,
   FeaturedDeviceTarget,
   FeaturedModel,
   FeaturedRuntime,
@@ -7,6 +8,7 @@ import type {
 } from '@whatcanirun/shared';
 import {
   FEATURED_WISHLIST,
+  getFeaturedDeviceType,
   isFeaturedRuntime,
   normalizeFeaturedDeviceTarget,
   toFeaturedModel,
@@ -33,6 +35,7 @@ export interface HistoricalFeaturedCoverageRow {
 
 interface SelectFeaturedWishlistEntriesOptions {
   coverage: ReadonlyMap<string, number>;
+  coverageByType: ReadonlyMap<string, number>;
   deviceTarget?: FeaturedDeviceTarget | null;
   limit?: number | null;
   runtime?: FeaturedRuntime;
@@ -62,6 +65,14 @@ export function getFeaturedCoverageKey(
   return `${runtime}::${modelRef}::${target}`;
 }
 
+export function getFeaturedCoverageTypeKey(
+  runtime: FeaturedRuntime,
+  modelRef: string,
+  deviceType: FeaturedDeviceType,
+): string {
+  return `${runtime}::${modelRef}::${deviceType}`;
+}
+
 export function buildFeaturedCoverageMap(
   rows: readonly HistoricalFeaturedCoverageRow[],
 ): Map<string, number> {
@@ -86,6 +97,34 @@ export function buildFeaturedCoverageMap(
   return coverage;
 }
 
+export function buildFeaturedCoverageByTypeMap(
+  rows: readonly HistoricalFeaturedCoverageRow[],
+): Map<string, number> {
+  const coverage = new Map<string, number>();
+
+  for (const row of rows) {
+    if (!isFeaturedRuntime(row.runtime) || !row.modelRef) continue;
+
+    const deviceTarget = normalizeFeaturedDeviceTarget({
+      cpu: row.cpu,
+      gpu: row.gpu,
+      gpuCount: row.gpuCount,
+      osName: row.osName,
+    });
+
+    if (!deviceTarget) continue;
+
+    const key = getFeaturedCoverageTypeKey(
+      row.runtime,
+      row.modelRef,
+      getFeaturedDeviceType(deviceTarget),
+    );
+    coverage.set(key, (coverage.get(key) ?? 0) + Number(row.runCount));
+  }
+
+  return coverage;
+}
+
 function getFeaturedEntryCoverage(
   entry: FeaturedWishlistEntry,
   target: FeaturedDeviceTarget,
@@ -96,13 +135,14 @@ function getFeaturedEntryCoverage(
 
 function getMinimumFeaturedEntryCoverage(
   entry: FeaturedWishlistEntry,
-  coverage: ReadonlyMap<string, number>,
+  coverageByType: ReadonlyMap<string, number>,
 ): number {
-  if (entry.targets.length === 0) return 0;
+  if (entry.deviceTypes.length === 0) return 0;
 
   let minimum = Number.POSITIVE_INFINITY;
-  for (const target of entry.targets) {
-    minimum = Math.min(minimum, getFeaturedEntryCoverage(entry, target, coverage));
+  for (const deviceType of entry.deviceTypes) {
+    const key = getFeaturedCoverageTypeKey(entry.runtime, entry.modelRef, deviceType);
+    minimum = Math.min(minimum, coverageByType.get(key) ?? 0);
   }
 
   return Number.isFinite(minimum) ? minimum : 0;
@@ -113,13 +153,17 @@ export function selectFeaturedWishlistEntries(
 ): FeaturedWishlistEntry[] {
   const wishlist = options.wishlist ?? FEATURED_WISHLIST;
   const coverage = options.coverage;
+  const coverageByType = options.coverageByType;
   const deviceTarget = options.deviceTarget ?? null;
+  const deviceType = deviceTarget ? getFeaturedDeviceType(deviceTarget) : null;
   const limit = clampFeaturedLimit(options.limit);
   const runtimeEntries = options.runtime
     ? wishlist.filter((entry) => entry.runtime === options.runtime)
     : [...wishlist];
   const targetedEntries =
-    deviceTarget == null ? [] : runtimeEntries.filter((entry) => entry.targets.includes(deviceTarget));
+    deviceType == null
+      ? []
+      : runtimeEntries.filter((entry) => entry.deviceTypes.includes(deviceType));
   const useTargetedEntries = deviceTarget != null && targetedEntries.length > 0;
   const entries = useTargetedEntries ? targetedEntries : runtimeEntries;
 
@@ -128,7 +172,7 @@ export function selectFeaturedWishlistEntries(
     score:
       useTargetedEntries && deviceTarget
         ? getFeaturedEntryCoverage(entry, deviceTarget, coverage)
-        : getMinimumFeaturedEntryCoverage(entry, coverage),
+        : getMinimumFeaturedEntryCoverage(entry, coverageByType),
     index: wishlist.indexOf(entry),
   }));
 
@@ -199,9 +243,12 @@ async function getHistoricalFeaturedCoverageRows(
 export async function getFeaturedModels(query: FeaturedModelsQuery = {}): Promise<FeaturedModel[]> {
   const runtime = query.runtime && isFeaturedRuntime(query.runtime) ? query.runtime : undefined;
   const deviceTarget = normalizeFeaturedDeviceTarget(query);
-  const coverage = buildFeaturedCoverageMap(await getHistoricalFeaturedCoverageRows(runtime));
+  const rows = await getHistoricalFeaturedCoverageRows(runtime);
+  const coverage = buildFeaturedCoverageMap(rows);
+  const coverageByType = buildFeaturedCoverageByTypeMap(rows);
   const entries = selectFeaturedWishlistEntries({
     coverage,
+    coverageByType,
     deviceTarget,
     limit: query.limit,
     runtime,
