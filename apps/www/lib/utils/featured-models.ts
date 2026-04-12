@@ -14,6 +14,8 @@ import {
   toFeaturedModel,
 } from '@whatcanirun/shared';
 
+import { getVramGb } from '@/lib/constants/gpu';
+
 // -----------------------------------------------------------------------------
 // Types
 // -----------------------------------------------------------------------------
@@ -33,6 +35,11 @@ export interface HistoricalFeaturedCoverageRow {
   runCount: number;
 }
 
+interface FeaturedModelSizeRow {
+  fileSizeBytes: number | null;
+  modelRef: string | null;
+}
+
 interface SelectFeaturedWishlistEntriesOptions {
   coverage: ReadonlyMap<string, number>;
   coverageByType: ReadonlyMap<string, number>;
@@ -47,6 +54,7 @@ interface SelectFeaturedWishlistEntriesOptions {
 // -----------------------------------------------------------------------------
 
 const MAX_FEATURED_LIMIT = 50;
+const FEATURED_MEMORY_OVERHEAD_BYTES = 512 * 1024 * 1024;
 
 // -----------------------------------------------------------------------------
 // Helpers
@@ -55,6 +63,57 @@ const MAX_FEATURED_LIMIT = 50;
 function clampFeaturedLimit(limit?: number | null): number | undefined {
   if (limit == null || Number.isNaN(limit)) return undefined;
   return Math.max(1, Math.min(MAX_FEATURED_LIMIT, Math.trunc(limit)));
+}
+
+function getFeaturedGpuBudgetBytes(
+  query: FeaturedModelsQuery,
+  deviceTarget: FeaturedDeviceTarget | null,
+): number | null {
+  if (!deviceTarget || getFeaturedDeviceType(deviceTarget) !== 'gpu' || !query.gpu?.trim()) {
+    return null;
+  }
+
+  const vramGb = getVramGb(query.gpu);
+  if (vramGb == null) return null;
+
+  const gpuCount =
+    query.gpuCount != null && Number.isFinite(query.gpuCount) && query.gpuCount > 0
+      ? Math.trunc(query.gpuCount)
+      : 1;
+
+  return vramGb * gpuCount * 1024 * 1024 * 1024;
+}
+
+function buildFeaturedModelFileSizeMap(
+  rows: readonly FeaturedModelSizeRow[],
+): Map<string, number> {
+  const fileSizes = new Map<string, number>();
+
+  for (const row of rows) {
+    if (!row.modelRef || row.fileSizeBytes == null || row.fileSizeBytes <= 0) continue;
+
+    const existing = fileSizes.get(row.modelRef);
+    if (existing == null || row.fileSizeBytes < existing) {
+      fileSizes.set(row.modelRef, row.fileSizeBytes);
+    }
+  }
+
+  return fileSizes;
+}
+
+function filterFeaturedWishlistByGpuBudget(
+  wishlist: readonly FeaturedWishlistEntry[],
+  fileSizes: ReadonlyMap<string, number>,
+  gpuBudgetBytes: number | null,
+): FeaturedWishlistEntry[] {
+  if (gpuBudgetBytes == null) return [...wishlist];
+
+  return wishlist.filter((entry) => {
+    const fileSizeBytes = fileSizes.get(entry.modelRef);
+    if (fileSizeBytes == null) return true;
+
+    return fileSizeBytes + FEATURED_MEMORY_OVERHEAD_BYTES <= gpuBudgetBytes;
+  });
 }
 
 export function getFeaturedCoverageKey(
@@ -184,12 +243,10 @@ export function selectFeaturedWishlistEntries(
 }
 
 async function getHistoricalFeaturedCoverageRows(
+  wishlist: readonly FeaturedWishlistEntry[],
   runtime?: FeaturedRuntime,
 ): Promise<HistoricalFeaturedCoverageRow[]> {
-  const candidateEntries = runtime
-    ? FEATURED_WISHLIST.filter((entry) => entry.runtime === runtime)
-    : FEATURED_WISHLIST;
-  const candidateModelRefs = [...new Set(candidateEntries.map((entry) => entry.modelRef))];
+  const candidateModelRefs = [...new Set(wishlist.map((entry) => entry.modelRef))];
 
   if (candidateModelRefs.length === 0) return [];
 
@@ -236,6 +293,34 @@ async function getHistoricalFeaturedCoverageRows(
     );
 }
 
+async function getFeaturedModelSizeRows(
+  wishlist: readonly FeaturedWishlistEntry[],
+): Promise<FeaturedModelSizeRow[]> {
+  const candidateModelRefs = [...new Set(wishlist.map((entry) => entry.modelRef))];
+
+  if (candidateModelRefs.length === 0) return [];
+
+  const [{ inArray, sql }, { db }, { models, modelsInfo }] = await Promise.all([
+    import('drizzle-orm'),
+    import('@/lib/db'),
+    import('@/lib/db/schema'),
+  ]);
+
+  const modelSourceExpression =
+    sql<string | null>`COALESCE(NULLIF(${modelsInfo.source}, ''), ${models.source})`;
+  const fileSizeExpression =
+    sql<number | null>`COALESCE(NULLIF(${modelsInfo.fileSizeBytes}, 0), ${models.fileSizeBytes})`;
+
+  return db
+    .select({
+      modelRef: modelSourceExpression.as('model_ref'),
+      fileSizeBytes: fileSizeExpression.as('file_size_bytes'),
+    })
+    .from(models)
+    .leftJoin(modelsInfo, sql`${models.artifactSha256} = ${modelsInfo.artifactSha256}`)
+    .where(inArray(modelSourceExpression, candidateModelRefs));
+}
+
 // -----------------------------------------------------------------------------
 // Public
 // -----------------------------------------------------------------------------
@@ -243,7 +328,13 @@ async function getHistoricalFeaturedCoverageRows(
 export async function getFeaturedModels(query: FeaturedModelsQuery = {}): Promise<FeaturedModel[]> {
   const runtime = query.runtime && isFeaturedRuntime(query.runtime) ? query.runtime : undefined;
   const deviceTarget = normalizeFeaturedDeviceTarget(query);
-  const rows = await getHistoricalFeaturedCoverageRows(runtime);
+  const runtimeWishlist = runtime
+    ? FEATURED_WISHLIST.filter((entry) => entry.runtime === runtime)
+    : FEATURED_WISHLIST;
+  const gpuBudgetBytes = getFeaturedGpuBudgetBytes(query, deviceTarget);
+  const fileSizes = buildFeaturedModelFileSizeMap(await getFeaturedModelSizeRows(runtimeWishlist));
+  const wishlist = filterFeaturedWishlistByGpuBudget(runtimeWishlist, fileSizes, gpuBudgetBytes);
+  const rows = await getHistoricalFeaturedCoverageRows(wishlist, runtime);
   const coverage = buildFeaturedCoverageMap(rows);
   const coverageByType = buildFeaturedCoverageByTypeMap(rows);
   const entries = selectFeaturedWishlistEntries({
@@ -252,6 +343,7 @@ export async function getFeaturedModels(query: FeaturedModelsQuery = {}): Promis
     deviceTarget,
     limit: query.limit,
     runtime,
+    wishlist,
   });
 
   return entries.map(toFeaturedModel);
