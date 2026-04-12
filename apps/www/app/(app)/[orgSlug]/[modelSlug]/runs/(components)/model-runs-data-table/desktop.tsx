@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import type { ModelRunsDataTableInternalProps } from '.';
 import type { ModelRunsDataTableValue } from './types';
 import { type ColumnDef, flexRender, useReactTable } from '@tanstack/react-table';
-import { ChevronRight, FileText } from 'lucide-react';
+import { ArrowRight, FileText } from 'lucide-react';
 
 import DataTableSortHeader from '@/components/templates/data-table-sort-header';
 import RelativeDate from '@/components/templates/relative-date';
@@ -186,7 +186,7 @@ const ModelRunsDataTableDesktop: React.FC<ModelRunsDataTableInternalProps> = (ta
               href={`/run/${row.original.id}`}
               variant="outline"
             >
-              <ChevronRight />
+              <ArrowRight />
             </IconButton>
           </div>
         ),
@@ -257,7 +257,7 @@ const ModelRunsDataTableDesktop: React.FC<ModelRunsDataTableInternalProps> = (ta
                   <MemoryTableCell.Skeleton key={5} align="left" />,
                   <div key={6} className="flex justify-end">
                     <IconButton variant="outline" disabled>
-                      <ChevronRight />
+                      <ArrowRight />
                     </IconButton>
                   </div>,
                 ].map((skeleton, i) => (

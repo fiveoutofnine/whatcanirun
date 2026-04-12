@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import type { RunsDataTableInternalProps } from '.';
 import type { RunsDataTableValue } from './types';
 import { type ColumnDef, flexRender, useReactTable } from '@tanstack/react-table';
-import { ChevronRight, FileText } from 'lucide-react';
+import { ArrowRight, FileText } from 'lucide-react';
 
 import { RunStatus } from '@/lib/db/schema';
 
@@ -243,7 +243,7 @@ const RunsDataTableDesktop: React.FC<RunsDataTableInternalProps> = (tableOptions
               href={`/run/${row.original.id}`}
               variant="outline"
             >
-              <ChevronRight />
+              <ArrowRight />
             </IconButton>
           </div>
         ),
@@ -315,7 +315,7 @@ const RunsDataTableDesktop: React.FC<RunsDataTableInternalProps> = (tableOptions
                   <div key={6} className="ml-auto h-5 w-16 animate-pulse rounded-full bg-gray-9" />,
                   <div key={7} className="flex justify-end">
                     <IconButton variant="outline" disabled>
-                      <ChevronRight />
+                      <ArrowRight />
                     </IconButton>
                   </div>,
                 ].map((skeleton, i) => (
