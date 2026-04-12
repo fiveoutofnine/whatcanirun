@@ -194,23 +194,23 @@ export async function runInteractive(): Promise<void> {
   } catch {
     featuredDevice = undefined;
   }
-  fetchSpinner.update(chalk.dim('Fetching featured models…'));
+  fetchSpinner.update(chalk.dim('Fetching models…'));
   const featured = await fetchFeaturedModels({
     device: featuredDevice,
     runtime: selectedRuntime.name,
   });
   activeSpinner = null;
-  fetchSpinner.stop(chalk.white(`[${chalk.green('✓')}] Loaded featured models.`));
+  fetchSpinner.stop(chalk.white(`[${chalk.green('✓')}] Loaded models.`));
   if (featured.source === 'fallback') {
     console.log(
-      chalk.dim(' ↳ Using the bundled wishlist because the featured models API was unavailable.')
+      chalk.dim(' ↳ Using the bundled wishlist because the models API was unavailable.')
     );
   }
   const models = featured.models;
 
   if (models.length === 0) {
     if (runtimes.length > 1) console.log();
-    log.error(`No featured models for ${chalk.cyan(selectedRuntime.name)}.`);
+    log.error(`No models for ${chalk.cyan(selectedRuntime.name)}.`);
     console.log(
       chalk.dim(
         `↳ Run a benchmark manually with ${chalk.bold.cyan(`${binName()} run --model <model> --runtime ${selectedRuntime.name}`)}`
