@@ -24,8 +24,11 @@ export type {
   FeaturedDeviceInfo,
   FeaturedDeviceType,
   FeaturedDeviceTarget,
+  FeaturedGgufInput,
   FeaturedModel,
+  FeaturedMlxInput,
   FeaturedRuntime,
+  FeaturedWishlistInput,
   FeaturedWishlistEntry,
 } from './featured';
 export type {

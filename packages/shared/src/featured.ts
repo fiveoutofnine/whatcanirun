@@ -28,6 +28,18 @@ export interface FeaturedDeviceInfo {
   osName?: string | null;
 }
 
+export interface FeaturedWishlistInput {
+  deviceTypes: readonly FeaturedDeviceType[];
+  displayName: string;
+  hfRepoId: string;
+}
+
+export interface FeaturedMlxInput extends FeaturedWishlistInput {}
+
+export interface FeaturedGgufInput extends FeaturedWishlistInput {
+  hfFileName: string;
+}
+
 // -----------------------------------------------------------------------------
 // Constants
 // -----------------------------------------------------------------------------
@@ -141,20 +153,20 @@ export function cpu(): FeaturedDeviceType {
   return 'cpu';
 }
 
-export function featuredMlx(
-  displayName: string,
-  hfRepoId: string,
-  deviceTypes: readonly FeaturedDeviceType[],
-): FeaturedWishlistEntry {
+export function featuredMlx({
+  deviceTypes,
+  displayName,
+  hfRepoId,
+}: FeaturedMlxInput): FeaturedWishlistEntry {
   return createFeaturedEntry(displayName, hfRepoId, 'mlx_lm', deviceTypes);
 }
 
-export function featuredGguf(
-  displayName: string,
-  hfRepoId: string,
-  hfFileName: string,
-  deviceTypes: readonly FeaturedDeviceType[],
-): FeaturedWishlistEntry {
+export function featuredGguf({
+  deviceTypes,
+  displayName,
+  hfFileName,
+  hfRepoId,
+}: FeaturedGgufInput): FeaturedWishlistEntry {
   return createFeaturedEntry(displayName, hfRepoId, 'llama.cpp', deviceTypes, hfFileName);
 }
 
