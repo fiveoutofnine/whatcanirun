@@ -12,6 +12,7 @@ import { getVramGb, MANUFACTURER_LABEL } from '@/lib/constants/gpu';
 import { RunStatus } from '@/lib/db/schema';
 import { parseManufacturer } from '@/lib/utils';
 
+import PreservedDeviceLink from '@/components/common/preserved-device-link';
 import ClickableTooltip from '@/components/templates/clickable-tooltip';
 import DataTableSortHeader from '@/components/templates/data-table-sort-header';
 import RelativeDate from '@/components/templates/relative-date';
@@ -243,6 +244,7 @@ const RunsDataTableMobileSubComponent: React.FC<{ data: RunsDataTableValue }> = 
   const hasGpu = device.gpuCount > 0;
   const gpuCount = device.gpuCount ?? 1;
   const devicePrimaryName = hasGpu ? device.gpu : device.cpu;
+  const deviceHref = `/device?device=${encodeURIComponent(device.chipId)}`;
   const { manufacturer, displayName, logo: Icon } = parseManufacturer(devicePrimaryName);
   const countPrefix = manufacturer !== 'apple' && gpuCount > 1 ? `${gpuCount}×` : '';
   const vram = getVramGb(device.gpu);
@@ -253,8 +255,13 @@ const RunsDataTableMobileSubComponent: React.FC<{ data: RunsDataTableValue }> = 
       <Stat className="col-span-2">
         <Stat.Name>Device</Stat.Name>
         <Stat.Value className="flex items-center gap-1.5">
-          {countPrefix}
-          {displayName}{' '}
+          <PreservedDeviceLink
+            className="inline-flex items-center hover:underline focus-visible:rounded-sm"
+            href={deviceHref}
+          >
+            {countPrefix ? `${countPrefix} ` : ''}
+            {displayName}
+          </PreservedDeviceLink>
           {manufacturer && Icon ? (
             <ClickableTooltip
               content={MANUFACTURER_LABEL[manufacturer]}
