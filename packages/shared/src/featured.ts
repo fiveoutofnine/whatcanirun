@@ -19,7 +19,6 @@ export interface FeaturedModel {
 export interface FeaturedWishlistEntry extends FeaturedModel {
   modelRef: string;
   deviceTypes: readonly FeaturedDeviceType[];
-  minimumCompositeScore?: number;
 }
 
 export interface FeaturedDeviceInfo {
@@ -33,7 +32,6 @@ export interface FeaturedWishlistInput {
   deviceTypes: readonly FeaturedDeviceType[];
   displayName: string;
   hfRepoId: string;
-  minimumCompositeScore?: number;
 }
 
 export interface FeaturedMlxInput extends FeaturedWishlistInput {}
@@ -127,7 +125,6 @@ function createFeaturedEntry(
   hfRepoId: string,
   runtime: FeaturedRuntime,
   deviceTypes: readonly FeaturedDeviceType[],
-  minimumCompositeScore?: number,
   hfFileName?: string,
 ): FeaturedWishlistEntry {
   return {
@@ -137,7 +134,6 @@ function createFeaturedEntry(
     runtime,
     modelRef: getFeaturedModelRef({ hfRepoId, hfFileName }),
     deviceTypes: [...deviceTypes],
-    ...(minimumCompositeScore != null ? { minimumCompositeScore } : {}),
   };
 }
 
@@ -161,9 +157,8 @@ export function featuredMlx({
   deviceTypes,
   displayName,
   hfRepoId,
-  minimumCompositeScore,
 }: FeaturedMlxInput): FeaturedWishlistEntry {
-  return createFeaturedEntry(displayName, hfRepoId, 'mlx_lm', deviceTypes, minimumCompositeScore);
+  return createFeaturedEntry(displayName, hfRepoId, 'mlx_lm', deviceTypes);
 }
 
 export function featuredGguf({
@@ -171,16 +166,8 @@ export function featuredGguf({
   displayName,
   hfFileName,
   hfRepoId,
-  minimumCompositeScore,
 }: FeaturedGgufInput): FeaturedWishlistEntry {
-  return createFeaturedEntry(
-    displayName,
-    hfRepoId,
-    'llama.cpp',
-    deviceTypes,
-    minimumCompositeScore,
-    hfFileName,
-  );
+  return createFeaturedEntry(displayName, hfRepoId, 'llama.cpp', deviceTypes, hfFileName);
 }
 
 export function defineFeaturedWishlist(
