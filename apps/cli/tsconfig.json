@@ -1,8 +1,12 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "baseUrl": ".",
     "outDir": "./dist",
     "rootDir": "./src",
+    "paths": {
+      "@whatcanirun/shared": ["../../packages/shared/src/index.ts"]
+    },
     "types": ["@types/bun"]
   },
   "include": ["src/**/*.ts"]

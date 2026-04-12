@@ -1,0 +1,249 @@
+// -----------------------------------------------------------------------------
+// Types
+// -----------------------------------------------------------------------------
+
+export const FEATURED_RUNTIMES = ['mlx_lm', 'llama.cpp'] as const;
+
+export type FeaturedRuntime = (typeof FEATURED_RUNTIMES)[number];
+export type FeaturedDeviceTarget = `apple/${string}` | `gpu/${string}` | `cpu/${string}`;
+
+export interface FeaturedModel {
+  displayName: string;
+  hfRepoId: string;
+  hfFileName?: string;
+  runtime: FeaturedRuntime;
+}
+
+export interface FeaturedWishlistEntry extends FeaturedModel {
+  modelRef: string;
+  targets: readonly FeaturedDeviceTarget[];
+}
+
+export interface FeaturedDeviceInfo {
+  cpu?: string | null;
+  gpu?: string | null;
+  gpuCount?: number | null;
+  osName?: string | null;
+}
+
+// -----------------------------------------------------------------------------
+// Constants
+// -----------------------------------------------------------------------------
+
+const GPU_VENDOR_PREFIX = /^(?:nvidia(?: corporation)?|advanced micro devices,? inc\.?(?: \[amd\/ati\])?|amd\/ati|intel(?: corporation)?|apple)\s+/i;
+const TRAILING_PCI_CODES = /\s*\[[\da-f]{4}(?::[\da-f]{4})?\]\s*/gi;
+const APPLE_CHIP_PATTERN = /\b(?:apple\s+)?(m\d+)(?:[\s-]*(ultra|max|pro))?\b/i;
+
+// -----------------------------------------------------------------------------
+// Type guards
+// -----------------------------------------------------------------------------
+
+export function isFeaturedRuntime(value: string | null | undefined): value is FeaturedRuntime {
+  return FEATURED_RUNTIMES.includes(value as FeaturedRuntime);
+}
+
+// -----------------------------------------------------------------------------
+// Helpers
+// -----------------------------------------------------------------------------
+
+export function getFeaturedModelRef(model: Pick<FeaturedModel, 'hfRepoId' | 'hfFileName'>): string {
+  return model.hfFileName ? `${model.hfRepoId}:${model.hfFileName}` : model.hfRepoId;
+}
+
+export function toFeaturedModel(entry: FeaturedWishlistEntry): FeaturedModel {
+  return {
+    displayName: entry.displayName,
+    hfRepoId: entry.hfRepoId,
+    ...(entry.hfFileName ? { hfFileName: entry.hfFileName } : {}),
+    runtime: entry.runtime,
+  };
+}
+
+function slugify(value: string): string {
+  return value
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[®™©]/g, '')
+    .replace(/\((?:r|tm|c)\)/gi, '')
+    .replace(TRAILING_PCI_CODES, ' ')
+    .replace(/[^a-zA-Z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .replace(/-{2,}/g, '-')
+    .toLowerCase();
+}
+
+function normalizeAppleTarget(value: string): string {
+  const match = value.trim().match(APPLE_CHIP_PATTERN);
+  if (!match) return slugify(value.replace(/^apple[\s-]+/i, ''));
+  const chip = match[1]!.toLowerCase();
+  const tier = match[2]?.toLowerCase();
+  return tier ? `${chip}-${tier}` : chip;
+}
+
+function normalizeGpuTarget(value: string): string {
+  return slugify(
+    value
+      .trim()
+      .replace(/^\d+x\s+/i, '')
+      .replace(GPU_VENDOR_PREFIX, ''),
+  );
+}
+
+function normalizeCpuTarget(value: string): string {
+  return slugify(value.trim().replace(/^\d+x\s+/i, ''));
+}
+
+function getAppleChipTarget(cpu?: string | null, gpu?: string | null): FeaturedDeviceTarget | null {
+  const candidate = [gpu, cpu].filter(Boolean).join(' ');
+  if (!candidate) return null;
+  const match = candidate.match(APPLE_CHIP_PATTERN);
+  if (!match) return null;
+  return `apple/${normalizeAppleTarget(match[0])}`;
+}
+
+function hasUsableGpu(gpu?: string | null): gpu is string {
+  if (!gpu) return false;
+  return !/^(?:none|unknown|n\/a)$/i.test(gpu.trim());
+}
+
+function createFeaturedEntry(
+  displayName: string,
+  hfRepoId: string,
+  runtime: FeaturedRuntime,
+  targets: readonly FeaturedDeviceTarget[],
+  hfFileName?: string,
+): FeaturedWishlistEntry {
+  return {
+    displayName,
+    hfRepoId,
+    ...(hfFileName ? { hfFileName } : {}),
+    runtime,
+    modelRef: getFeaturedModelRef({ hfRepoId, hfFileName }),
+    targets: [...targets],
+  };
+}
+
+// -----------------------------------------------------------------------------
+// DSL
+// -----------------------------------------------------------------------------
+
+export function apple(target: string): FeaturedDeviceTarget {
+  return `apple/${normalizeAppleTarget(target)}`;
+}
+
+export function gpu(target: string): FeaturedDeviceTarget {
+  return `gpu/${normalizeGpuTarget(target)}`;
+}
+
+export function cpu(target: string): FeaturedDeviceTarget {
+  return `cpu/${normalizeCpuTarget(target)}`;
+}
+
+export function featuredMlx(
+  displayName: string,
+  hfRepoId: string,
+  targets: readonly FeaturedDeviceTarget[],
+): FeaturedWishlistEntry {
+  return createFeaturedEntry(displayName, hfRepoId, 'mlx_lm', targets);
+}
+
+export function featuredGguf(
+  displayName: string,
+  hfRepoId: string,
+  hfFileName: string,
+  targets: readonly FeaturedDeviceTarget[],
+): FeaturedWishlistEntry {
+  return createFeaturedEntry(displayName, hfRepoId, 'llama.cpp', targets, hfFileName);
+}
+
+export function defineFeaturedWishlist(
+  entries: readonly FeaturedWishlistEntry[],
+): readonly FeaturedWishlistEntry[] {
+  const seen = new Set<string>();
+
+  return Object.freeze(
+    entries.map((entry) => {
+      for (const target of entry.targets) {
+        const key = `${entry.runtime}::${entry.modelRef}::${target}`;
+        if (seen.has(key)) {
+          throw new Error(`Duplicate featured wishlist tuple: ${key}`);
+        }
+        seen.add(key);
+      }
+
+      return Object.freeze({
+        ...entry,
+        targets: Object.freeze([...entry.targets]),
+      });
+    }),
+  );
+}
+
+// -----------------------------------------------------------------------------
+// Normalization
+// -----------------------------------------------------------------------------
+
+export function normalizeFeaturedDeviceTarget(
+  device: FeaturedDeviceInfo,
+): FeaturedDeviceTarget | null {
+  const appleTarget = getAppleChipTarget(device.cpu, device.gpu);
+  if (appleTarget) return appleTarget;
+
+  if (hasUsableGpu(device.gpu)) {
+    return `gpu/${normalizeGpuTarget(device.gpu)}`;
+  }
+
+  if (device.cpu?.trim()) {
+    return `cpu/${normalizeCpuTarget(device.cpu)}`;
+  }
+
+  return null;
+}
+
+// -----------------------------------------------------------------------------
+// Wishlist
+// -----------------------------------------------------------------------------
+
+const APPLE_TARGETS = Object.freeze([
+  apple('M1'),
+  apple('M5 Pro'),
+  apple('M5 Max'),
+  apple('M3 Ultra'),
+]);
+
+const LLAMA_CPP_TARGETS = Object.freeze([
+  ...APPLE_TARGETS,
+  gpu('GeForce RTX 5090'),
+  gpu('GeForce RTX 5090 Laptop GPU'),
+  gpu('GeForce RTX 4090'),
+]);
+
+export const FEATURED_WISHLIST = defineFeaturedWishlist([
+  featuredMlx('Gemma 4 E4B Instruct (4-bit)', 'mlx-community/gemma-4-e4b-it-4bit', APPLE_TARGETS),
+  featuredMlx('Gemma 4 E4B Instruct (8-bit)', 'mlx-community/gemma-4-e4b-it-8bit', APPLE_TARGETS),
+  featuredMlx('Gemma 4 31B Instruct (4-bit)', 'mlx-community/gemma-4-31b-it-4bit', APPLE_TARGETS),
+  featuredGguf(
+    'Gemma 4 E2B Instruct (Q4_K_M)',
+    'unsloth/gemma-4-E2B-it-GGUF',
+    'gemma-4-E2B-it-Q4_K_M.gguf',
+    LLAMA_CPP_TARGETS,
+  ),
+  featuredGguf(
+    'Gemma 4 E4B Instruct (Q4_K_M)',
+    'unsloth/gemma-4-E4B-it-GGUF',
+    'gemma-4-E4B-it-Q4_K_M.gguf',
+    LLAMA_CPP_TARGETS,
+  ),
+  featuredGguf(
+    'Gemma 4 26B-A4B Instruct (Q4_K_M)',
+    'unsloth/gemma-4-26B-A4B-it-GGUF',
+    'gemma-4-26B-A4B-it-UD-Q4_K_M.gguf',
+    LLAMA_CPP_TARGETS,
+  ),
+  featuredGguf(
+    'Gemma 4 31B Instruct (Q4_K_M)',
+    'unsloth/gemma-4-31B-it-GGUF',
+    'gemma-4-31B-it-Q4_K_M.gguf',
+    LLAMA_CPP_TARGETS,
+  ),
+]);

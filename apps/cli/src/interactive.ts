@@ -1,102 +1,15 @@
+import type { FeaturedDeviceInfo } from '@whatcanirun/shared';
 import chalk from 'chalk';
 
 import { getAuth } from './auth/token';
 import { executeBenchmark } from './commands/run';
+import { detectDevice } from './device/detect';
+import { fetchFeaturedModels } from './featured/client';
 import { resolveRuntime } from './runtime/resolve';
 import type { RuntimeInfo } from './runtime/types';
 import { binName } from './utils/bin';
 import * as log from './utils/log';
 import { Spinner } from './utils/log';
-
-// -----------------------------------------------------------------------------
-// Types
-// -----------------------------------------------------------------------------
-
-interface FeaturedModel {
-  displayName: string;
-  hfRepoId: string;
-  hfFileName?: string;
-  runtime: 'mlx_lm' | 'llama.cpp';
-}
-
-// -----------------------------------------------------------------------------
-// Fallback featured models (used when API is unreachable)
-// -----------------------------------------------------------------------------
-
-const FALLBACK_MODELS: FeaturedModel[] = [
-  {
-    displayName: 'Qwen 3.5 0.8B (4-bit)',
-    hfRepoId: 'mlx-community/Qwen3.5-0.8B-OptiQ-4bit',
-    runtime: 'mlx_lm',
-  },
-  {
-    displayName: 'Qwen 3.5 4B (4-bit)',
-    hfRepoId: 'mlx-community/Qwen3.5-4B-MLX-4bit',
-    runtime: 'mlx_lm',
-  },
-  {
-    displayName: 'Qwen 3.5 9B (4-bit)',
-    hfRepoId: 'mlx-community/Qwen3.5-9B-MLX-4bit',
-    runtime: 'mlx_lm',
-  },
-  {
-    displayName: 'Llama 3.1 8B Instruct (4-bit)',
-    hfRepoId: 'mlx-community/Meta-Llama-3.1-8B-Instruct-4bit',
-    runtime: 'mlx_lm',
-  },
-  {
-    displayName: 'Qwen 3.5 0.8B (Q4_K_M GGUF)',
-    hfRepoId: 'unsloth/Qwen3.5-0.8B-GGUF',
-    hfFileName: 'Qwen3.5-0.8B-Q4_K_M.gguf',
-    runtime: 'llama.cpp',
-  },
-  {
-    displayName: 'Qwen 3.5 4B (Q4_K_M GGUF)',
-    hfRepoId: 'unsloth/Qwen3.5-4B-GGUF',
-    hfFileName: 'Qwen3.5-4B-Q4_K_M.gguf',
-    runtime: 'llama.cpp',
-  },
-  {
-    displayName: 'Qwen 3.5 9B (Q4_K_M GGUF)',
-    hfRepoId: 'unsloth/Qwen3.5-9B-GGUF',
-    hfFileName: 'Qwen3.5-9B-Q4_K_M.gguf',
-    runtime: 'llama.cpp',
-  },
-];
-
-// -----------------------------------------------------------------------------
-// Fetch featured models
-// -----------------------------------------------------------------------------
-
-const API_BASE = process.env.WCIR_API_URL || 'https://whatcani.run';
-
-function isFeaturedModel(item: unknown): item is FeaturedModel {
-  if (typeof item !== 'object' || item === null) return false;
-  const obj = item as Record<string, unknown>;
-  return (
-    typeof obj.displayName === 'string' &&
-    typeof obj.hfRepoId === 'string' &&
-    (obj.hfFileName === undefined || typeof obj.hfFileName === 'string') &&
-    (obj.runtime === 'mlx_lm' || obj.runtime === 'llama.cpp')
-  );
-}
-
-async function fetchFeaturedModels(): Promise<FeaturedModel[]> {
-  try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 5000);
-    const resp = await fetch(`${API_BASE}/api/v0/featured`, {
-      signal: controller.signal,
-    });
-    clearTimeout(timeout);
-    if (!resp.ok) return FALLBACK_MODELS;
-    const data: unknown = await resp.json();
-    if (!Array.isArray(data) || !data.every(isFeaturedModel)) return FALLBACK_MODELS;
-    return data;
-  } catch {
-    return FALLBACK_MODELS;
-  }
-}
 
 // -----------------------------------------------------------------------------
 // Arrow-key picker (vertical list)
@@ -269,8 +182,22 @@ export async function runInteractive(): Promise<void> {
   // Fetch and filter models for this runtime.
   const fetchSpinner = new Spinner(chalk.dim('Fetching models…')).start();
   activeSpinner = fetchSpinner;
-  const allModels = await fetchFeaturedModels();
-  const models = allModels.filter((m) => m.runtime === selectedRuntime.name);
+  let featuredDevice: FeaturedDeviceInfo | undefined;
+  try {
+    const device = await detectDevice();
+    featuredDevice = {
+      cpu: device.cpu_model,
+      gpu: device.gpu_model,
+      gpuCount: device.gpu_count,
+      osName: device.os_name,
+    };
+  } catch {
+    featuredDevice = undefined;
+  }
+  const models = await fetchFeaturedModels({
+    device: featuredDevice,
+    runtime: selectedRuntime.name,
+  });
   activeSpinner = null;
   fetchSpinner.stop();
 
