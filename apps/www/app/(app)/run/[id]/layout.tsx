@@ -51,6 +51,7 @@ export const generateMetadata = async ({
           device: {
             columns: {
               gpu: true,
+              gpuCount: true,
               cpu: true,
               cpuCores: true,
             },
@@ -67,9 +68,11 @@ export const generateMetadata = async ({
   const modelName = run.model?.info?.name ?? run.model.displayName;
   const quant = run.model?.info?.quant ?? run.model.quant;
   const format = run.model?.format;
-  const { manufacturer, displayName } = parseManufacturer(run.device.gpu);
+  const primaryDeviceName = run.device.gpuCount > 0 ? run.device.gpu : run.device.cpu;
+  const { manufacturer, displayName } = parseManufacturer(primaryDeviceName);
+  const deviceName = displayName || primaryDeviceName;
   const isApple = manufacturer === 'apple';
-  const article = isApple || 'aeiou'.includes(displayName.charAt(0).toLowerCase()) ? 'an' : 'a';
+  const article = isApple || 'aeiou'.includes(deviceName.charAt(0).toLowerCase()) ? 'an' : 'a';
 
   const modelLabLogoUrl = run.model?.info?.lab?.logoUrl;
   const ogLogoBase = 'https://daimon-assets.fiveoutofnine.com/org_logos';
@@ -89,17 +92,18 @@ export const generateMetadata = async ({
   if (manufacturer) ogParams.set('deviceManufacturerLogoUrl', `${ogLogoBase}/${manufacturer}.jpg`);
   if (run.decodeTpsMean) ogParams.set('decode', String(run.decodeTpsMean));
   if (run.prefillTpsMean) ogParams.set('prefill', String(run.prefillTpsMean));
-  ogParams.set('device', displayName || run.device.gpu);
+  ogParams.set('device', deviceName);
 
-  const title = `Run Details`;
+  const title =
+    modelName && deviceName ? `${modelName} Run Details on ${deviceName}` : 'Run Details';
   const description =
     `View details for a benchmark run of ${modelName} ${quant ? ` (${quant} quant) ` : ''}` +
-    (displayName ? `on ${article} ${displayName}.` : '.');
+    (deviceName ? `on ${article} ${deviceName}.` : '.');
   const url = `https://whatcani.run/run/${id}`;
   const images = [
     {
       url: `https://whatcani.run/api/og/run?${ogParams.toString()}`,
-      alt: `${modelName} benchmark results on ${displayName || run.device.gpu}`,
+      alt: `${modelName} benchmark results on ${deviceName}`,
       width: 1200,
       height: 630,
     },
