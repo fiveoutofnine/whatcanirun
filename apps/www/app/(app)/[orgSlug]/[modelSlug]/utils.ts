@@ -90,18 +90,14 @@ export function groupModelFamilyMembers(members: ModelFamilyMember[]) {
   }));
 }
 
-function toDate(value: Date | string | number): Date {
-  return value instanceof Date ? value : new Date(value);
-}
-
 function isNewerModel(
   left: typeof models.$inferSelect,
   right: typeof models.$inferSelect | null,
 ): boolean {
   if (!right) return true;
 
-  const leftTime = toDate(left.createdAt).getTime();
-  const rightTime = toDate(right.createdAt).getTime();
+  const leftTime = new Date(left.createdAt).getTime();
+  const rightTime = new Date(right.createdAt).getTime();
 
   if (leftTime !== rightTime) return leftTime > rightTime;
   return left.id > right.id;
