@@ -50,7 +50,7 @@ export default async function Page({
           gpuCores: sql<number>`MIN(${view__model_stats_by_device.deviceGpuCores})`.as('gpu_cores'),
           gpuCount: sql<number>`MIN(${view__model_stats_by_device.deviceGpuCount})`.as('gpu_count'),
           ramGb: sql<number>`MIN(${view__model_stats_by_device.deviceRamGb})`.as('ram_gb'),
-          modelCount: countDistinct(view__model_stats_by_device.modelId).as('model_count'),
+          modelCount: countDistinct(view__model_stats_by_device.modelGroupKey).as('model_count'),
         })
         .from(view__model_stats_by_device)
         .groupBy(view__model_stats_by_device.deviceChipId),

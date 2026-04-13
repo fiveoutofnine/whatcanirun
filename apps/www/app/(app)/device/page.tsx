@@ -41,7 +41,7 @@ export default async function Page({
           gpuCores: sql<number>`MIN(${v.deviceGpuCores})`.as('gpu_cores'),
           gpuCount: sql<number>`MIN(${v.deviceGpuCount})`.as('gpu_count'),
           ramGb: sql<number>`MIN(${v.deviceRamGb})`.as('ram_gb'),
-          modelCount: countDistinct(v.modelId).as('model_count'),
+          modelCount: countDistinct(v.modelGroupKey).as('model_count'),
         })
         .from(v)
         .groupBy(v.deviceChipId),
@@ -75,7 +75,7 @@ export default async function Page({
           .where(eq(v.deviceChipId, sql`${effectiveDevice}`)),
         db
           .select({
-            models: countDistinct(v.modelId),
+            models: countDistinct(v.modelGroupKey),
             runs: sql<number>`SUM(${v.runCount})`.as('total_runs'),
             trials: sql<number>`SUM(${v.trialCount})`.as('total_trials'),
           })

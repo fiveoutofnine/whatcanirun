@@ -6,7 +6,7 @@ import DevicesChart from './(components)/devices-chart';
 import type { ModelDevicesChartValue } from './(components)/devices-chart';
 import ModelQuantizationsTable from './(components)/quantizations-table';
 import type { Quant } from './(components)/quantizations-table';
-import { getModelFamily, getModelFamilyChips } from './utils';
+import { getModelFamily, getModelFamilyChips, groupModelFamilyMembers } from './utils';
 import { eq } from 'drizzle-orm';
 import { File } from 'lucide-react';
 
@@ -74,25 +74,32 @@ export default async function Page({
       ? deviceParam
       : (sortedChips[0]?.chipId ?? '');
 
-  // Stats by model for device (one row per model from the view)
+  const groupedMembers = groupModelFamilyMembers(members);
+
+  // Stats by grouped model for device (one row per grouped model from the view)
   const statsByModel = new Map(
-    stats.filter((r) => r.deviceChipId === effectiveDevice).map((r) => [r.modelId, r]),
+    stats.filter((r) => r.deviceChipId === effectiveDevice).map((r) => [r.modelGroupKey, r]),
   );
 
   // Quantizations
-  const quants: Quant[] = members
-    .filter((m) => m.model !== null)
-    .map((m) => ({
-      modelId: m.model!.id,
-      quant: m.quant || m.model!.quant,
-      format: m.model!.format,
-      fileSizeBytes: m.fileSizeBytes || m.model!.fileSizeBytes || null,
-      source: m.source || m.model!.source,
-      quantizedBy: m.quantizedBy,
-      score: statsByModel.get(m.model!.id)?.compositeScore ?? null,
-      decodeTps: statsByModel.get(m.model!.id)?.avgDecodeTps ?? null,
-      prefillTps: statsByModel.get(m.model!.id)?.avgPrefillTps ?? null,
-    }))
+  const quants: Quant[] = groupedMembers
+    .map(({ modelGroupKey, member }) => {
+      if (!member.model) return null;
+
+      return {
+        modelGroupKey,
+        modelId: member.model.id,
+        quant: member.quant || member.model.quant,
+        format: member.model.format,
+        fileSizeBytes: member.fileSizeBytes || member.model.fileSizeBytes || null,
+        source: member.source || member.model.source,
+        quantizedBy: member.quantizedBy,
+        score: statsByModel.get(modelGroupKey)?.compositeScore ?? null,
+        decodeTps: statsByModel.get(modelGroupKey)?.avgDecodeTps ?? null,
+        prefillTps: statsByModel.get(modelGroupKey)?.avgPrefillTps ?? null,
+      };
+    })
+    .filter((quant): quant is Quant => quant !== null)
     .sort((a, b) => {
       if (a.fileSizeBytes == null && b.fileSizeBytes == null) return 0;
       if (a.fileSizeBytes == null) return 1;
@@ -102,14 +109,14 @@ export default async function Page({
 
   // Chart data: all model×device combos across all chips
   const modelInfoMap = new Map(
-    members
-      .filter((m) => m.model !== null)
-      .map((m) => [
-        m.model!.id,
+    groupedMembers
+      .filter(({ member }) => member.model !== null)
+      .map(({ modelGroupKey, member }) => [
+        modelGroupKey,
         {
-          quant: m.quant || m.model!.quant,
-          format: m.model!.format,
-          fileSizeBytes: m.fileSizeBytes || m.model!.fileSizeBytes || null,
+          quant: member.quant || member.model!.quant,
+          format: member.model!.format,
+          fileSizeBytes: member.fileSizeBytes || member.model!.fileSizeBytes || null,
         },
       ]),
   );
@@ -118,11 +125,11 @@ export default async function Page({
       (r) =>
         r.avgDecodeTps != null &&
         r.avgPrefillTps != null &&
-        modelInfoMap.has(r.modelId) &&
-        modelInfoMap.get(r.modelId)!.quant != null,
+        modelInfoMap.has(r.modelGroupKey) &&
+        modelInfoMap.get(r.modelGroupKey)!.quant != null,
     )
     .map((r) => {
-      const info = modelInfoMap.get(r.modelId)!;
+      const info = modelInfoMap.get(r.modelGroupKey)!;
       return {
         ...r,
         quant: info.quant!,

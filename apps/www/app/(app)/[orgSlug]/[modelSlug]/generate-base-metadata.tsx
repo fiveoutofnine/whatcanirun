@@ -6,6 +6,7 @@ import { countDistinct, eq, sql } from 'drizzle-orm';
 
 import { db } from '@/lib/db';
 import { devices, models, modelsInfo, runs } from '@/lib/db/schema';
+import { getModelGroupKeySql } from '@/lib/utils/model-grouping';
 
 export async function generateBaseMetadata({
   orgSlug,
@@ -19,9 +20,14 @@ export async function generateBaseMetadata({
 
   const stats = await cache(
     async () => {
+      const modelGroupKey = getModelGroupKeySql(
+        modelsInfo.source,
+        models.source,
+        models.artifactSha256,
+      );
       const [row] = await db
         .select({
-          quantCount: countDistinct(models.quant),
+          quantCount: countDistinct(modelGroupKey),
           deviceCount: countDistinct(devices.chipId),
           totalTokens:
             sql<number>`COALESCE(SUM(COALESCE(${runs.promptTokens}, 0) + COALESCE(${runs.completionTokens}, 0)), 0)`.as(
