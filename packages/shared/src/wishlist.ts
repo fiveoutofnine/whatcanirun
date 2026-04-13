@@ -45,6 +45,66 @@ const EXTREME_MODEL_GOALS = Object.freeze({
   priority: 8,
 });
 
+const QWEN35_FRONTIER_GOALS = Object.freeze({
+  ...FRONTIER_GOALS,
+  priority: 9,
+});
+
+const QWEN35_FLAGSHIP_GOALS = Object.freeze({
+  ...FLAGSHIP_GOALS,
+  priority: 9,
+});
+
+const QWEN35_BREADTH_GOALS = Object.freeze({
+  ...BREADTH_GOALS,
+  priority: 9,
+});
+
+const QWEN35_LARGE_MODEL_GOALS = Object.freeze({
+  ...LARGE_MODEL_GOALS,
+  priority: 9,
+});
+
+const GEMMA_FRONTIER_GOALS = Object.freeze({
+  ...FRONTIER_GOALS,
+  priority: 10,
+});
+
+const GEMMA_FLAGSHIP_GOALS = Object.freeze({
+  ...FLAGSHIP_GOALS,
+  priority: 10,
+});
+
+const GEMMA_BREADTH_GOALS = Object.freeze({
+  ...BREADTH_GOALS,
+  priority: 10,
+});
+
+const GEMMA_LARGE_MODEL_GOALS = Object.freeze({
+  ...LARGE_MODEL_GOALS,
+  priority: 10,
+});
+
+const LIQUID_FRONTIER_GOALS = Object.freeze({
+  ...FRONTIER_GOALS,
+  priority: 11,
+});
+
+const LIQUID_FLAGSHIP_GOALS = Object.freeze({
+  ...FLAGSHIP_GOALS,
+  priority: 11,
+});
+
+const LIQUID_BREADTH_GOALS = Object.freeze({
+  ...BREADTH_GOALS,
+  priority: 11,
+});
+
+const LIQUID_LARGE_MODEL_GOALS = Object.freeze({
+  ...LARGE_MODEL_GOALS,
+  priority: 11,
+});
+
 export const FEATURED_WISHLIST = defineFeaturedWishlist([
   // -----------------------------------------------------------------------------
   // OpenAI
@@ -225,448 +285,448 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
   // Google DeepMind
   // -----------------------------------------------------------------------------
   featuredMlx({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-26b-a4b-4bit',
     hfRepoId: 'mlx-community/gemma-4-26b-a4b-4bit',
     fileSizeBytes: 15608838574,
   }),
   featuredMlx({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-26b-a4b-5bit',
     hfRepoId: 'mlx-community/gemma-4-26b-a4b-5bit',
     fileSizeBytes: 18695039256,
   }),
   featuredMlx({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-26b-a4b-6bit',
     hfRepoId: 'mlx-community/gemma-4-26b-a4b-6bit',
     fileSizeBytes: 21781239781,
   }),
   featuredMlx({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-26b-a4b-8bit',
     hfRepoId: 'mlx-community/gemma-4-26b-a4b-8bit',
     fileSizeBytes: 27953641181,
   }),
   featuredMlx({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-26b-a4b-bf16',
     hfRepoId: 'mlx-community/gemma-4-26b-a4b-bf16',
     fileSizeBytes: 51612010983,
   }),
   featuredMlx({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-26b-a4b-it-4bit',
     hfRepoId: 'mlx-community/gemma-4-26b-a4b-it-4bit',
     fileSizeBytes: 15608838574,
   }),
   featuredMlx({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-26b-a4b-it-5bit',
     hfRepoId: 'mlx-community/gemma-4-26b-a4b-it-5bit',
     fileSizeBytes: 18695039256,
   }),
   featuredMlx({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-26b-a4b-it-6bit',
     hfRepoId: 'mlx-community/gemma-4-26b-a4b-it-6bit',
     fileSizeBytes: 21781239781,
   }),
   featuredMlx({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-26b-a4b-it-8bit',
     hfRepoId: 'mlx-community/gemma-4-26b-a4b-it-8bit',
     fileSizeBytes: 27953641181,
   }),
   featuredMlx({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-26b-a4b-it-bf16',
     hfRepoId: 'mlx-community/gemma-4-26b-a4b-it-bf16',
     fileSizeBytes: 51612010983,
   }),
   featuredMlx({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-26b-a4b-it-mxfp4',
     hfRepoId: 'mlx-community/gemma-4-26b-a4b-it-mxfp4',
     fileSizeBytes: 14837259660,
   }),
   featuredMlx({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-26b-a4b-it-mxfp8',
     hfRepoId: 'mlx-community/gemma-4-26b-a4b-it-mxfp8',
     fileSizeBytes: 27182062772,
   }),
   featuredMlx({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-26b-a4b-it-nvfp4',
     hfRepoId: 'mlx-community/gemma-4-26b-a4b-it-nvfp4',
     fileSizeBytes: 15608810138,
   }),
   featuredMlx({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-26b-a4b-mxfp4',
     hfRepoId: 'mlx-community/gemma-4-26b-a4b-mxfp4',
     fileSizeBytes: 14837259660,
   }),
   featuredMlx({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-26b-a4b-mxfp8',
     hfRepoId: 'mlx-community/gemma-4-26b-a4b-mxfp8',
     fileSizeBytes: 27182062772,
   }),
   featuredMlx({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-26b-a4b-nvfp4',
     hfRepoId: 'mlx-community/gemma-4-26b-a4b-nvfp4',
     fileSizeBytes: 15608810138,
   }),
   featuredMlx({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-31b-4bit',
     hfRepoId: 'mlx-community/gemma-4-31b-4bit',
     fileSizeBytes: 18412016832,
   }),
   featuredMlx({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-31b-5bit',
     hfRepoId: 'mlx-community/gemma-4-31b-5bit',
     fileSizeBytes: 22249792445,
   }),
   featuredMlx({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-31b-6bit',
     hfRepoId: 'mlx-community/gemma-4-31b-6bit',
     fileSizeBytes: 26087568907,
   }),
   featuredMlx({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-31b-8bit',
     hfRepoId: 'mlx-community/gemma-4-31b-8bit',
     fileSizeBytes: 33763120491,
   }),
   featuredMlx({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-31b-bf16',
     hfRepoId: 'mlx-community/gemma-4-31b-bf16',
     fileSizeBytes: 62546333760,
   }),
   featuredMlx({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-31b-it-4bit',
     hfRepoId: 'mlx-community/gemma-4-31b-it-4bit',
     fileSizeBytes: 18412016832,
   }),
   featuredMlx({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-31b-it-5bit',
     hfRepoId: 'mlx-community/gemma-4-31b-it-5bit',
     fileSizeBytes: 22249792445,
   }),
   featuredMlx({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-31b-it-6bit',
     hfRepoId: 'mlx-community/gemma-4-31b-it-6bit',
     fileSizeBytes: 26087568907,
   }),
   featuredMlx({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-31b-it-8bit',
     hfRepoId: 'mlx-community/gemma-4-31b-it-8bit',
     fileSizeBytes: 33763120491,
   }),
   featuredMlx({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-31b-it-bf16',
     hfRepoId: 'mlx-community/gemma-4-31b-it-bf16',
     fileSizeBytes: 62546333760,
   }),
   featuredMlx({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-31b-it-mxfp4',
     hfRepoId: 'mlx-community/gemma-4-31b-it-mxfp4',
     fileSizeBytes: 17452518872,
   }),
   featuredMlx({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-31b-it-mxfp8',
     hfRepoId: 'mlx-community/gemma-4-31b-it-mxfp8',
     fileSizeBytes: 32803622480,
   }),
   featuredMlx({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-31b-it-nvfp4',
     hfRepoId: 'mlx-community/gemma-4-31b-it-nvfp4',
     fileSizeBytes: 18411963128,
   }),
   featuredMlx({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-31b-mxfp4',
     hfRepoId: 'mlx-community/gemma-4-31b-mxfp4',
     fileSizeBytes: 17452518872,
   }),
   featuredMlx({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-31b-mxfp8',
     hfRepoId: 'mlx-community/gemma-4-31b-mxfp8',
     fileSizeBytes: 32803622480,
   }),
   featuredMlx({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-31b-nvfp4',
     hfRepoId: 'mlx-community/gemma-4-31b-nvfp4',
     fileSizeBytes: 18411963128,
   }),
   featuredMlx({
-    ...BREADTH_GOALS,
+    ...GEMMA_BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e2b-4bit',
     hfRepoId: 'mlx-community/gemma-4-e2b-4bit',
     fileSizeBytes: 3581101896,
   }),
   featuredMlx({
-    ...BREADTH_GOALS,
+    ...GEMMA_BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e2b-5bit',
     hfRepoId: 'mlx-community/gemma-4-e2b-5bit',
     fileSizeBytes: 4160719027,
   }),
   featuredMlx({
-    ...BREADTH_GOALS,
+    ...GEMMA_BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e2b-6bit',
     hfRepoId: 'mlx-community/gemma-4-e2b-6bit',
     fileSizeBytes: 4740335854,
   }),
   featuredMlx({
-    ...BREADTH_GOALS,
+    ...GEMMA_BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e2b-8bit',
     hfRepoId: 'mlx-community/gemma-4-e2b-8bit',
     fileSizeBytes: 5899567778,
   }),
   featuredMlx({
-    ...BREADTH_GOALS,
+    ...GEMMA_BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e2b-bf16',
     hfRepoId: 'mlx-community/gemma-4-e2b-bf16',
     fileSizeBytes: 10246611624,
   }),
   featuredMlx({
-    ...BREADTH_GOALS,
+    ...GEMMA_BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e2b-it-4bit',
     hfRepoId: 'mlx-community/gemma-4-e2b-it-4bit',
     fileSizeBytes: 3581101896,
   }),
   featuredMlx({
-    ...BREADTH_GOALS,
+    ...GEMMA_BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e2b-it-5bit',
     hfRepoId: 'mlx-community/gemma-4-e2b-it-5bit',
     fileSizeBytes: 4160719027,
   }),
   featuredMlx({
-    ...BREADTH_GOALS,
+    ...GEMMA_BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e2b-it-6bit',
     hfRepoId: 'mlx-community/gemma-4-e2b-it-6bit',
     fileSizeBytes: 4740335854,
   }),
   featuredMlx({
-    ...BREADTH_GOALS,
+    ...GEMMA_BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e2b-it-8bit',
     hfRepoId: 'mlx-community/gemma-4-e2b-it-8bit',
     fileSizeBytes: 5899567778,
   }),
   featuredMlx({
-    ...BREADTH_GOALS,
+    ...GEMMA_BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e2b-it-bf16',
     hfRepoId: 'mlx-community/gemma-4-e2b-it-bf16',
     fileSizeBytes: 10246611624,
   }),
   featuredMlx({
-    ...BREADTH_GOALS,
+    ...GEMMA_BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e2b-it-mxfp4',
     hfRepoId: 'mlx-community/gemma-4-e2b-it-mxfp4',
     fileSizeBytes: 4263396466,
   }),
   featuredMlx({
-    ...BREADTH_GOALS,
+    ...GEMMA_BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e2b-it-mxfp8',
     hfRepoId: 'mlx-community/gemma-4-e2b-it-mxfp8',
     fileSizeBytes: 5754621426,
   }),
   featuredMlx({
-    ...BREADTH_GOALS,
+    ...GEMMA_BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e2b-it-OptiQ-4bit',
     hfRepoId: 'mlx-community/gemma-4-e2b-it-OptiQ-4bit',
     fileSizeBytes: 4170987649,
   }),
   featuredMlx({
-    ...BREADTH_GOALS,
+    ...GEMMA_BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e2b-mxfp4',
     hfRepoId: 'mlx-community/gemma-4-e2b-mxfp4',
     fileSizeBytes: 4263396466,
   }),
   featuredMlx({
-    ...BREADTH_GOALS,
+    ...GEMMA_BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e2b-mxfp8',
     hfRepoId: 'mlx-community/gemma-4-e2b-mxfp8',
     fileSizeBytes: 5754621426,
   }),
   featuredMlx({
-    ...BREADTH_GOALS,
+    ...GEMMA_BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e2b-nvfp4',
     hfRepoId: 'mlx-community/gemma-4-e2b-nvfp4',
     fileSizeBytes: 4359640245,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...GEMMA_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e4b-4bit',
     hfRepoId: 'mlx-community/gemma-4-e4b-4bit',
     fileSizeBytes: 5217361182,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...GEMMA_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e4b-5bit',
     hfRepoId: 'mlx-community/gemma-4-e4b-5bit',
     fileSizeBytes: 6154344072,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...GEMMA_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e4b-6bit',
     hfRepoId: 'mlx-community/gemma-4-e4b-6bit',
     fileSizeBytes: 7091329353,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...GEMMA_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e4b-8bit',
     hfRepoId: 'mlx-community/gemma-4-e4b-8bit',
     fileSizeBytes: 8965298732,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...GEMMA_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e4b-bf16',
     hfRepoId: 'mlx-community/gemma-4-e4b-bf16',
     fileSizeBytes: 15992583476,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...GEMMA_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e4b-it-4bit',
     hfRepoId: 'mlx-community/gemma-4-e4b-it-4bit',
     fileSizeBytes: 5217361182,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...GEMMA_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e4b-it-5bit',
     hfRepoId: 'mlx-community/gemma-4-e4b-it-5bit',
     fileSizeBytes: 6154344072,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...GEMMA_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e4b-it-6bit',
     hfRepoId: 'mlx-community/gemma-4-e4b-it-6bit',
     fileSizeBytes: 7091329353,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...GEMMA_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e4b-it-8bit',
     hfRepoId: 'mlx-community/gemma-4-e4b-it-8bit',
     fileSizeBytes: 8965298732,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...GEMMA_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e4b-it-bf16',
     hfRepoId: 'mlx-community/gemma-4-e4b-it-bf16',
     fileSizeBytes: 15992583476,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...GEMMA_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e4b-it-mxfp4',
     hfRepoId: 'mlx-community/gemma-4-e4b-it-mxfp4',
     fileSizeBytes: 6737807231,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...GEMMA_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e4b-it-mxfp8',
     hfRepoId: 'mlx-community/gemma-4-e4b-it-mxfp8',
     fileSizeBytes: 8731002419,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...GEMMA_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e4b-it-nvfp4',
     hfRepoId: 'mlx-community/gemma-4-e4b-it-nvfp4',
     fileSizeBytes: 6868834441,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...GEMMA_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e4b-it-OptiQ-4bit',
     hfRepoId: 'mlx-community/gemma-4-e4b-it-OptiQ-4bit',
     fileSizeBytes: 6321106593,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...GEMMA_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e4b-mxfp8',
     hfRepoId: 'mlx-community/gemma-4-e4b-mxfp8',
     fileSizeBytes: 8731002419,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...GEMMA_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-E2B-it-BF16',
     hfFileName: 'gemma-4-E2B-it-BF16.gguf',
@@ -674,7 +734,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 9311303072,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...GEMMA_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-E2B-it-IQ4_NL',
     hfFileName: 'gemma-4-E2B-it-IQ4_NL.gguf',
@@ -682,7 +742,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 3041080992,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...GEMMA_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-E2B-it-IQ4_XS',
     hfFileName: 'gemma-4-E2B-it-IQ4_XS.gguf',
@@ -690,7 +750,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 2983941792,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...GEMMA_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-E2B-it-Q3_K_M',
     hfFileName: 'gemma-4-E2B-it-Q3_K_M.gguf',
@@ -698,7 +758,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 2536783520,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...GEMMA_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-E2B-it-Q3_K_S',
     hfFileName: 'gemma-4-E2B-it-Q3_K_S.gguf',
@@ -706,7 +766,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 2445649568,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...GEMMA_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-E2B-it-Q4_0',
     hfFileName: 'gemma-4-E2B-it-Q4_0.gguf',
@@ -714,7 +774,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 3041375904,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...GEMMA_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-E2B-it-Q4_1',
     hfFileName: 'gemma-4-E2B-it-Q4_1.gguf',
@@ -722,7 +782,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 3154917024,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...GEMMA_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-E2B-it-Q4_K_M',
     hfFileName: 'gemma-4-E2B-it-Q4_K_M.gguf',
@@ -730,7 +790,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 3106735776,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...GEMMA_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-E2B-it-Q4_K_S',
     hfFileName: 'gemma-4-E2B-it-Q4_K_S.gguf',
@@ -738,7 +798,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 3043931808,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...GEMMA_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-E2B-it-Q5_K_M',
     hfFileName: 'gemma-4-E2B-it-Q5_K_M.gguf',
@@ -746,7 +806,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 3356034720,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...GEMMA_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-E2B-it-Q5_K_S',
     hfFileName: 'gemma-4-E2B-it-Q5_K_S.gguf',
@@ -754,7 +814,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 3321149088,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...GEMMA_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-E2B-it-Q6_K',
     hfFileName: 'gemma-4-E2B-it-Q6_K.gguf',
@@ -762,7 +822,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 4501718688,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...GEMMA_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-E2B-it-Q8_0',
     hfFileName: 'gemma-4-E2B-it-Q8_0.gguf',
@@ -770,7 +830,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 5048350368,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...GEMMA_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-E2B-it-UD-IQ2_M',
     hfFileName: 'gemma-4-E2B-it-UD-IQ2_M.gguf',
@@ -778,7 +838,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 2287109792,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...GEMMA_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-E2B-it-UD-IQ3_XXS',
     hfFileName: 'gemma-4-E2B-it-UD-IQ3_XXS.gguf',
@@ -786,7 +846,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 2369242784,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...GEMMA_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-E2B-it-UD-Q2_K_XL',
     hfFileName: 'gemma-4-E2B-it-UD-Q2_K_XL.gguf',
@@ -794,7 +854,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 2399907488,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...GEMMA_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-E2B-it-UD-Q3_K_XL',
     hfFileName: 'gemma-4-E2B-it-UD-Q3_K_XL.gguf',
@@ -802,7 +862,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 2915067552,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...GEMMA_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-E2B-it-UD-Q4_K_XL',
     hfFileName: 'gemma-4-E2B-it-UD-Q4_K_XL.gguf',
@@ -810,7 +870,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 3174043296,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...GEMMA_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-E2B-it-UD-Q5_K_XL',
     hfFileName: 'gemma-4-E2B-it-UD-Q5_K_XL.gguf',
@@ -818,7 +878,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 4291999392,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...GEMMA_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-E2B-it-UD-Q6_K_XL',
     hfFileName: 'gemma-4-E2B-it-UD-Q6_K_XL.gguf',
@@ -826,7 +886,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 4710086304,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...GEMMA_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-E2B-it-UD-Q8_K_XL',
     hfFileName: 'gemma-4-E2B-it-UD-Q8_K_XL.gguf',
@@ -834,7 +894,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 5269534368,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...GEMMA_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-E4B-it-BF16',
     hfFileName: 'gemma-4-E4B-it-BF16.gguf',
@@ -842,7 +902,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 15053095360,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...GEMMA_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-E4B-it-IQ4_NL',
     hfFileName: 'gemma-4-E4B-it-IQ4_NL.gguf',
@@ -850,7 +910,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 4835836608,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...GEMMA_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-E4B-it-IQ4_XS',
     hfFileName: 'gemma-4-E4B-it-IQ4_XS.gguf',
@@ -858,7 +918,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 4715414208,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...GEMMA_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-E4B-it-Q3_K_M',
     hfFileName: 'gemma-4-E4B-it-Q3_K_M.gguf',
@@ -866,7 +926,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 4058135232,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...GEMMA_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-E4B-it-Q3_K_S',
     hfFileName: 'gemma-4-E4B-it-Q3_K_S.gguf',
@@ -874,7 +934,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 3862377152,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...GEMMA_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-E4B-it-Q4_0',
     hfFileName: 'gemma-4-E4B-it-Q4_0.gguf',
@@ -882,7 +942,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 4836000448,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...GEMMA_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-E4B-it-Q4_1',
     hfFileName: 'gemma-4-E4B-it-Q4_1.gguf',
@@ -890,7 +950,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 5074387648,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...GEMMA_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-E4B-it-Q4_K_M',
     hfFileName: 'gemma-4-E4B-it-Q4_K_M.gguf',
@@ -898,7 +958,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 4977169088,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...GEMMA_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-E4B-it-Q4_K_S',
     hfFileName: 'gemma-4-E4B-it-Q4_K_S.gguf',
@@ -906,7 +966,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 4844847808,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...GEMMA_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-E4B-it-Q5_K_M',
     hfFileName: 'gemma-4-E4B-it-Q5_K_M.gguf',
@@ -914,7 +974,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 5481796288,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...GEMMA_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-E4B-it-Q5_K_S',
     hfFileName: 'gemma-4-E4B-it-Q5_K_S.gguf',
@@ -922,7 +982,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 5404852928,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...GEMMA_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-E4B-it-Q6_K',
     hfFileName: 'gemma-4-E4B-it-Q6_K.gguf',
@@ -930,7 +990,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 7074927296,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...GEMMA_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-E4B-it-Q8_0',
     hfFileName: 'gemma-4-E4B-it-Q8_0.gguf',
@@ -938,7 +998,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 8192950976,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...GEMMA_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-E4B-it-UD-IQ2_M',
     hfFileName: 'gemma-4-E4B-it-UD-IQ2_M.gguf',
@@ -946,7 +1006,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 3530232512,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...GEMMA_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-E4B-it-UD-IQ3_XXS',
     hfFileName: 'gemma-4-E4B-it-UD-IQ3_XXS.gguf',
@@ -954,7 +1014,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 3702264512,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...GEMMA_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-E4B-it-UD-Q2_K_XL',
     hfFileName: 'gemma-4-E4B-it-UD-Q2_K_XL.gguf',
@@ -962,7 +1022,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 3742794432,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...GEMMA_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-E4B-it-UD-Q3_K_XL',
     hfFileName: 'gemma-4-E4B-it-UD-Q3_K_XL.gguf',
@@ -970,7 +1030,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 4563503808,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...GEMMA_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-E4B-it-UD-Q4_K_XL',
     hfFileName: 'gemma-4-E4B-it-UD-Q4_K_XL.gguf',
@@ -978,7 +1038,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 5101718208,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...GEMMA_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-E4B-it-UD-Q5_K_XL',
     hfFileName: 'gemma-4-E4B-it-UD-Q5_K_XL.gguf',
@@ -986,7 +1046,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 6647847616,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...GEMMA_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-E4B-it-UD-Q6_K_XL',
     hfFileName: 'gemma-4-E4B-it-UD-Q6_K_XL.gguf',
@@ -994,7 +1054,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 7457759936,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...GEMMA_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-E4B-it-UD-Q8_K_XL',
     hfFileName: 'gemma-4-E4B-it-UD-Q8_K_XL.gguf',
@@ -1002,7 +1062,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 8658666176,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-26B-A4B-it-MXFP4_MOE',
     hfFileName: 'gemma-4-26B-A4B-it-MXFP4_MOE.gguf',
@@ -1010,7 +1070,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 16630345024,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-26B-A4B-it-Q8_0',
     hfFileName: 'gemma-4-26B-A4B-it-Q8_0.gguf',
@@ -1018,7 +1078,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 26859859264,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-26B-A4B-it-UD-IQ2_M',
     hfFileName: 'gemma-4-26B-A4B-it-UD-IQ2_M.gguf',
@@ -1026,7 +1086,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 9974943040,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-26B-A4B-it-UD-IQ2_XXS',
     hfFileName: 'gemma-4-26B-A4B-it-UD-IQ2_XXS.gguf',
@@ -1034,7 +1094,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 9882668352,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-26B-A4B-it-UD-IQ3_S',
     hfFileName: 'gemma-4-26B-A4B-it-UD-IQ3_S.gguf',
@@ -1042,7 +1102,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 11219406656,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-26B-A4B-it-UD-IQ3_XXS',
     hfFileName: 'gemma-4-26B-A4B-it-UD-IQ3_XXS.gguf',
@@ -1050,7 +1110,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 11219406656,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-26B-A4B-it-UD-IQ4_NL',
     hfFileName: 'gemma-4-26B-A4B-it-UD-IQ4_NL.gguf',
@@ -1058,7 +1118,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 13418753344,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-26B-A4B-it-UD-IQ4_XS',
     hfFileName: 'gemma-4-26B-A4B-it-UD-IQ4_XS.gguf',
@@ -1066,7 +1126,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 13418753344,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-26B-A4B-it-UD-Q2_K_XL',
     hfFileName: 'gemma-4-26B-A4B-it-UD-Q2_K_XL.gguf',
@@ -1074,7 +1134,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 10545963072,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-26B-A4B-it-UD-Q3_K_M',
     hfFileName: 'gemma-4-26B-A4B-it-UD-Q3_K_M.gguf',
@@ -1082,7 +1142,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 12526284096,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-26B-A4B-it-UD-Q3_K_S',
     hfFileName: 'gemma-4-26B-A4B-it-UD-Q3_K_S.gguf',
@@ -1090,7 +1150,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 12526284096,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-26B-A4B-it-UD-Q3_K_XL',
     hfFileName: 'gemma-4-26B-A4B-it-UD-Q3_K_XL.gguf',
@@ -1098,7 +1158,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 12875558208,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-26B-A4B-it-UD-Q4_K_M',
     hfFileName: 'gemma-4-26B-A4B-it-UD-Q4_K_M.gguf',
@@ -1106,7 +1166,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 16868240704,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-26B-A4B-it-UD-Q4_K_S',
     hfFileName: 'gemma-4-26B-A4B-it-UD-Q4_K_S.gguf',
@@ -1114,7 +1174,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 16392449344,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-26B-A4B-it-UD-Q4_K_XL',
     hfFileName: 'gemma-4-26B-A4B-it-UD-Q4_K_XL.gguf',
@@ -1122,7 +1182,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 17090276672,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-26B-A4B-it-UD-Q5_K_M',
     hfFileName: 'gemma-4-26B-A4B-it-UD-Q5_K_M.gguf',
@@ -1130,7 +1190,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 21150362944,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-26B-A4B-it-UD-Q5_K_S',
     hfFileName: 'gemma-4-26B-A4B-it-UD-Q5_K_S.gguf',
@@ -1138,7 +1198,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 18771406144,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-26B-A4B-it-UD-Q5_K_XL',
     hfFileName: 'gemma-4-26B-A4B-it-UD-Q5_K_XL.gguf',
@@ -1146,7 +1206,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 21217766720,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-26B-A4B-it-UD-Q6_K',
     hfFileName: 'gemma-4-26B-A4B-it-UD-Q6_K.gguf',
@@ -1154,7 +1214,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 22903604544,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-26B-A4B-it-UD-Q6_K_XL',
     hfFileName: 'gemma-4-26B-A4B-it-UD-Q6_K_XL.gguf',
@@ -1162,7 +1222,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 23295388992,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-26B-A4B-it-UD-Q8_K_XL',
     hfFileName: 'gemma-4-26B-A4B-it-UD-Q8_K_XL.gguf',
@@ -1170,7 +1230,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 27866185024,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-31B-it-IQ4_NL',
     hfFileName: 'gemma-4-31B-it-IQ4_NL.gguf',
@@ -1178,7 +1238,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 17287668256,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-31B-it-IQ4_XS',
     hfFileName: 'gemma-4-31B-it-IQ4_XS.gguf',
@@ -1186,7 +1246,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 16372458016,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-31B-it-Q3_K_M',
     hfFileName: 'gemma-4-31B-it-Q3_K_M.gguf',
@@ -1194,7 +1254,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 14736605728,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-31B-it-Q3_K_S',
     hfFileName: 'gemma-4-31B-it-Q3_K_S.gguf',
@@ -1202,7 +1262,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 13210853920,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-31B-it-Q4_0',
     hfFileName: 'gemma-4-31B-it-Q4_0.gguf',
@@ -1210,7 +1270,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 17338245664,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-31B-it-Q4_1',
     hfFileName: 'gemma-4-31B-it-Q4_1.gguf',
@@ -1218,7 +1278,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 19118088736,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-31B-it-Q4_K_M',
     hfFileName: 'gemma-4-31B-it-Q4_K_M.gguf',
@@ -1226,7 +1286,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 18323730976,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-31B-it-Q4_K_S',
     hfFileName: 'gemma-4-31B-it-Q4_K_S.gguf',
@@ -1234,7 +1294,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 17399833120,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-31B-it-Q5_K_M',
     hfFileName: 'gemma-4-31B-it-Q5_K_M.gguf',
@@ -1242,7 +1302,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 21658399264,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-31B-it-Q5_K_S',
     hfFileName: 'gemma-4-31B-it-Q5_K_S.gguf',
@@ -1250,7 +1310,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 21124669984,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-31B-it-Q6_K',
     hfFileName: 'gemma-4-31B-it-Q6_K.gguf',
@@ -1258,7 +1318,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 25201484320,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-31B-it-Q8_0',
     hfFileName: 'gemma-4-31B-it-Q8_0.gguf',
@@ -1266,7 +1326,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 32635675168,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-31B-it-UD-IQ2_M',
     hfFileName: 'gemma-4-31B-it-UD-IQ2_M.gguf',
@@ -1274,7 +1334,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 10752817696,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-31B-it-UD-IQ2_XXS',
     hfFileName: 'gemma-4-31B-it-UD-IQ2_XXS.gguf',
@@ -1282,7 +1342,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 8534293024,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-31B-it-UD-IQ3_XXS',
     hfFileName: 'gemma-4-31B-it-UD-IQ3_XXS.gguf',
@@ -1290,7 +1350,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 11837780512,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-31B-it-UD-Q2_K_XL',
     hfFileName: 'gemma-4-31B-it-UD-Q2_K_XL.gguf',
@@ -1298,7 +1358,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 11774988832,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-31B-it-UD-Q3_K_XL',
     hfFileName: 'gemma-4-31B-it-UD-Q3_K_XL.gguf',
@@ -1306,7 +1366,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 15322417696,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-31B-it-UD-Q4_K_XL',
     hfFileName: 'gemma-4-31B-it-UD-Q4_K_XL.gguf',
@@ -1314,7 +1374,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 18767229472,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-31B-it-UD-Q5_K_XL',
     hfFileName: 'gemma-4-31B-it-UD-Q5_K_XL.gguf',
@@ -1322,7 +1382,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 21890427424,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-31B-it-UD-Q6_K_XL',
     hfFileName: 'gemma-4-31B-it-UD-Q6_K_XL.gguf',
@@ -1330,7 +1390,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 27521335840,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...GEMMA_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'gemma-4-31B-it-UD-Q8_K_XL',
     hfFileName: 'gemma-4-31B-it-UD-Q8_K_XL.gguf',
@@ -1342,658 +1402,658 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
   // Alibaba / Qwen
   // -----------------------------------------------------------------------------
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-3bit',
     hfRepoId: 'mlx-community/Qwen3.5-0.8B-3bit',
     fileSizeBytes: 531242442,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-4bit',
     hfRepoId: 'mlx-community/Qwen3.5-0.8B-4bit',
     fileSizeBytes: 625229487,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-5bit',
     hfRepoId: 'mlx-community/Qwen3.5-0.8B-5bit',
     fileSizeBytes: 719216385,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-6bit',
     hfRepoId: 'mlx-community/Qwen3.5-0.8B-6bit',
     fileSizeBytes: 813203247,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-8bit',
     hfRepoId: 'mlx-community/Qwen3.5-0.8B-8bit',
     fileSizeBytes: 1001176958,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-bf16',
     hfRepoId: 'mlx-community/Qwen3.5-0.8B-bf16',
     fileSizeBytes: 1706030684,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-mixed_2_6',
     hfRepoId: 'mlx-community/Qwen3.5-0.8B-mixed_2_6',
     fileSizeBytes: 586939661,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-mixed_3_4',
     hfRepoId: 'mlx-community/Qwen3.5-0.8B-mixed_3_4',
     fileSizeBytes: 568663507,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-mixed_3_5',
     hfRepoId: 'mlx-community/Qwen3.5-0.8B-mixed_3_5',
     fileSizeBytes: 606084575,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-mixed_3_6',
     hfRepoId: 'mlx-community/Qwen3.5-0.8B-mixed_3_6',
     fileSizeBytes: 643505643,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-mixed_3_8',
     hfRepoId: 'mlx-community/Qwen3.5-0.8B-mixed_3_8',
     fileSizeBytes: 718347757,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-mixed_4_6',
     hfRepoId: 'mlx-community/Qwen3.5-0.8B-mixed_4_6',
     fileSizeBytes: 700071609,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-mixed_4_8',
     hfRepoId: 'mlx-community/Qwen3.5-0.8B-mixed_4_8',
     fileSizeBytes: 774913737,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-MLX-4bit',
     hfRepoId: 'mlx-community/Qwen3.5-0.8B-MLX-4bit',
     fileSizeBytes: 625229487,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-MLX-8bit',
     hfRepoId: 'mlx-community/Qwen3.5-0.8B-MLX-8bit',
     fileSizeBytes: 1001176958,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-MLX-bf16',
     hfRepoId: 'mlx-community/Qwen3.5-0.8B-MLX-bf16',
     fileSizeBytes: 1706030684,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-mxfp4',
     hfRepoId: 'mlx-community/Qwen3.5-0.8B-mxfp4',
     fileSizeBytes: 601708318,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-mxfp8',
     hfRepoId: 'mlx-community/Qwen3.5-0.8B-mxfp8',
     fileSizeBytes: 977655780,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-nvfp4',
     hfRepoId: 'mlx-community/Qwen3.5-0.8B-nvfp4',
     fileSizeBytes: 625205078,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-OptiQ-4bit',
     hfRepoId: 'mlx-community/Qwen3.5-0.8B-OptiQ-4bit',
     fileSizeBytes: 598127866,
   }),
   featuredMlx({
-    ...BREADTH_GOALS,
+    ...QWEN35_BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-3bit',
     hfRepoId: 'mlx-community/Qwen3.5-2B-3bit',
     fileSizeBytes: 1487112081,
   }),
   featuredMlx({
-    ...BREADTH_GOALS,
+    ...QWEN35_BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-4bit',
     hfRepoId: 'mlx-community/Qwen3.5-2B-4bit',
     fileSizeBytes: 1722271785,
   }),
   featuredMlx({
-    ...BREADTH_GOALS,
+    ...QWEN35_BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-5bit',
     hfRepoId: 'mlx-community/Qwen3.5-2B-5bit',
     fileSizeBytes: 1957431375,
   }),
   featuredMlx({
-    ...BREADTH_GOALS,
+    ...QWEN35_BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-6bit',
     hfRepoId: 'mlx-community/Qwen3.5-2B-6bit',
     fileSizeBytes: 2192591075,
   }),
   featuredMlx({
-    ...BREADTH_GOALS,
+    ...QWEN35_BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-8bit',
     hfRepoId: 'mlx-community/Qwen3.5-2B-8bit',
     fileSizeBytes: 2662910403,
   }),
   featuredMlx({
-    ...BREADTH_GOALS,
+    ...QWEN35_BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-bf16',
     hfRepoId: 'mlx-community/Qwen3.5-2B-bf16',
     fileSizeBytes: 4426559145,
   }),
   featuredMlx({
-    ...BREADTH_GOALS,
+    ...QWEN35_BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-mixed_2_6',
     hfRepoId: 'mlx-community/Qwen3.5-2B-mixed_2_6',
     fileSizeBytes: 1582778313,
   }),
   featuredMlx({
-    ...BREADTH_GOALS,
+    ...QWEN35_BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-mixed_3_4',
     hfRepoId: 'mlx-community/Qwen3.5-2B-mixed_3_4',
     fileSizeBytes: 1569818581,
   }),
   featuredMlx({
-    ...BREADTH_GOALS,
+    ...QWEN35_BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-mixed_3_5',
     hfRepoId: 'mlx-community/Qwen3.5-2B-mixed_3_5',
     fileSizeBytes: 1652525041,
   }),
   featuredMlx({
-    ...BREADTH_GOALS,
+    ...QWEN35_BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-mixed_3_6',
     hfRepoId: 'mlx-community/Qwen3.5-2B-mixed_3_6',
     fileSizeBytes: 1735231491,
   }),
   featuredMlx({
-    ...BREADTH_GOALS,
+    ...QWEN35_BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-mixed_3_8',
     hfRepoId: 'mlx-community/Qwen3.5-2B-mixed_3_8',
     fileSizeBytes: 1900644389,
   }),
   featuredMlx({
-    ...BREADTH_GOALS,
+    ...QWEN35_BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-mixed_4_6',
     hfRepoId: 'mlx-community/Qwen3.5-2B-mixed_4_6',
     fileSizeBytes: 1887684691,
   }),
   featuredMlx({
-    ...BREADTH_GOALS,
+    ...QWEN35_BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-mixed_4_8',
     hfRepoId: 'mlx-community/Qwen3.5-2B-mixed_4_8',
     fileSizeBytes: 2053097557,
   }),
   featuredMlx({
-    ...BREADTH_GOALS,
+    ...QWEN35_BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-MLX-4bit',
     hfRepoId: 'mlx-community/Qwen3.5-2B-MLX-4bit',
     fileSizeBytes: 1722271785,
   }),
   featuredMlx({
-    ...BREADTH_GOALS,
+    ...QWEN35_BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-MLX-8bit',
     hfRepoId: 'mlx-community/Qwen3.5-2B-MLX-8bit',
     fileSizeBytes: 2662910403,
   }),
   featuredMlx({
-    ...BREADTH_GOALS,
+    ...QWEN35_BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-MLX-bf16',
     hfRepoId: 'mlx-community/Qwen3.5-2B-MLX-bf16',
     fileSizeBytes: 4426559145,
   }),
   featuredMlx({
-    ...BREADTH_GOALS,
+    ...QWEN35_BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-mxfp4',
     hfRepoId: 'mlx-community/Qwen3.5-2B-mxfp4',
     fileSizeBytes: 1663457462,
   }),
   featuredMlx({
-    ...BREADTH_GOALS,
+    ...QWEN35_BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-mxfp8',
     hfRepoId: 'mlx-community/Qwen3.5-2B-mxfp8',
     fileSizeBytes: 2604095934,
   }),
   featuredMlx({
-    ...BREADTH_GOALS,
+    ...QWEN35_BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-nvfp4',
     hfRepoId: 'mlx-community/Qwen3.5-2B-nvfp4',
     fileSizeBytes: 1722247527,
   }),
   featuredMlx({
-    ...BREADTH_GOALS,
+    ...QWEN35_BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-OptiQ-4bit',
     hfRepoId: 'mlx-community/Qwen3.5-2B-OptiQ-4bit',
     fileSizeBytes: 1431179061,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-3bit',
     hfRepoId: 'mlx-community/Qwen3.5-4B-3bit',
     fileSizeBytes: 2508701687,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-4bit',
     hfRepoId: 'mlx-community/Qwen3.5-4B-4bit',
     fileSizeBytes: 3034300695,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-6bit',
     hfRepoId: 'mlx-community/Qwen3.5-4B-6bit',
     fileSizeBytes: 4085498443,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-8bit',
     hfRepoId: 'mlx-community/Qwen3.5-4B-8bit',
     fileSizeBytes: 5136696107,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-bf16',
     hfRepoId: 'mlx-community/Qwen3.5-4B-bf16',
     fileSizeBytes: 9078621809,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-mixed_2_6',
     hfRepoId: 'mlx-community/Qwen3.5-4B-mixed_2_6',
     fileSizeBytes: 2494938977,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-mixed_3_4',
     hfRepoId: 'mlx-community/Qwen3.5-4B-mixed_3_4',
     fileSizeBytes: 2636660765,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-mixed_3_5',
     hfRepoId: 'mlx-community/Qwen3.5-4B-mixed_3_5',
     fileSizeBytes: 2764619855,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-mixed_3_6',
     hfRepoId: 'mlx-community/Qwen3.5-4B-mixed_3_6',
     fileSizeBytes: 2892578955,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-mixed_3_8',
     hfRepoId: 'mlx-community/Qwen3.5-4B-mixed_3_8',
     fileSizeBytes: 3148497095,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-mixed_4_6',
     hfRepoId: 'mlx-community/Qwen3.5-4B-mixed_4_6',
     fileSizeBytes: 3290218829,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-mixed_4_8',
     hfRepoId: 'mlx-community/Qwen3.5-4B-mixed_4_8',
     fileSizeBytes: 3546136979,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-MLX-4bit',
     hfRepoId: 'mlx-community/Qwen3.5-4B-MLX-4bit',
     fileSizeBytes: 3034300695,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-MLX-8bit',
     hfRepoId: 'mlx-community/Qwen3.5-4B-MLX-8bit',
     fileSizeBytes: 5136696107,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-MLX-bf16',
     hfRepoId: 'mlx-community/Qwen3.5-4B-MLX-bf16',
     fileSizeBytes: 9078621809,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-mxfp4',
     hfRepoId: 'mlx-community/Qwen3.5-4B-mxfp4',
     fileSizeBytes: 2902868044,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-mxfp8',
     hfRepoId: 'mlx-community/Qwen3.5-4B-mxfp8',
     fileSizeBytes: 5005263364,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-nvfp4',
     hfRepoId: 'mlx-community/Qwen3.5-4B-nvfp4',
     fileSizeBytes: 3034267941,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-OptiQ-4bit',
     hfRepoId: 'mlx-community/Qwen3.5-4B-OptiQ-4bit',
     fileSizeBytes: 2947852893,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-9B-4bit',
     hfRepoId: 'mlx-community/Qwen3.5-9B-4bit',
     fileSizeBytes: 5950221072,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-9B-5bit',
     hfRepoId: 'mlx-community/Qwen3.5-9B-5bit',
     fileSizeBytes: 7069313579,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-9B-6bit',
     hfRepoId: 'mlx-community/Qwen3.5-9B-6bit',
     fileSizeBytes: 8188406421,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-9B-8bit',
     hfRepoId: 'mlx-community/Qwen3.5-9B-8bit',
     fileSizeBytes: 10426592423,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-9B-bf16',
     hfRepoId: 'mlx-community/Qwen3.5-9B-bf16',
     fileSizeBytes: 18819722691,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-9B-MLX-4bit',
     hfRepoId: 'mlx-community/Qwen3.5-9B-MLX-4bit',
     fileSizeBytes: 5950221072,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-9B-MLX-8bit',
     hfRepoId: 'mlx-community/Qwen3.5-9B-MLX-8bit',
     fileSizeBytes: 10426592423,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-9B-MLX-bf16',
     hfRepoId: 'mlx-community/Qwen3.5-9B-MLX-bf16',
     fileSizeBytes: 18819722691,
   }),
   featuredMlx({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-9B-OptiQ-4bit',
     hfRepoId: 'mlx-community/Qwen3.5-9B-OptiQ-4bit',
     fileSizeBytes: 6042704466,
   }),
   featuredMlx({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-27B-4bit',
     hfRepoId: 'mlx-community/Qwen3.5-27B-4bit',
     fileSizeBytes: 16054546159,
   }),
   featuredMlx({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-27B-4bit-DWQ',
     hfRepoId: 'mlx-community/Qwen3.5-27B-4bit-DWQ',
     fileSizeBytes: 15209557485,
   }),
   featuredMlx({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-27B-5bit',
     hfRepoId: 'mlx-community/Qwen3.5-27B-5bit',
     fileSizeBytes: 19416215339,
   }),
   featuredMlx({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-27B-6bit',
     hfRepoId: 'mlx-community/Qwen3.5-27B-6bit',
     fileSizeBytes: 22777884327,
   }),
   featuredMlx({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-27B-8bit',
     hfRepoId: 'mlx-community/Qwen3.5-27B-8bit',
     fileSizeBytes: 29501222821,
   }),
   featuredMlx({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-27B-bf16',
     hfRepoId: 'mlx-community/Qwen3.5-27B-bf16',
     fileSizeBytes: 54713610987,
   }),
   featuredMlx({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-27B-GPTQ-Int4',
     hfRepoId: 'mlx-community/Qwen3.5-27B-GPTQ-Int4',
     fileSizeBytes: 28657793949,
   }),
   featuredMlx({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-27B-mxfp8',
     hfRepoId: 'mlx-community/Qwen3.5-27B-mxfp8',
     fileSizeBytes: 28660739752,
   }),
   featuredMlx({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-35B-A3B-4bit',
     hfRepoId: 'mlx-community/Qwen3.5-35B-A3B-4bit',
     fileSizeBytes: 20391679439,
   }),
   featuredMlx({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-35B-A3B-5bit',
     hfRepoId: 'mlx-community/Qwen3.5-35B-A3B-5bit',
     fileSizeBytes: 24724110133,
   }),
   featuredMlx({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-35B-A3B-6bit',
     hfRepoId: 'mlx-community/Qwen3.5-35B-A3B-6bit',
     fileSizeBytes: 29056541579,
   }),
   featuredMlx({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-35B-A3B-8bit',
     hfRepoId: 'mlx-community/Qwen3.5-35B-A3B-8bit',
     fileSizeBytes: 37721404892,
   }),
   featuredMlx({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-35B-A3B-bf16',
     hfRepoId: 'mlx-community/Qwen3.5-35B-A3B-bf16',
     fileSizeBytes: 70214502211,
   }),
   featuredMlx({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-35B-A3B-GPTQ-Int4',
     hfRepoId: 'mlx-community/Qwen3.5-35B-A3B-GPTQ-Int4',
     fileSizeBytes: 22009605074,
   }),
   featuredMlx({
-    ...LARGE_MODEL_GOALS,
+    ...QWEN35_LARGE_MODEL_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-122B-A10B-4bit',
     hfRepoId: 'mlx-community/Qwen3.5-122B-A10B-4bit',
     fileSizeBytes: 69593636939,
   }),
   featuredMlx({
-    ...LARGE_MODEL_GOALS,
+    ...QWEN35_LARGE_MODEL_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-122B-A10B-5bit',
     hfRepoId: 'mlx-community/Qwen3.5-122B-A10B-5bit',
     fileSizeBytes: 84857317565,
   }),
   featuredMlx({
-    ...LARGE_MODEL_GOALS,
+    ...QWEN35_LARGE_MODEL_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-122B-A10B-6bit',
     hfRepoId: 'mlx-community/Qwen3.5-122B-A10B-6bit',
     fileSizeBytes: 100120997719,
   }),
   featuredMlx({
-    ...LARGE_MODEL_GOALS,
+    ...QWEN35_LARGE_MODEL_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-122B-A10B-8bit',
     hfRepoId: 'mlx-community/Qwen3.5-122B-A10B-8bit',
     fileSizeBytes: 130648358613,
   }),
   featuredMlx({
-    ...LARGE_MODEL_GOALS,
+    ...QWEN35_LARGE_MODEL_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-122B-A10B-bf16',
     hfRepoId: 'mlx-community/Qwen3.5-122B-A10B-bf16',
     fileSizeBytes: 245125798053,
   }),
   featuredMlx({
-    ...LARGE_MODEL_GOALS,
+    ...QWEN35_LARGE_MODEL_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-397B-A17B-4bit',
     hfRepoId: 'mlx-community/Qwen3.5-397B-A17B-4bit',
     fileSizeBytes: 223861162211,
   }),
   featuredMlx({
-    ...LARGE_MODEL_GOALS,
+    ...QWEN35_LARGE_MODEL_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-397B-A17B-5bit',
     hfRepoId: 'mlx-community/Qwen3.5-397B-A17B-5bit',
     fileSizeBytes: 273404117299,
   }),
   featuredMlx({
-    ...LARGE_MODEL_GOALS,
+    ...QWEN35_LARGE_MODEL_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-397B-A17B-6bit',
     hfRepoId: 'mlx-community/Qwen3.5-397B-A17B-6bit',
     fileSizeBytes: 322947070259,
   }),
   featuredMlx({
-    ...LARGE_MODEL_GOALS,
+    ...QWEN35_LARGE_MODEL_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-397B-A17B-8bit',
     hfRepoId: 'mlx-community/Qwen3.5-397B-A17B-8bit',
     fileSizeBytes: 422032974222,
   }),
   featuredMlx({
-    ...LARGE_MODEL_GOALS,
+    ...QWEN35_LARGE_MODEL_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-397B-A17B-8bit-gs32',
     hfRepoId: 'mlx-community/Qwen3.5-397B-A17B-8bit-gs32',
     fileSizeBytes: 445884513534,
   }),
   featuredMlx({
-    ...LARGE_MODEL_GOALS,
+    ...QWEN35_LARGE_MODEL_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-397B-A17B-nvfp4',
     hfRepoId: 'mlx-community/Qwen3.5-397B-A17B-nvfp4',
     fileSizeBytes: 223012051290,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-BF16',
     hfFileName: 'Qwen3.5-0.8B-BF16.gguf',
@@ -2001,7 +2061,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 1516744736,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-IQ4_NL',
     hfFileName: 'Qwen3.5-0.8B-IQ4_NL.gguf',
@@ -2009,7 +2069,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 506859776,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-IQ4_XS',
     hfFileName: 'Qwen3.5-0.8B-IQ4_XS.gguf',
@@ -2017,7 +2077,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 492605696,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-Q3_K_M',
     hfFileName: 'Qwen3.5-0.8B-Q3_K_M.gguf',
@@ -2025,7 +2085,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 470167808,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-Q3_K_S',
     hfFileName: 'Qwen3.5-0.8B-Q3_K_S.gguf',
@@ -2033,7 +2093,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 440750336,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-Q4_0',
     hfFileName: 'Qwen3.5-0.8B-Q4_0.gguf',
@@ -2041,7 +2101,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 507154688,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-Q4_1',
     hfFileName: 'Qwen3.5-0.8B-Q4_1.gguf',
@@ -2049,7 +2109,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 535171328,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-Q4_K_M',
     hfFileName: 'Qwen3.5-0.8B-Q4_K_M.gguf',
@@ -2057,7 +2117,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 532517120,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-Q4_K_S',
     hfFileName: 'Qwen3.5-0.8B-Q4_K_S.gguf',
@@ -2065,7 +2125,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 508104960,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-Q5_K_M',
     hfFileName: 'Qwen3.5-0.8B-Q5_K_M.gguf',
@@ -2073,7 +2133,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 590057728,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-Q5_K_S',
     hfFileName: 'Qwen3.5-0.8B-Q5_K_S.gguf',
@@ -2081,7 +2141,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 568889600,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-Q6_K',
     hfFileName: 'Qwen3.5-0.8B-Q6_K.gguf',
@@ -2089,7 +2149,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 639029504,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-Q8_0',
     hfFileName: 'Qwen3.5-0.8B-Q8_0.gguf',
@@ -2097,7 +2157,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 811843840,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-UD-IQ2_M',
     hfFileName: 'Qwen3.5-0.8B-UD-IQ2_M.gguf',
@@ -2105,7 +2165,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 371933440,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-UD-IQ2_XXS',
     hfFileName: 'Qwen3.5-0.8B-UD-IQ2_XXS.gguf',
@@ -2113,7 +2173,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 338227456,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-UD-IQ3_XXS',
     hfFileName: 'Qwen3.5-0.8B-UD-IQ3_XXS.gguf',
@@ -2121,7 +2181,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 398237952,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-UD-Q2_K_XL',
     hfFileName: 'Qwen3.5-0.8B-UD-Q2_K_XL.gguf',
@@ -2129,7 +2189,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 417718528,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-UD-Q3_K_XL',
     hfFileName: 'Qwen3.5-0.8B-UD-Q3_K_XL.gguf',
@@ -2137,7 +2197,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 492216576,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-UD-Q4_K_XL',
     hfFileName: 'Qwen3.5-0.8B-UD-Q4_K_XL.gguf',
@@ -2145,7 +2205,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 558772480,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-UD-Q5_K_XL',
     hfFileName: 'Qwen3.5-0.8B-UD-Q5_K_XL.gguf',
@@ -2153,7 +2213,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 606585088,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-UD-Q6_K_XL',
     hfFileName: 'Qwen3.5-0.8B-UD-Q6_K_XL.gguf',
@@ -2161,7 +2221,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 771092736,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-UD-Q8_K_XL',
     hfFileName: 'Qwen3.5-0.8B-UD-Q8_K_XL.gguf',
@@ -2169,7 +2229,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 1186443520,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...QWEN35_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-BF16',
     hfFileName: 'Qwen3.5-2B-BF16.gguf',
@@ -2177,7 +2237,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 3775709216,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...QWEN35_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-IQ4_NL',
     hfFileName: 'Qwen3.5-2B-IQ4_NL.gguf',
@@ -2185,7 +2245,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 1213300992,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...QWEN35_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-IQ4_XS',
     hfFileName: 'Qwen3.5-2B-IQ4_XS.gguf',
@@ -2193,7 +2253,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 1172996352,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...QWEN35_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-Q3_K_M',
     hfFileName: 'Qwen3.5-2B-Q3_K_M.gguf',
@@ -2201,7 +2261,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 1107149056,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...QWEN35_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-Q3_K_S',
     hfFileName: 'Qwen3.5-2B-Q3_K_S.gguf',
@@ -2209,7 +2269,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 1030947072,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...QWEN35_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-Q4_0',
     hfFileName: 'Qwen3.5-2B-Q4_0.gguf',
@@ -2217,7 +2277,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 1214873856,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...QWEN35_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-Q4_1',
     hfFileName: 'Qwen3.5-2B-Q4_1.gguf',
@@ -2225,7 +2285,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 1293517056,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...QWEN35_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-Q4_K_M',
     hfFileName: 'Qwen3.5-2B-Q4_K_M.gguf',
@@ -2233,7 +2293,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 1280835840,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...QWEN35_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-Q4_K_S',
     hfFileName: 'Qwen3.5-2B-Q4_K_S.gguf',
@@ -2241,7 +2301,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 1217757440,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...QWEN35_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-Q5_K_M',
     hfFileName: 'Qwen3.5-2B-Q5_K_M.gguf',
@@ -2249,7 +2309,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 1435238656,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...QWEN35_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-Q5_K_S',
     hfFileName: 'Qwen3.5-2B-Q5_K_S.gguf',
@@ -2257,7 +2317,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 1384546560,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...QWEN35_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-Q6_K',
     hfFileName: 'Qwen3.5-2B-Q6_K.gguf',
@@ -2265,7 +2325,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 1574961408,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...QWEN35_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-Q8_0',
     hfFileName: 'Qwen3.5-2B-Q8_0.gguf',
@@ -2273,7 +2333,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 2012012800,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...QWEN35_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-UD-IQ2_M',
     hfFileName: 'Qwen3.5-2B-UD-IQ2_M.gguf',
@@ -2281,7 +2341,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 859857152,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...QWEN35_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-UD-IQ2_XXS',
     hfFileName: 'Qwen3.5-2B-UD-IQ2_XXS.gguf',
@@ -2289,7 +2349,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 768270592,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...QWEN35_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-UD-IQ3_XXS',
     hfFileName: 'Qwen3.5-2B-UD-IQ3_XXS.gguf',
@@ -2297,7 +2357,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 931823872,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...QWEN35_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-UD-Q2_K_XL',
     hfFileName: 'Qwen3.5-2B-UD-Q2_K_XL.gguf',
@@ -2305,7 +2365,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 966533376,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...QWEN35_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-UD-Q3_K_XL',
     hfFileName: 'Qwen3.5-2B-UD-Q3_K_XL.gguf',
@@ -2313,7 +2373,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 1159274752,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...QWEN35_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-UD-Q4_K_XL',
     hfFileName: 'Qwen3.5-2B-UD-Q4_K_XL.gguf',
@@ -2321,7 +2381,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 1339752704,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...QWEN35_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-UD-Q5_K_XL',
     hfFileName: 'Qwen3.5-2B-UD-Q5_K_XL.gguf',
@@ -2329,7 +2389,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 1466687744,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...QWEN35_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-UD-Q6_K_XL',
     hfFileName: 'Qwen3.5-2B-UD-Q6_K_XL.gguf',
@@ -2337,7 +2397,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 1864483072,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...QWEN35_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-UD-Q8_K_XL',
     hfFileName: 'Qwen3.5-2B-UD-Q8_K_XL.gguf',
@@ -2345,7 +2405,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 2834940160,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-BF16',
     hfFileName: 'Qwen3.5-4B-BF16.gguf',
@@ -2353,7 +2413,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 8424393632,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-IQ4_NL',
     hfFileName: 'Qwen3.5-4B-IQ4_NL.gguf',
@@ -2361,7 +2421,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 2579944608,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-IQ4_XS',
     hfFileName: 'Qwen3.5-4B-IQ4_XS.gguf',
@@ -2369,7 +2429,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 2477053088,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-Q3_K_M',
     hfFileName: 'Qwen3.5-4B-Q3_K_M.gguf',
@@ -2377,7 +2437,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 2293388448,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-Q3_K_S',
     hfFileName: 'Qwen3.5-4B-Q3_K_S.gguf',
@@ -2385,7 +2445,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 2105791648,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-Q4_0',
     hfFileName: 'Qwen3.5-4B-Q4_0.gguf',
@@ -2393,7 +2453,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 2583221408,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-Q4_1',
     hfFileName: 'Qwen3.5-4B-Q4_1.gguf',
@@ -2401,7 +2461,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 2784416928,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-Q4_K_M',
     hfFileName: 'Qwen3.5-4B-Q4_K_M.gguf',
@@ -2409,7 +2469,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 2740937888,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-Q4_K_S',
     hfFileName: 'Qwen3.5-4B-Q4_K_S.gguf',
@@ -2417,7 +2477,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 2590430368,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-Q5_K_M',
     hfFileName: 'Qwen3.5-4B-Q5_K_M.gguf',
@@ -2425,7 +2485,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 3143656608,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-Q5_K_S',
     hfFileName: 'Qwen3.5-4B-Q5_K_S.gguf',
@@ -2433,7 +2493,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 3024934048,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-Q6_K',
     hfFileName: 'Qwen3.5-4B-Q6_K.gguf',
@@ -2441,7 +2501,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 3525956768,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-Q8_0',
     hfFileName: 'Qwen3.5-4B-Q8_0.gguf',
@@ -2449,7 +2509,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 4482403488,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-UD-IQ2_M',
     hfFileName: 'Qwen3.5-4B-UD-IQ2_M.gguf',
@@ -2457,7 +2517,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 1759997088,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-UD-IQ2_XXS',
     hfFileName: 'Qwen3.5-4B-UD-IQ2_XXS.gguf',
@@ -2465,7 +2525,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 1520217248,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-UD-IQ3_XXS',
     hfFileName: 'Qwen3.5-4B-UD-IQ3_XXS.gguf',
@@ -2473,7 +2533,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 1949047968,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-UD-Q2_K_XL',
     hfFileName: 'Qwen3.5-4B-UD-Q2_K_XL.gguf',
@@ -2481,7 +2541,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 1940825248,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-UD-Q3_K_XL',
     hfFileName: 'Qwen3.5-4B-UD-Q3_K_XL.gguf',
@@ -2489,7 +2549,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 2436420768,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-UD-Q4_K_XL',
     hfFileName: 'Qwen3.5-4B-UD-Q4_K_XL.gguf',
@@ -2497,7 +2557,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 2912109728,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-UD-Q5_K_XL',
     hfFileName: 'Qwen3.5-4B-UD-Q5_K_XL.gguf',
@@ -2505,7 +2565,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 3250869408,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-UD-Q6_K_XL',
     hfFileName: 'Qwen3.5-4B-UD-Q6_K_XL.gguf',
@@ -2513,7 +2573,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 4145548448,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-UD-Q8_K_XL',
     hfFileName: 'Qwen3.5-4B-UD-Q8_K_XL.gguf',
@@ -2521,7 +2581,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 5952048288,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-9B-BF16',
     hfFileName: 'Qwen3.5-9B-BF16.gguf',
@@ -2529,7 +2589,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 17920697312,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-9B-IQ4_NL',
     hfFileName: 'Qwen3.5-9B-IQ4_NL.gguf',
@@ -2537,7 +2597,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 5371028704,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-9B-IQ4_XS',
     hfFileName: 'Qwen3.5-9B-IQ4_XS.gguf',
@@ -2545,7 +2605,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 5168653536,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-9B-Q3_K_M',
     hfFileName: 'Qwen3.5-9B-Q3_K_M.gguf',
@@ -2553,7 +2613,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 4673643744,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-9B-Q3_K_S',
     hfFileName: 'Qwen3.5-9B-Q3_K_S.gguf',
@@ -2561,7 +2621,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 4316865760,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-9B-Q4_0',
     hfFileName: 'Qwen3.5-9B-Q4_0.gguf',
@@ -2569,7 +2629,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 5379417312,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-9B-Q4_1',
     hfFileName: 'Qwen3.5-9B-Q4_1.gguf',
@@ -2577,7 +2637,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 5837251808,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-9B-Q4_K_M',
     hfFileName: 'Qwen3.5-9B-Q4_K_M.gguf',
@@ -2585,7 +2645,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 5680522464,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-9B-Q4_K_S',
     hfFileName: 'Qwen3.5-9B-Q4_K_S.gguf',
@@ -2593,7 +2653,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 5394097376,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-9B-Q5_K_M',
     hfFileName: 'Qwen3.5-9B-Q5_K_M.gguf',
@@ -2601,7 +2661,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 6577841376,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-9B-Q5_K_S',
     hfFileName: 'Qwen3.5-9B-Q5_K_S.gguf',
@@ -2609,7 +2669,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 6361146592,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-9B-Q6_K',
     hfFileName: 'Qwen3.5-9B-Q6_K.gguf',
@@ -2617,7 +2677,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 7458301152,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-9B-Q8_0',
     hfFileName: 'Qwen3.5-9B-Q8_0.gguf',
@@ -2625,7 +2685,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 9527502048,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-9B-UD-IQ2_M',
     hfFileName: 'Qwen3.5-9B-UD-IQ2_M.gguf',
@@ -2633,7 +2693,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 3649365216,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-9B-UD-IQ2_XXS',
     hfFileName: 'Qwen3.5-9B-UD-IQ2_XXS.gguf',
@@ -2641,7 +2701,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 3190613216,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-9B-UD-IQ3_XXS',
     hfFileName: 'Qwen3.5-9B-UD-IQ3_XXS.gguf',
@@ -2649,7 +2709,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 4016235744,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-9B-UD-Q2_K_XL',
     hfFileName: 'Qwen3.5-9B-UD-Q2_K_XL.gguf',
@@ -2657,7 +2717,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 4121781472,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-9B-UD-Q3_K_XL',
     hfFileName: 'Qwen3.5-9B-UD-Q3_K_XL.gguf',
@@ -2665,7 +2725,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 5053834464,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-9B-UD-Q4_K_XL',
     hfFileName: 'Qwen3.5-9B-UD-Q4_K_XL.gguf',
@@ -2673,7 +2733,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 5966095584,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-9B-UD-Q5_K_XL',
     hfFileName: 'Qwen3.5-9B-UD-Q5_K_XL.gguf',
@@ -2681,7 +2741,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 6743680224,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-9B-UD-Q6_K_XL',
     hfFileName: 'Qwen3.5-9B-UD-Q6_K_XL.gguf',
@@ -2689,7 +2749,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 8756929760,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...QWEN35_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-9B-UD-Q8_K_XL',
     hfFileName: 'Qwen3.5-9B-UD-Q8_K_XL.gguf',
@@ -2697,7 +2757,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 12974040288,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-27B-IQ4_NL',
     hfFileName: 'Qwen3.5-27B-IQ4_NL.gguf',
@@ -2705,7 +2765,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 15687894944,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-27B-IQ4_XS',
     hfFileName: 'Qwen3.5-27B-IQ4_XS.gguf',
@@ -2713,7 +2773,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 14977484704,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-27B-Q3_K_M',
     hfFileName: 'Qwen3.5-27B-Q3_K_M.gguf',
@@ -2721,7 +2781,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 13505116064,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-27B-Q3_K_S',
     hfFileName: 'Qwen3.5-27B-Q3_K_S.gguf',
@@ -2729,7 +2789,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 12289423264,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-27B-Q4_0',
     hfFileName: 'Qwen3.5-27B-Q4_0.gguf',
@@ -2737,7 +2797,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 15721973664,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-27B-Q4_1',
     hfFileName: 'Qwen3.5-27B-Q4_1.gguf',
@@ -2745,7 +2805,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 17182934944,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-27B-Q4_K_M',
     hfFileName: 'Qwen3.5-27B-Q4_K_M.gguf',
@@ -2753,7 +2813,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 16740812704,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-27B-Q4_K_S',
     hfFileName: 'Qwen3.5-27B-Q4_K_S.gguf',
@@ -2761,7 +2821,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 15769159584,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-27B-Q5_K_M',
     hfFileName: 'Qwen3.5-27B-Q5_K_M.gguf',
@@ -2769,7 +2829,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 19608995744,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-27B-Q5_K_S',
     hfFileName: 'Qwen3.5-27B-Q5_K_S.gguf',
@@ -2777,7 +2837,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 18889000864,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-27B-Q6_K',
     hfFileName: 'Qwen3.5-27B-Q6_K.gguf',
@@ -2785,7 +2845,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 22453933984,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-27B-Q8_0',
     hfFileName: 'Qwen3.5-27B-Q8_0.gguf',
@@ -2793,7 +2853,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 28595763104,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-27B-UD-IQ2_M',
     hfFileName: 'Qwen3.5-27B-UD-IQ2_M.gguf',
@@ -2801,7 +2861,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 10188072864,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-27B-UD-IQ2_XXS',
     hfFileName: 'Qwen3.5-27B-UD-IQ2_XXS.gguf',
@@ -2809,7 +2869,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 8573593504,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-27B-UD-IQ3_XXS',
     hfFileName: 'Qwen3.5-27B-UD-IQ3_XXS.gguf',
@@ -2817,7 +2877,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 11506493344,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-27B-UD-Q2_K_XL',
     hfFileName: 'Qwen3.5-27B-UD-Q2_K_XL.gguf',
@@ -2825,7 +2885,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 11213752224,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-27B-UD-Q3_K_XL',
     hfFileName: 'Qwen3.5-27B-UD-Q3_K_XL.gguf',
@@ -2833,7 +2893,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 14438533024,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-27B-UD-Q4_K_XL',
     hfFileName: 'Qwen3.5-27B-UD-Q4_K_XL.gguf',
@@ -2841,7 +2901,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 17621125024,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-27B-UD-Q5_K_XL',
     hfFileName: 'Qwen3.5-27B-UD-Q5_K_XL.gguf',
@@ -2849,7 +2909,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 20171253664,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-27B-UD-Q6_K_XL',
     hfFileName: 'Qwen3.5-27B-UD-Q6_K_XL.gguf',
@@ -2857,7 +2917,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 25675642784,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-27B-UD-Q8_K_XL',
     hfFileName: 'Qwen3.5-27B-UD-Q8_K_XL.gguf',
@@ -2865,7 +2925,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 35528652704,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-35B-A3B-MXFP4_MOE',
     hfFileName: 'Qwen3.5-35B-A3B-MXFP4_MOE.gguf',
@@ -2873,7 +2933,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 21587638912,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-35B-A3B-Q3_K_M',
     hfFileName: 'Qwen3.5-35B-A3B-Q3_K_M.gguf',
@@ -2881,7 +2941,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 16356375168,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-35B-A3B-Q3_K_S',
     hfFileName: 'Qwen3.5-35B-A3B-Q3_K_S.gguf',
@@ -2889,7 +2949,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 15265856128,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-35B-A3B-Q4_K_M',
     hfFileName: 'Qwen3.5-35B-A3B-Q4_K_M.gguf',
@@ -2897,7 +2957,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 22016023168,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-35B-A3B-Q4_K_S',
     hfFileName: 'Qwen3.5-35B-A3B-Q4_K_S.gguf',
@@ -2905,7 +2965,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 20673845888,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-35B-A3B-Q5_K_M',
     hfFileName: 'Qwen3.5-35B-A3B-Q5_K_M.gguf',
@@ -2913,7 +2973,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 26249607808,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-35B-A3B-Q5_K_S',
     hfFileName: 'Qwen3.5-35B-A3B-Q5_K_S.gguf',
@@ -2921,7 +2981,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 24823544448,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-35B-A3B-Q6_K',
     hfFileName: 'Qwen3.5-35B-A3B-Q6_K.gguf',
@@ -2929,7 +2989,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 28852861568,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-35B-A3B-Q8_0',
     hfFileName: 'Qwen3.5-35B-A3B-Q8_0.gguf',
@@ -2937,7 +2997,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 36903139968,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-35B-A3B-UD-IQ2_M',
     hfFileName: 'Qwen3.5-35B-A3B-UD-IQ2_M.gguf',
@@ -2945,7 +3005,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 11391613568,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-35B-A3B-UD-IQ2_XXS',
     hfFileName: 'Qwen3.5-35B-A3B-UD-IQ2_XXS.gguf',
@@ -2953,7 +3013,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 10656955008,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-35B-A3B-UD-IQ3_S',
     hfFileName: 'Qwen3.5-35B-A3B-UD-IQ3_S.gguf',
@@ -2961,7 +3021,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 13583383168,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-35B-A3B-UD-IQ3_XXS',
     hfFileName: 'Qwen3.5-35B-A3B-UD-IQ3_XXS.gguf',
@@ -2969,7 +3029,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 13080066688,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-35B-A3B-UD-IQ4_NL',
     hfFileName: 'Qwen3.5-35B-A3B-UD-IQ4_NL.gguf',
@@ -2977,7 +3037,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 17821719168,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-35B-A3B-UD-IQ4_XS',
     hfFileName: 'Qwen3.5-35B-A3B-UD-IQ4_XS.gguf',
@@ -2985,7 +3045,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 17486174848,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-35B-A3B-UD-Q2_K_XL',
     hfFileName: 'Qwen3.5-35B-A3B-UD-Q2_K_XL.gguf',
@@ -2993,7 +3053,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 12156754560,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-35B-A3B-UD-Q3_K_XL',
     hfFileName: 'Qwen3.5-35B-A3B-UD-Q3_K_XL.gguf',
@@ -3001,7 +3061,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 16601176704,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-35B-A3B-UD-Q4_K_L',
     hfFileName: 'Qwen3.5-35B-A3B-UD-Q4_K_L.gguf',
@@ -3009,7 +3069,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 20205632160,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-35B-A3B-UD-Q4_K_XL',
     hfFileName: 'Qwen3.5-35B-A3B-UD-Q4_K_XL.gguf',
@@ -3017,7 +3077,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 22241950336,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-35B-A3B-UD-Q5_K_XL',
     hfFileName: 'Qwen3.5-35B-A3B-UD-Q5_K_XL.gguf',
@@ -3025,7 +3085,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 26385922688,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-35B-A3B-UD-Q6_K_S',
     hfFileName: 'Qwen3.5-35B-A3B-UD-Q6_K_S.gguf',
@@ -3033,7 +3093,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 28515105440,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-35B-A3B-UD-Q6_K_XL',
     hfFileName: 'Qwen3.5-35B-A3B-UD-Q6_K_XL.gguf',
@@ -3041,7 +3101,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 32071842432,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...QWEN35_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-35B-A3B-UD-Q8_K_XL',
     hfFileName: 'Qwen3.5-35B-A3B-UD-Q8_K_XL.gguf',
@@ -3049,7 +3109,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 48688560768,
   }),
   featuredGguf({
-    ...LARGE_MODEL_GOALS,
+    ...QWEN35_LARGE_MODEL_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-122B-A10B-UD-IQ1_M',
     hfFileName: 'Qwen3.5-122B-A10B-UD-IQ1_M.gguf',
@@ -3057,7 +3117,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 34221749440,
   }),
   featuredGguf({
-    ...LARGE_MODEL_GOALS,
+    ...QWEN35_LARGE_MODEL_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-122B-A10B-UD-IQ2_M',
     hfFileName: 'Qwen3.5-122B-A10B-UD-IQ2_M.gguf',
@@ -3065,7 +3125,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 39148942528,
   }),
   featuredGguf({
-    ...LARGE_MODEL_GOALS,
+    ...QWEN35_LARGE_MODEL_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-122B-A10B-UD-IQ2_XXS',
     hfFileName: 'Qwen3.5-122B-A10B-UD-IQ2_XXS.gguf',
@@ -3073,7 +3133,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 36637668544,
   }),
   featuredGguf({
-    ...LARGE_MODEL_GOALS,
+    ...QWEN35_LARGE_MODEL_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-122B-A10B-UD-IQ3_S',
     hfFileName: 'Qwen3.5-122B-A10B-UD-IQ3_S.gguf',
@@ -3081,7 +3141,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 46556959936,
   }),
   featuredGguf({
-    ...LARGE_MODEL_GOALS,
+    ...QWEN35_LARGE_MODEL_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-122B-A10B-UD-IQ3_XXS',
     hfFileName: 'Qwen3.5-122B-A10B-UD-IQ3_XXS.gguf',
@@ -3089,7 +3149,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 44745020608,
   }),
   featuredGguf({
-    ...LARGE_MODEL_GOALS,
+    ...QWEN35_LARGE_MODEL_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'Qwen3.5-122B-A10B-UD-Q2_K_XL',
     hfFileName: 'Qwen3.5-122B-A10B-UD-Q2_K_XL.gguf',
@@ -3101,7 +3161,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
   // Liquid AI
   // -----------------------------------------------------------------------------
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-1.2B-Extract-F16',
     hfFileName: 'LFM2-1.2B-Extract-F16.gguf',
@@ -3109,7 +3169,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 2343325408,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-1.2B-Extract-Q4_0',
     hfFileName: 'LFM2-1.2B-Extract-Q4_0.gguf',
@@ -3117,7 +3177,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 695750368,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-1.2B-Extract-Q4_K_M',
     hfFileName: 'LFM2-1.2B-Extract-Q4_K_M.gguf',
@@ -3125,7 +3185,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 730894048,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-1.2B-Extract-Q5_K_M',
     hfFileName: 'LFM2-1.2B-Extract-Q5_K_M.gguf',
@@ -3133,7 +3193,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 843353824,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-1.2B-Extract-Q6_K',
     hfFileName: 'LFM2-1.2B-Extract-Q6_K.gguf',
@@ -3141,7 +3201,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 962842336,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-1.2B-Extract-Q8_0',
     hfFileName: 'LFM2-1.2B-Extract-Q8_0.gguf',
@@ -3149,7 +3209,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 1246252768,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-1.2B-F16',
     hfFileName: 'LFM2-1.2B-F16.gguf',
@@ -3157,7 +3217,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 2343324608,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-1.2B-Q4_0',
     hfFileName: 'LFM2-1.2B-Q4_0.gguf',
@@ -3165,7 +3225,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 695749568,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-1.2B-Q4_K_M-hip-optimized',
     hfFileName: 'LFM2-1.2B-Q4_K_M-hip-optimized.gguf',
@@ -3173,7 +3233,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 796412864,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-1.2B-Q4_K_M',
     hfFileName: 'LFM2-1.2B-Q4_K_M.gguf',
@@ -3181,7 +3241,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 730893248,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-1.2B-Q5_K_M',
     hfFileName: 'LFM2-1.2B-Q5_K_M.gguf',
@@ -3189,7 +3249,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 843353024,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-1.2B-Q6_K',
     hfFileName: 'LFM2-1.2B-Q6_K.gguf',
@@ -3197,7 +3257,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 962841536,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-1.2B-Q8_0',
     hfFileName: 'LFM2-1.2B-Q8_0.gguf',
@@ -3205,7 +3265,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 1246251968,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-1.2B-RAG-F16',
     hfFileName: 'LFM2-1.2B-RAG-F16.gguf',
@@ -3213,7 +3273,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 2343325408,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-1.2B-RAG-Q4_0',
     hfFileName: 'LFM2-1.2B-RAG-Q4_0.gguf',
@@ -3221,7 +3281,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 695750368,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-1.2B-RAG-Q4_K_M',
     hfFileName: 'LFM2-1.2B-RAG-Q4_K_M.gguf',
@@ -3229,7 +3289,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 730894048,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-1.2B-RAG-Q5_K_M',
     hfFileName: 'LFM2-1.2B-RAG-Q5_K_M.gguf',
@@ -3237,7 +3297,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 843353824,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-1.2B-RAG-Q6_K',
     hfFileName: 'LFM2-1.2B-RAG-Q6_K.gguf',
@@ -3245,7 +3305,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 962842336,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-1.2B-RAG-Q8_0',
     hfFileName: 'LFM2-1.2B-RAG-Q8_0.gguf',
@@ -3253,7 +3313,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 1246252768,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-1.2B-Tool-F16',
     hfFileName: 'LFM2-1.2B-Tool-F16.gguf',
@@ -3261,7 +3321,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 2343325408,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-1.2B-Tool-Q4_0',
     hfFileName: 'LFM2-1.2B-Tool-Q4_0.gguf',
@@ -3269,7 +3329,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 695750368,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-1.2B-Tool-Q4_K_M',
     hfFileName: 'LFM2-1.2B-Tool-Q4_K_M.gguf',
@@ -3277,7 +3337,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 730894048,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-1.2B-Tool-Q5_K_M',
     hfFileName: 'LFM2-1.2B-Tool-Q5_K_M.gguf',
@@ -3285,7 +3345,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 843353824,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-1.2B-Tool-Q6_K',
     hfFileName: 'LFM2-1.2B-Tool-Q6_K.gguf',
@@ -3293,7 +3353,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 962842336,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-1.2B-Tool-Q8_0',
     hfFileName: 'LFM2-1.2B-Tool-Q8_0.gguf',
@@ -3301,7 +3361,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 1246252768,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-2.6B-Exp-F16',
     hfFileName: 'LFM2-2.6B-Exp-F16.gguf',
@@ -3309,7 +3369,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 5409894752,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-2.6B-Exp-Q4_0',
     hfFileName: 'LFM2-2.6B-Exp-Q4_0.gguf',
@@ -3317,7 +3377,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 1558606176,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-2.6B-Exp-Q4_K_M',
     hfFileName: 'LFM2-2.6B-Exp-Q4_K_M.gguf',
@@ -3325,7 +3385,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 1639166304,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-2.6B-Exp-Q5_K_M',
     hfFileName: 'LFM2-2.6B-Exp-Q5_K_M.gguf',
@@ -3333,7 +3393,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 1921233248,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-2.6B-Exp-Q6_K',
     hfFileName: 'LFM2-2.6B-Exp-Q6_K.gguf',
@@ -3341,7 +3401,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 2220929376,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-2.6B-Exp-Q8_0',
     hfFileName: 'LFM2-2.6B-Exp-Q8_0.gguf',
@@ -3349,7 +3409,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 2875617632,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-2.6B-F16',
     hfFileName: 'LFM2-2.6B-F16.gguf',
@@ -3357,7 +3417,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 5141459168,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-2.6B-Q4_0',
     hfFileName: 'LFM2-2.6B-Q4_0.gguf',
@@ -3365,7 +3425,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 1483108576,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-2.6B-Q4_K_M-hip-optimized',
     hfFileName: 'LFM2-2.6B-Q4_K_M-hip-optimized.gguf',
@@ -3373,7 +3433,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 1671852256,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-2.6B-Q4_K_M',
     hfFileName: 'LFM2-2.6B-Q4_K_M.gguf',
@@ -3381,7 +3441,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 1563668704,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-2.6B-Q5_K_M',
     hfFileName: 'LFM2-2.6B-Q5_K_M.gguf',
@@ -3389,7 +3449,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 1828958432,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-2.6B-Q6_K',
     hfFileName: 'LFM2-2.6B-Q6_K.gguf',
@@ -3397,7 +3457,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 2110828768,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-2.6B-Q8_0',
     hfFileName: 'LFM2-2.6B-Q8_0.gguf',
@@ -3405,7 +3465,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 2733011168,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-2.6B-Transcript-BF16',
     hfFileName: 'LFM2-2.6B-Transcript-BF16.gguf',
@@ -3413,7 +3473,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 5141459712,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-2.6B-Transcript-F16',
     hfFileName: 'LFM2-2.6B-Transcript-F16.gguf',
@@ -3421,7 +3481,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 5141459712,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-2.6B-Transcript-Q4_0',
     hfFileName: 'LFM2-2.6B-Transcript-Q4_0.gguf',
@@ -3429,7 +3489,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 1483109120,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-2.6B-Transcript-Q4_K_M',
     hfFileName: 'LFM2-2.6B-Transcript-Q4_K_M.gguf',
@@ -3437,7 +3497,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 1563669248,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-2.6B-Transcript-Q5_K_M',
     hfFileName: 'LFM2-2.6B-Transcript-Q5_K_M.gguf',
@@ -3445,7 +3505,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 1828958976,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-2.6B-Transcript-Q6_K',
     hfFileName: 'LFM2-2.6B-Transcript-Q6_K.gguf',
@@ -3453,7 +3513,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 2110829312,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-2.6B-Transcript-Q8_0',
     hfFileName: 'LFM2-2.6B-Transcript-Q8_0.gguf',
@@ -3461,7 +3521,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 2733011712,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...LIQUID_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-8B-A1B-F16',
     hfFileName: 'LFM2-8B-A1B-F16.gguf',
@@ -3469,7 +3529,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 16685562560,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...LIQUID_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-8B-A1B-Q4_0',
     hfFileName: 'LFM2-8B-A1B-Q4_0.gguf',
@@ -3477,7 +3537,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 4733893312,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...LIQUID_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-8B-A1B-Q4_K_M',
     hfFileName: 'LFM2-8B-A1B-Q4_K_M.gguf',
@@ -3485,7 +3545,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 5044779712,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...LIQUID_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-8B-A1B-Q5_K_M',
     hfFileName: 'LFM2-8B-A1B-Q5_K_M.gguf',
@@ -3493,7 +3553,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 5919554240,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...LIQUID_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-8B-A1B-Q6_K',
     hfFileName: 'LFM2-8B-A1B-Q6_K.gguf',
@@ -3501,7 +3561,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 6849002176,
   }),
   featuredGguf({
-    ...FLAGSHIP_GOALS,
+    ...LIQUID_FLAGSHIP_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-8B-A1B-Q8_0',
     hfFileName: 'LFM2-8B-A1B-Q8_0.gguf',
@@ -3509,7 +3569,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 8868428480,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...LIQUID_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-24B-A2B-BF16',
     hfFileName: 'LFM2-24B-A2B-BF16.gguf',
@@ -3517,7 +3577,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 47700397344,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...LIQUID_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-24B-A2B-F16',
     hfFileName: 'LFM2-24B-A2B-F16.gguf',
@@ -3525,7 +3585,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 47700397344,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...LIQUID_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-24B-A2B-Q4_0',
     hfFileName: 'LFM2-24B-A2B-Q4_0.gguf',
@@ -3533,7 +3593,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 13467405600,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...LIQUID_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-24B-A2B-Q4_K_M',
     hfFileName: 'LFM2-24B-A2B-Q4_K_M.gguf',
@@ -3541,7 +3601,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 14415473952,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...LIQUID_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-24B-A2B-Q5_K_M',
     hfFileName: 'LFM2-24B-A2B-Q5_K_M.gguf',
@@ -3549,7 +3609,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 16918818080,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...LIQUID_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-24B-A2B-Q6_K',
     hfFileName: 'LFM2-24B-A2B-Q6_K.gguf',
@@ -3557,7 +3617,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 19578621216,
   }),
   featuredGguf({
-    ...FRONTIER_GOALS,
+    ...LIQUID_FRONTIER_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-24B-A2B-Q8_0',
     hfFileName: 'LFM2-24B-A2B-Q8_0.gguf',
@@ -3565,7 +3625,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 25351965984,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-350M-ENJP-MT-F16',
     hfFileName: 'LFM2-350M-ENJP-MT-F16.gguf',
@@ -3573,7 +3633,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 711483168,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-350M-ENJP-MT-F32',
     hfFileName: 'LFM2-350M-ENJP-MT-F32.gguf',
@@ -3581,7 +3641,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 1420320544,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-350M-ENJP-MT-Q4_0',
     hfFileName: 'LFM2-350M-ENJP-MT-Q4_0.gguf',
@@ -3589,7 +3649,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 219307808,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-350M-ENJP-MT-Q4_K_M',
     hfFileName: 'LFM2-350M-ENJP-MT-Q4_K_M.gguf',
@@ -3597,7 +3657,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 229310240,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-350M-ENJP-MT-Q5_K_M',
     hfFileName: 'LFM2-350M-ENJP-MT-Q5_K_M.gguf',
@@ -3605,7 +3665,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 260374304,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-350M-ENJP-MT-Q6_K',
     hfFileName: 'LFM2-350M-ENJP-MT-Q6_K.gguf',
@@ -3613,7 +3673,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 293379872,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-350M-ENJP-MT-Q8_0',
     hfFileName: 'LFM2-350M-ENJP-MT-Q8_0.gguf',
@@ -3621,7 +3681,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 379215648,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-350M-Extract-F16',
     hfFileName: 'LFM2-350M-Extract-F16.gguf',
@@ -3629,7 +3689,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 711483008,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-350M-Extract-Q4_0',
     hfFileName: 'LFM2-350M-Extract-Q4_0.gguf',
@@ -3637,7 +3697,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 219307648,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-350M-Extract-Q4_K_M',
     hfFileName: 'LFM2-350M-Extract-Q4_K_M.gguf',
@@ -3645,7 +3705,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 229310080,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-350M-Extract-Q5_K_M',
     hfFileName: 'LFM2-350M-Extract-Q5_K_M.gguf',
@@ -3653,7 +3713,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 260374144,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-350M-Extract-Q6_K',
     hfFileName: 'LFM2-350M-Extract-Q6_K.gguf',
@@ -3661,7 +3721,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 293379712,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-350M-Extract-Q8_0',
     hfFileName: 'LFM2-350M-Extract-Q8_0.gguf',
@@ -3669,7 +3729,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 379215488,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-350M-F16',
     hfFileName: 'LFM2-350M-F16.gguf',
@@ -3677,7 +3737,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 711482304,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-350M-Q4_0',
     hfFileName: 'LFM2-350M-Q4_0.gguf',
@@ -3685,7 +3745,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 219306944,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-350M-Q4_K_M-hip-optimized',
     hfFileName: 'LFM2-350M-Q4_K_M-hip-optimized.gguf',
@@ -3693,7 +3753,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 254958528,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-350M-Q4_K_M',
     hfFileName: 'LFM2-350M-Q4_K_M.gguf',
@@ -3701,7 +3761,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 229309376,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-350M-Q5_K_M',
     hfFileName: 'LFM2-350M-Q5_K_M.gguf',
@@ -3709,7 +3769,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 260373440,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-350M-Q6_K',
     hfFileName: 'LFM2-350M-Q6_K.gguf',
@@ -3717,7 +3777,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 293379008,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-350M-Q8_0',
     hfFileName: 'LFM2-350M-Q8_0.gguf',
@@ -3725,7 +3785,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 379214784,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-350M-Math-F16',
     hfFileName: 'LFM2-350M-Math-F16.gguf',
@@ -3733,7 +3793,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 711483104,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-350M-Math-Q4_0',
     hfFileName: 'LFM2-350M-Math-Q4_0.gguf',
@@ -3741,7 +3801,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 219307744,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-350M-Math-Q4_K_M',
     hfFileName: 'LFM2-350M-Math-Q4_K_M.gguf',
@@ -3749,7 +3809,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 229310176,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-350M-Math-Q5_K_M',
     hfFileName: 'LFM2-350M-Math-Q5_K_M.gguf',
@@ -3757,7 +3817,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 260374240,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-350M-Math-Q6_K',
     hfFileName: 'LFM2-350M-Math-Q6_K.gguf',
@@ -3765,7 +3825,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 293379808,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-350M-Math-Q8_0',
     hfFileName: 'LFM2-350M-Math-Q8_0.gguf',
@@ -3773,7 +3833,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 379215584,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-350M-PII-Extract-JP-F16',
     hfFileName: 'LFM2-350M-PII-Extract-JP-F16.gguf',
@@ -3781,7 +3841,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 711484000,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-350M-PII-Extract-JP-Q4_0',
     hfFileName: 'LFM2-350M-PII-Extract-JP-Q4_0.gguf',
@@ -3789,7 +3849,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 219308640,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-350M-PII-Extract-JP-Q4_K_M',
     hfFileName: 'LFM2-350M-PII-Extract-JP-Q4_K_M.gguf',
@@ -3797,7 +3857,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 229311072,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-350M-PII-Extract-JP-Q5_K_M',
     hfFileName: 'LFM2-350M-PII-Extract-JP-Q5_K_M.gguf',
@@ -3805,7 +3865,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 260375136,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-350M-PII-Extract-JP-Q6_K',
     hfFileName: 'LFM2-350M-PII-Extract-JP-Q6_K.gguf',
@@ -3813,7 +3873,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 293380704,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-350M-PII-Extract-JP-Q8_0',
     hfFileName: 'LFM2-350M-PII-Extract-JP-Q8_0.gguf',
@@ -3821,7 +3881,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 379216480,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-700M-F16',
     hfFileName: 'LFM2-700M-F16.gguf',
@@ -3829,7 +3889,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 1487557568,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-700M-Q4_0',
     hfFileName: 'LFM2-700M-Q4_0.gguf',
@@ -3837,7 +3897,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 446321600,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-700M-Q4_K_M-hip-optimized',
     hfFileName: 'LFM2-700M-Q4_K_M-hip-optimized.gguf',
@@ -3845,7 +3905,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 513954752,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-700M-Q4_K_M',
     hfFileName: 'LFM2-700M-Q4_K_M.gguf',
@@ -3853,7 +3913,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 468624320,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-700M-Q5_K_M',
     hfFileName: 'LFM2-700M-Q5_K_M.gguf',
@@ -3861,7 +3921,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 538026944,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-700M-Q6_K',
     hfFileName: 'LFM2-700M-Q6_K.gguf',
@@ -3869,7 +3929,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 611767232,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2-700M-Q8_0',
     hfFileName: 'LFM2-700M-Q8_0.gguf',
@@ -3877,7 +3937,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 791565248,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2.5-1.2B-Base-BF16',
     hfFileName: 'LFM2.5-1.2B-Base-BF16.gguf',
@@ -3885,7 +3945,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 2343325888,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2.5-1.2B-Base-F16',
     hfFileName: 'LFM2.5-1.2B-Base-F16.gguf',
@@ -3893,7 +3953,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 2343325888,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2.5-1.2B-Base-Q4_0',
     hfFileName: 'LFM2.5-1.2B-Base-Q4_0.gguf',
@@ -3901,7 +3961,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 695750848,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2.5-1.2B-Base-Q4_K_M',
     hfFileName: 'LFM2.5-1.2B-Base-Q4_K_M.gguf',
@@ -3909,7 +3969,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 730894528,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2.5-1.2B-Base-Q5_K_M',
     hfFileName: 'LFM2.5-1.2B-Base-Q5_K_M.gguf',
@@ -3917,7 +3977,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 843354304,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2.5-1.2B-Base-Q6_K',
     hfFileName: 'LFM2.5-1.2B-Base-Q6_K.gguf',
@@ -3925,7 +3985,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 962842816,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2.5-1.2B-Base-Q8_0',
     hfFileName: 'LFM2.5-1.2B-Base-Q8_0.gguf',
@@ -3933,7 +3993,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 1246253248,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2.5-1.2B-Instruct-BF16',
     hfFileName: 'LFM2.5-1.2B-Instruct-BF16.gguf',
@@ -3941,7 +4001,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 2343326528,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2.5-1.2B-Instruct-F16',
     hfFileName: 'LFM2.5-1.2B-Instruct-F16.gguf',
@@ -3949,7 +4009,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 2343326528,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2.5-1.2B-Instruct-Q4_0',
     hfFileName: 'LFM2.5-1.2B-Instruct-Q4_0.gguf',
@@ -3957,7 +4017,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 695751488,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2.5-1.2B-Instruct-Q4_K_M',
     hfFileName: 'LFM2.5-1.2B-Instruct-Q4_K_M.gguf',
@@ -3965,7 +4025,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 730895168,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2.5-1.2B-Instruct-Q5_K_M',
     hfFileName: 'LFM2.5-1.2B-Instruct-Q5_K_M.gguf',
@@ -3973,7 +4033,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 843354944,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2.5-1.2B-Instruct-Q6_K',
     hfFileName: 'LFM2.5-1.2B-Instruct-Q6_K.gguf',
@@ -3981,7 +4041,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 962843456,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2.5-1.2B-Instruct-Q8_0',
     hfFileName: 'LFM2.5-1.2B-Instruct-Q8_0.gguf',
@@ -3989,7 +4049,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 1246253888,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2.5-1.2B-JP-F16',
     hfFileName: 'LFM2.5-1.2B-JP-F16.gguf',
@@ -3997,7 +4057,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 2343326656,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2.5-1.2B-JP-Q4_0',
     hfFileName: 'LFM2.5-1.2B-JP-Q4_0.gguf',
@@ -4005,7 +4065,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 695751616,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2.5-1.2B-JP-Q4_K_M',
     hfFileName: 'LFM2.5-1.2B-JP-Q4_K_M.gguf',
@@ -4013,7 +4073,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 730895296,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2.5-1.2B-JP-Q5_K_M',
     hfFileName: 'LFM2.5-1.2B-JP-Q5_K_M.gguf',
@@ -4021,7 +4081,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 843355072,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2.5-1.2B-JP-Q6_K',
     hfFileName: 'LFM2.5-1.2B-JP-Q6_K.gguf',
@@ -4029,7 +4089,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 962843584,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2.5-1.2B-JP-Q8_0',
     hfFileName: 'LFM2.5-1.2B-JP-Q8_0.gguf',
@@ -4037,7 +4097,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 1246254016,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2.5-1.2B-Thinking-BF16',
     hfFileName: 'LFM2.5-1.2B-Thinking-BF16.gguf',
@@ -4045,7 +4105,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 2343326720,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2.5-1.2B-Thinking-F16',
     hfFileName: 'LFM2.5-1.2B-Thinking-F16.gguf',
@@ -4053,7 +4113,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 2343326720,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2.5-1.2B-Thinking-Q4_0',
     hfFileName: 'LFM2.5-1.2B-Thinking-Q4_0.gguf',
@@ -4061,7 +4121,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 695751680,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2.5-1.2B-Thinking-Q4_K_M',
     hfFileName: 'LFM2.5-1.2B-Thinking-Q4_K_M.gguf',
@@ -4069,7 +4129,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 730895360,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2.5-1.2B-Thinking-Q5_K_M',
     hfFileName: 'LFM2.5-1.2B-Thinking-Q5_K_M.gguf',
@@ -4077,7 +4137,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 843355136,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2.5-1.2B-Thinking-Q6_K',
     hfFileName: 'LFM2.5-1.2B-Thinking-Q6_K.gguf',
@@ -4085,7 +4145,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 962843648,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2.5-1.2B-Thinking-Q8_0',
     hfFileName: 'LFM2.5-1.2B-Thinking-Q8_0.gguf',
@@ -4093,7 +4153,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 1246254080,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2.5-350M-BF16',
     hfFileName: 'LFM2.5-350M-BF16.gguf',
@@ -4101,7 +4161,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 711485152,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2.5-350M-F16',
     hfFileName: 'LFM2.5-350M-F16.gguf',
@@ -4109,7 +4169,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 711485152,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2.5-350M-Q4_0',
     hfFileName: 'LFM2.5-350M-Q4_0.gguf',
@@ -4117,7 +4177,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 219309792,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2.5-350M-Q4_K_M',
     hfFileName: 'LFM2.5-350M-Q4_K_M.gguf',
@@ -4125,7 +4185,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 229312224,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2.5-350M-Q5_K_M',
     hfFileName: 'LFM2.5-350M-Q5_K_M.gguf',
@@ -4133,7 +4193,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 260376288,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2.5-350M-Q6_K',
     hfFileName: 'LFM2.5-350M-Q6_K.gguf',
@@ -4141,7 +4201,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     fileSizeBytes: 293381856,
   }),
   featuredGguf({
-    ...BREADTH_GOALS,
+    ...LIQUID_BREADTH_GOALS,
     deviceTypes: LLAMA_CPP_DEVICE_TYPES,
     displayName: 'LFM2.5-350M-Q8_0',
     hfFileName: 'LFM2.5-350M-Q8_0.gguf',
