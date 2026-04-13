@@ -3,7 +3,7 @@
 import { forwardRef, Fragment } from 'react';
 
 import { popoverArrowVariants, popoverVariants } from './styles';
-import type { PopoverComposition, PopoverContentProps } from './types';
+import type { PopoverComposition, PopoverContentProps, PopoverRootProps } from './types';
 import * as PopoverPrimitive from '@radix-ui/react-popover';
 import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -52,7 +52,9 @@ const PopoverContent = forwardRef<
   },
 );
 
-const PopoverRoot = PopoverPrimitive.Root;
+const PopoverRoot = ({ modal = false, ...rest }: PopoverRootProps) => (
+  <PopoverPrimitive.Root modal={modal} {...rest} />
+);
 
 const PopoverTrigger = PopoverPrimitive.Trigger;
 
