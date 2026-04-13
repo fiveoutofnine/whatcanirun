@@ -23,6 +23,7 @@ export interface FeaturedWishlistGoals {
 }
 
 export interface FeaturedWishlistEntry extends FeaturedModel, FeaturedWishlistGoals {
+  fileSizeBytes?: number;
   modelRef: string;
   deviceTypes: readonly FeaturedDeviceType[];
 }
@@ -38,6 +39,7 @@ export interface FeaturedDeviceInfo {
 export interface FeaturedWishlistInput extends Partial<FeaturedWishlistGoals> {
   deviceTypes: readonly FeaturedDeviceType[];
   displayName: string;
+  fileSizeBytes?: number;
   hfRepoId: string;
 }
 
@@ -151,6 +153,16 @@ function normalizeFeaturedGoal(
   return normalized;
 }
 
+function normalizeFeaturedFileSizeBytes(value: number | undefined): number | undefined {
+  if (value == null) return undefined;
+
+  if (!Number.isSafeInteger(value) || value <= 0) {
+    throw new Error(`Invalid featured wishlist fileSizeBytes: ${String(value)}`);
+  }
+
+  return value;
+}
+
 function createFeaturedEntry(
   input: FeaturedWishlistInput & {
     runtime: FeaturedRuntime;
@@ -172,9 +184,11 @@ function createFeaturedEntry(
     minimum: 1,
     name: 'priority',
   });
+  const fileSizeBytes = normalizeFeaturedFileSizeBytes(input.fileSizeBytes);
 
   return {
     displayName: input.displayName,
+    ...(fileSizeBytes ? { fileSizeBytes } : {}),
     hfRepoId: input.hfRepoId,
     ...(input.hfFileName ? { hfFileName: input.hfFileName } : {}),
     runtime: input.runtime,
@@ -205,6 +219,7 @@ export function cpu(): FeaturedDeviceType {
 export function featuredMlx({
   deviceTypes,
   displayName,
+  fileSizeBytes,
   hfRepoId,
   minimumDistinctDevices,
   minimumRunsPerDevice,
@@ -213,6 +228,7 @@ export function featuredMlx({
   return createFeaturedEntry({
     deviceTypes,
     displayName,
+    fileSizeBytes,
     hfRepoId,
     minimumDistinctDevices,
     minimumRunsPerDevice,
@@ -224,6 +240,7 @@ export function featuredMlx({
 export function featuredGguf({
   deviceTypes,
   displayName,
+  fileSizeBytes,
   hfFileName,
   hfRepoId,
   minimumDistinctDevices,
@@ -233,6 +250,7 @@ export function featuredGguf({
   return createFeaturedEntry({
     deviceTypes,
     displayName,
+    fileSizeBytes,
     hfFileName,
     hfRepoId,
     minimumDistinctDevices,

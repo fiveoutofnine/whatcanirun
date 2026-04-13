@@ -54,30 +54,35 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gpt-oss-20b-MXFP4-Q4',
     hfRepoId: 'mlx-community/gpt-oss-20b-MXFP4-Q4',
+    fileSizeBytes: 11178569159,
   }),
   featuredMlx({
     ...FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gpt-oss-20b-MXFP4-Q8',
     hfRepoId: 'mlx-community/gpt-oss-20b-MXFP4-Q8',
+    fileSizeBytes: 12076207568,
   }),
   featuredMlx({
     ...LARGE_MODEL_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gpt-oss-120b-4bit',
     hfRepoId: 'mlx-community/gpt-oss-120b-4bit',
+    fileSizeBytes: 65774504710,
   }),
   featuredMlx({
     ...LARGE_MODEL_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gpt-oss-120b-MXFP4-Q4',
     hfRepoId: 'mlx-community/gpt-oss-120b-MXFP4-Q4',
+    fileSizeBytes: 62330057589,
   }),
   featuredMlx({
     ...LARGE_MODEL_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gpt-oss-120b-MXFP4-Q8',
     hfRepoId: 'mlx-community/gpt-oss-120b-MXFP4-Q8',
+    fileSizeBytes: 63386948506,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -85,6 +90,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gpt-oss-20b-F16',
     hfFileName: 'gpt-oss-20b-F16.gguf',
     hfRepoId: 'unsloth/gpt-oss-20b-GGUF',
+    fileSizeBytes: 13792639168,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -92,6 +98,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gpt-oss-20b-Q2_K',
     hfFileName: 'gpt-oss-20b-Q2_K.gguf',
     hfRepoId: 'unsloth/gpt-oss-20b-GGUF',
+    fileSizeBytes: 11468317888,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -99,6 +106,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gpt-oss-20b-Q2_K_L',
     hfFileName: 'gpt-oss-20b-Q2_K_L.gguf',
     hfRepoId: 'unsloth/gpt-oss-20b-GGUF',
+    fileSizeBytes: 11757884608,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -106,6 +114,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gpt-oss-20b-Q3_K_M',
     hfFileName: 'gpt-oss-20b-Q3_K_M.gguf',
     hfRepoId: 'unsloth/gpt-oss-20b-GGUF',
+    fileSizeBytes: 11506103488,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -113,6 +122,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gpt-oss-20b-Q3_K_S',
     hfFileName: 'gpt-oss-20b-Q3_K_S.gguf',
     hfRepoId: 'unsloth/gpt-oss-20b-GGUF',
+    fileSizeBytes: 11463894208,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -120,6 +130,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gpt-oss-20b-Q4_0',
     hfFileName: 'gpt-oss-20b-Q4_0.gguf',
     hfRepoId: 'unsloth/gpt-oss-20b-GGUF',
+    fileSizeBytes: 11501495488,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -127,6 +138,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gpt-oss-20b-Q4_1',
     hfFileName: 'gpt-oss-20b-Q4_1.gguf',
     hfRepoId: 'unsloth/gpt-oss-20b-GGUF',
+    fileSizeBytes: 11577504448,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -134,6 +146,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gpt-oss-20b-Q4_K_M',
     hfFileName: 'gpt-oss-20b-Q4_K_M.gguf',
     hfRepoId: 'unsloth/gpt-oss-20b-GGUF',
+    fileSizeBytes: 11624759488,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -141,6 +154,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gpt-oss-20b-Q4_K_S',
     hfFileName: 'gpt-oss-20b-Q4_K_S.gguf',
     hfRepoId: 'unsloth/gpt-oss-20b-GGUF',
+    fileSizeBytes: 11618492608,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -148,6 +162,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gpt-oss-20b-Q5_K_M',
     hfFileName: 'gpt-oss-20b-Q5_K_M.gguf',
     hfRepoId: 'unsloth/gpt-oss-20b-GGUF',
+    fileSizeBytes: 11717357248,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -155,6 +170,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gpt-oss-20b-Q5_K_S',
     hfFileName: 'gpt-oss-20b-Q5_K_S.gguf',
     hfRepoId: 'unsloth/gpt-oss-20b-GGUF',
+    fileSizeBytes: 11711827648,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -162,6 +178,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gpt-oss-20b-Q6_K',
     hfFileName: 'gpt-oss-20b-Q6_K.gguf',
     hfRepoId: 'unsloth/gpt-oss-20b-GGUF',
+    fileSizeBytes: 12041000128,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -169,6 +186,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gpt-oss-20b-Q8_0',
     hfFileName: 'gpt-oss-20b-Q8_0.gguf',
     hfRepoId: 'unsloth/gpt-oss-20b-GGUF',
+    fileSizeBytes: 12109567168,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -176,6 +194,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gpt-oss-20b-UD-Q4_K_XL',
     hfFileName: 'gpt-oss-20b-UD-Q4_K_XL.gguf',
     hfRepoId: 'unsloth/gpt-oss-20b-GGUF',
+    fileSizeBytes: 11872347328,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -183,6 +202,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gpt-oss-20b-UD-Q6_K_XL',
     hfFileName: 'gpt-oss-20b-UD-Q6_K_XL.gguf',
     hfRepoId: 'unsloth/gpt-oss-20b-GGUF',
+    fileSizeBytes: 12041000128,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -190,6 +210,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gpt-oss-20b-UD-Q8_K_XL',
     hfFileName: 'gpt-oss-20b-UD-Q8_K_XL.gguf',
     hfRepoId: 'unsloth/gpt-oss-20b-GGUF',
+    fileSizeBytes: 13195442368,
   }),
   featuredGguf({
     ...LARGE_MODEL_GOALS,
@@ -197,6 +218,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gpt-oss-120b-F16',
     hfFileName: 'gpt-oss-120b-F16.gguf',
     hfRepoId: 'unsloth/gpt-oss-120b-GGUF',
+    fileSizeBytes: 65369017728,
   }),
 
   // -----------------------------------------------------------------------------
@@ -207,396 +229,441 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-26b-a4b-4bit',
     hfRepoId: 'mlx-community/gemma-4-26b-a4b-4bit',
+    fileSizeBytes: 15608838574,
   }),
   featuredMlx({
     ...FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-26b-a4b-5bit',
     hfRepoId: 'mlx-community/gemma-4-26b-a4b-5bit',
+    fileSizeBytes: 18695039256,
   }),
   featuredMlx({
     ...FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-26b-a4b-6bit',
     hfRepoId: 'mlx-community/gemma-4-26b-a4b-6bit',
+    fileSizeBytes: 21781239781,
   }),
   featuredMlx({
     ...FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-26b-a4b-8bit',
     hfRepoId: 'mlx-community/gemma-4-26b-a4b-8bit',
+    fileSizeBytes: 27953641181,
   }),
   featuredMlx({
     ...FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-26b-a4b-bf16',
     hfRepoId: 'mlx-community/gemma-4-26b-a4b-bf16',
+    fileSizeBytes: 51612010983,
   }),
   featuredMlx({
     ...FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-26b-a4b-it-4bit',
     hfRepoId: 'mlx-community/gemma-4-26b-a4b-it-4bit',
+    fileSizeBytes: 15608838574,
   }),
   featuredMlx({
     ...FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-26b-a4b-it-5bit',
     hfRepoId: 'mlx-community/gemma-4-26b-a4b-it-5bit',
+    fileSizeBytes: 18695039256,
   }),
   featuredMlx({
     ...FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-26b-a4b-it-6bit',
     hfRepoId: 'mlx-community/gemma-4-26b-a4b-it-6bit',
+    fileSizeBytes: 21781239781,
   }),
   featuredMlx({
     ...FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-26b-a4b-it-8bit',
     hfRepoId: 'mlx-community/gemma-4-26b-a4b-it-8bit',
+    fileSizeBytes: 27953641181,
   }),
   featuredMlx({
     ...FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-26b-a4b-it-bf16',
     hfRepoId: 'mlx-community/gemma-4-26b-a4b-it-bf16',
+    fileSizeBytes: 51612010983,
   }),
   featuredMlx({
     ...FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-26b-a4b-it-mxfp4',
     hfRepoId: 'mlx-community/gemma-4-26b-a4b-it-mxfp4',
+    fileSizeBytes: 14837259660,
   }),
   featuredMlx({
     ...FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-26b-a4b-it-mxfp8',
     hfRepoId: 'mlx-community/gemma-4-26b-a4b-it-mxfp8',
+    fileSizeBytes: 27182062772,
   }),
   featuredMlx({
     ...FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-26b-a4b-it-nvfp4',
     hfRepoId: 'mlx-community/gemma-4-26b-a4b-it-nvfp4',
+    fileSizeBytes: 15608810138,
   }),
   featuredMlx({
     ...FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-26b-a4b-mxfp4',
     hfRepoId: 'mlx-community/gemma-4-26b-a4b-mxfp4',
+    fileSizeBytes: 14837259660,
   }),
   featuredMlx({
     ...FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-26b-a4b-mxfp8',
     hfRepoId: 'mlx-community/gemma-4-26b-a4b-mxfp8',
+    fileSizeBytes: 27182062772,
   }),
   featuredMlx({
     ...FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-26b-a4b-nvfp4',
     hfRepoId: 'mlx-community/gemma-4-26b-a4b-nvfp4',
+    fileSizeBytes: 15608810138,
   }),
   featuredMlx({
     ...FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-31b-4bit',
     hfRepoId: 'mlx-community/gemma-4-31b-4bit',
+    fileSizeBytes: 18412016832,
   }),
   featuredMlx({
     ...FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-31b-5bit',
     hfRepoId: 'mlx-community/gemma-4-31b-5bit',
+    fileSizeBytes: 22249792445,
   }),
   featuredMlx({
     ...FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-31b-6bit',
     hfRepoId: 'mlx-community/gemma-4-31b-6bit',
+    fileSizeBytes: 26087568907,
   }),
   featuredMlx({
     ...FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-31b-8bit',
     hfRepoId: 'mlx-community/gemma-4-31b-8bit',
+    fileSizeBytes: 33763120491,
   }),
   featuredMlx({
     ...FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-31b-bf16',
     hfRepoId: 'mlx-community/gemma-4-31b-bf16',
+    fileSizeBytes: 62546333760,
   }),
   featuredMlx({
     ...FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-31b-it-4bit',
     hfRepoId: 'mlx-community/gemma-4-31b-it-4bit',
+    fileSizeBytes: 18412016832,
   }),
   featuredMlx({
     ...FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-31b-it-5bit',
     hfRepoId: 'mlx-community/gemma-4-31b-it-5bit',
+    fileSizeBytes: 22249792445,
   }),
   featuredMlx({
     ...FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-31b-it-6bit',
     hfRepoId: 'mlx-community/gemma-4-31b-it-6bit',
+    fileSizeBytes: 26087568907,
   }),
   featuredMlx({
     ...FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-31b-it-8bit',
     hfRepoId: 'mlx-community/gemma-4-31b-it-8bit',
+    fileSizeBytes: 33763120491,
   }),
   featuredMlx({
     ...FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-31b-it-bf16',
     hfRepoId: 'mlx-community/gemma-4-31b-it-bf16',
+    fileSizeBytes: 62546333760,
   }),
   featuredMlx({
     ...FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-31b-it-mxfp4',
     hfRepoId: 'mlx-community/gemma-4-31b-it-mxfp4',
+    fileSizeBytes: 17452518872,
   }),
   featuredMlx({
     ...FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-31b-it-mxfp8',
     hfRepoId: 'mlx-community/gemma-4-31b-it-mxfp8',
+    fileSizeBytes: 32803622480,
   }),
   featuredMlx({
     ...FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-31b-it-nvfp4',
     hfRepoId: 'mlx-community/gemma-4-31b-it-nvfp4',
+    fileSizeBytes: 18411963128,
   }),
   featuredMlx({
     ...FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-31b-mxfp4',
     hfRepoId: 'mlx-community/gemma-4-31b-mxfp4',
+    fileSizeBytes: 17452518872,
   }),
   featuredMlx({
     ...FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-31b-mxfp8',
     hfRepoId: 'mlx-community/gemma-4-31b-mxfp8',
+    fileSizeBytes: 32803622480,
   }),
   featuredMlx({
     ...FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-31b-nvfp4',
     hfRepoId: 'mlx-community/gemma-4-31b-nvfp4',
+    fileSizeBytes: 18411963128,
   }),
   featuredMlx({
     ...BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e2b-4bit',
     hfRepoId: 'mlx-community/gemma-4-e2b-4bit',
+    fileSizeBytes: 3581101896,
   }),
   featuredMlx({
     ...BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e2b-5bit',
     hfRepoId: 'mlx-community/gemma-4-e2b-5bit',
+    fileSizeBytes: 4160719027,
   }),
   featuredMlx({
     ...BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e2b-6bit',
     hfRepoId: 'mlx-community/gemma-4-e2b-6bit',
+    fileSizeBytes: 4740335854,
   }),
   featuredMlx({
     ...BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e2b-8bit',
     hfRepoId: 'mlx-community/gemma-4-e2b-8bit',
+    fileSizeBytes: 5899567778,
   }),
   featuredMlx({
     ...BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e2b-bf16',
     hfRepoId: 'mlx-community/gemma-4-e2b-bf16',
+    fileSizeBytes: 10246611624,
   }),
   featuredMlx({
     ...BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e2b-it-4bit',
     hfRepoId: 'mlx-community/gemma-4-e2b-it-4bit',
+    fileSizeBytes: 3581101896,
   }),
   featuredMlx({
     ...BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e2b-it-5bit',
     hfRepoId: 'mlx-community/gemma-4-e2b-it-5bit',
+    fileSizeBytes: 4160719027,
   }),
   featuredMlx({
     ...BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e2b-it-6bit',
     hfRepoId: 'mlx-community/gemma-4-e2b-it-6bit',
+    fileSizeBytes: 4740335854,
   }),
   featuredMlx({
     ...BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e2b-it-8bit',
     hfRepoId: 'mlx-community/gemma-4-e2b-it-8bit',
+    fileSizeBytes: 5899567778,
   }),
   featuredMlx({
     ...BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e2b-it-bf16',
     hfRepoId: 'mlx-community/gemma-4-e2b-it-bf16',
+    fileSizeBytes: 10246611624,
   }),
   featuredMlx({
     ...BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e2b-it-mxfp4',
     hfRepoId: 'mlx-community/gemma-4-e2b-it-mxfp4',
+    fileSizeBytes: 4263396466,
   }),
   featuredMlx({
     ...BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e2b-it-mxfp8',
     hfRepoId: 'mlx-community/gemma-4-e2b-it-mxfp8',
-  }),
-  featuredMlx({
-    ...BREADTH_GOALS,
-    deviceTypes: MLX_DEVICE_TYPES,
-    displayName: 'gemma-4-e2b-it-nvfp4',
-    hfRepoId: 'mlx-community/gemma-4-e2b-it-nvfp4',
+    fileSizeBytes: 5754621426,
   }),
   featuredMlx({
     ...BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e2b-it-OptiQ-4bit',
     hfRepoId: 'mlx-community/gemma-4-e2b-it-OptiQ-4bit',
+    fileSizeBytes: 4170987649,
   }),
   featuredMlx({
     ...BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e2b-mxfp4',
     hfRepoId: 'mlx-community/gemma-4-e2b-mxfp4',
+    fileSizeBytes: 4263396466,
   }),
   featuredMlx({
     ...BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e2b-mxfp8',
     hfRepoId: 'mlx-community/gemma-4-e2b-mxfp8',
+    fileSizeBytes: 5754621426,
   }),
   featuredMlx({
     ...BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e2b-nvfp4',
     hfRepoId: 'mlx-community/gemma-4-e2b-nvfp4',
+    fileSizeBytes: 4359640245,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e4b-4bit',
     hfRepoId: 'mlx-community/gemma-4-e4b-4bit',
+    fileSizeBytes: 5217361182,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e4b-5bit',
     hfRepoId: 'mlx-community/gemma-4-e4b-5bit',
+    fileSizeBytes: 6154344072,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e4b-6bit',
     hfRepoId: 'mlx-community/gemma-4-e4b-6bit',
+    fileSizeBytes: 7091329353,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e4b-8bit',
     hfRepoId: 'mlx-community/gemma-4-e4b-8bit',
+    fileSizeBytes: 8965298732,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e4b-bf16',
     hfRepoId: 'mlx-community/gemma-4-e4b-bf16',
+    fileSizeBytes: 15992583476,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e4b-it-4bit',
     hfRepoId: 'mlx-community/gemma-4-e4b-it-4bit',
+    fileSizeBytes: 5217361182,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e4b-it-5bit',
     hfRepoId: 'mlx-community/gemma-4-e4b-it-5bit',
+    fileSizeBytes: 6154344072,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e4b-it-6bit',
     hfRepoId: 'mlx-community/gemma-4-e4b-it-6bit',
+    fileSizeBytes: 7091329353,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e4b-it-8bit',
     hfRepoId: 'mlx-community/gemma-4-e4b-it-8bit',
+    fileSizeBytes: 8965298732,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e4b-it-bf16',
     hfRepoId: 'mlx-community/gemma-4-e4b-it-bf16',
+    fileSizeBytes: 15992583476,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e4b-it-mxfp4',
     hfRepoId: 'mlx-community/gemma-4-e4b-it-mxfp4',
+    fileSizeBytes: 6737807231,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e4b-it-mxfp8',
     hfRepoId: 'mlx-community/gemma-4-e4b-it-mxfp8',
+    fileSizeBytes: 8731002419,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e4b-it-nvfp4',
     hfRepoId: 'mlx-community/gemma-4-e4b-it-nvfp4',
+    fileSizeBytes: 6868834441,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e4b-it-OptiQ-4bit',
     hfRepoId: 'mlx-community/gemma-4-e4b-it-OptiQ-4bit',
-  }),
-  featuredMlx({
-    ...FLAGSHIP_GOALS,
-    deviceTypes: MLX_DEVICE_TYPES,
-    displayName: 'gemma-4-e4b-mxfp4',
-    hfRepoId: 'mlx-community/gemma-4-e4b-mxfp4',
+    fileSizeBytes: 6321106593,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'gemma-4-e4b-mxfp8',
     hfRepoId: 'mlx-community/gemma-4-e4b-mxfp8',
-  }),
-  featuredMlx({
-    ...FLAGSHIP_GOALS,
-    deviceTypes: MLX_DEVICE_TYPES,
-    displayName: 'gemma-4-e4b-nvfp4',
-    hfRepoId: 'mlx-community/gemma-4-e4b-nvfp4',
+    fileSizeBytes: 8731002419,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -604,6 +671,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-E2B-it-BF16',
     hfFileName: 'gemma-4-E2B-it-BF16.gguf',
     hfRepoId: 'unsloth/gemma-4-E2B-it-GGUF',
+    fileSizeBytes: 9311303072,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -611,6 +679,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-E2B-it-IQ4_NL',
     hfFileName: 'gemma-4-E2B-it-IQ4_NL.gguf',
     hfRepoId: 'unsloth/gemma-4-E2B-it-GGUF',
+    fileSizeBytes: 3041080992,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -618,6 +687,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-E2B-it-IQ4_XS',
     hfFileName: 'gemma-4-E2B-it-IQ4_XS.gguf',
     hfRepoId: 'unsloth/gemma-4-E2B-it-GGUF',
+    fileSizeBytes: 2983941792,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -625,6 +695,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-E2B-it-Q3_K_M',
     hfFileName: 'gemma-4-E2B-it-Q3_K_M.gguf',
     hfRepoId: 'unsloth/gemma-4-E2B-it-GGUF',
+    fileSizeBytes: 2536783520,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -632,6 +703,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-E2B-it-Q3_K_S',
     hfFileName: 'gemma-4-E2B-it-Q3_K_S.gguf',
     hfRepoId: 'unsloth/gemma-4-E2B-it-GGUF',
+    fileSizeBytes: 2445649568,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -639,6 +711,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-E2B-it-Q4_0',
     hfFileName: 'gemma-4-E2B-it-Q4_0.gguf',
     hfRepoId: 'unsloth/gemma-4-E2B-it-GGUF',
+    fileSizeBytes: 3041375904,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -646,6 +719,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-E2B-it-Q4_1',
     hfFileName: 'gemma-4-E2B-it-Q4_1.gguf',
     hfRepoId: 'unsloth/gemma-4-E2B-it-GGUF',
+    fileSizeBytes: 3154917024,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -653,6 +727,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-E2B-it-Q4_K_M',
     hfFileName: 'gemma-4-E2B-it-Q4_K_M.gguf',
     hfRepoId: 'unsloth/gemma-4-E2B-it-GGUF',
+    fileSizeBytes: 3106735776,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -660,6 +735,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-E2B-it-Q4_K_S',
     hfFileName: 'gemma-4-E2B-it-Q4_K_S.gguf',
     hfRepoId: 'unsloth/gemma-4-E2B-it-GGUF',
+    fileSizeBytes: 3043931808,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -667,6 +743,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-E2B-it-Q5_K_M',
     hfFileName: 'gemma-4-E2B-it-Q5_K_M.gguf',
     hfRepoId: 'unsloth/gemma-4-E2B-it-GGUF',
+    fileSizeBytes: 3356034720,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -674,6 +751,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-E2B-it-Q5_K_S',
     hfFileName: 'gemma-4-E2B-it-Q5_K_S.gguf',
     hfRepoId: 'unsloth/gemma-4-E2B-it-GGUF',
+    fileSizeBytes: 3321149088,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -681,6 +759,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-E2B-it-Q6_K',
     hfFileName: 'gemma-4-E2B-it-Q6_K.gguf',
     hfRepoId: 'unsloth/gemma-4-E2B-it-GGUF',
+    fileSizeBytes: 4501718688,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -688,6 +767,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-E2B-it-Q8_0',
     hfFileName: 'gemma-4-E2B-it-Q8_0.gguf',
     hfRepoId: 'unsloth/gemma-4-E2B-it-GGUF',
+    fileSizeBytes: 5048350368,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -695,6 +775,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-E2B-it-UD-IQ2_M',
     hfFileName: 'gemma-4-E2B-it-UD-IQ2_M.gguf',
     hfRepoId: 'unsloth/gemma-4-E2B-it-GGUF',
+    fileSizeBytes: 2287109792,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -702,6 +783,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-E2B-it-UD-IQ3_XXS',
     hfFileName: 'gemma-4-E2B-it-UD-IQ3_XXS.gguf',
     hfRepoId: 'unsloth/gemma-4-E2B-it-GGUF',
+    fileSizeBytes: 2369242784,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -709,6 +791,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-E2B-it-UD-Q2_K_XL',
     hfFileName: 'gemma-4-E2B-it-UD-Q2_K_XL.gguf',
     hfRepoId: 'unsloth/gemma-4-E2B-it-GGUF',
+    fileSizeBytes: 2399907488,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -716,6 +799,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-E2B-it-UD-Q3_K_XL',
     hfFileName: 'gemma-4-E2B-it-UD-Q3_K_XL.gguf',
     hfRepoId: 'unsloth/gemma-4-E2B-it-GGUF',
+    fileSizeBytes: 2915067552,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -723,6 +807,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-E2B-it-UD-Q4_K_XL',
     hfFileName: 'gemma-4-E2B-it-UD-Q4_K_XL.gguf',
     hfRepoId: 'unsloth/gemma-4-E2B-it-GGUF',
+    fileSizeBytes: 3174043296,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -730,6 +815,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-E2B-it-UD-Q5_K_XL',
     hfFileName: 'gemma-4-E2B-it-UD-Q5_K_XL.gguf',
     hfRepoId: 'unsloth/gemma-4-E2B-it-GGUF',
+    fileSizeBytes: 4291999392,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -737,6 +823,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-E2B-it-UD-Q6_K_XL',
     hfFileName: 'gemma-4-E2B-it-UD-Q6_K_XL.gguf',
     hfRepoId: 'unsloth/gemma-4-E2B-it-GGUF',
+    fileSizeBytes: 4710086304,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -744,6 +831,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-E2B-it-UD-Q8_K_XL',
     hfFileName: 'gemma-4-E2B-it-UD-Q8_K_XL.gguf',
     hfRepoId: 'unsloth/gemma-4-E2B-it-GGUF',
+    fileSizeBytes: 5269534368,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -751,6 +839,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-E4B-it-BF16',
     hfFileName: 'gemma-4-E4B-it-BF16.gguf',
     hfRepoId: 'unsloth/gemma-4-E4B-it-GGUF',
+    fileSizeBytes: 15053095360,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -758,6 +847,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-E4B-it-IQ4_NL',
     hfFileName: 'gemma-4-E4B-it-IQ4_NL.gguf',
     hfRepoId: 'unsloth/gemma-4-E4B-it-GGUF',
+    fileSizeBytes: 4835836608,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -765,6 +855,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-E4B-it-IQ4_XS',
     hfFileName: 'gemma-4-E4B-it-IQ4_XS.gguf',
     hfRepoId: 'unsloth/gemma-4-E4B-it-GGUF',
+    fileSizeBytes: 4715414208,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -772,6 +863,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-E4B-it-Q3_K_M',
     hfFileName: 'gemma-4-E4B-it-Q3_K_M.gguf',
     hfRepoId: 'unsloth/gemma-4-E4B-it-GGUF',
+    fileSizeBytes: 4058135232,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -779,6 +871,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-E4B-it-Q3_K_S',
     hfFileName: 'gemma-4-E4B-it-Q3_K_S.gguf',
     hfRepoId: 'unsloth/gemma-4-E4B-it-GGUF',
+    fileSizeBytes: 3862377152,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -786,6 +879,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-E4B-it-Q4_0',
     hfFileName: 'gemma-4-E4B-it-Q4_0.gguf',
     hfRepoId: 'unsloth/gemma-4-E4B-it-GGUF',
+    fileSizeBytes: 4836000448,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -793,6 +887,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-E4B-it-Q4_1',
     hfFileName: 'gemma-4-E4B-it-Q4_1.gguf',
     hfRepoId: 'unsloth/gemma-4-E4B-it-GGUF',
+    fileSizeBytes: 5074387648,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -800,6 +895,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-E4B-it-Q4_K_M',
     hfFileName: 'gemma-4-E4B-it-Q4_K_M.gguf',
     hfRepoId: 'unsloth/gemma-4-E4B-it-GGUF',
+    fileSizeBytes: 4977169088,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -807,6 +903,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-E4B-it-Q4_K_S',
     hfFileName: 'gemma-4-E4B-it-Q4_K_S.gguf',
     hfRepoId: 'unsloth/gemma-4-E4B-it-GGUF',
+    fileSizeBytes: 4844847808,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -814,6 +911,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-E4B-it-Q5_K_M',
     hfFileName: 'gemma-4-E4B-it-Q5_K_M.gguf',
     hfRepoId: 'unsloth/gemma-4-E4B-it-GGUF',
+    fileSizeBytes: 5481796288,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -821,6 +919,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-E4B-it-Q5_K_S',
     hfFileName: 'gemma-4-E4B-it-Q5_K_S.gguf',
     hfRepoId: 'unsloth/gemma-4-E4B-it-GGUF',
+    fileSizeBytes: 5404852928,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -828,6 +927,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-E4B-it-Q6_K',
     hfFileName: 'gemma-4-E4B-it-Q6_K.gguf',
     hfRepoId: 'unsloth/gemma-4-E4B-it-GGUF',
+    fileSizeBytes: 7074927296,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -835,6 +935,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-E4B-it-Q8_0',
     hfFileName: 'gemma-4-E4B-it-Q8_0.gguf',
     hfRepoId: 'unsloth/gemma-4-E4B-it-GGUF',
+    fileSizeBytes: 8192950976,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -842,6 +943,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-E4B-it-UD-IQ2_M',
     hfFileName: 'gemma-4-E4B-it-UD-IQ2_M.gguf',
     hfRepoId: 'unsloth/gemma-4-E4B-it-GGUF',
+    fileSizeBytes: 3530232512,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -849,6 +951,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-E4B-it-UD-IQ3_XXS',
     hfFileName: 'gemma-4-E4B-it-UD-IQ3_XXS.gguf',
     hfRepoId: 'unsloth/gemma-4-E4B-it-GGUF',
+    fileSizeBytes: 3702264512,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -856,6 +959,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-E4B-it-UD-Q2_K_XL',
     hfFileName: 'gemma-4-E4B-it-UD-Q2_K_XL.gguf',
     hfRepoId: 'unsloth/gemma-4-E4B-it-GGUF',
+    fileSizeBytes: 3742794432,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -863,6 +967,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-E4B-it-UD-Q3_K_XL',
     hfFileName: 'gemma-4-E4B-it-UD-Q3_K_XL.gguf',
     hfRepoId: 'unsloth/gemma-4-E4B-it-GGUF',
+    fileSizeBytes: 4563503808,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -870,6 +975,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-E4B-it-UD-Q4_K_XL',
     hfFileName: 'gemma-4-E4B-it-UD-Q4_K_XL.gguf',
     hfRepoId: 'unsloth/gemma-4-E4B-it-GGUF',
+    fileSizeBytes: 5101718208,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -877,6 +983,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-E4B-it-UD-Q5_K_XL',
     hfFileName: 'gemma-4-E4B-it-UD-Q5_K_XL.gguf',
     hfRepoId: 'unsloth/gemma-4-E4B-it-GGUF',
+    fileSizeBytes: 6647847616,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -884,6 +991,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-E4B-it-UD-Q6_K_XL',
     hfFileName: 'gemma-4-E4B-it-UD-Q6_K_XL.gguf',
     hfRepoId: 'unsloth/gemma-4-E4B-it-GGUF',
+    fileSizeBytes: 7457759936,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -891,6 +999,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-E4B-it-UD-Q8_K_XL',
     hfFileName: 'gemma-4-E4B-it-UD-Q8_K_XL.gguf',
     hfRepoId: 'unsloth/gemma-4-E4B-it-GGUF',
+    fileSizeBytes: 8658666176,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -898,6 +1007,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-26B-A4B-it-MXFP4_MOE',
     hfFileName: 'gemma-4-26B-A4B-it-MXFP4_MOE.gguf',
     hfRepoId: 'unsloth/gemma-4-26B-A4B-it-GGUF',
+    fileSizeBytes: 16630345024,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -905,6 +1015,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-26B-A4B-it-Q8_0',
     hfFileName: 'gemma-4-26B-A4B-it-Q8_0.gguf',
     hfRepoId: 'unsloth/gemma-4-26B-A4B-it-GGUF',
+    fileSizeBytes: 26859859264,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -912,6 +1023,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-26B-A4B-it-UD-IQ2_M',
     hfFileName: 'gemma-4-26B-A4B-it-UD-IQ2_M.gguf',
     hfRepoId: 'unsloth/gemma-4-26B-A4B-it-GGUF',
+    fileSizeBytes: 9974943040,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -919,6 +1031,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-26B-A4B-it-UD-IQ2_XXS',
     hfFileName: 'gemma-4-26B-A4B-it-UD-IQ2_XXS.gguf',
     hfRepoId: 'unsloth/gemma-4-26B-A4B-it-GGUF',
+    fileSizeBytes: 9882668352,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -926,6 +1039,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-26B-A4B-it-UD-IQ3_S',
     hfFileName: 'gemma-4-26B-A4B-it-UD-IQ3_S.gguf',
     hfRepoId: 'unsloth/gemma-4-26B-A4B-it-GGUF',
+    fileSizeBytes: 11219406656,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -933,6 +1047,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-26B-A4B-it-UD-IQ3_XXS',
     hfFileName: 'gemma-4-26B-A4B-it-UD-IQ3_XXS.gguf',
     hfRepoId: 'unsloth/gemma-4-26B-A4B-it-GGUF',
+    fileSizeBytes: 11219406656,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -940,6 +1055,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-26B-A4B-it-UD-IQ4_NL',
     hfFileName: 'gemma-4-26B-A4B-it-UD-IQ4_NL.gguf',
     hfRepoId: 'unsloth/gemma-4-26B-A4B-it-GGUF',
+    fileSizeBytes: 13418753344,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -947,6 +1063,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-26B-A4B-it-UD-IQ4_XS',
     hfFileName: 'gemma-4-26B-A4B-it-UD-IQ4_XS.gguf',
     hfRepoId: 'unsloth/gemma-4-26B-A4B-it-GGUF',
+    fileSizeBytes: 13418753344,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -954,6 +1071,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-26B-A4B-it-UD-Q2_K_XL',
     hfFileName: 'gemma-4-26B-A4B-it-UD-Q2_K_XL.gguf',
     hfRepoId: 'unsloth/gemma-4-26B-A4B-it-GGUF',
+    fileSizeBytes: 10545963072,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -961,6 +1079,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-26B-A4B-it-UD-Q3_K_M',
     hfFileName: 'gemma-4-26B-A4B-it-UD-Q3_K_M.gguf',
     hfRepoId: 'unsloth/gemma-4-26B-A4B-it-GGUF',
+    fileSizeBytes: 12526284096,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -968,6 +1087,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-26B-A4B-it-UD-Q3_K_S',
     hfFileName: 'gemma-4-26B-A4B-it-UD-Q3_K_S.gguf',
     hfRepoId: 'unsloth/gemma-4-26B-A4B-it-GGUF',
+    fileSizeBytes: 12526284096,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -975,6 +1095,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-26B-A4B-it-UD-Q3_K_XL',
     hfFileName: 'gemma-4-26B-A4B-it-UD-Q3_K_XL.gguf',
     hfRepoId: 'unsloth/gemma-4-26B-A4B-it-GGUF',
+    fileSizeBytes: 12875558208,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -982,6 +1103,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-26B-A4B-it-UD-Q4_K_M',
     hfFileName: 'gemma-4-26B-A4B-it-UD-Q4_K_M.gguf',
     hfRepoId: 'unsloth/gemma-4-26B-A4B-it-GGUF',
+    fileSizeBytes: 16868240704,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -989,6 +1111,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-26B-A4B-it-UD-Q4_K_S',
     hfFileName: 'gemma-4-26B-A4B-it-UD-Q4_K_S.gguf',
     hfRepoId: 'unsloth/gemma-4-26B-A4B-it-GGUF',
+    fileSizeBytes: 16392449344,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -996,6 +1119,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-26B-A4B-it-UD-Q4_K_XL',
     hfFileName: 'gemma-4-26B-A4B-it-UD-Q4_K_XL.gguf',
     hfRepoId: 'unsloth/gemma-4-26B-A4B-it-GGUF',
+    fileSizeBytes: 17090276672,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -1003,6 +1127,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-26B-A4B-it-UD-Q5_K_M',
     hfFileName: 'gemma-4-26B-A4B-it-UD-Q5_K_M.gguf',
     hfRepoId: 'unsloth/gemma-4-26B-A4B-it-GGUF',
+    fileSizeBytes: 21150362944,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -1010,6 +1135,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-26B-A4B-it-UD-Q5_K_S',
     hfFileName: 'gemma-4-26B-A4B-it-UD-Q5_K_S.gguf',
     hfRepoId: 'unsloth/gemma-4-26B-A4B-it-GGUF',
+    fileSizeBytes: 18771406144,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -1017,6 +1143,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-26B-A4B-it-UD-Q5_K_XL',
     hfFileName: 'gemma-4-26B-A4B-it-UD-Q5_K_XL.gguf',
     hfRepoId: 'unsloth/gemma-4-26B-A4B-it-GGUF',
+    fileSizeBytes: 21217766720,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -1024,6 +1151,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-26B-A4B-it-UD-Q6_K',
     hfFileName: 'gemma-4-26B-A4B-it-UD-Q6_K.gguf',
     hfRepoId: 'unsloth/gemma-4-26B-A4B-it-GGUF',
+    fileSizeBytes: 22903604544,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -1031,6 +1159,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-26B-A4B-it-UD-Q6_K_XL',
     hfFileName: 'gemma-4-26B-A4B-it-UD-Q6_K_XL.gguf',
     hfRepoId: 'unsloth/gemma-4-26B-A4B-it-GGUF',
+    fileSizeBytes: 23295388992,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -1038,6 +1167,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-26B-A4B-it-UD-Q8_K_XL',
     hfFileName: 'gemma-4-26B-A4B-it-UD-Q8_K_XL.gguf',
     hfRepoId: 'unsloth/gemma-4-26B-A4B-it-GGUF',
+    fileSizeBytes: 27866185024,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -1045,6 +1175,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-31B-it-IQ4_NL',
     hfFileName: 'gemma-4-31B-it-IQ4_NL.gguf',
     hfRepoId: 'unsloth/gemma-4-31B-it-GGUF',
+    fileSizeBytes: 17287668256,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -1052,6 +1183,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-31B-it-IQ4_XS',
     hfFileName: 'gemma-4-31B-it-IQ4_XS.gguf',
     hfRepoId: 'unsloth/gemma-4-31B-it-GGUF',
+    fileSizeBytes: 16372458016,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -1059,6 +1191,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-31B-it-Q3_K_M',
     hfFileName: 'gemma-4-31B-it-Q3_K_M.gguf',
     hfRepoId: 'unsloth/gemma-4-31B-it-GGUF',
+    fileSizeBytes: 14736605728,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -1066,6 +1199,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-31B-it-Q3_K_S',
     hfFileName: 'gemma-4-31B-it-Q3_K_S.gguf',
     hfRepoId: 'unsloth/gemma-4-31B-it-GGUF',
+    fileSizeBytes: 13210853920,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -1073,6 +1207,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-31B-it-Q4_0',
     hfFileName: 'gemma-4-31B-it-Q4_0.gguf',
     hfRepoId: 'unsloth/gemma-4-31B-it-GGUF',
+    fileSizeBytes: 17338245664,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -1080,6 +1215,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-31B-it-Q4_1',
     hfFileName: 'gemma-4-31B-it-Q4_1.gguf',
     hfRepoId: 'unsloth/gemma-4-31B-it-GGUF',
+    fileSizeBytes: 19118088736,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -1087,6 +1223,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-31B-it-Q4_K_M',
     hfFileName: 'gemma-4-31B-it-Q4_K_M.gguf',
     hfRepoId: 'unsloth/gemma-4-31B-it-GGUF',
+    fileSizeBytes: 18323730976,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -1094,6 +1231,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-31B-it-Q4_K_S',
     hfFileName: 'gemma-4-31B-it-Q4_K_S.gguf',
     hfRepoId: 'unsloth/gemma-4-31B-it-GGUF',
+    fileSizeBytes: 17399833120,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -1101,6 +1239,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-31B-it-Q5_K_M',
     hfFileName: 'gemma-4-31B-it-Q5_K_M.gguf',
     hfRepoId: 'unsloth/gemma-4-31B-it-GGUF',
+    fileSizeBytes: 21658399264,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -1108,6 +1247,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-31B-it-Q5_K_S',
     hfFileName: 'gemma-4-31B-it-Q5_K_S.gguf',
     hfRepoId: 'unsloth/gemma-4-31B-it-GGUF',
+    fileSizeBytes: 21124669984,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -1115,6 +1255,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-31B-it-Q6_K',
     hfFileName: 'gemma-4-31B-it-Q6_K.gguf',
     hfRepoId: 'unsloth/gemma-4-31B-it-GGUF',
+    fileSizeBytes: 25201484320,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -1122,6 +1263,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-31B-it-Q8_0',
     hfFileName: 'gemma-4-31B-it-Q8_0.gguf',
     hfRepoId: 'unsloth/gemma-4-31B-it-GGUF',
+    fileSizeBytes: 32635675168,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -1129,6 +1271,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-31B-it-UD-IQ2_M',
     hfFileName: 'gemma-4-31B-it-UD-IQ2_M.gguf',
     hfRepoId: 'unsloth/gemma-4-31B-it-GGUF',
+    fileSizeBytes: 10752817696,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -1136,6 +1279,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-31B-it-UD-IQ2_XXS',
     hfFileName: 'gemma-4-31B-it-UD-IQ2_XXS.gguf',
     hfRepoId: 'unsloth/gemma-4-31B-it-GGUF',
+    fileSizeBytes: 8534293024,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -1143,6 +1287,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-31B-it-UD-IQ3_XXS',
     hfFileName: 'gemma-4-31B-it-UD-IQ3_XXS.gguf',
     hfRepoId: 'unsloth/gemma-4-31B-it-GGUF',
+    fileSizeBytes: 11837780512,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -1150,6 +1295,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-31B-it-UD-Q2_K_XL',
     hfFileName: 'gemma-4-31B-it-UD-Q2_K_XL.gguf',
     hfRepoId: 'unsloth/gemma-4-31B-it-GGUF',
+    fileSizeBytes: 11774988832,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -1157,6 +1303,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-31B-it-UD-Q3_K_XL',
     hfFileName: 'gemma-4-31B-it-UD-Q3_K_XL.gguf',
     hfRepoId: 'unsloth/gemma-4-31B-it-GGUF',
+    fileSizeBytes: 15322417696,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -1164,6 +1311,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-31B-it-UD-Q4_K_XL',
     hfFileName: 'gemma-4-31B-it-UD-Q4_K_XL.gguf',
     hfRepoId: 'unsloth/gemma-4-31B-it-GGUF',
+    fileSizeBytes: 18767229472,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -1171,6 +1319,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-31B-it-UD-Q5_K_XL',
     hfFileName: 'gemma-4-31B-it-UD-Q5_K_XL.gguf',
     hfRepoId: 'unsloth/gemma-4-31B-it-GGUF',
+    fileSizeBytes: 21890427424,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -1178,6 +1327,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-31B-it-UD-Q6_K_XL',
     hfFileName: 'gemma-4-31B-it-UD-Q6_K_XL.gguf',
     hfRepoId: 'unsloth/gemma-4-31B-it-GGUF',
+    fileSizeBytes: 27521335840,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -1185,6 +1335,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'gemma-4-31B-it-UD-Q8_K_XL',
     hfFileName: 'gemma-4-31B-it-UD-Q8_K_XL.gguf',
     hfRepoId: 'unsloth/gemma-4-31B-it-GGUF',
+    fileSizeBytes: 35020038688,
   }),
 
   // -----------------------------------------------------------------------------
@@ -1195,624 +1346,651 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-3bit',
     hfRepoId: 'mlx-community/Qwen3.5-0.8B-3bit',
+    fileSizeBytes: 531242442,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-4bit',
     hfRepoId: 'mlx-community/Qwen3.5-0.8B-4bit',
+    fileSizeBytes: 625229487,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-5bit',
     hfRepoId: 'mlx-community/Qwen3.5-0.8B-5bit',
+    fileSizeBytes: 719216385,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-6bit',
     hfRepoId: 'mlx-community/Qwen3.5-0.8B-6bit',
+    fileSizeBytes: 813203247,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-8bit',
     hfRepoId: 'mlx-community/Qwen3.5-0.8B-8bit',
+    fileSizeBytes: 1001176958,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-bf16',
     hfRepoId: 'mlx-community/Qwen3.5-0.8B-bf16',
+    fileSizeBytes: 1706030684,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-mixed_2_6',
     hfRepoId: 'mlx-community/Qwen3.5-0.8B-mixed_2_6',
+    fileSizeBytes: 586939661,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-mixed_3_4',
     hfRepoId: 'mlx-community/Qwen3.5-0.8B-mixed_3_4',
+    fileSizeBytes: 568663507,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-mixed_3_5',
     hfRepoId: 'mlx-community/Qwen3.5-0.8B-mixed_3_5',
+    fileSizeBytes: 606084575,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-mixed_3_6',
     hfRepoId: 'mlx-community/Qwen3.5-0.8B-mixed_3_6',
+    fileSizeBytes: 643505643,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-mixed_3_8',
     hfRepoId: 'mlx-community/Qwen3.5-0.8B-mixed_3_8',
+    fileSizeBytes: 718347757,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-mixed_4_6',
     hfRepoId: 'mlx-community/Qwen3.5-0.8B-mixed_4_6',
+    fileSizeBytes: 700071609,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-mixed_4_8',
     hfRepoId: 'mlx-community/Qwen3.5-0.8B-mixed_4_8',
+    fileSizeBytes: 774913737,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-MLX-4bit',
     hfRepoId: 'mlx-community/Qwen3.5-0.8B-MLX-4bit',
+    fileSizeBytes: 625229487,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-MLX-8bit',
     hfRepoId: 'mlx-community/Qwen3.5-0.8B-MLX-8bit',
+    fileSizeBytes: 1001176958,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-MLX-bf16',
     hfRepoId: 'mlx-community/Qwen3.5-0.8B-MLX-bf16',
+    fileSizeBytes: 1706030684,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-mxfp4',
     hfRepoId: 'mlx-community/Qwen3.5-0.8B-mxfp4',
+    fileSizeBytes: 601708318,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-mxfp8',
     hfRepoId: 'mlx-community/Qwen3.5-0.8B-mxfp8',
+    fileSizeBytes: 977655780,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-nvfp4',
     hfRepoId: 'mlx-community/Qwen3.5-0.8B-nvfp4',
+    fileSizeBytes: 625205078,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-0.8B-OptiQ-4bit',
     hfRepoId: 'mlx-community/Qwen3.5-0.8B-OptiQ-4bit',
+    fileSizeBytes: 598127866,
   }),
   featuredMlx({
     ...BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-3bit',
     hfRepoId: 'mlx-community/Qwen3.5-2B-3bit',
+    fileSizeBytes: 1487112081,
   }),
   featuredMlx({
     ...BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-4bit',
     hfRepoId: 'mlx-community/Qwen3.5-2B-4bit',
+    fileSizeBytes: 1722271785,
   }),
   featuredMlx({
     ...BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-5bit',
     hfRepoId: 'mlx-community/Qwen3.5-2B-5bit',
+    fileSizeBytes: 1957431375,
   }),
   featuredMlx({
     ...BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-6bit',
     hfRepoId: 'mlx-community/Qwen3.5-2B-6bit',
+    fileSizeBytes: 2192591075,
   }),
   featuredMlx({
     ...BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-8bit',
     hfRepoId: 'mlx-community/Qwen3.5-2B-8bit',
+    fileSizeBytes: 2662910403,
   }),
   featuredMlx({
     ...BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-bf16',
     hfRepoId: 'mlx-community/Qwen3.5-2B-bf16',
+    fileSizeBytes: 4426559145,
   }),
   featuredMlx({
     ...BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-mixed_2_6',
     hfRepoId: 'mlx-community/Qwen3.5-2B-mixed_2_6',
+    fileSizeBytes: 1582778313,
   }),
   featuredMlx({
     ...BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-mixed_3_4',
     hfRepoId: 'mlx-community/Qwen3.5-2B-mixed_3_4',
+    fileSizeBytes: 1569818581,
   }),
   featuredMlx({
     ...BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-mixed_3_5',
     hfRepoId: 'mlx-community/Qwen3.5-2B-mixed_3_5',
+    fileSizeBytes: 1652525041,
   }),
   featuredMlx({
     ...BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-mixed_3_6',
     hfRepoId: 'mlx-community/Qwen3.5-2B-mixed_3_6',
+    fileSizeBytes: 1735231491,
   }),
   featuredMlx({
     ...BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-mixed_3_8',
     hfRepoId: 'mlx-community/Qwen3.5-2B-mixed_3_8',
+    fileSizeBytes: 1900644389,
   }),
   featuredMlx({
     ...BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-mixed_4_6',
     hfRepoId: 'mlx-community/Qwen3.5-2B-mixed_4_6',
+    fileSizeBytes: 1887684691,
   }),
   featuredMlx({
     ...BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-mixed_4_8',
     hfRepoId: 'mlx-community/Qwen3.5-2B-mixed_4_8',
+    fileSizeBytes: 2053097557,
   }),
   featuredMlx({
     ...BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-MLX-4bit',
     hfRepoId: 'mlx-community/Qwen3.5-2B-MLX-4bit',
+    fileSizeBytes: 1722271785,
   }),
   featuredMlx({
     ...BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-MLX-8bit',
     hfRepoId: 'mlx-community/Qwen3.5-2B-MLX-8bit',
+    fileSizeBytes: 2662910403,
   }),
   featuredMlx({
     ...BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-MLX-bf16',
     hfRepoId: 'mlx-community/Qwen3.5-2B-MLX-bf16',
+    fileSizeBytes: 4426559145,
   }),
   featuredMlx({
     ...BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-mxfp4',
     hfRepoId: 'mlx-community/Qwen3.5-2B-mxfp4',
+    fileSizeBytes: 1663457462,
   }),
   featuredMlx({
     ...BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-mxfp8',
     hfRepoId: 'mlx-community/Qwen3.5-2B-mxfp8',
+    fileSizeBytes: 2604095934,
   }),
   featuredMlx({
     ...BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-nvfp4',
     hfRepoId: 'mlx-community/Qwen3.5-2B-nvfp4',
+    fileSizeBytes: 1722247527,
   }),
   featuredMlx({
     ...BREADTH_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-2B-OptiQ-4bit',
     hfRepoId: 'mlx-community/Qwen3.5-2B-OptiQ-4bit',
+    fileSizeBytes: 1431179061,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-3bit',
     hfRepoId: 'mlx-community/Qwen3.5-4B-3bit',
+    fileSizeBytes: 2508701687,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-4bit',
     hfRepoId: 'mlx-community/Qwen3.5-4B-4bit',
+    fileSizeBytes: 3034300695,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-6bit',
     hfRepoId: 'mlx-community/Qwen3.5-4B-6bit',
+    fileSizeBytes: 4085498443,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-8bit',
     hfRepoId: 'mlx-community/Qwen3.5-4B-8bit',
+    fileSizeBytes: 5136696107,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-bf16',
     hfRepoId: 'mlx-community/Qwen3.5-4B-bf16',
+    fileSizeBytes: 9078621809,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-mixed_2_6',
     hfRepoId: 'mlx-community/Qwen3.5-4B-mixed_2_6',
+    fileSizeBytes: 2494938977,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-mixed_3_4',
     hfRepoId: 'mlx-community/Qwen3.5-4B-mixed_3_4',
+    fileSizeBytes: 2636660765,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-mixed_3_5',
     hfRepoId: 'mlx-community/Qwen3.5-4B-mixed_3_5',
+    fileSizeBytes: 2764619855,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-mixed_3_6',
     hfRepoId: 'mlx-community/Qwen3.5-4B-mixed_3_6',
+    fileSizeBytes: 2892578955,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-mixed_3_8',
     hfRepoId: 'mlx-community/Qwen3.5-4B-mixed_3_8',
+    fileSizeBytes: 3148497095,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-mixed_4_6',
     hfRepoId: 'mlx-community/Qwen3.5-4B-mixed_4_6',
+    fileSizeBytes: 3290218829,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-mixed_4_8',
     hfRepoId: 'mlx-community/Qwen3.5-4B-mixed_4_8',
+    fileSizeBytes: 3546136979,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-MLX-4bit',
     hfRepoId: 'mlx-community/Qwen3.5-4B-MLX-4bit',
+    fileSizeBytes: 3034300695,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-MLX-8bit',
     hfRepoId: 'mlx-community/Qwen3.5-4B-MLX-8bit',
+    fileSizeBytes: 5136696107,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-MLX-bf16',
     hfRepoId: 'mlx-community/Qwen3.5-4B-MLX-bf16',
+    fileSizeBytes: 9078621809,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-mxfp4',
     hfRepoId: 'mlx-community/Qwen3.5-4B-mxfp4',
+    fileSizeBytes: 2902868044,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-mxfp8',
     hfRepoId: 'mlx-community/Qwen3.5-4B-mxfp8',
+    fileSizeBytes: 5005263364,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-nvfp4',
     hfRepoId: 'mlx-community/Qwen3.5-4B-nvfp4',
+    fileSizeBytes: 3034267941,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-4B-OptiQ-4bit',
     hfRepoId: 'mlx-community/Qwen3.5-4B-OptiQ-4bit',
-  }),
-  featuredMlx({
-    ...FLAGSHIP_GOALS,
-    deviceTypes: MLX_DEVICE_TYPES,
-    displayName: 'Qwen3.5-9B-3bit',
-    hfRepoId: 'mlx-community/Qwen3.5-9B-3bit',
+    fileSizeBytes: 2947852893,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-9B-4bit',
     hfRepoId: 'mlx-community/Qwen3.5-9B-4bit',
+    fileSizeBytes: 5950221072,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-9B-5bit',
     hfRepoId: 'mlx-community/Qwen3.5-9B-5bit',
+    fileSizeBytes: 7069313579,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-9B-6bit',
     hfRepoId: 'mlx-community/Qwen3.5-9B-6bit',
+    fileSizeBytes: 8188406421,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-9B-8bit',
     hfRepoId: 'mlx-community/Qwen3.5-9B-8bit',
+    fileSizeBytes: 10426592423,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-9B-bf16',
     hfRepoId: 'mlx-community/Qwen3.5-9B-bf16',
-  }),
-  featuredMlx({
-    ...FLAGSHIP_GOALS,
-    deviceTypes: MLX_DEVICE_TYPES,
-    displayName: 'Qwen3.5-9B-mixed_2_6',
-    hfRepoId: 'mlx-community/Qwen3.5-9B-mixed_2_6',
-  }),
-  featuredMlx({
-    ...FLAGSHIP_GOALS,
-    deviceTypes: MLX_DEVICE_TYPES,
-    displayName: 'Qwen3.5-9B-mixed_3_4',
-    hfRepoId: 'mlx-community/Qwen3.5-9B-mixed_3_4',
-  }),
-  featuredMlx({
-    ...FLAGSHIP_GOALS,
-    deviceTypes: MLX_DEVICE_TYPES,
-    displayName: 'Qwen3.5-9B-mixed_3_5',
-    hfRepoId: 'mlx-community/Qwen3.5-9B-mixed_3_5',
-  }),
-  featuredMlx({
-    ...FLAGSHIP_GOALS,
-    deviceTypes: MLX_DEVICE_TYPES,
-    displayName: 'Qwen3.5-9B-mixed_3_6',
-    hfRepoId: 'mlx-community/Qwen3.5-9B-mixed_3_6',
-  }),
-  featuredMlx({
-    ...FLAGSHIP_GOALS,
-    deviceTypes: MLX_DEVICE_TYPES,
-    displayName: 'Qwen3.5-9B-mixed_3_8',
-    hfRepoId: 'mlx-community/Qwen3.5-9B-mixed_3_8',
-  }),
-  featuredMlx({
-    ...FLAGSHIP_GOALS,
-    deviceTypes: MLX_DEVICE_TYPES,
-    displayName: 'Qwen3.5-9B-mixed_4_6',
-    hfRepoId: 'mlx-community/Qwen3.5-9B-mixed_4_6',
-  }),
-  featuredMlx({
-    ...FLAGSHIP_GOALS,
-    deviceTypes: MLX_DEVICE_TYPES,
-    displayName: 'Qwen3.5-9B-mixed_4_8',
-    hfRepoId: 'mlx-community/Qwen3.5-9B-mixed_4_8',
+    fileSizeBytes: 18819722691,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-9B-MLX-4bit',
     hfRepoId: 'mlx-community/Qwen3.5-9B-MLX-4bit',
+    fileSizeBytes: 5950221072,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-9B-MLX-8bit',
     hfRepoId: 'mlx-community/Qwen3.5-9B-MLX-8bit',
+    fileSizeBytes: 10426592423,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-9B-MLX-bf16',
     hfRepoId: 'mlx-community/Qwen3.5-9B-MLX-bf16',
-  }),
-  featuredMlx({
-    ...FLAGSHIP_GOALS,
-    deviceTypes: MLX_DEVICE_TYPES,
-    displayName: 'Qwen3.5-9B-mxfp4',
-    hfRepoId: 'mlx-community/Qwen3.5-9B-mxfp4',
-  }),
-  featuredMlx({
-    ...FLAGSHIP_GOALS,
-    deviceTypes: MLX_DEVICE_TYPES,
-    displayName: 'Qwen3.5-9B-mxfp8',
-    hfRepoId: 'mlx-community/Qwen3.5-9B-mxfp8',
-  }),
-  featuredMlx({
-    ...FLAGSHIP_GOALS,
-    deviceTypes: MLX_DEVICE_TYPES,
-    displayName: 'Qwen3.5-9B-nvfp4',
-    hfRepoId: 'mlx-community/Qwen3.5-9B-nvfp4',
+    fileSizeBytes: 18819722691,
   }),
   featuredMlx({
     ...FLAGSHIP_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-9B-OptiQ-4bit',
     hfRepoId: 'mlx-community/Qwen3.5-9B-OptiQ-4bit',
+    fileSizeBytes: 6042704466,
   }),
   featuredMlx({
     ...FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-27B-4bit',
     hfRepoId: 'mlx-community/Qwen3.5-27B-4bit',
+    fileSizeBytes: 16054546159,
   }),
   featuredMlx({
     ...FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-27B-4bit-DWQ',
     hfRepoId: 'mlx-community/Qwen3.5-27B-4bit-DWQ',
+    fileSizeBytes: 15209557485,
   }),
   featuredMlx({
     ...FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-27B-5bit',
     hfRepoId: 'mlx-community/Qwen3.5-27B-5bit',
+    fileSizeBytes: 19416215339,
   }),
   featuredMlx({
     ...FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-27B-6bit',
     hfRepoId: 'mlx-community/Qwen3.5-27B-6bit',
+    fileSizeBytes: 22777884327,
   }),
   featuredMlx({
     ...FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-27B-8bit',
     hfRepoId: 'mlx-community/Qwen3.5-27B-8bit',
+    fileSizeBytes: 29501222821,
   }),
   featuredMlx({
     ...FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-27B-bf16',
     hfRepoId: 'mlx-community/Qwen3.5-27B-bf16',
+    fileSizeBytes: 54713610987,
   }),
   featuredMlx({
     ...FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-27B-GPTQ-Int4',
     hfRepoId: 'mlx-community/Qwen3.5-27B-GPTQ-Int4',
+    fileSizeBytes: 28657793949,
   }),
   featuredMlx({
     ...FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-27B-mxfp8',
     hfRepoId: 'mlx-community/Qwen3.5-27B-mxfp8',
+    fileSizeBytes: 28660739752,
   }),
   featuredMlx({
     ...FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-35B-A3B-4bit',
     hfRepoId: 'mlx-community/Qwen3.5-35B-A3B-4bit',
+    fileSizeBytes: 20391679439,
   }),
   featuredMlx({
     ...FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-35B-A3B-5bit',
     hfRepoId: 'mlx-community/Qwen3.5-35B-A3B-5bit',
+    fileSizeBytes: 24724110133,
   }),
   featuredMlx({
     ...FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-35B-A3B-6bit',
     hfRepoId: 'mlx-community/Qwen3.5-35B-A3B-6bit',
+    fileSizeBytes: 29056541579,
   }),
   featuredMlx({
     ...FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-35B-A3B-8bit',
     hfRepoId: 'mlx-community/Qwen3.5-35B-A3B-8bit',
+    fileSizeBytes: 37721404892,
   }),
   featuredMlx({
     ...FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-35B-A3B-bf16',
     hfRepoId: 'mlx-community/Qwen3.5-35B-A3B-bf16',
+    fileSizeBytes: 70214502211,
   }),
   featuredMlx({
     ...FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-35B-A3B-GPTQ-Int4',
     hfRepoId: 'mlx-community/Qwen3.5-35B-A3B-GPTQ-Int4',
+    fileSizeBytes: 22009605074,
   }),
   featuredMlx({
     ...LARGE_MODEL_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-122B-A10B-4bit',
     hfRepoId: 'mlx-community/Qwen3.5-122B-A10B-4bit',
+    fileSizeBytes: 69593636939,
   }),
   featuredMlx({
     ...LARGE_MODEL_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-122B-A10B-5bit',
     hfRepoId: 'mlx-community/Qwen3.5-122B-A10B-5bit',
+    fileSizeBytes: 84857317565,
   }),
   featuredMlx({
     ...LARGE_MODEL_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-122B-A10B-6bit',
     hfRepoId: 'mlx-community/Qwen3.5-122B-A10B-6bit',
+    fileSizeBytes: 100120997719,
   }),
   featuredMlx({
     ...LARGE_MODEL_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-122B-A10B-8bit',
     hfRepoId: 'mlx-community/Qwen3.5-122B-A10B-8bit',
+    fileSizeBytes: 130648358613,
   }),
   featuredMlx({
     ...LARGE_MODEL_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-122B-A10B-bf16',
     hfRepoId: 'mlx-community/Qwen3.5-122B-A10B-bf16',
+    fileSizeBytes: 245125798053,
   }),
   featuredMlx({
     ...LARGE_MODEL_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-397B-A17B-4bit',
     hfRepoId: 'mlx-community/Qwen3.5-397B-A17B-4bit',
+    fileSizeBytes: 223861162211,
   }),
   featuredMlx({
     ...LARGE_MODEL_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-397B-A17B-5bit',
     hfRepoId: 'mlx-community/Qwen3.5-397B-A17B-5bit',
+    fileSizeBytes: 273404117299,
   }),
   featuredMlx({
     ...LARGE_MODEL_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-397B-A17B-6bit',
     hfRepoId: 'mlx-community/Qwen3.5-397B-A17B-6bit',
+    fileSizeBytes: 322947070259,
   }),
   featuredMlx({
     ...LARGE_MODEL_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-397B-A17B-8bit',
     hfRepoId: 'mlx-community/Qwen3.5-397B-A17B-8bit',
+    fileSizeBytes: 422032974222,
   }),
   featuredMlx({
     ...LARGE_MODEL_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-397B-A17B-8bit-gs32',
     hfRepoId: 'mlx-community/Qwen3.5-397B-A17B-8bit-gs32',
+    fileSizeBytes: 445884513534,
   }),
   featuredMlx({
     ...LARGE_MODEL_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Qwen3.5-397B-A17B-nvfp4',
     hfRepoId: 'mlx-community/Qwen3.5-397B-A17B-nvfp4',
+    fileSizeBytes: 223012051290,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -1820,6 +1998,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-0.8B-BF16',
     hfFileName: 'Qwen3.5-0.8B-BF16.gguf',
     hfRepoId: 'unsloth/Qwen3.5-0.8B-GGUF',
+    fileSizeBytes: 1516744736,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -1827,6 +2006,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-0.8B-IQ4_NL',
     hfFileName: 'Qwen3.5-0.8B-IQ4_NL.gguf',
     hfRepoId: 'unsloth/Qwen3.5-0.8B-GGUF',
+    fileSizeBytes: 506859776,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -1834,6 +2014,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-0.8B-IQ4_XS',
     hfFileName: 'Qwen3.5-0.8B-IQ4_XS.gguf',
     hfRepoId: 'unsloth/Qwen3.5-0.8B-GGUF',
+    fileSizeBytes: 492605696,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -1841,6 +2022,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-0.8B-Q3_K_M',
     hfFileName: 'Qwen3.5-0.8B-Q3_K_M.gguf',
     hfRepoId: 'unsloth/Qwen3.5-0.8B-GGUF',
+    fileSizeBytes: 470167808,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -1848,6 +2030,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-0.8B-Q3_K_S',
     hfFileName: 'Qwen3.5-0.8B-Q3_K_S.gguf',
     hfRepoId: 'unsloth/Qwen3.5-0.8B-GGUF',
+    fileSizeBytes: 440750336,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -1855,6 +2038,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-0.8B-Q4_0',
     hfFileName: 'Qwen3.5-0.8B-Q4_0.gguf',
     hfRepoId: 'unsloth/Qwen3.5-0.8B-GGUF',
+    fileSizeBytes: 507154688,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -1862,6 +2046,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-0.8B-Q4_1',
     hfFileName: 'Qwen3.5-0.8B-Q4_1.gguf',
     hfRepoId: 'unsloth/Qwen3.5-0.8B-GGUF',
+    fileSizeBytes: 535171328,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -1869,6 +2054,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-0.8B-Q4_K_M',
     hfFileName: 'Qwen3.5-0.8B-Q4_K_M.gguf',
     hfRepoId: 'unsloth/Qwen3.5-0.8B-GGUF',
+    fileSizeBytes: 532517120,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -1876,6 +2062,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-0.8B-Q4_K_S',
     hfFileName: 'Qwen3.5-0.8B-Q4_K_S.gguf',
     hfRepoId: 'unsloth/Qwen3.5-0.8B-GGUF',
+    fileSizeBytes: 508104960,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -1883,6 +2070,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-0.8B-Q5_K_M',
     hfFileName: 'Qwen3.5-0.8B-Q5_K_M.gguf',
     hfRepoId: 'unsloth/Qwen3.5-0.8B-GGUF',
+    fileSizeBytes: 590057728,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -1890,6 +2078,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-0.8B-Q5_K_S',
     hfFileName: 'Qwen3.5-0.8B-Q5_K_S.gguf',
     hfRepoId: 'unsloth/Qwen3.5-0.8B-GGUF',
+    fileSizeBytes: 568889600,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -1897,6 +2086,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-0.8B-Q6_K',
     hfFileName: 'Qwen3.5-0.8B-Q6_K.gguf',
     hfRepoId: 'unsloth/Qwen3.5-0.8B-GGUF',
+    fileSizeBytes: 639029504,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -1904,6 +2094,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-0.8B-Q8_0',
     hfFileName: 'Qwen3.5-0.8B-Q8_0.gguf',
     hfRepoId: 'unsloth/Qwen3.5-0.8B-GGUF',
+    fileSizeBytes: 811843840,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -1911,6 +2102,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-0.8B-UD-IQ2_M',
     hfFileName: 'Qwen3.5-0.8B-UD-IQ2_M.gguf',
     hfRepoId: 'unsloth/Qwen3.5-0.8B-GGUF',
+    fileSizeBytes: 371933440,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -1918,6 +2110,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-0.8B-UD-IQ2_XXS',
     hfFileName: 'Qwen3.5-0.8B-UD-IQ2_XXS.gguf',
     hfRepoId: 'unsloth/Qwen3.5-0.8B-GGUF',
+    fileSizeBytes: 338227456,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -1925,6 +2118,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-0.8B-UD-IQ3_XXS',
     hfFileName: 'Qwen3.5-0.8B-UD-IQ3_XXS.gguf',
     hfRepoId: 'unsloth/Qwen3.5-0.8B-GGUF',
+    fileSizeBytes: 398237952,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -1932,6 +2126,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-0.8B-UD-Q2_K_XL',
     hfFileName: 'Qwen3.5-0.8B-UD-Q2_K_XL.gguf',
     hfRepoId: 'unsloth/Qwen3.5-0.8B-GGUF',
+    fileSizeBytes: 417718528,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -1939,6 +2134,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-0.8B-UD-Q3_K_XL',
     hfFileName: 'Qwen3.5-0.8B-UD-Q3_K_XL.gguf',
     hfRepoId: 'unsloth/Qwen3.5-0.8B-GGUF',
+    fileSizeBytes: 492216576,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -1946,6 +2142,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-0.8B-UD-Q4_K_XL',
     hfFileName: 'Qwen3.5-0.8B-UD-Q4_K_XL.gguf',
     hfRepoId: 'unsloth/Qwen3.5-0.8B-GGUF',
+    fileSizeBytes: 558772480,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -1953,6 +2150,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-0.8B-UD-Q5_K_XL',
     hfFileName: 'Qwen3.5-0.8B-UD-Q5_K_XL.gguf',
     hfRepoId: 'unsloth/Qwen3.5-0.8B-GGUF',
+    fileSizeBytes: 606585088,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -1960,6 +2158,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-0.8B-UD-Q6_K_XL',
     hfFileName: 'Qwen3.5-0.8B-UD-Q6_K_XL.gguf',
     hfRepoId: 'unsloth/Qwen3.5-0.8B-GGUF',
+    fileSizeBytes: 771092736,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -1967,6 +2166,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-0.8B-UD-Q8_K_XL',
     hfFileName: 'Qwen3.5-0.8B-UD-Q8_K_XL.gguf',
     hfRepoId: 'unsloth/Qwen3.5-0.8B-GGUF',
+    fileSizeBytes: 1186443520,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -1974,6 +2174,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-2B-BF16',
     hfFileName: 'Qwen3.5-2B-BF16.gguf',
     hfRepoId: 'unsloth/Qwen3.5-2B-GGUF',
+    fileSizeBytes: 3775709216,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -1981,6 +2182,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-2B-IQ4_NL',
     hfFileName: 'Qwen3.5-2B-IQ4_NL.gguf',
     hfRepoId: 'unsloth/Qwen3.5-2B-GGUF',
+    fileSizeBytes: 1213300992,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -1988,6 +2190,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-2B-IQ4_XS',
     hfFileName: 'Qwen3.5-2B-IQ4_XS.gguf',
     hfRepoId: 'unsloth/Qwen3.5-2B-GGUF',
+    fileSizeBytes: 1172996352,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -1995,6 +2198,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-2B-Q3_K_M',
     hfFileName: 'Qwen3.5-2B-Q3_K_M.gguf',
     hfRepoId: 'unsloth/Qwen3.5-2B-GGUF',
+    fileSizeBytes: 1107149056,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -2002,6 +2206,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-2B-Q3_K_S',
     hfFileName: 'Qwen3.5-2B-Q3_K_S.gguf',
     hfRepoId: 'unsloth/Qwen3.5-2B-GGUF',
+    fileSizeBytes: 1030947072,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -2009,6 +2214,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-2B-Q4_0',
     hfFileName: 'Qwen3.5-2B-Q4_0.gguf',
     hfRepoId: 'unsloth/Qwen3.5-2B-GGUF',
+    fileSizeBytes: 1214873856,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -2016,6 +2222,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-2B-Q4_1',
     hfFileName: 'Qwen3.5-2B-Q4_1.gguf',
     hfRepoId: 'unsloth/Qwen3.5-2B-GGUF',
+    fileSizeBytes: 1293517056,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -2023,6 +2230,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-2B-Q4_K_M',
     hfFileName: 'Qwen3.5-2B-Q4_K_M.gguf',
     hfRepoId: 'unsloth/Qwen3.5-2B-GGUF',
+    fileSizeBytes: 1280835840,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -2030,6 +2238,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-2B-Q4_K_S',
     hfFileName: 'Qwen3.5-2B-Q4_K_S.gguf',
     hfRepoId: 'unsloth/Qwen3.5-2B-GGUF',
+    fileSizeBytes: 1217757440,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -2037,6 +2246,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-2B-Q5_K_M',
     hfFileName: 'Qwen3.5-2B-Q5_K_M.gguf',
     hfRepoId: 'unsloth/Qwen3.5-2B-GGUF',
+    fileSizeBytes: 1435238656,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -2044,6 +2254,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-2B-Q5_K_S',
     hfFileName: 'Qwen3.5-2B-Q5_K_S.gguf',
     hfRepoId: 'unsloth/Qwen3.5-2B-GGUF',
+    fileSizeBytes: 1384546560,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -2051,6 +2262,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-2B-Q6_K',
     hfFileName: 'Qwen3.5-2B-Q6_K.gguf',
     hfRepoId: 'unsloth/Qwen3.5-2B-GGUF',
+    fileSizeBytes: 1574961408,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -2058,6 +2270,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-2B-Q8_0',
     hfFileName: 'Qwen3.5-2B-Q8_0.gguf',
     hfRepoId: 'unsloth/Qwen3.5-2B-GGUF',
+    fileSizeBytes: 2012012800,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -2065,6 +2278,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-2B-UD-IQ2_M',
     hfFileName: 'Qwen3.5-2B-UD-IQ2_M.gguf',
     hfRepoId: 'unsloth/Qwen3.5-2B-GGUF',
+    fileSizeBytes: 859857152,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -2072,6 +2286,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-2B-UD-IQ2_XXS',
     hfFileName: 'Qwen3.5-2B-UD-IQ2_XXS.gguf',
     hfRepoId: 'unsloth/Qwen3.5-2B-GGUF',
+    fileSizeBytes: 768270592,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -2079,6 +2294,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-2B-UD-IQ3_XXS',
     hfFileName: 'Qwen3.5-2B-UD-IQ3_XXS.gguf',
     hfRepoId: 'unsloth/Qwen3.5-2B-GGUF',
+    fileSizeBytes: 931823872,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -2086,6 +2302,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-2B-UD-Q2_K_XL',
     hfFileName: 'Qwen3.5-2B-UD-Q2_K_XL.gguf',
     hfRepoId: 'unsloth/Qwen3.5-2B-GGUF',
+    fileSizeBytes: 966533376,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -2093,6 +2310,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-2B-UD-Q3_K_XL',
     hfFileName: 'Qwen3.5-2B-UD-Q3_K_XL.gguf',
     hfRepoId: 'unsloth/Qwen3.5-2B-GGUF',
+    fileSizeBytes: 1159274752,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -2100,6 +2318,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-2B-UD-Q4_K_XL',
     hfFileName: 'Qwen3.5-2B-UD-Q4_K_XL.gguf',
     hfRepoId: 'unsloth/Qwen3.5-2B-GGUF',
+    fileSizeBytes: 1339752704,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -2107,6 +2326,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-2B-UD-Q5_K_XL',
     hfFileName: 'Qwen3.5-2B-UD-Q5_K_XL.gguf',
     hfRepoId: 'unsloth/Qwen3.5-2B-GGUF',
+    fileSizeBytes: 1466687744,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -2114,6 +2334,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-2B-UD-Q6_K_XL',
     hfFileName: 'Qwen3.5-2B-UD-Q6_K_XL.gguf',
     hfRepoId: 'unsloth/Qwen3.5-2B-GGUF',
+    fileSizeBytes: 1864483072,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -2121,6 +2342,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-2B-UD-Q8_K_XL',
     hfFileName: 'Qwen3.5-2B-UD-Q8_K_XL.gguf',
     hfRepoId: 'unsloth/Qwen3.5-2B-GGUF',
+    fileSizeBytes: 2834940160,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -2128,6 +2350,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-4B-BF16',
     hfFileName: 'Qwen3.5-4B-BF16.gguf',
     hfRepoId: 'unsloth/Qwen3.5-4B-GGUF',
+    fileSizeBytes: 8424393632,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -2135,6 +2358,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-4B-IQ4_NL',
     hfFileName: 'Qwen3.5-4B-IQ4_NL.gguf',
     hfRepoId: 'unsloth/Qwen3.5-4B-GGUF',
+    fileSizeBytes: 2579944608,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -2142,6 +2366,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-4B-IQ4_XS',
     hfFileName: 'Qwen3.5-4B-IQ4_XS.gguf',
     hfRepoId: 'unsloth/Qwen3.5-4B-GGUF',
+    fileSizeBytes: 2477053088,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -2149,6 +2374,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-4B-Q3_K_M',
     hfFileName: 'Qwen3.5-4B-Q3_K_M.gguf',
     hfRepoId: 'unsloth/Qwen3.5-4B-GGUF',
+    fileSizeBytes: 2293388448,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -2156,6 +2382,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-4B-Q3_K_S',
     hfFileName: 'Qwen3.5-4B-Q3_K_S.gguf',
     hfRepoId: 'unsloth/Qwen3.5-4B-GGUF',
+    fileSizeBytes: 2105791648,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -2163,6 +2390,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-4B-Q4_0',
     hfFileName: 'Qwen3.5-4B-Q4_0.gguf',
     hfRepoId: 'unsloth/Qwen3.5-4B-GGUF',
+    fileSizeBytes: 2583221408,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -2170,6 +2398,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-4B-Q4_1',
     hfFileName: 'Qwen3.5-4B-Q4_1.gguf',
     hfRepoId: 'unsloth/Qwen3.5-4B-GGUF',
+    fileSizeBytes: 2784416928,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -2177,6 +2406,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-4B-Q4_K_M',
     hfFileName: 'Qwen3.5-4B-Q4_K_M.gguf',
     hfRepoId: 'unsloth/Qwen3.5-4B-GGUF',
+    fileSizeBytes: 2740937888,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -2184,6 +2414,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-4B-Q4_K_S',
     hfFileName: 'Qwen3.5-4B-Q4_K_S.gguf',
     hfRepoId: 'unsloth/Qwen3.5-4B-GGUF',
+    fileSizeBytes: 2590430368,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -2191,6 +2422,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-4B-Q5_K_M',
     hfFileName: 'Qwen3.5-4B-Q5_K_M.gguf',
     hfRepoId: 'unsloth/Qwen3.5-4B-GGUF',
+    fileSizeBytes: 3143656608,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -2198,6 +2430,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-4B-Q5_K_S',
     hfFileName: 'Qwen3.5-4B-Q5_K_S.gguf',
     hfRepoId: 'unsloth/Qwen3.5-4B-GGUF',
+    fileSizeBytes: 3024934048,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -2205,6 +2438,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-4B-Q6_K',
     hfFileName: 'Qwen3.5-4B-Q6_K.gguf',
     hfRepoId: 'unsloth/Qwen3.5-4B-GGUF',
+    fileSizeBytes: 3525956768,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -2212,6 +2446,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-4B-Q8_0',
     hfFileName: 'Qwen3.5-4B-Q8_0.gguf',
     hfRepoId: 'unsloth/Qwen3.5-4B-GGUF',
+    fileSizeBytes: 4482403488,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -2219,6 +2454,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-4B-UD-IQ2_M',
     hfFileName: 'Qwen3.5-4B-UD-IQ2_M.gguf',
     hfRepoId: 'unsloth/Qwen3.5-4B-GGUF',
+    fileSizeBytes: 1759997088,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -2226,6 +2462,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-4B-UD-IQ2_XXS',
     hfFileName: 'Qwen3.5-4B-UD-IQ2_XXS.gguf',
     hfRepoId: 'unsloth/Qwen3.5-4B-GGUF',
+    fileSizeBytes: 1520217248,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -2233,6 +2470,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-4B-UD-IQ3_XXS',
     hfFileName: 'Qwen3.5-4B-UD-IQ3_XXS.gguf',
     hfRepoId: 'unsloth/Qwen3.5-4B-GGUF',
+    fileSizeBytes: 1949047968,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -2240,6 +2478,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-4B-UD-Q2_K_XL',
     hfFileName: 'Qwen3.5-4B-UD-Q2_K_XL.gguf',
     hfRepoId: 'unsloth/Qwen3.5-4B-GGUF',
+    fileSizeBytes: 1940825248,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -2247,6 +2486,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-4B-UD-Q3_K_XL',
     hfFileName: 'Qwen3.5-4B-UD-Q3_K_XL.gguf',
     hfRepoId: 'unsloth/Qwen3.5-4B-GGUF',
+    fileSizeBytes: 2436420768,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -2254,6 +2494,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-4B-UD-Q4_K_XL',
     hfFileName: 'Qwen3.5-4B-UD-Q4_K_XL.gguf',
     hfRepoId: 'unsloth/Qwen3.5-4B-GGUF',
+    fileSizeBytes: 2912109728,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -2261,6 +2502,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-4B-UD-Q5_K_XL',
     hfFileName: 'Qwen3.5-4B-UD-Q5_K_XL.gguf',
     hfRepoId: 'unsloth/Qwen3.5-4B-GGUF',
+    fileSizeBytes: 3250869408,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -2268,6 +2510,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-4B-UD-Q6_K_XL',
     hfFileName: 'Qwen3.5-4B-UD-Q6_K_XL.gguf',
     hfRepoId: 'unsloth/Qwen3.5-4B-GGUF',
+    fileSizeBytes: 4145548448,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -2275,6 +2518,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-4B-UD-Q8_K_XL',
     hfFileName: 'Qwen3.5-4B-UD-Q8_K_XL.gguf',
     hfRepoId: 'unsloth/Qwen3.5-4B-GGUF',
+    fileSizeBytes: 5952048288,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -2282,6 +2526,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-9B-BF16',
     hfFileName: 'Qwen3.5-9B-BF16.gguf',
     hfRepoId: 'unsloth/Qwen3.5-9B-GGUF',
+    fileSizeBytes: 17920697312,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -2289,6 +2534,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-9B-IQ4_NL',
     hfFileName: 'Qwen3.5-9B-IQ4_NL.gguf',
     hfRepoId: 'unsloth/Qwen3.5-9B-GGUF',
+    fileSizeBytes: 5371028704,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -2296,6 +2542,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-9B-IQ4_XS',
     hfFileName: 'Qwen3.5-9B-IQ4_XS.gguf',
     hfRepoId: 'unsloth/Qwen3.5-9B-GGUF',
+    fileSizeBytes: 5168653536,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -2303,6 +2550,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-9B-Q3_K_M',
     hfFileName: 'Qwen3.5-9B-Q3_K_M.gguf',
     hfRepoId: 'unsloth/Qwen3.5-9B-GGUF',
+    fileSizeBytes: 4673643744,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -2310,6 +2558,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-9B-Q3_K_S',
     hfFileName: 'Qwen3.5-9B-Q3_K_S.gguf',
     hfRepoId: 'unsloth/Qwen3.5-9B-GGUF',
+    fileSizeBytes: 4316865760,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -2317,6 +2566,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-9B-Q4_0',
     hfFileName: 'Qwen3.5-9B-Q4_0.gguf',
     hfRepoId: 'unsloth/Qwen3.5-9B-GGUF',
+    fileSizeBytes: 5379417312,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -2324,6 +2574,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-9B-Q4_1',
     hfFileName: 'Qwen3.5-9B-Q4_1.gguf',
     hfRepoId: 'unsloth/Qwen3.5-9B-GGUF',
+    fileSizeBytes: 5837251808,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -2331,6 +2582,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-9B-Q4_K_M',
     hfFileName: 'Qwen3.5-9B-Q4_K_M.gguf',
     hfRepoId: 'unsloth/Qwen3.5-9B-GGUF',
+    fileSizeBytes: 5680522464,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -2338,6 +2590,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-9B-Q4_K_S',
     hfFileName: 'Qwen3.5-9B-Q4_K_S.gguf',
     hfRepoId: 'unsloth/Qwen3.5-9B-GGUF',
+    fileSizeBytes: 5394097376,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -2345,6 +2598,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-9B-Q5_K_M',
     hfFileName: 'Qwen3.5-9B-Q5_K_M.gguf',
     hfRepoId: 'unsloth/Qwen3.5-9B-GGUF',
+    fileSizeBytes: 6577841376,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -2352,6 +2606,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-9B-Q5_K_S',
     hfFileName: 'Qwen3.5-9B-Q5_K_S.gguf',
     hfRepoId: 'unsloth/Qwen3.5-9B-GGUF',
+    fileSizeBytes: 6361146592,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -2359,6 +2614,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-9B-Q6_K',
     hfFileName: 'Qwen3.5-9B-Q6_K.gguf',
     hfRepoId: 'unsloth/Qwen3.5-9B-GGUF',
+    fileSizeBytes: 7458301152,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -2366,6 +2622,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-9B-Q8_0',
     hfFileName: 'Qwen3.5-9B-Q8_0.gguf',
     hfRepoId: 'unsloth/Qwen3.5-9B-GGUF',
+    fileSizeBytes: 9527502048,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -2373,6 +2630,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-9B-UD-IQ2_M',
     hfFileName: 'Qwen3.5-9B-UD-IQ2_M.gguf',
     hfRepoId: 'unsloth/Qwen3.5-9B-GGUF',
+    fileSizeBytes: 3649365216,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -2380,6 +2638,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-9B-UD-IQ2_XXS',
     hfFileName: 'Qwen3.5-9B-UD-IQ2_XXS.gguf',
     hfRepoId: 'unsloth/Qwen3.5-9B-GGUF',
+    fileSizeBytes: 3190613216,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -2387,6 +2646,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-9B-UD-IQ3_XXS',
     hfFileName: 'Qwen3.5-9B-UD-IQ3_XXS.gguf',
     hfRepoId: 'unsloth/Qwen3.5-9B-GGUF',
+    fileSizeBytes: 4016235744,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -2394,6 +2654,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-9B-UD-Q2_K_XL',
     hfFileName: 'Qwen3.5-9B-UD-Q2_K_XL.gguf',
     hfRepoId: 'unsloth/Qwen3.5-9B-GGUF',
+    fileSizeBytes: 4121781472,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -2401,6 +2662,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-9B-UD-Q3_K_XL',
     hfFileName: 'Qwen3.5-9B-UD-Q3_K_XL.gguf',
     hfRepoId: 'unsloth/Qwen3.5-9B-GGUF',
+    fileSizeBytes: 5053834464,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -2408,6 +2670,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-9B-UD-Q4_K_XL',
     hfFileName: 'Qwen3.5-9B-UD-Q4_K_XL.gguf',
     hfRepoId: 'unsloth/Qwen3.5-9B-GGUF',
+    fileSizeBytes: 5966095584,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -2415,6 +2678,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-9B-UD-Q5_K_XL',
     hfFileName: 'Qwen3.5-9B-UD-Q5_K_XL.gguf',
     hfRepoId: 'unsloth/Qwen3.5-9B-GGUF',
+    fileSizeBytes: 6743680224,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -2422,6 +2686,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-9B-UD-Q6_K_XL',
     hfFileName: 'Qwen3.5-9B-UD-Q6_K_XL.gguf',
     hfRepoId: 'unsloth/Qwen3.5-9B-GGUF',
+    fileSizeBytes: 8756929760,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -2429,6 +2694,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-9B-UD-Q8_K_XL',
     hfFileName: 'Qwen3.5-9B-UD-Q8_K_XL.gguf',
     hfRepoId: 'unsloth/Qwen3.5-9B-GGUF',
+    fileSizeBytes: 12974040288,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -2436,6 +2702,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-27B-IQ4_NL',
     hfFileName: 'Qwen3.5-27B-IQ4_NL.gguf',
     hfRepoId: 'unsloth/Qwen3.5-27B-GGUF',
+    fileSizeBytes: 15687894944,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -2443,6 +2710,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-27B-IQ4_XS',
     hfFileName: 'Qwen3.5-27B-IQ4_XS.gguf',
     hfRepoId: 'unsloth/Qwen3.5-27B-GGUF',
+    fileSizeBytes: 14977484704,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -2450,6 +2718,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-27B-Q3_K_M',
     hfFileName: 'Qwen3.5-27B-Q3_K_M.gguf',
     hfRepoId: 'unsloth/Qwen3.5-27B-GGUF',
+    fileSizeBytes: 13505116064,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -2457,6 +2726,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-27B-Q3_K_S',
     hfFileName: 'Qwen3.5-27B-Q3_K_S.gguf',
     hfRepoId: 'unsloth/Qwen3.5-27B-GGUF',
+    fileSizeBytes: 12289423264,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -2464,6 +2734,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-27B-Q4_0',
     hfFileName: 'Qwen3.5-27B-Q4_0.gguf',
     hfRepoId: 'unsloth/Qwen3.5-27B-GGUF',
+    fileSizeBytes: 15721973664,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -2471,6 +2742,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-27B-Q4_1',
     hfFileName: 'Qwen3.5-27B-Q4_1.gguf',
     hfRepoId: 'unsloth/Qwen3.5-27B-GGUF',
+    fileSizeBytes: 17182934944,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -2478,6 +2750,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-27B-Q4_K_M',
     hfFileName: 'Qwen3.5-27B-Q4_K_M.gguf',
     hfRepoId: 'unsloth/Qwen3.5-27B-GGUF',
+    fileSizeBytes: 16740812704,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -2485,6 +2758,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-27B-Q4_K_S',
     hfFileName: 'Qwen3.5-27B-Q4_K_S.gguf',
     hfRepoId: 'unsloth/Qwen3.5-27B-GGUF',
+    fileSizeBytes: 15769159584,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -2492,6 +2766,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-27B-Q5_K_M',
     hfFileName: 'Qwen3.5-27B-Q5_K_M.gguf',
     hfRepoId: 'unsloth/Qwen3.5-27B-GGUF',
+    fileSizeBytes: 19608995744,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -2499,6 +2774,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-27B-Q5_K_S',
     hfFileName: 'Qwen3.5-27B-Q5_K_S.gguf',
     hfRepoId: 'unsloth/Qwen3.5-27B-GGUF',
+    fileSizeBytes: 18889000864,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -2506,6 +2782,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-27B-Q6_K',
     hfFileName: 'Qwen3.5-27B-Q6_K.gguf',
     hfRepoId: 'unsloth/Qwen3.5-27B-GGUF',
+    fileSizeBytes: 22453933984,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -2513,6 +2790,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-27B-Q8_0',
     hfFileName: 'Qwen3.5-27B-Q8_0.gguf',
     hfRepoId: 'unsloth/Qwen3.5-27B-GGUF',
+    fileSizeBytes: 28595763104,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -2520,6 +2798,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-27B-UD-IQ2_M',
     hfFileName: 'Qwen3.5-27B-UD-IQ2_M.gguf',
     hfRepoId: 'unsloth/Qwen3.5-27B-GGUF',
+    fileSizeBytes: 10188072864,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -2527,6 +2806,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-27B-UD-IQ2_XXS',
     hfFileName: 'Qwen3.5-27B-UD-IQ2_XXS.gguf',
     hfRepoId: 'unsloth/Qwen3.5-27B-GGUF',
+    fileSizeBytes: 8573593504,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -2534,6 +2814,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-27B-UD-IQ3_XXS',
     hfFileName: 'Qwen3.5-27B-UD-IQ3_XXS.gguf',
     hfRepoId: 'unsloth/Qwen3.5-27B-GGUF',
+    fileSizeBytes: 11506493344,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -2541,6 +2822,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-27B-UD-Q2_K_XL',
     hfFileName: 'Qwen3.5-27B-UD-Q2_K_XL.gguf',
     hfRepoId: 'unsloth/Qwen3.5-27B-GGUF',
+    fileSizeBytes: 11213752224,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -2548,6 +2830,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-27B-UD-Q3_K_XL',
     hfFileName: 'Qwen3.5-27B-UD-Q3_K_XL.gguf',
     hfRepoId: 'unsloth/Qwen3.5-27B-GGUF',
+    fileSizeBytes: 14438533024,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -2555,6 +2838,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-27B-UD-Q4_K_XL',
     hfFileName: 'Qwen3.5-27B-UD-Q4_K_XL.gguf',
     hfRepoId: 'unsloth/Qwen3.5-27B-GGUF',
+    fileSizeBytes: 17621125024,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -2562,6 +2846,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-27B-UD-Q5_K_XL',
     hfFileName: 'Qwen3.5-27B-UD-Q5_K_XL.gguf',
     hfRepoId: 'unsloth/Qwen3.5-27B-GGUF',
+    fileSizeBytes: 20171253664,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -2569,6 +2854,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-27B-UD-Q6_K_XL',
     hfFileName: 'Qwen3.5-27B-UD-Q6_K_XL.gguf',
     hfRepoId: 'unsloth/Qwen3.5-27B-GGUF',
+    fileSizeBytes: 25675642784,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -2576,6 +2862,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-27B-UD-Q8_K_XL',
     hfFileName: 'Qwen3.5-27B-UD-Q8_K_XL.gguf',
     hfRepoId: 'unsloth/Qwen3.5-27B-GGUF',
+    fileSizeBytes: 35528652704,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -2583,6 +2870,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-35B-A3B-MXFP4_MOE',
     hfFileName: 'Qwen3.5-35B-A3B-MXFP4_MOE.gguf',
     hfRepoId: 'unsloth/Qwen3.5-35B-A3B-GGUF',
+    fileSizeBytes: 21587638912,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -2590,6 +2878,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-35B-A3B-Q3_K_M',
     hfFileName: 'Qwen3.5-35B-A3B-Q3_K_M.gguf',
     hfRepoId: 'unsloth/Qwen3.5-35B-A3B-GGUF',
+    fileSizeBytes: 16356375168,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -2597,6 +2886,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-35B-A3B-Q3_K_S',
     hfFileName: 'Qwen3.5-35B-A3B-Q3_K_S.gguf',
     hfRepoId: 'unsloth/Qwen3.5-35B-A3B-GGUF',
+    fileSizeBytes: 15265856128,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -2604,6 +2894,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-35B-A3B-Q4_K_M',
     hfFileName: 'Qwen3.5-35B-A3B-Q4_K_M.gguf',
     hfRepoId: 'unsloth/Qwen3.5-35B-A3B-GGUF',
+    fileSizeBytes: 22016023168,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -2611,6 +2902,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-35B-A3B-Q4_K_S',
     hfFileName: 'Qwen3.5-35B-A3B-Q4_K_S.gguf',
     hfRepoId: 'unsloth/Qwen3.5-35B-A3B-GGUF',
+    fileSizeBytes: 20673845888,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -2618,6 +2910,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-35B-A3B-Q5_K_M',
     hfFileName: 'Qwen3.5-35B-A3B-Q5_K_M.gguf',
     hfRepoId: 'unsloth/Qwen3.5-35B-A3B-GGUF',
+    fileSizeBytes: 26249607808,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -2625,6 +2918,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-35B-A3B-Q5_K_S',
     hfFileName: 'Qwen3.5-35B-A3B-Q5_K_S.gguf',
     hfRepoId: 'unsloth/Qwen3.5-35B-A3B-GGUF',
+    fileSizeBytes: 24823544448,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -2632,6 +2926,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-35B-A3B-Q6_K',
     hfFileName: 'Qwen3.5-35B-A3B-Q6_K.gguf',
     hfRepoId: 'unsloth/Qwen3.5-35B-A3B-GGUF',
+    fileSizeBytes: 28852861568,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -2639,6 +2934,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-35B-A3B-Q8_0',
     hfFileName: 'Qwen3.5-35B-A3B-Q8_0.gguf',
     hfRepoId: 'unsloth/Qwen3.5-35B-A3B-GGUF',
+    fileSizeBytes: 36903139968,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -2646,6 +2942,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-35B-A3B-UD-IQ2_M',
     hfFileName: 'Qwen3.5-35B-A3B-UD-IQ2_M.gguf',
     hfRepoId: 'unsloth/Qwen3.5-35B-A3B-GGUF',
+    fileSizeBytes: 11391613568,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -2653,6 +2950,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-35B-A3B-UD-IQ2_XXS',
     hfFileName: 'Qwen3.5-35B-A3B-UD-IQ2_XXS.gguf',
     hfRepoId: 'unsloth/Qwen3.5-35B-A3B-GGUF',
+    fileSizeBytes: 10656955008,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -2660,6 +2958,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-35B-A3B-UD-IQ3_S',
     hfFileName: 'Qwen3.5-35B-A3B-UD-IQ3_S.gguf',
     hfRepoId: 'unsloth/Qwen3.5-35B-A3B-GGUF',
+    fileSizeBytes: 13583383168,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -2667,6 +2966,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-35B-A3B-UD-IQ3_XXS',
     hfFileName: 'Qwen3.5-35B-A3B-UD-IQ3_XXS.gguf',
     hfRepoId: 'unsloth/Qwen3.5-35B-A3B-GGUF',
+    fileSizeBytes: 13080066688,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -2674,6 +2974,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-35B-A3B-UD-IQ4_NL',
     hfFileName: 'Qwen3.5-35B-A3B-UD-IQ4_NL.gguf',
     hfRepoId: 'unsloth/Qwen3.5-35B-A3B-GGUF',
+    fileSizeBytes: 17821719168,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -2681,6 +2982,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-35B-A3B-UD-IQ4_XS',
     hfFileName: 'Qwen3.5-35B-A3B-UD-IQ4_XS.gguf',
     hfRepoId: 'unsloth/Qwen3.5-35B-A3B-GGUF',
+    fileSizeBytes: 17486174848,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -2688,6 +2990,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-35B-A3B-UD-Q2_K_XL',
     hfFileName: 'Qwen3.5-35B-A3B-UD-Q2_K_XL.gguf',
     hfRepoId: 'unsloth/Qwen3.5-35B-A3B-GGUF',
+    fileSizeBytes: 12156754560,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -2695,6 +2998,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-35B-A3B-UD-Q3_K_XL',
     hfFileName: 'Qwen3.5-35B-A3B-UD-Q3_K_XL.gguf',
     hfRepoId: 'unsloth/Qwen3.5-35B-A3B-GGUF',
+    fileSizeBytes: 16601176704,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -2702,6 +3006,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-35B-A3B-UD-Q4_K_L',
     hfFileName: 'Qwen3.5-35B-A3B-UD-Q4_K_L.gguf',
     hfRepoId: 'unsloth/Qwen3.5-35B-A3B-GGUF',
+    fileSizeBytes: 20205632160,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -2709,6 +3014,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-35B-A3B-UD-Q4_K_XL',
     hfFileName: 'Qwen3.5-35B-A3B-UD-Q4_K_XL.gguf',
     hfRepoId: 'unsloth/Qwen3.5-35B-A3B-GGUF',
+    fileSizeBytes: 22241950336,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -2716,6 +3022,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-35B-A3B-UD-Q5_K_XL',
     hfFileName: 'Qwen3.5-35B-A3B-UD-Q5_K_XL.gguf',
     hfRepoId: 'unsloth/Qwen3.5-35B-A3B-GGUF',
+    fileSizeBytes: 26385922688,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -2723,6 +3030,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-35B-A3B-UD-Q6_K_S',
     hfFileName: 'Qwen3.5-35B-A3B-UD-Q6_K_S.gguf',
     hfRepoId: 'unsloth/Qwen3.5-35B-A3B-GGUF',
+    fileSizeBytes: 28515105440,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -2730,6 +3038,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-35B-A3B-UD-Q6_K_XL',
     hfFileName: 'Qwen3.5-35B-A3B-UD-Q6_K_XL.gguf',
     hfRepoId: 'unsloth/Qwen3.5-35B-A3B-GGUF',
+    fileSizeBytes: 32071842432,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -2737,6 +3046,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-35B-A3B-UD-Q8_K_XL',
     hfFileName: 'Qwen3.5-35B-A3B-UD-Q8_K_XL.gguf',
     hfRepoId: 'unsloth/Qwen3.5-35B-A3B-GGUF',
+    fileSizeBytes: 48688560768,
   }),
   featuredGguf({
     ...LARGE_MODEL_GOALS,
@@ -2744,6 +3054,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-122B-A10B-UD-IQ1_M',
     hfFileName: 'Qwen3.5-122B-A10B-UD-IQ1_M.gguf',
     hfRepoId: 'unsloth/Qwen3.5-122B-A10B-GGUF',
+    fileSizeBytes: 34221749440,
   }),
   featuredGguf({
     ...LARGE_MODEL_GOALS,
@@ -2751,6 +3062,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-122B-A10B-UD-IQ2_M',
     hfFileName: 'Qwen3.5-122B-A10B-UD-IQ2_M.gguf',
     hfRepoId: 'unsloth/Qwen3.5-122B-A10B-GGUF',
+    fileSizeBytes: 39148942528,
   }),
   featuredGguf({
     ...LARGE_MODEL_GOALS,
@@ -2758,6 +3070,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-122B-A10B-UD-IQ2_XXS',
     hfFileName: 'Qwen3.5-122B-A10B-UD-IQ2_XXS.gguf',
     hfRepoId: 'unsloth/Qwen3.5-122B-A10B-GGUF',
+    fileSizeBytes: 36637668544,
   }),
   featuredGguf({
     ...LARGE_MODEL_GOALS,
@@ -2765,6 +3078,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-122B-A10B-UD-IQ3_S',
     hfFileName: 'Qwen3.5-122B-A10B-UD-IQ3_S.gguf',
     hfRepoId: 'unsloth/Qwen3.5-122B-A10B-GGUF',
+    fileSizeBytes: 46556959936,
   }),
   featuredGguf({
     ...LARGE_MODEL_GOALS,
@@ -2772,6 +3086,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-122B-A10B-UD-IQ3_XXS',
     hfFileName: 'Qwen3.5-122B-A10B-UD-IQ3_XXS.gguf',
     hfRepoId: 'unsloth/Qwen3.5-122B-A10B-GGUF',
+    fileSizeBytes: 44745020608,
   }),
   featuredGguf({
     ...LARGE_MODEL_GOALS,
@@ -2779,6 +3094,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Qwen3.5-122B-A10B-UD-Q2_K_XL',
     hfFileName: 'Qwen3.5-122B-A10B-UD-Q2_K_XL.gguf',
     hfRepoId: 'unsloth/Qwen3.5-122B-A10B-GGUF',
+    fileSizeBytes: 41845347520,
   }),
 
   // -----------------------------------------------------------------------------
@@ -2790,6 +3106,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-1.2B-Extract-F16',
     hfFileName: 'LFM2-1.2B-Extract-F16.gguf',
     hfRepoId: 'LiquidAI/LFM2-1.2B-Extract-GGUF',
+    fileSizeBytes: 2343325408,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -2797,6 +3114,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-1.2B-Extract-Q4_0',
     hfFileName: 'LFM2-1.2B-Extract-Q4_0.gguf',
     hfRepoId: 'LiquidAI/LFM2-1.2B-Extract-GGUF',
+    fileSizeBytes: 695750368,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -2804,6 +3122,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-1.2B-Extract-Q4_K_M',
     hfFileName: 'LFM2-1.2B-Extract-Q4_K_M.gguf',
     hfRepoId: 'LiquidAI/LFM2-1.2B-Extract-GGUF',
+    fileSizeBytes: 730894048,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -2811,6 +3130,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-1.2B-Extract-Q5_K_M',
     hfFileName: 'LFM2-1.2B-Extract-Q5_K_M.gguf',
     hfRepoId: 'LiquidAI/LFM2-1.2B-Extract-GGUF',
+    fileSizeBytes: 843353824,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -2818,6 +3138,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-1.2B-Extract-Q6_K',
     hfFileName: 'LFM2-1.2B-Extract-Q6_K.gguf',
     hfRepoId: 'LiquidAI/LFM2-1.2B-Extract-GGUF',
+    fileSizeBytes: 962842336,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -2825,6 +3146,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-1.2B-Extract-Q8_0',
     hfFileName: 'LFM2-1.2B-Extract-Q8_0.gguf',
     hfRepoId: 'LiquidAI/LFM2-1.2B-Extract-GGUF',
+    fileSizeBytes: 1246252768,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -2832,6 +3154,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-1.2B-F16',
     hfFileName: 'LFM2-1.2B-F16.gguf',
     hfRepoId: 'LiquidAI/LFM2-1.2B-GGUF',
+    fileSizeBytes: 2343324608,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -2839,6 +3162,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-1.2B-Q4_0',
     hfFileName: 'LFM2-1.2B-Q4_0.gguf',
     hfRepoId: 'LiquidAI/LFM2-1.2B-GGUF',
+    fileSizeBytes: 695749568,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -2846,6 +3170,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-1.2B-Q4_K_M-hip-optimized',
     hfFileName: 'LFM2-1.2B-Q4_K_M-hip-optimized.gguf',
     hfRepoId: 'LiquidAI/LFM2-1.2B-GGUF',
+    fileSizeBytes: 796412864,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -2853,6 +3178,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-1.2B-Q4_K_M',
     hfFileName: 'LFM2-1.2B-Q4_K_M.gguf',
     hfRepoId: 'LiquidAI/LFM2-1.2B-GGUF',
+    fileSizeBytes: 730893248,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -2860,6 +3186,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-1.2B-Q5_K_M',
     hfFileName: 'LFM2-1.2B-Q5_K_M.gguf',
     hfRepoId: 'LiquidAI/LFM2-1.2B-GGUF',
+    fileSizeBytes: 843353024,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -2867,6 +3194,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-1.2B-Q6_K',
     hfFileName: 'LFM2-1.2B-Q6_K.gguf',
     hfRepoId: 'LiquidAI/LFM2-1.2B-GGUF',
+    fileSizeBytes: 962841536,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -2874,6 +3202,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-1.2B-Q8_0',
     hfFileName: 'LFM2-1.2B-Q8_0.gguf',
     hfRepoId: 'LiquidAI/LFM2-1.2B-GGUF',
+    fileSizeBytes: 1246251968,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -2881,6 +3210,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-1.2B-RAG-F16',
     hfFileName: 'LFM2-1.2B-RAG-F16.gguf',
     hfRepoId: 'LiquidAI/LFM2-1.2B-RAG-GGUF',
+    fileSizeBytes: 2343325408,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -2888,6 +3218,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-1.2B-RAG-Q4_0',
     hfFileName: 'LFM2-1.2B-RAG-Q4_0.gguf',
     hfRepoId: 'LiquidAI/LFM2-1.2B-RAG-GGUF',
+    fileSizeBytes: 695750368,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -2895,6 +3226,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-1.2B-RAG-Q4_K_M',
     hfFileName: 'LFM2-1.2B-RAG-Q4_K_M.gguf',
     hfRepoId: 'LiquidAI/LFM2-1.2B-RAG-GGUF',
+    fileSizeBytes: 730894048,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -2902,6 +3234,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-1.2B-RAG-Q5_K_M',
     hfFileName: 'LFM2-1.2B-RAG-Q5_K_M.gguf',
     hfRepoId: 'LiquidAI/LFM2-1.2B-RAG-GGUF',
+    fileSizeBytes: 843353824,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -2909,6 +3242,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-1.2B-RAG-Q6_K',
     hfFileName: 'LFM2-1.2B-RAG-Q6_K.gguf',
     hfRepoId: 'LiquidAI/LFM2-1.2B-RAG-GGUF',
+    fileSizeBytes: 962842336,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -2916,6 +3250,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-1.2B-RAG-Q8_0',
     hfFileName: 'LFM2-1.2B-RAG-Q8_0.gguf',
     hfRepoId: 'LiquidAI/LFM2-1.2B-RAG-GGUF',
+    fileSizeBytes: 1246252768,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -2923,6 +3258,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-1.2B-Tool-F16',
     hfFileName: 'LFM2-1.2B-Tool-F16.gguf',
     hfRepoId: 'LiquidAI/LFM2-1.2B-Tool-GGUF',
+    fileSizeBytes: 2343325408,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -2930,6 +3266,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-1.2B-Tool-Q4_0',
     hfFileName: 'LFM2-1.2B-Tool-Q4_0.gguf',
     hfRepoId: 'LiquidAI/LFM2-1.2B-Tool-GGUF',
+    fileSizeBytes: 695750368,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -2937,6 +3274,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-1.2B-Tool-Q4_K_M',
     hfFileName: 'LFM2-1.2B-Tool-Q4_K_M.gguf',
     hfRepoId: 'LiquidAI/LFM2-1.2B-Tool-GGUF',
+    fileSizeBytes: 730894048,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -2944,6 +3282,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-1.2B-Tool-Q5_K_M',
     hfFileName: 'LFM2-1.2B-Tool-Q5_K_M.gguf',
     hfRepoId: 'LiquidAI/LFM2-1.2B-Tool-GGUF',
+    fileSizeBytes: 843353824,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -2951,6 +3290,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-1.2B-Tool-Q6_K',
     hfFileName: 'LFM2-1.2B-Tool-Q6_K.gguf',
     hfRepoId: 'LiquidAI/LFM2-1.2B-Tool-GGUF',
+    fileSizeBytes: 962842336,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -2958,6 +3298,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-1.2B-Tool-Q8_0',
     hfFileName: 'LFM2-1.2B-Tool-Q8_0.gguf',
     hfRepoId: 'LiquidAI/LFM2-1.2B-Tool-GGUF',
+    fileSizeBytes: 1246252768,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -2965,6 +3306,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-2.6B-Exp-F16',
     hfFileName: 'LFM2-2.6B-Exp-F16.gguf',
     hfRepoId: 'LiquidAI/LFM2-2.6B-Exp-GGUF',
+    fileSizeBytes: 5409894752,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -2972,6 +3314,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-2.6B-Exp-Q4_0',
     hfFileName: 'LFM2-2.6B-Exp-Q4_0.gguf',
     hfRepoId: 'LiquidAI/LFM2-2.6B-Exp-GGUF',
+    fileSizeBytes: 1558606176,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -2979,6 +3322,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-2.6B-Exp-Q4_K_M',
     hfFileName: 'LFM2-2.6B-Exp-Q4_K_M.gguf',
     hfRepoId: 'LiquidAI/LFM2-2.6B-Exp-GGUF',
+    fileSizeBytes: 1639166304,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -2986,6 +3330,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-2.6B-Exp-Q5_K_M',
     hfFileName: 'LFM2-2.6B-Exp-Q5_K_M.gguf',
     hfRepoId: 'LiquidAI/LFM2-2.6B-Exp-GGUF',
+    fileSizeBytes: 1921233248,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -2993,6 +3338,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-2.6B-Exp-Q6_K',
     hfFileName: 'LFM2-2.6B-Exp-Q6_K.gguf',
     hfRepoId: 'LiquidAI/LFM2-2.6B-Exp-GGUF',
+    fileSizeBytes: 2220929376,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3000,6 +3346,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-2.6B-Exp-Q8_0',
     hfFileName: 'LFM2-2.6B-Exp-Q8_0.gguf',
     hfRepoId: 'LiquidAI/LFM2-2.6B-Exp-GGUF',
+    fileSizeBytes: 2875617632,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3007,6 +3354,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-2.6B-F16',
     hfFileName: 'LFM2-2.6B-F16.gguf',
     hfRepoId: 'LiquidAI/LFM2-2.6B-GGUF',
+    fileSizeBytes: 5141459168,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3014,6 +3362,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-2.6B-Q4_0',
     hfFileName: 'LFM2-2.6B-Q4_0.gguf',
     hfRepoId: 'LiquidAI/LFM2-2.6B-GGUF',
+    fileSizeBytes: 1483108576,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3021,6 +3370,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-2.6B-Q4_K_M-hip-optimized',
     hfFileName: 'LFM2-2.6B-Q4_K_M-hip-optimized.gguf',
     hfRepoId: 'LiquidAI/LFM2-2.6B-GGUF',
+    fileSizeBytes: 1671852256,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3028,6 +3378,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-2.6B-Q4_K_M',
     hfFileName: 'LFM2-2.6B-Q4_K_M.gguf',
     hfRepoId: 'LiquidAI/LFM2-2.6B-GGUF',
+    fileSizeBytes: 1563668704,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3035,6 +3386,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-2.6B-Q5_K_M',
     hfFileName: 'LFM2-2.6B-Q5_K_M.gguf',
     hfRepoId: 'LiquidAI/LFM2-2.6B-GGUF',
+    fileSizeBytes: 1828958432,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3042,6 +3394,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-2.6B-Q6_K',
     hfFileName: 'LFM2-2.6B-Q6_K.gguf',
     hfRepoId: 'LiquidAI/LFM2-2.6B-GGUF',
+    fileSizeBytes: 2110828768,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3049,6 +3402,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-2.6B-Q8_0',
     hfFileName: 'LFM2-2.6B-Q8_0.gguf',
     hfRepoId: 'LiquidAI/LFM2-2.6B-GGUF',
+    fileSizeBytes: 2733011168,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3056,6 +3410,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-2.6B-Transcript-BF16',
     hfFileName: 'LFM2-2.6B-Transcript-BF16.gguf',
     hfRepoId: 'LiquidAI/LFM2-2.6B-Transcript-GGUF',
+    fileSizeBytes: 5141459712,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3063,6 +3418,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-2.6B-Transcript-F16',
     hfFileName: 'LFM2-2.6B-Transcript-F16.gguf',
     hfRepoId: 'LiquidAI/LFM2-2.6B-Transcript-GGUF',
+    fileSizeBytes: 5141459712,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3070,6 +3426,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-2.6B-Transcript-Q4_0',
     hfFileName: 'LFM2-2.6B-Transcript-Q4_0.gguf',
     hfRepoId: 'LiquidAI/LFM2-2.6B-Transcript-GGUF',
+    fileSizeBytes: 1483109120,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3077,6 +3434,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-2.6B-Transcript-Q4_K_M',
     hfFileName: 'LFM2-2.6B-Transcript-Q4_K_M.gguf',
     hfRepoId: 'LiquidAI/LFM2-2.6B-Transcript-GGUF',
+    fileSizeBytes: 1563669248,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3084,6 +3442,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-2.6B-Transcript-Q5_K_M',
     hfFileName: 'LFM2-2.6B-Transcript-Q5_K_M.gguf',
     hfRepoId: 'LiquidAI/LFM2-2.6B-Transcript-GGUF',
+    fileSizeBytes: 1828958976,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3091,6 +3450,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-2.6B-Transcript-Q6_K',
     hfFileName: 'LFM2-2.6B-Transcript-Q6_K.gguf',
     hfRepoId: 'LiquidAI/LFM2-2.6B-Transcript-GGUF',
+    fileSizeBytes: 2110829312,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3098,6 +3458,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-2.6B-Transcript-Q8_0',
     hfFileName: 'LFM2-2.6B-Transcript-Q8_0.gguf',
     hfRepoId: 'LiquidAI/LFM2-2.6B-Transcript-GGUF',
+    fileSizeBytes: 2733011712,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -3105,6 +3466,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-8B-A1B-F16',
     hfFileName: 'LFM2-8B-A1B-F16.gguf',
     hfRepoId: 'LiquidAI/LFM2-8B-A1B-GGUF',
+    fileSizeBytes: 16685562560,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -3112,6 +3474,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-8B-A1B-Q4_0',
     hfFileName: 'LFM2-8B-A1B-Q4_0.gguf',
     hfRepoId: 'LiquidAI/LFM2-8B-A1B-GGUF',
+    fileSizeBytes: 4733893312,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -3119,6 +3482,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-8B-A1B-Q4_K_M',
     hfFileName: 'LFM2-8B-A1B-Q4_K_M.gguf',
     hfRepoId: 'LiquidAI/LFM2-8B-A1B-GGUF',
+    fileSizeBytes: 5044779712,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -3126,6 +3490,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-8B-A1B-Q5_K_M',
     hfFileName: 'LFM2-8B-A1B-Q5_K_M.gguf',
     hfRepoId: 'LiquidAI/LFM2-8B-A1B-GGUF',
+    fileSizeBytes: 5919554240,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -3133,6 +3498,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-8B-A1B-Q6_K',
     hfFileName: 'LFM2-8B-A1B-Q6_K.gguf',
     hfRepoId: 'LiquidAI/LFM2-8B-A1B-GGUF',
+    fileSizeBytes: 6849002176,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -3140,6 +3506,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-8B-A1B-Q8_0',
     hfFileName: 'LFM2-8B-A1B-Q8_0.gguf',
     hfRepoId: 'LiquidAI/LFM2-8B-A1B-GGUF',
+    fileSizeBytes: 8868428480,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -3147,6 +3514,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-24B-A2B-BF16',
     hfFileName: 'LFM2-24B-A2B-BF16.gguf',
     hfRepoId: 'LiquidAI/LFM2-24B-A2B-GGUF',
+    fileSizeBytes: 47700397344,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -3154,6 +3522,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-24B-A2B-F16',
     hfFileName: 'LFM2-24B-A2B-F16.gguf',
     hfRepoId: 'LiquidAI/LFM2-24B-A2B-GGUF',
+    fileSizeBytes: 47700397344,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -3161,6 +3530,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-24B-A2B-Q4_0',
     hfFileName: 'LFM2-24B-A2B-Q4_0.gguf',
     hfRepoId: 'LiquidAI/LFM2-24B-A2B-GGUF',
+    fileSizeBytes: 13467405600,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -3168,6 +3538,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-24B-A2B-Q4_K_M',
     hfFileName: 'LFM2-24B-A2B-Q4_K_M.gguf',
     hfRepoId: 'LiquidAI/LFM2-24B-A2B-GGUF',
+    fileSizeBytes: 14415473952,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -3175,6 +3546,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-24B-A2B-Q5_K_M',
     hfFileName: 'LFM2-24B-A2B-Q5_K_M.gguf',
     hfRepoId: 'LiquidAI/LFM2-24B-A2B-GGUF',
+    fileSizeBytes: 16918818080,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -3182,6 +3554,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-24B-A2B-Q6_K',
     hfFileName: 'LFM2-24B-A2B-Q6_K.gguf',
     hfRepoId: 'LiquidAI/LFM2-24B-A2B-GGUF',
+    fileSizeBytes: 19578621216,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -3189,6 +3562,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-24B-A2B-Q8_0',
     hfFileName: 'LFM2-24B-A2B-Q8_0.gguf',
     hfRepoId: 'LiquidAI/LFM2-24B-A2B-GGUF',
+    fileSizeBytes: 25351965984,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3196,6 +3570,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-350M-ENJP-MT-F16',
     hfFileName: 'LFM2-350M-ENJP-MT-F16.gguf',
     hfRepoId: 'LiquidAI/LFM2-350M-ENJP-MT-GGUF',
+    fileSizeBytes: 711483168,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3203,6 +3578,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-350M-ENJP-MT-F32',
     hfFileName: 'LFM2-350M-ENJP-MT-F32.gguf',
     hfRepoId: 'LiquidAI/LFM2-350M-ENJP-MT-GGUF',
+    fileSizeBytes: 1420320544,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3210,6 +3586,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-350M-ENJP-MT-Q4_0',
     hfFileName: 'LFM2-350M-ENJP-MT-Q4_0.gguf',
     hfRepoId: 'LiquidAI/LFM2-350M-ENJP-MT-GGUF',
+    fileSizeBytes: 219307808,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3217,6 +3594,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-350M-ENJP-MT-Q4_K_M',
     hfFileName: 'LFM2-350M-ENJP-MT-Q4_K_M.gguf',
     hfRepoId: 'LiquidAI/LFM2-350M-ENJP-MT-GGUF',
+    fileSizeBytes: 229310240,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3224,6 +3602,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-350M-ENJP-MT-Q5_K_M',
     hfFileName: 'LFM2-350M-ENJP-MT-Q5_K_M.gguf',
     hfRepoId: 'LiquidAI/LFM2-350M-ENJP-MT-GGUF',
+    fileSizeBytes: 260374304,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3231,6 +3610,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-350M-ENJP-MT-Q6_K',
     hfFileName: 'LFM2-350M-ENJP-MT-Q6_K.gguf',
     hfRepoId: 'LiquidAI/LFM2-350M-ENJP-MT-GGUF',
+    fileSizeBytes: 293379872,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3238,6 +3618,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-350M-ENJP-MT-Q8_0',
     hfFileName: 'LFM2-350M-ENJP-MT-Q8_0.gguf',
     hfRepoId: 'LiquidAI/LFM2-350M-ENJP-MT-GGUF',
+    fileSizeBytes: 379215648,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3245,6 +3626,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-350M-Extract-F16',
     hfFileName: 'LFM2-350M-Extract-F16.gguf',
     hfRepoId: 'LiquidAI/LFM2-350M-Extract-GGUF',
+    fileSizeBytes: 711483008,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3252,6 +3634,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-350M-Extract-Q4_0',
     hfFileName: 'LFM2-350M-Extract-Q4_0.gguf',
     hfRepoId: 'LiquidAI/LFM2-350M-Extract-GGUF',
+    fileSizeBytes: 219307648,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3259,6 +3642,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-350M-Extract-Q4_K_M',
     hfFileName: 'LFM2-350M-Extract-Q4_K_M.gguf',
     hfRepoId: 'LiquidAI/LFM2-350M-Extract-GGUF',
+    fileSizeBytes: 229310080,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3266,6 +3650,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-350M-Extract-Q5_K_M',
     hfFileName: 'LFM2-350M-Extract-Q5_K_M.gguf',
     hfRepoId: 'LiquidAI/LFM2-350M-Extract-GGUF',
+    fileSizeBytes: 260374144,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3273,6 +3658,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-350M-Extract-Q6_K',
     hfFileName: 'LFM2-350M-Extract-Q6_K.gguf',
     hfRepoId: 'LiquidAI/LFM2-350M-Extract-GGUF',
+    fileSizeBytes: 293379712,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3280,6 +3666,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-350M-Extract-Q8_0',
     hfFileName: 'LFM2-350M-Extract-Q8_0.gguf',
     hfRepoId: 'LiquidAI/LFM2-350M-Extract-GGUF',
+    fileSizeBytes: 379215488,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3287,6 +3674,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-350M-F16',
     hfFileName: 'LFM2-350M-F16.gguf',
     hfRepoId: 'LiquidAI/LFM2-350M-GGUF',
+    fileSizeBytes: 711482304,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3294,6 +3682,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-350M-Q4_0',
     hfFileName: 'LFM2-350M-Q4_0.gguf',
     hfRepoId: 'LiquidAI/LFM2-350M-GGUF',
+    fileSizeBytes: 219306944,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3301,6 +3690,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-350M-Q4_K_M-hip-optimized',
     hfFileName: 'LFM2-350M-Q4_K_M-hip-optimized.gguf',
     hfRepoId: 'LiquidAI/LFM2-350M-GGUF',
+    fileSizeBytes: 254958528,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3308,6 +3698,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-350M-Q4_K_M',
     hfFileName: 'LFM2-350M-Q4_K_M.gguf',
     hfRepoId: 'LiquidAI/LFM2-350M-GGUF',
+    fileSizeBytes: 229309376,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3315,6 +3706,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-350M-Q5_K_M',
     hfFileName: 'LFM2-350M-Q5_K_M.gguf',
     hfRepoId: 'LiquidAI/LFM2-350M-GGUF',
+    fileSizeBytes: 260373440,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3322,6 +3714,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-350M-Q6_K',
     hfFileName: 'LFM2-350M-Q6_K.gguf',
     hfRepoId: 'LiquidAI/LFM2-350M-GGUF',
+    fileSizeBytes: 293379008,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3329,6 +3722,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-350M-Q8_0',
     hfFileName: 'LFM2-350M-Q8_0.gguf',
     hfRepoId: 'LiquidAI/LFM2-350M-GGUF',
+    fileSizeBytes: 379214784,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3336,6 +3730,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-350M-Math-F16',
     hfFileName: 'LFM2-350M-Math-F16.gguf',
     hfRepoId: 'LiquidAI/LFM2-350M-Math-GGUF',
+    fileSizeBytes: 711483104,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3343,6 +3738,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-350M-Math-Q4_0',
     hfFileName: 'LFM2-350M-Math-Q4_0.gguf',
     hfRepoId: 'LiquidAI/LFM2-350M-Math-GGUF',
+    fileSizeBytes: 219307744,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3350,6 +3746,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-350M-Math-Q4_K_M',
     hfFileName: 'LFM2-350M-Math-Q4_K_M.gguf',
     hfRepoId: 'LiquidAI/LFM2-350M-Math-GGUF',
+    fileSizeBytes: 229310176,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3357,6 +3754,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-350M-Math-Q5_K_M',
     hfFileName: 'LFM2-350M-Math-Q5_K_M.gguf',
     hfRepoId: 'LiquidAI/LFM2-350M-Math-GGUF',
+    fileSizeBytes: 260374240,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3364,6 +3762,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-350M-Math-Q6_K',
     hfFileName: 'LFM2-350M-Math-Q6_K.gguf',
     hfRepoId: 'LiquidAI/LFM2-350M-Math-GGUF',
+    fileSizeBytes: 293379808,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3371,6 +3770,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-350M-Math-Q8_0',
     hfFileName: 'LFM2-350M-Math-Q8_0.gguf',
     hfRepoId: 'LiquidAI/LFM2-350M-Math-GGUF',
+    fileSizeBytes: 379215584,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3378,6 +3778,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-350M-PII-Extract-JP-F16',
     hfFileName: 'LFM2-350M-PII-Extract-JP-F16.gguf',
     hfRepoId: 'LiquidAI/LFM2-350M-PII-Extract-JP-GGUF',
+    fileSizeBytes: 711484000,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3385,6 +3786,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-350M-PII-Extract-JP-Q4_0',
     hfFileName: 'LFM2-350M-PII-Extract-JP-Q4_0.gguf',
     hfRepoId: 'LiquidAI/LFM2-350M-PII-Extract-JP-GGUF',
+    fileSizeBytes: 219308640,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3392,6 +3794,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-350M-PII-Extract-JP-Q4_K_M',
     hfFileName: 'LFM2-350M-PII-Extract-JP-Q4_K_M.gguf',
     hfRepoId: 'LiquidAI/LFM2-350M-PII-Extract-JP-GGUF',
+    fileSizeBytes: 229311072,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3399,6 +3802,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-350M-PII-Extract-JP-Q5_K_M',
     hfFileName: 'LFM2-350M-PII-Extract-JP-Q5_K_M.gguf',
     hfRepoId: 'LiquidAI/LFM2-350M-PII-Extract-JP-GGUF',
+    fileSizeBytes: 260375136,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3406,6 +3810,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-350M-PII-Extract-JP-Q6_K',
     hfFileName: 'LFM2-350M-PII-Extract-JP-Q6_K.gguf',
     hfRepoId: 'LiquidAI/LFM2-350M-PII-Extract-JP-GGUF',
+    fileSizeBytes: 293380704,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3413,6 +3818,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-350M-PII-Extract-JP-Q8_0',
     hfFileName: 'LFM2-350M-PII-Extract-JP-Q8_0.gguf',
     hfRepoId: 'LiquidAI/LFM2-350M-PII-Extract-JP-GGUF',
+    fileSizeBytes: 379216480,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3420,6 +3826,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-700M-F16',
     hfFileName: 'LFM2-700M-F16.gguf',
     hfRepoId: 'LiquidAI/LFM2-700M-GGUF',
+    fileSizeBytes: 1487557568,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3427,6 +3834,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-700M-Q4_0',
     hfFileName: 'LFM2-700M-Q4_0.gguf',
     hfRepoId: 'LiquidAI/LFM2-700M-GGUF',
+    fileSizeBytes: 446321600,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3434,6 +3842,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-700M-Q4_K_M-hip-optimized',
     hfFileName: 'LFM2-700M-Q4_K_M-hip-optimized.gguf',
     hfRepoId: 'LiquidAI/LFM2-700M-GGUF',
+    fileSizeBytes: 513954752,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3441,6 +3850,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-700M-Q4_K_M',
     hfFileName: 'LFM2-700M-Q4_K_M.gguf',
     hfRepoId: 'LiquidAI/LFM2-700M-GGUF',
+    fileSizeBytes: 468624320,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3448,6 +3858,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-700M-Q5_K_M',
     hfFileName: 'LFM2-700M-Q5_K_M.gguf',
     hfRepoId: 'LiquidAI/LFM2-700M-GGUF',
+    fileSizeBytes: 538026944,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3455,6 +3866,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-700M-Q6_K',
     hfFileName: 'LFM2-700M-Q6_K.gguf',
     hfRepoId: 'LiquidAI/LFM2-700M-GGUF',
+    fileSizeBytes: 611767232,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3462,6 +3874,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2-700M-Q8_0',
     hfFileName: 'LFM2-700M-Q8_0.gguf',
     hfRepoId: 'LiquidAI/LFM2-700M-GGUF',
+    fileSizeBytes: 791565248,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3469,6 +3882,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2.5-1.2B-Base-BF16',
     hfFileName: 'LFM2.5-1.2B-Base-BF16.gguf',
     hfRepoId: 'LiquidAI/LFM2.5-1.2B-Base-GGUF',
+    fileSizeBytes: 2343325888,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3476,6 +3890,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2.5-1.2B-Base-F16',
     hfFileName: 'LFM2.5-1.2B-Base-F16.gguf',
     hfRepoId: 'LiquidAI/LFM2.5-1.2B-Base-GGUF',
+    fileSizeBytes: 2343325888,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3483,6 +3898,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2.5-1.2B-Base-Q4_0',
     hfFileName: 'LFM2.5-1.2B-Base-Q4_0.gguf',
     hfRepoId: 'LiquidAI/LFM2.5-1.2B-Base-GGUF',
+    fileSizeBytes: 695750848,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3490,6 +3906,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2.5-1.2B-Base-Q4_K_M',
     hfFileName: 'LFM2.5-1.2B-Base-Q4_K_M.gguf',
     hfRepoId: 'LiquidAI/LFM2.5-1.2B-Base-GGUF',
+    fileSizeBytes: 730894528,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3497,6 +3914,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2.5-1.2B-Base-Q5_K_M',
     hfFileName: 'LFM2.5-1.2B-Base-Q5_K_M.gguf',
     hfRepoId: 'LiquidAI/LFM2.5-1.2B-Base-GGUF',
+    fileSizeBytes: 843354304,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3504,6 +3922,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2.5-1.2B-Base-Q6_K',
     hfFileName: 'LFM2.5-1.2B-Base-Q6_K.gguf',
     hfRepoId: 'LiquidAI/LFM2.5-1.2B-Base-GGUF',
+    fileSizeBytes: 962842816,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3511,6 +3930,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2.5-1.2B-Base-Q8_0',
     hfFileName: 'LFM2.5-1.2B-Base-Q8_0.gguf',
     hfRepoId: 'LiquidAI/LFM2.5-1.2B-Base-GGUF',
+    fileSizeBytes: 1246253248,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3518,6 +3938,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2.5-1.2B-Instruct-BF16',
     hfFileName: 'LFM2.5-1.2B-Instruct-BF16.gguf',
     hfRepoId: 'LiquidAI/LFM2.5-1.2B-Instruct-GGUF',
+    fileSizeBytes: 2343326528,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3525,6 +3946,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2.5-1.2B-Instruct-F16',
     hfFileName: 'LFM2.5-1.2B-Instruct-F16.gguf',
     hfRepoId: 'LiquidAI/LFM2.5-1.2B-Instruct-GGUF',
+    fileSizeBytes: 2343326528,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3532,6 +3954,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2.5-1.2B-Instruct-Q4_0',
     hfFileName: 'LFM2.5-1.2B-Instruct-Q4_0.gguf',
     hfRepoId: 'LiquidAI/LFM2.5-1.2B-Instruct-GGUF',
+    fileSizeBytes: 695751488,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3539,6 +3962,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2.5-1.2B-Instruct-Q4_K_M',
     hfFileName: 'LFM2.5-1.2B-Instruct-Q4_K_M.gguf',
     hfRepoId: 'LiquidAI/LFM2.5-1.2B-Instruct-GGUF',
+    fileSizeBytes: 730895168,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3546,6 +3970,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2.5-1.2B-Instruct-Q5_K_M',
     hfFileName: 'LFM2.5-1.2B-Instruct-Q5_K_M.gguf',
     hfRepoId: 'LiquidAI/LFM2.5-1.2B-Instruct-GGUF',
+    fileSizeBytes: 843354944,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3553,6 +3978,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2.5-1.2B-Instruct-Q6_K',
     hfFileName: 'LFM2.5-1.2B-Instruct-Q6_K.gguf',
     hfRepoId: 'LiquidAI/LFM2.5-1.2B-Instruct-GGUF',
+    fileSizeBytes: 962843456,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3560,6 +3986,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2.5-1.2B-Instruct-Q8_0',
     hfFileName: 'LFM2.5-1.2B-Instruct-Q8_0.gguf',
     hfRepoId: 'LiquidAI/LFM2.5-1.2B-Instruct-GGUF',
+    fileSizeBytes: 1246253888,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3567,6 +3994,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2.5-1.2B-JP-F16',
     hfFileName: 'LFM2.5-1.2B-JP-F16.gguf',
     hfRepoId: 'LiquidAI/LFM2.5-1.2B-JP-GGUF',
+    fileSizeBytes: 2343326656,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3574,6 +4002,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2.5-1.2B-JP-Q4_0',
     hfFileName: 'LFM2.5-1.2B-JP-Q4_0.gguf',
     hfRepoId: 'LiquidAI/LFM2.5-1.2B-JP-GGUF',
+    fileSizeBytes: 695751616,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3581,6 +4010,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2.5-1.2B-JP-Q4_K_M',
     hfFileName: 'LFM2.5-1.2B-JP-Q4_K_M.gguf',
     hfRepoId: 'LiquidAI/LFM2.5-1.2B-JP-GGUF',
+    fileSizeBytes: 730895296,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3588,6 +4018,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2.5-1.2B-JP-Q5_K_M',
     hfFileName: 'LFM2.5-1.2B-JP-Q5_K_M.gguf',
     hfRepoId: 'LiquidAI/LFM2.5-1.2B-JP-GGUF',
+    fileSizeBytes: 843355072,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3595,6 +4026,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2.5-1.2B-JP-Q6_K',
     hfFileName: 'LFM2.5-1.2B-JP-Q6_K.gguf',
     hfRepoId: 'LiquidAI/LFM2.5-1.2B-JP-GGUF',
+    fileSizeBytes: 962843584,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3602,6 +4034,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2.5-1.2B-JP-Q8_0',
     hfFileName: 'LFM2.5-1.2B-JP-Q8_0.gguf',
     hfRepoId: 'LiquidAI/LFM2.5-1.2B-JP-GGUF',
+    fileSizeBytes: 1246254016,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3609,6 +4042,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2.5-1.2B-Thinking-BF16',
     hfFileName: 'LFM2.5-1.2B-Thinking-BF16.gguf',
     hfRepoId: 'LiquidAI/LFM2.5-1.2B-Thinking-GGUF',
+    fileSizeBytes: 2343326720,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3616,6 +4050,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2.5-1.2B-Thinking-F16',
     hfFileName: 'LFM2.5-1.2B-Thinking-F16.gguf',
     hfRepoId: 'LiquidAI/LFM2.5-1.2B-Thinking-GGUF',
+    fileSizeBytes: 2343326720,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3623,6 +4058,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2.5-1.2B-Thinking-Q4_0',
     hfFileName: 'LFM2.5-1.2B-Thinking-Q4_0.gguf',
     hfRepoId: 'LiquidAI/LFM2.5-1.2B-Thinking-GGUF',
+    fileSizeBytes: 695751680,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3630,6 +4066,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2.5-1.2B-Thinking-Q4_K_M',
     hfFileName: 'LFM2.5-1.2B-Thinking-Q4_K_M.gguf',
     hfRepoId: 'LiquidAI/LFM2.5-1.2B-Thinking-GGUF',
+    fileSizeBytes: 730895360,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3637,6 +4074,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2.5-1.2B-Thinking-Q5_K_M',
     hfFileName: 'LFM2.5-1.2B-Thinking-Q5_K_M.gguf',
     hfRepoId: 'LiquidAI/LFM2.5-1.2B-Thinking-GGUF',
+    fileSizeBytes: 843355136,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3644,6 +4082,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2.5-1.2B-Thinking-Q6_K',
     hfFileName: 'LFM2.5-1.2B-Thinking-Q6_K.gguf',
     hfRepoId: 'LiquidAI/LFM2.5-1.2B-Thinking-GGUF',
+    fileSizeBytes: 962843648,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3651,6 +4090,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2.5-1.2B-Thinking-Q8_0',
     hfFileName: 'LFM2.5-1.2B-Thinking-Q8_0.gguf',
     hfRepoId: 'LiquidAI/LFM2.5-1.2B-Thinking-GGUF',
+    fileSizeBytes: 1246254080,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3658,6 +4098,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2.5-350M-BF16',
     hfFileName: 'LFM2.5-350M-BF16.gguf',
     hfRepoId: 'LiquidAI/LFM2.5-350M-GGUF',
+    fileSizeBytes: 711485152,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3665,6 +4106,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2.5-350M-F16',
     hfFileName: 'LFM2.5-350M-F16.gguf',
     hfRepoId: 'LiquidAI/LFM2.5-350M-GGUF',
+    fileSizeBytes: 711485152,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3672,6 +4114,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2.5-350M-Q4_0',
     hfFileName: 'LFM2.5-350M-Q4_0.gguf',
     hfRepoId: 'LiquidAI/LFM2.5-350M-GGUF',
+    fileSizeBytes: 219309792,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3679,6 +4122,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2.5-350M-Q4_K_M',
     hfFileName: 'LFM2.5-350M-Q4_K_M.gguf',
     hfRepoId: 'LiquidAI/LFM2.5-350M-GGUF',
+    fileSizeBytes: 229312224,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3686,6 +4130,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2.5-350M-Q5_K_M',
     hfFileName: 'LFM2.5-350M-Q5_K_M.gguf',
     hfRepoId: 'LiquidAI/LFM2.5-350M-GGUF',
+    fileSizeBytes: 260376288,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3693,6 +4138,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2.5-350M-Q6_K',
     hfFileName: 'LFM2.5-350M-Q6_K.gguf',
     hfRepoId: 'LiquidAI/LFM2.5-350M-GGUF',
+    fileSizeBytes: 293381856,
   }),
   featuredGguf({
     ...BREADTH_GOALS,
@@ -3700,6 +4146,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'LFM2.5-350M-Q8_0',
     hfFileName: 'LFM2.5-350M-Q8_0.gguf',
     hfRepoId: 'LiquidAI/LFM2.5-350M-GGUF',
+    fileSizeBytes: 379217632,
   }),
 
   // -----------------------------------------------------------------------------
@@ -3711,6 +4158,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'NVIDIA-Nemotron-3-Nano-4B-BF16',
     hfFileName: 'NVIDIA-Nemotron-3-Nano-4B-BF16.gguf',
     hfRepoId: 'unsloth/NVIDIA-Nemotron-3-Nano-4B-GGUF',
+    fileSizeBytes: 7957647392,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -3718,6 +4166,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'NVIDIA-Nemotron-3-Nano-4B-IQ4_NL',
     hfFileName: 'NVIDIA-Nemotron-3-Nano-4B-IQ4_NL.gguf',
     hfRepoId: 'unsloth/NVIDIA-Nemotron-3-Nano-4B-GGUF',
+    fileSizeBytes: 2567685280,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -3725,6 +4174,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'NVIDIA-Nemotron-3-Nano-4B-IQ4_XS',
     hfFileName: 'NVIDIA-Nemotron-3-Nano-4B-IQ4_XS.gguf',
     hfRepoId: 'unsloth/NVIDIA-Nemotron-3-Nano-4B-GGUF',
+    fileSizeBytes: 2544779936,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -3732,6 +4182,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'NVIDIA-Nemotron-3-Nano-4B-Q3_K_M',
     hfFileName: 'NVIDIA-Nemotron-3-Nano-4B-Q3_K_M.gguf',
     hfRepoId: 'unsloth/NVIDIA-Nemotron-3-Nano-4B-GGUF',
+    fileSizeBytes: 2464924832,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -3739,6 +4190,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'NVIDIA-Nemotron-3-Nano-4B-Q3_K_S',
     hfFileName: 'NVIDIA-Nemotron-3-Nano-4B-Q3_K_S.gguf',
     hfRepoId: 'unsloth/NVIDIA-Nemotron-3-Nano-4B-GGUF',
+    fileSizeBytes: 2355735584,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -3746,6 +4198,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'NVIDIA-Nemotron-3-Nano-4B-Q4_0',
     hfFileName: 'NVIDIA-Nemotron-3-Nano-4B-Q4_0.gguf',
     hfRepoId: 'unsloth/NVIDIA-Nemotron-3-Nano-4B-GGUF',
+    fileSizeBytes: 2528598176,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -3753,6 +4206,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'NVIDIA-Nemotron-3-Nano-4B-Q4_1',
     hfFileName: 'NVIDIA-Nemotron-3-Nano-4B-Q4_1.gguf',
     hfRepoId: 'unsloth/NVIDIA-Nemotron-3-Nano-4B-GGUF',
+    fileSizeBytes: 2707268640,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -3760,6 +4214,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'NVIDIA-Nemotron-3-Nano-4B-Q4_K_M',
     hfFileName: 'NVIDIA-Nemotron-3-Nano-4B-Q4_K_M.gguf',
     hfRepoId: 'unsloth/NVIDIA-Nemotron-3-Nano-4B-GGUF',
+    fileSizeBytes: 2900295712,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -3767,6 +4222,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'NVIDIA-Nemotron-3-Nano-4B-Q4_K_S',
     hfFileName: 'NVIDIA-Nemotron-3-Nano-4B-Q4_K_S.gguf',
     hfRepoId: 'unsloth/NVIDIA-Nemotron-3-Nano-4B-GGUF',
+    fileSizeBytes: 2831999904,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -3774,6 +4230,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'NVIDIA-Nemotron-3-Nano-4B-Q5_K_M',
     hfFileName: 'NVIDIA-Nemotron-3-Nano-4B-Q5_K_M.gguf',
     hfRepoId: 'unsloth/NVIDIA-Nemotron-3-Nano-4B-GGUF',
+    fileSizeBytes: 3159586464,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -3781,6 +4238,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'NVIDIA-Nemotron-3-Nano-4B-Q5_K_S',
     hfFileName: 'NVIDIA-Nemotron-3-Nano-4B-Q5_K_S.gguf',
     hfRepoId: 'unsloth/NVIDIA-Nemotron-3-Nano-4B-GGUF',
+    fileSizeBytes: 3110558240,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -3788,6 +4246,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'NVIDIA-Nemotron-3-Nano-4B-Q6_K',
     hfFileName: 'NVIDIA-Nemotron-3-Nano-4B-Q6_K.gguf',
     hfRepoId: 'unsloth/NVIDIA-Nemotron-3-Nano-4B-GGUF',
+    fileSizeBytes: 4056162592,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -3795,6 +4254,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'NVIDIA-Nemotron-3-Nano-4B-Q8_0',
     hfFileName: 'NVIDIA-Nemotron-3-Nano-4B-Q8_0.gguf',
     hfRepoId: 'unsloth/NVIDIA-Nemotron-3-Nano-4B-GGUF',
+    fileSizeBytes: 4233679008,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -3802,6 +4262,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'NVIDIA-Nemotron-3-Nano-4B-UD-IQ2_M',
     hfFileName: 'NVIDIA-Nemotron-3-Nano-4B-UD-IQ2_M.gguf',
     hfRepoId: 'unsloth/NVIDIA-Nemotron-3-Nano-4B-GGUF',
+    fileSizeBytes: 2298861088,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -3809,6 +4270,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'NVIDIA-Nemotron-3-Nano-4B-UD-IQ2_XXS',
     hfFileName: 'NVIDIA-Nemotron-3-Nano-4B-UD-IQ2_XXS.gguf',
     hfRepoId: 'unsloth/NVIDIA-Nemotron-3-Nano-4B-GGUF',
+    fileSizeBytes: 2182496672,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -3816,6 +4278,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'NVIDIA-Nemotron-3-Nano-4B-UD-IQ3_XXS',
     hfFileName: 'NVIDIA-Nemotron-3-Nano-4B-UD-IQ3_XXS.gguf',
     hfRepoId: 'unsloth/NVIDIA-Nemotron-3-Nano-4B-GGUF',
+    fileSizeBytes: 2389391136,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -3823,6 +4286,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'NVIDIA-Nemotron-3-Nano-4B-UD-Q2_K_XL',
     hfFileName: 'NVIDIA-Nemotron-3-Nano-4B-UD-Q2_K_XL.gguf',
     hfRepoId: 'unsloth/NVIDIA-Nemotron-3-Nano-4B-GGUF',
+    fileSizeBytes: 2504018208,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -3830,6 +4294,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'NVIDIA-Nemotron-3-Nano-4B-UD-Q3_K_XL',
     hfFileName: 'NVIDIA-Nemotron-3-Nano-4B-UD-Q3_K_XL.gguf',
     hfRepoId: 'unsloth/NVIDIA-Nemotron-3-Nano-4B-GGUF',
+    fileSizeBytes: 2682625952,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -3837,6 +4302,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'NVIDIA-Nemotron-3-Nano-4B-UD-Q4_K_XL',
     hfFileName: 'NVIDIA-Nemotron-3-Nano-4B-UD-Q4_K_XL.gguf',
     hfRepoId: 'unsloth/NVIDIA-Nemotron-3-Nano-4B-GGUF',
+    fileSizeBytes: 3133118624,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -3844,6 +4310,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'NVIDIA-Nemotron-3-Nano-4B-UD-Q5_K_XL',
     hfFileName: 'NVIDIA-Nemotron-3-Nano-4B-UD-Q5_K_XL.gguf',
     hfRepoId: 'unsloth/NVIDIA-Nemotron-3-Nano-4B-GGUF',
+    fileSizeBytes: 3311437856,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -3851,6 +4318,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'NVIDIA-Nemotron-3-Nano-4B-UD-Q6_K_XL',
     hfFileName: 'NVIDIA-Nemotron-3-Nano-4B-UD-Q6_K_XL.gguf',
     hfRepoId: 'unsloth/NVIDIA-Nemotron-3-Nano-4B-GGUF',
+    fileSizeBytes: 4558907296,
   }),
   featuredGguf({
     ...FLAGSHIP_GOALS,
@@ -3858,6 +4326,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'NVIDIA-Nemotron-3-Nano-4B-UD-Q8_K_XL',
     hfFileName: 'NVIDIA-Nemotron-3-Nano-4B-UD-Q8_K_XL.gguf',
     hfRepoId: 'unsloth/NVIDIA-Nemotron-3-Nano-4B-GGUF',
+    fileSizeBytes: 5626063008,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -3865,6 +4334,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Nemotron-3-Nano-30B-A3B-IQ4_NL',
     hfFileName: 'Nemotron-3-Nano-30B-A3B-IQ4_NL.gguf',
     hfRepoId: 'unsloth/Nemotron-3-Nano-30B-A3B-GGUF',
+    fileSizeBytes: 18178933536,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -3872,6 +4342,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Nemotron-3-Nano-30B-A3B-IQ4_XS',
     hfFileName: 'Nemotron-3-Nano-30B-A3B-IQ4_XS.gguf',
     hfRepoId: 'unsloth/Nemotron-3-Nano-30B-A3B-GGUF',
+    fileSizeBytes: 18168955680,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -3879,6 +4350,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Nemotron-3-Nano-30B-A3B-Q2_K_L',
     hfFileName: 'Nemotron-3-Nano-30B-A3B-Q2_K_L.gguf',
     hfRepoId: 'unsloth/Nemotron-3-Nano-30B-A3B-GGUF',
+    fileSizeBytes: 18096465696,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -3886,6 +4358,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Nemotron-3-Nano-30B-A3B-Q3_K_M',
     hfFileName: 'Nemotron-3-Nano-30B-A3B-Q3_K_M.gguf',
     hfRepoId: 'unsloth/Nemotron-3-Nano-30B-A3B-GGUF',
+    fileSizeBytes: 20007397152,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -3893,6 +4366,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Nemotron-3-Nano-30B-A3B-Q3_K_S',
     hfFileName: 'Nemotron-3-Nano-30B-A3B-Q3_K_S.gguf',
     hfRepoId: 'unsloth/Nemotron-3-Nano-30B-A3B-GGUF',
+    fileSizeBytes: 18122184480,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -3900,6 +4374,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Nemotron-3-Nano-30B-A3B-Q4_0',
     hfFileName: 'Nemotron-3-Nano-30B-A3B-Q4_0.gguf',
     hfRepoId: 'unsloth/Nemotron-3-Nano-30B-A3B-GGUF',
+    fileSizeBytes: 18214716192,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -3907,6 +4382,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Nemotron-3-Nano-30B-A3B-Q4_1',
     hfFileName: 'Nemotron-3-Nano-30B-A3B-Q4_1.gguf',
     hfRepoId: 'unsloth/Nemotron-3-Nano-30B-A3B-GGUF',
+    fileSizeBytes: 20057254176,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -3914,6 +4390,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Nemotron-3-Nano-30B-A3B-Q4_K_M',
     hfFileName: 'Nemotron-3-Nano-30B-A3B-Q4_K_M.gguf',
     hfRepoId: 'unsloth/Nemotron-3-Nano-30B-A3B-GGUF',
+    fileSizeBytes: 24574373664,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -3921,6 +4398,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Nemotron-3-Nano-30B-A3B-Q4_K_S',
     hfFileName: 'Nemotron-3-Nano-30B-A3B-Q4_K_S.gguf',
     hfRepoId: 'unsloth/Nemotron-3-Nano-30B-A3B-GGUF',
+    fileSizeBytes: 22019698464,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -3928,6 +4406,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Nemotron-3-Nano-30B-A3B-Q5_K_M',
     hfFileName: 'Nemotron-3-Nano-30B-A3B-Q5_K_M.gguf',
     hfRepoId: 'unsloth/Nemotron-3-Nano-30B-A3B-GGUF',
+    fileSizeBytes: 26149294368,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -3935,6 +4414,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Nemotron-3-Nano-30B-A3B-Q5_K_S',
     hfFileName: 'Nemotron-3-Nano-30B-A3B-Q5_K_S.gguf',
     hfRepoId: 'unsloth/Nemotron-3-Nano-30B-A3B-GGUF',
+    fileSizeBytes: 23953735968,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -3942,6 +4422,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Nemotron-3-Nano-30B-A3B-Q6_K',
     hfFileName: 'Nemotron-3-Nano-30B-A3B-Q6_K.gguf',
     hfRepoId: 'unsloth/Nemotron-3-Nano-30B-A3B-GGUF',
+    fileSizeBytes: 33508167456,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -3949,6 +4430,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Nemotron-3-Nano-30B-A3B-Q8_0',
     hfFileName: 'Nemotron-3-Nano-30B-A3B-Q8_0.gguf',
     hfRepoId: 'unsloth/Nemotron-3-Nano-30B-A3B-GGUF',
+    fileSizeBytes: 33585495840,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -3956,6 +4438,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Nemotron-3-Nano-30B-A3B-UD-IQ2_M',
     hfFileName: 'Nemotron-3-Nano-30B-A3B-UD-IQ2_M.gguf',
     hfRepoId: 'unsloth/Nemotron-3-Nano-30B-A3B-GGUF',
+    fileSizeBytes: 18124162848,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -3963,6 +4446,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Nemotron-3-Nano-30B-A3B-UD-IQ2_XXS',
     hfFileName: 'Nemotron-3-Nano-30B-A3B-UD-IQ2_XXS.gguf',
     hfRepoId: 'unsloth/Nemotron-3-Nano-30B-A3B-GGUF',
+    fileSizeBytes: 18113840928,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -3970,6 +4454,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Nemotron-3-Nano-30B-A3B-UD-IQ3_XXS',
     hfFileName: 'Nemotron-3-Nano-30B-A3B-UD-IQ3_XXS.gguf',
     hfRepoId: 'unsloth/Nemotron-3-Nano-30B-A3B-GGUF',
+    fileSizeBytes: 18145387296,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -3977,6 +4462,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Nemotron-3-Nano-30B-A3B-UD-Q2_K_XL',
     hfFileName: 'Nemotron-3-Nano-30B-A3B-UD-Q2_K_XL.gguf',
     hfRepoId: 'unsloth/Nemotron-3-Nano-30B-A3B-GGUF',
+    fileSizeBytes: 19919660832,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -3984,6 +4470,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Nemotron-3-Nano-30B-A3B-UD-Q3_K_XL',
     hfFileName: 'Nemotron-3-Nano-30B-A3B-UD-Q3_K_XL.gguf',
     hfRepoId: 'unsloth/Nemotron-3-Nano-30B-A3B-GGUF',
+    fileSizeBytes: 19939207968,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -3991,6 +4478,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Nemotron-3-Nano-30B-A3B-UD-Q4_K_XL',
     hfFileName: 'Nemotron-3-Nano-30B-A3B-UD-Q4_K_XL.gguf',
     hfRepoId: 'unsloth/Nemotron-3-Nano-30B-A3B-GGUF',
+    fileSizeBytes: 22833947424,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -3998,6 +4486,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Nemotron-3-Nano-30B-A3B-UD-Q5_K_XL',
     hfFileName: 'Nemotron-3-Nano-30B-A3B-UD-Q5_K_XL.gguf',
     hfRepoId: 'unsloth/Nemotron-3-Nano-30B-A3B-GGUF',
+    fileSizeBytes: 27506196768,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -4005,6 +4494,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Nemotron-3-Nano-30B-A3B-UD-Q6_K_XL',
     hfFileName: 'Nemotron-3-Nano-30B-A3B-UD-Q6_K_XL.gguf',
     hfRepoId: 'unsloth/Nemotron-3-Nano-30B-A3B-GGUF',
+    fileSizeBytes: 33508167456,
   }),
   featuredGguf({
     ...FRONTIER_GOALS,
@@ -4012,6 +4502,7 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     displayName: 'Nemotron-3-Nano-30B-A3B-UD-Q8_K_XL',
     hfFileName: 'Nemotron-3-Nano-30B-A3B-UD-Q8_K_XL.gguf',
     hfRepoId: 'unsloth/Nemotron-3-Nano-30B-A3B-GGUF',
+    fileSizeBytes: 40447959840,
   }),
 
   // -----------------------------------------------------------------------------
@@ -4022,180 +4513,147 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'GLM-5.1',
     hfRepoId: 'mlx-community/GLM-5.1',
-  }),
-  featuredMlx({
-    ...EXTREME_MODEL_GOALS,
-    deviceTypes: MLX_DEVICE_TYPES,
-    displayName: 'GLM-5.1-4bit',
-    hfRepoId: 'mlx-community/GLM-5.1-4bit',
-  }),
-  featuredMlx({
-    ...EXTREME_MODEL_GOALS,
-    deviceTypes: MLX_DEVICE_TYPES,
-    displayName: 'GLM-5.1-5bit',
-    hfRepoId: 'mlx-community/GLM-5.1-5bit',
-  }),
-  featuredMlx({
-    ...EXTREME_MODEL_GOALS,
-    deviceTypes: MLX_DEVICE_TYPES,
-    displayName: 'GLM-5.1-6bit',
-    hfRepoId: 'mlx-community/GLM-5.1-6bit',
-  }),
-  featuredMlx({
-    ...EXTREME_MODEL_GOALS,
-    deviceTypes: MLX_DEVICE_TYPES,
-    displayName: 'GLM-5.1-8bit',
-    hfRepoId: 'mlx-community/GLM-5.1-8bit',
-  }),
-  featuredMlx({
-    ...EXTREME_MODEL_GOALS,
-    deviceTypes: MLX_DEVICE_TYPES,
-    displayName: 'GLM-5.1-8bit-MXFP8',
-    hfRepoId: 'mlx-community/GLM-5.1-8bit-MXFP8',
-  }),
-  featuredMlx({
-    ...EXTREME_MODEL_GOALS,
-    deviceTypes: MLX_DEVICE_TYPES,
-    displayName: 'GLM-5.1-bf16',
-    hfRepoId: 'mlx-community/GLM-5.1-bf16',
+    fileSizeBytes: 1487822698926,
   }),
   featuredMlx({
     ...EXTREME_MODEL_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'GLM-5.1-DQ4plus-q8',
     hfRepoId: 'mlx-community/GLM-5.1-DQ4plus-q8',
-  }),
-  featuredMlx({
-    ...EXTREME_MODEL_GOALS,
-    deviceTypes: MLX_DEVICE_TYPES,
-    displayName: 'GLM-5.1-mxfp4',
-    hfRepoId: 'mlx-community/GLM-5.1-mxfp4',
+    fileSizeBytes: 465174158454,
   }),
   featuredMlx({
     ...EXTREME_MODEL_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'GLM-5.1-MXFP4-Q8',
     hfRepoId: 'mlx-community/GLM-5.1-MXFP4-Q8',
-  }),
-  featuredMlx({
-    ...EXTREME_MODEL_GOALS,
-    deviceTypes: MLX_DEVICE_TYPES,
-    displayName: 'GLM-5.1-mxfp8',
-    hfRepoId: 'mlx-community/GLM-5.1-mxfp8',
-  }),
-  featuredMlx({
-    ...EXTREME_MODEL_GOALS,
-    deviceTypes: MLX_DEVICE_TYPES,
-    displayName: 'GLM-5.1-nvfp4',
-    hfRepoId: 'mlx-community/GLM-5.1-nvfp4',
+    fileSizeBytes: 405480796753,
   }),
   featuredMlx({
     ...EXTREME_MODEL_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Kimi-K2-Instruct-4bit',
     hfRepoId: 'mlx-community/Kimi-K2-Instruct-4bit',
+    fileSizeBytes: 577593852668,
   }),
   featuredMlx({
     ...EXTREME_MODEL_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Kimi-K2-Instruct-0905-mlx-3bit',
     hfRepoId: 'mlx-community/Kimi-K2-Instruct-0905-mlx-3bit',
+    fileSizeBytes: 449313595964,
   }),
   featuredMlx({
     ...EXTREME_MODEL_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Kimi-K2-Instruct-0905-mlx-DQ3_K_M',
     hfRepoId: 'mlx-community/Kimi-K2-Instruct-0905-mlx-DQ3_K_M',
+    fileSizeBytes: 468407255534,
   }),
   featuredMlx({
     ...EXTREME_MODEL_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Kimi-K2-Thinking',
     hfRepoId: 'mlx-community/Kimi-K2-Thinking',
+    fileSizeBytes: 657623404311,
   }),
   featuredMlx({
     ...EXTREME_MODEL_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Kimi-K2-Thinking-3bit',
     hfRepoId: 'mlx-community/Kimi-K2-Thinking-3bit',
+    fileSizeBytes: 449313595964,
   }),
   featuredMlx({
     ...EXTREME_MODEL_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Kimi-K2-Thinking-4bit',
     hfRepoId: 'mlx-community/Kimi-K2-Thinking-4bit',
+    fileSizeBytes: 1235217256979,
   }),
   featuredMlx({
     ...EXTREME_MODEL_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Kimi-K2.5',
     hfRepoId: 'mlx-community/Kimi-K2.5',
+    fileSizeBytes: 657623425412,
   }),
   featuredMlx({
     ...EXTREME_MODEL_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Kimi-K2.5-3bit',
     hfRepoId: 'mlx-community/Kimi-K2.5-3bit',
+    fileSizeBytes: 449313656407,
   }),
   featuredMlx({
     ...EXTREME_MODEL_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Kimi-K2.5-mlx-DQ3_K_M-q8',
     hfRepoId: 'mlx-community/Kimi-K2.5-mlx-DQ3_K_M-q8',
+    fileSizeBytes: 470629035512,
   }),
   featuredMlx({
     ...EXTREME_MODEL_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'MiniMax-M2.7',
     hfRepoId: 'mlx-community/MiniMax-M2.7',
+    fileSizeBytes: 457477180680,
   }),
   featuredMlx({
     ...EXTREME_MODEL_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'MiniMax-M2.7-3bit',
     hfRepoId: 'mlx-community/MiniMax-M2.7-3bit',
+    fileSizeBytes: 100086867616,
   }),
   featuredMlx({
     ...EXTREME_MODEL_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'MiniMax-M2.7-4bit',
     hfRepoId: 'mlx-community/MiniMax-M2.7-4bit',
+    fileSizeBytes: 128666887980,
   }),
   featuredMlx({
     ...EXTREME_MODEL_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'MiniMax-M2.7-4bit-mxfp4',
     hfRepoId: 'mlx-community/MiniMax-M2.7-4bit-mxfp4',
+    fileSizeBytes: 121521827137,
   }),
   featuredMlx({
     ...EXTREME_MODEL_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'MiniMax-M2.7-5bit',
     hfRepoId: 'mlx-community/MiniMax-M2.7-5bit',
+    fileSizeBytes: 157246908914,
   }),
   featuredMlx({
     ...EXTREME_MODEL_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'MiniMax-M2.7-6bit',
     hfRepoId: 'mlx-community/MiniMax-M2.7-6bit',
+    fileSizeBytes: 185826928562,
   }),
   featuredMlx({
     ...EXTREME_MODEL_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'MiniMax-M2.7-8bit',
     hfRepoId: 'mlx-community/MiniMax-M2.7-8bit',
+    fileSizeBytes: 242986969522,
   }),
   featuredMlx({
     ...EXTREME_MODEL_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'MiniMax-M2.7-8bit-gs32',
     hfRepoId: 'mlx-community/MiniMax-M2.7-8bit-gs32',
+    fileSizeBytes: 257276980418,
   }),
   featuredMlx({
     ...EXTREME_MODEL_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'MiniMax-M2.7-nvfp4',
     hfRepoId: 'mlx-community/MiniMax-M2.7-nvfp4',
+    fileSizeBytes: 128666832687,
   }),
 
   // -----------------------------------------------------------------------------
@@ -4206,11 +4664,13 @@ export const FEATURED_WISHLIST = defineFeaturedWishlist([
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Llama 3.2 3B Instruct (4-bit)',
     hfRepoId: 'mlx-community/Llama-3.2-3B-Instruct-4bit',
+    fileSizeBytes: 1807496278,
   }),
   featuredMlx({
     ...FRONTIER_GOALS,
     deviceTypes: MLX_DEVICE_TYPES,
     displayName: 'Meta Llama 3.1 8B Instruct (4-bit)',
     hfRepoId: 'mlx-community/Meta-Llama-3.1-8B-Instruct-4bit',
+    fileSizeBytes: 4517488999,
   }),
 ]);

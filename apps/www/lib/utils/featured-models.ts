@@ -355,6 +355,16 @@ export async function getFeaturedModels(query: FeaturedModelsQuery = {}): Promis
   const memoryBudgetBytes = getFeaturedMemoryBudgetBytes(query, deviceTarget);
   const fileSizes = new Map<string, number>();
 
+  for (const entry of runtimeWishlist) {
+    if (
+      entry.fileSizeBytes != null &&
+      Number.isSafeInteger(entry.fileSizeBytes) &&
+      entry.fileSizeBytes > 0
+    ) {
+      fileSizes.set(entry.modelRef, entry.fileSizeBytes);
+    }
+  }
+
   for (const row of await getFeaturedModelSizeRows(runtimeWishlist)) {
     if (!row.modelRef || row.fileSizeBytes == null || row.fileSizeBytes <= 0) continue;
 
