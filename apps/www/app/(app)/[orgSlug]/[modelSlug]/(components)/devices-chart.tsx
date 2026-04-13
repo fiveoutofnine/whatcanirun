@@ -91,10 +91,22 @@ const ModelDevicesChartChart: React.FC<ModelDevicesChartProps> = ({ data, defaul
     () =>
       data.filter((d) => {
         if (d.avgDecodeTps <= 0 || d.avgPrefillTps <= 0) return false;
-        if (selectedQuants) return selectedQuants.has(`${d.format}:${d.quant}`);
+        if (selectedQuants) return selectedQuants.has(getQuantOptionKey(d));
         return true;
       }),
     [data, selectedQuants],
+  );
+
+  const shortcutQuantKeys = useMemo(
+    () => ({
+      gguf: quantOptions.filter((o) => o.format === 'gguf').map(getQuantOptionKey),
+      mlx: quantOptions.filter((o) => o.format === 'mlx').map(getQuantOptionKey),
+      fourBit: quantOptions.filter((o) => matchesQuantBitWidth(o.quant, 4)).map(getQuantOptionKey),
+      eightBit: quantOptions
+        .filter((o) => matchesQuantBitWidth(o.quant, 8))
+        .map(getQuantOptionKey),
+    }),
+    [quantOptions],
   );
 
   // Highlight highest decode (a) and prefill (b) data points.
@@ -196,18 +208,12 @@ const ModelDevicesChartChart: React.FC<ModelDevicesChartProps> = ({ data, defaul
                 >
                   Select all
                 </Dropdown.Item>
-                {quantOptions.some((o) => o.format === 'gguf') ? (
+                {shortcutQuantKeys.gguf.length > 0 ? (
                   <Dropdown.Item
                     icon={<ChevronRight />}
                     onSelect={(e) => {
                       e.preventDefault();
-                      setSelectedQuants(
-                        new Set(
-                          quantOptions
-                            .filter((o) => o.format === 'gguf')
-                            .map((o) => `${o.format}:${o.quant}`),
-                        ),
-                      );
+                      setSelectedQuants(new Set(shortcutQuantKeys.gguf));
                     }}
                   >
                     <span className="flex items-center gap-1.5">
@@ -215,18 +221,12 @@ const ModelDevicesChartChart: React.FC<ModelDevicesChartProps> = ({ data, defaul
                     </span>
                   </Dropdown.Item>
                 ) : null}
-                {quantOptions.some((o) => o.format === 'mlx') ? (
+                {shortcutQuantKeys.mlx.length > 0 ? (
                   <Dropdown.Item
                     icon={<ChevronRight />}
                     onSelect={(e) => {
                       e.preventDefault();
-                      setSelectedQuants(
-                        new Set(
-                          quantOptions
-                            .filter((o) => o.format === 'mlx')
-                            .map((o) => `${o.format}:${o.quant}`),
-                        ),
-                      );
+                      setSelectedQuants(new Set(shortcutQuantKeys.mlx));
                     }}
                   >
                     <span className="flex items-center gap-1.5">
@@ -234,11 +234,33 @@ const ModelDevicesChartChart: React.FC<ModelDevicesChartProps> = ({ data, defaul
                     </span>
                   </Dropdown.Item>
                 ) : null}
+                {shortcutQuantKeys.fourBit.length > 0 ? (
+                  <Dropdown.Item
+                    icon={<ChevronRight />}
+                    onSelect={(e) => {
+                      e.preventDefault();
+                      setSelectedQuants(new Set(shortcutQuantKeys.fourBit));
+                    }}
+                  >
+                    Select 4-bit quants only
+                  </Dropdown.Item>
+                ) : null}
+                {shortcutQuantKeys.eightBit.length > 0 ? (
+                  <Dropdown.Item
+                    icon={<ChevronRight />}
+                    onSelect={(e) => {
+                      e.preventDefault();
+                      setSelectedQuants(new Set(shortcutQuantKeys.eightBit));
+                    }}
+                  >
+                    Select 8-bit quants only
+                  </Dropdown.Item>
+                ) : null}
               </Dropdown.Group>
               <Dropdown.Separator />
               <Dropdown.Group>
                 {quantOptions.map((opt) => {
-                  const key = `${opt.format}:${opt.quant}`;
+                  const key = getQuantOptionKey(opt);
                   const checked = selectedQuants ? selectedQuants.has(key) : true;
                   const FormatLogo = FORMAT_LOGO[opt.format];
 
@@ -250,7 +272,7 @@ const ModelDevicesChartChart: React.FC<ModelDevicesChartProps> = ({ data, defaul
                         setSelectedQuants((prev) => {
                           if (!prev) {
                             // First deselection: start with all selected, then remove this one.
-                            const all = new Set(quantOptions.map((o) => `${o.format}:${o.quant}`));
+                            const all = new Set(quantOptions.map(getQuantOptionKey));
                             all.delete(key);
                             return all.size === 0 ? null : all;
                           }
@@ -574,10 +596,161 @@ function getDataPointKey(d: ModelDevicesChartValue) {
   return `${d.deviceChipId}:${d.format}:${d.quant}`;
 }
 
+function getQuantOptionKey(d: Pick<ModelDevicesChartValue, 'format' | 'quant'>) {
+  return `${d.format}:${d.quant}`;
+}
+
 const FORMAT_LOGO: Record<string, React.FC<{ className?: string; size?: number }>> = {
   gguf: LogoImg.Ggml,
   mlx: LogoImg.Mlx,
 };
+
+type QuantBitWidth = 4 | 8;
+
+// Keep these filters explicit: mixed or brand-only labels such as APEX-Compact
+// should not be guessed into the 4-bit/8-bit buckets unless the quant name says so.
+const QUANT_BIT_WIDTH_EXACT_ALIASES: Record<QuantBitWidth, Set<string>> = {
+  4: new Set([
+    '4bit',
+    '4-bit',
+    'af4',
+    'awq',
+    'awq-4bit',
+    'bitsandbytes-4bit',
+    'bitsandbytes_4bit',
+    'bnb-4bit',
+    'bnb_4bit',
+    'exl2-4bit',
+    'fp4',
+    'gptq',
+    'gptq-4bit',
+    'hqq-4bit',
+    'hqq4',
+    'int4',
+    'iq4_0',
+    'iq4_1',
+    'iq4_m',
+    'iq4_nl',
+    'iq4_s',
+    'iq4_xs',
+    'iq4_xxs',
+    'mxfp4',
+    'nf4',
+    'nvfp4',
+    'optiq-4bit',
+    'q4_0',
+    'q4_1',
+    'q4_2',
+    'q4_3',
+    'q4_k',
+    'q4_k_l',
+    'q4_k_m',
+    'q4_k_s',
+    'q4_k_xl',
+    'q4_m',
+    'q4_s',
+    'q4f16',
+    'q4f16_0',
+    'q4f16_1',
+    'quanto-fp4',
+    'quanto-int4',
+    'spqr-4bit',
+    'uint4',
+    'w4a4',
+    'w4a16',
+    'w4a8',
+  ]),
+  8: new Set([
+    '8bit',
+    '8-bit',
+    'bitsandbytes-8bit',
+    'bitsandbytes_8bit',
+    'bnb-8bit',
+    'bnb_8bit',
+    'e4m3fn',
+    'e4m3fnuz',
+    'e5m2',
+    'e5m2fn',
+    'e5m2fnuz',
+    'f8e4m3fn',
+    'f8e4m3fnuz',
+    'f8e5m2',
+    'f8e5m2fn',
+    'f8e5m2fnuz',
+    'exl2-8bit',
+    'f8_e4m3fn',
+    'f8_e4m3fnuz',
+    'f8_e5m2',
+    'f8_e5m2fn',
+    'f8_e5m2fnuz',
+    'float8',
+    'fp8',
+    'gptq-8bit',
+    'hqq-8bit',
+    'hqq8',
+    'int8',
+    'iq8_0',
+    'iq8_1',
+    'llm-int8',
+    'llm.int8',
+    'llm_int8',
+    'optiq-8bit',
+    'q8_0',
+    'q8_1',
+    'q8_k',
+    'quanto-fp8',
+    'quanto-int8',
+    'uint8',
+    'w8a16',
+    'w8a8',
+  ]),
+};
+
+const QUANT_BIT_WIDTH_TOKEN_ALIASES: Record<QuantBitWidth, Set<string>> = {
+  4: new Set([
+    '4bit',
+    'af4',
+    'awq',
+    'fp4',
+    'gptq',
+    'hqq4',
+    'int4',
+    'iq4',
+    'mxfp4',
+    'nf4',
+    'nvfp4',
+    'q4',
+    'uint4',
+    'w4a4',
+    'w4a16',
+    'w4a8',
+  ]),
+  8: new Set([
+    '8bit',
+    'e4m3fn',
+    'e4m3fnuz',
+    'e5m2',
+    'e5m2fn',
+    'e5m2fnuz',
+    'float8',
+    'fp8',
+    'hqq8',
+    'int8',
+    'iq8',
+    'q8',
+    'uint8',
+    'w8a16',
+    'w8a8',
+  ]),
+};
+
+function matchesQuantBitWidth(quant: string, bitWidth: QuantBitWidth) {
+  const normalized = quant.trim().toLowerCase();
+  if (QUANT_BIT_WIDTH_EXACT_ALIASES[bitWidth].has(normalized)) return true;
+
+  const tokens = normalized.split(/[^a-z0-9]+/).filter(Boolean);
+  return tokens.some((token) => QUANT_BIT_WIDTH_TOKEN_ALIASES[bitWidth].has(token));
+}
 
 function getManufacturerLogo(datum: ModelDevicesChartValue) {
   const isApple = datum.deviceGpu.toLowerCase().startsWith('apple');
