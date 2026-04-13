@@ -1,10 +1,16 @@
 import { unstable_cache as cache } from 'next/cache';
 
 import DeviceSizeCharts from './(components)/size-charts';
-import { and, countDistinct, eq, sql } from 'drizzle-orm';
+import { and, count, countDistinct, eq, sql } from 'drizzle-orm';
 
 import { db } from '@/lib/db';
-import { devices, runs, RunStatus, view__model_stats_by_device } from '@/lib/db/schema';
+import {
+  devices,
+  runs,
+  RunStatus,
+  view__model_device_summary,
+  view__model_stats_by_device,
+} from '@/lib/db/schema';
 
 import DeviceFloatingSelector from '@/components/common/device-floating-selector';
 import type { ChipOption } from '@/components/common/device-floating-selector';
@@ -29,22 +35,23 @@ export default async function Page({
   const { device } = await searchParams;
 
   // Chip options (reuse same pattern as home page).
-  const v = view__model_stats_by_device;
+  const summaryView = view__model_device_summary;
+  const statsView = view__model_stats_by_device;
   const chipRows: ChipOption[] = await cache(
     async () =>
       await db
         .select({
-          chipId: v.deviceChipId,
-          cpu: sql<string>`MIN(${v.deviceCpu})`.as('cpu'),
-          cpuCores: sql<number>`MIN(${v.deviceCpuCores})`.as('cpu_cores'),
-          gpu: sql<string>`MIN(${v.deviceGpu})`.as('gpu'),
-          gpuCores: sql<number>`MIN(${v.deviceGpuCores})`.as('gpu_cores'),
-          gpuCount: sql<number>`MIN(${v.deviceGpuCount})`.as('gpu_count'),
-          ramGb: sql<number>`MIN(${v.deviceRamGb})`.as('ram_gb'),
-          modelCount: countDistinct(v.modelId).as('model_count'),
+          chipId: summaryView.deviceChipId,
+          cpu: sql<string>`MIN(${summaryView.deviceCpu})`.as('cpu'),
+          cpuCores: sql<number>`MIN(${summaryView.deviceCpuCores})`.as('cpu_cores'),
+          gpu: sql<string>`MIN(${summaryView.deviceGpu})`.as('gpu'),
+          gpuCores: sql<number>`MIN(${summaryView.deviceGpuCores})`.as('gpu_cores'),
+          gpuCount: sql<number>`MIN(${summaryView.deviceGpuCount})`.as('gpu_count'),
+          ramGb: sql<number>`MIN(${summaryView.deviceRamGb})`.as('ram_gb'),
+          modelCount: count().as('model_count'),
         })
-        .from(v)
-        .groupBy(v.deviceChipId),
+        .from(summaryView)
+        .groupBy(summaryView.deviceChipId),
     ['device-chip-options'],
     { revalidate: 600 },
   )();
@@ -57,30 +64,35 @@ export default async function Page({
   // All model stats + overview for the selected device.
   const [data, overview] = await cache(
     async () => {
-      const [rows, [aggRow], [contribRow]] = await Promise.all([
+      const [rows, [modelCountRow], [volumeRow], [contribRow]] = await Promise.all([
         db
           .select({
-            modelId: v.modelId,
-            modelDisplayName: v.modelDisplayName,
-            modelFormat: v.modelFormat,
-            modelFileSizeBytes: v.modelFileSizeBytes,
-            modelQuant: v.modelQuant,
-            labName: v.labName,
-            labLogoUrl: v.labLogoUrl,
-            labSlug: v.labSlug,
-            avgDecodeTps: v.avgDecodeTps,
-            avgPrefillTps: v.avgPrefillTps,
+            modelId: statsView.modelId,
+            modelDisplayName: statsView.modelDisplayName,
+            modelFormat: statsView.modelFormat,
+            modelFileSizeBytes: statsView.modelFileSizeBytes,
+            modelQuant: statsView.modelQuant,
+            labName: statsView.labName,
+            labLogoUrl: statsView.labLogoUrl,
+            labSlug: statsView.labSlug,
+            avgDecodeTps: statsView.avgDecodeTps,
+            avgPrefillTps: statsView.avgPrefillTps,
           })
-          .from(v)
-          .where(eq(v.deviceChipId, sql`${effectiveDevice}`)),
+          .from(statsView)
+          .where(eq(statsView.deviceChipId, sql`${effectiveDevice}`)),
         db
           .select({
-            models: countDistinct(v.modelId),
-            runs: sql<number>`SUM(${v.runCount})`.as('total_runs'),
-            trials: sql<number>`SUM(${v.trialCount})`.as('total_trials'),
+            models: count(),
           })
-          .from(v)
-          .where(eq(v.deviceChipId, sql`${effectiveDevice}`)),
+          .from(summaryView)
+          .where(eq(summaryView.deviceChipId, sql`${effectiveDevice}`)),
+        db
+          .select({
+            runs: sql<number>`SUM(${statsView.runCount})`.as('total_runs'),
+            trials: sql<number>`SUM(${statsView.trialCount})`.as('total_trials'),
+          })
+          .from(statsView)
+          .where(eq(statsView.deviceChipId, sql`${effectiveDevice}`)),
         db
           .select({ contributors: countDistinct(runs.ipHash) })
           .from(runs)
@@ -98,16 +110,16 @@ export default async function Page({
           r.avgPrefillTps > 0,
       );
 
-      const totalTrials = Number(aggRow?.trials ?? 0);
+      const totalTrials = Number(volumeRow?.trials ?? 0);
       const totalTokens = totalTrials * (4096 + 1024);
 
       const overview: { label: string; term?: keyof typeof GLOSSARY; value: string }[] = [
-        { label: 'Models tested', value: (aggRow?.models ?? 0).toLocaleString() },
+        { label: 'Models tested', value: (modelCountRow?.models ?? 0).toLocaleString() },
         { label: 'Tokens', value: totalTokens.toLocaleString() },
         {
           label: 'Runs',
           term: 'run',
-          value: Number(aggRow?.runs ?? 0).toLocaleString(),
+          value: Number(volumeRow?.runs ?? 0).toLocaleString(),
         },
         {
           label: 'Contributors',

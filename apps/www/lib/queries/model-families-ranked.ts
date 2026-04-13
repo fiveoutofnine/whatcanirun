@@ -11,6 +11,7 @@ import {
   runs,
   RunStatus,
 } from '@/lib/db/schema';
+import { getModelGroupKeySql } from '@/lib/utils/model-grouping';
 
 export { MODEL_FAMILY_SORT_OPTIONS, type ModelFamilySort } from './model-families-sort';
 
@@ -44,6 +45,11 @@ export async function getRankedModelFamilies(
 ): Promise<RankedModelFamily[]> {
   const pattern = search ? `%${search}%` : undefined;
   const conditions = [eq(runs.status, RunStatus.VERIFIED)];
+  const modelGroupKey = getModelGroupKeySql(
+    modelsInfo.source,
+    models.source,
+    models.artifactSha256,
+  );
   if (pattern) {
     conditions.push(or(ilike(modelFamilies.name, pattern), ilike(organizations.name, pattern))!);
   }
@@ -65,7 +71,7 @@ export async function getRankedModelFamilies(
         sql<number>`COALESCE(SUM(COALESCE(${runs.promptTokens}, 0) + COALESCE(${runs.completionTokens}, 0)), 0)`.as(
           'total_tokens',
         ),
-      quantCount: countDistinct(models.id).as('quant_count'),
+      quantCount: countDistinct(modelGroupKey).as('quant_count'),
       deviceCount: countDistinct(devices.chipId).as('device_count'),
     })
     .from(runs)

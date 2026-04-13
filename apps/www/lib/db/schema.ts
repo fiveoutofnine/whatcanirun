@@ -1,4 +1,4 @@
-import { and, count, countDistinct, eq, relations, sql } from 'drizzle-orm';
+import { and, count, countDistinct, desc, eq, relations, sql } from 'drizzle-orm';
 import {
   alias,
   bigint,
@@ -16,6 +16,7 @@ import {
 } from 'drizzle-orm/pg-core';
 
 import enumToPgEnum from '@/lib/utils/enum-to-pg-enum';
+import { getModelGroupKeySql, getModelSourceSql } from '@/lib/utils/model-grouping';
 
 // -----------------------------------------------------------------------------
 // Enums
@@ -326,51 +327,92 @@ export const trials = pgTable(
 const labOrg = alias(organizations, 'lab_org');
 const quantOrg = alias(organizations, 'quant_org');
 
+function getLatestModelGroupMetadata(qb: any) {
+  const modelGroupKey = getModelGroupKeySql(
+    modelsInfo.source,
+    models.source,
+    models.artifactSha256,
+  );
+  const modelSource = getModelSourceSql(modelsInfo.source, models.source);
+
+  return qb
+    .selectDistinctOn([modelGroupKey], {
+      modelGroupKey: sql<string>`${modelGroupKey}`.as('model_group_key'),
+      latestModelId: sql<string>`${models.id}`.as('latest_model_id'),
+      latestFamilyId: sql<string | null>`${modelsInfo.familyId}`.as('latest_family_id'),
+      modelDisplayName:
+        sql<string>`COALESCE(NULLIF(${modelsInfo.name}, ''), ${models.displayName})`.as(
+          'model_display_name',
+        ),
+      modelFormat: sql<string>`${models.format}`.as('model_format'),
+      modelFileSizeBytes: sql<
+        number | null
+      >`COALESCE(NULLIF(${modelsInfo.fileSizeBytes}, 0), ${models.fileSizeBytes})`.as(
+        'model_file_size_bytes',
+      ),
+      modelParameters: sql<
+        string | null
+      >`COALESCE(NULLIF(${modelsInfo.parameters}, ''), ${models.parameters})`.as(
+        'model_parameters',
+      ),
+      modelQuant: sql<
+        string | null
+      >`COALESCE(NULLIF(${modelsInfo.quant}, ''), ${models.quant})`.as('model_quant'),
+      modelArchitecture: sql<
+        string | null
+      >`COALESCE(NULLIF(${modelsInfo.architecture}, ''), ${models.architecture})`.as(
+        'model_architecture',
+      ),
+      modelSource: sql<string | null>`${modelSource}`.as('model_source'),
+      labName: sql<string | null>`${labOrg.name}`.as('lab_name'),
+      labLogoUrl: sql<string | null>`${labOrg.logoUrl}`.as('lab_logo_url'),
+      labWebsiteUrl: sql<string | null>`${labOrg.websiteUrl}`.as('lab_website_url'),
+      labSlug: sql<string | null>`${labOrg.slug}`.as('lab_slug'),
+      familySlug: sql<string | null>`${modelFamilies.slug}`.as('family_slug'),
+      quantizedByName: sql<string | null>`${quantOrg.name}`.as('quantized_by_name'),
+      quantizedByLogoUrl: sql<string | null>`${quantOrg.logoUrl}`.as('quantized_by_logo_url'),
+      quantizedByWebsiteUrl:
+        sql<string | null>`${quantOrg.websiteUrl}`.as('quantized_by_website_url'),
+    })
+    .from(models)
+    .leftJoin(modelsInfo, eq(models.artifactSha256, modelsInfo.artifactSha256))
+    .leftJoin(labOrg, eq(modelsInfo.labId, labOrg.id))
+    .leftJoin(quantOrg, eq(modelsInfo.quantizedById, quantOrg.id))
+    .leftJoin(modelFamilies, eq(modelsInfo.familyId, modelFamilies.id))
+    .orderBy(modelGroupKey, desc(models.createdAt), desc(models.id))
+    .as('latest_model_group_metadata');
+}
+
 export const view__model_stats_by_device = pgMaterializedView('view__model_stats_by_device').as(
-  (qb) =>
-    qb
+  (qb) => {
+    const latestModelGroupMetadata = getLatestModelGroupMetadata(qb);
+    const modelGroupKey = getModelGroupKeySql(
+      modelsInfo.source,
+      models.source,
+      models.artifactSha256,
+    );
+
+    return qb
       .select({
         // Model (prefer modelsInfo overrides, fall back to models)
-        modelId: sql<string>`${models.id}`.as('model_id'),
-        modelDisplayName:
-          sql<string>`COALESCE(NULLIF(MIN(${modelsInfo.name}), ''), ${models.displayName})`.as(
-            'model_display_name',
-          ),
-        modelFormat: models.format,
-        modelFileSizeBytes: sql<
-          number | null
-        >`COALESCE(NULLIF(MIN(${modelsInfo.fileSizeBytes}), 0), ${models.fileSizeBytes})`.as(
-          'model_file_size_bytes',
-        ),
-        modelParameters: sql<
-          string | null
-        >`COALESCE(NULLIF(MIN(${modelsInfo.parameters}), ''), ${models.parameters})`.as(
-          'model_parameters',
-        ),
-        modelQuant: sql<
-          string | null
-        >`COALESCE(NULLIF(MIN(${modelsInfo.quant}), ''), ${models.quant})`.as('model_quant'),
-        modelArchitecture: sql<
-          string | null
-        >`COALESCE(NULLIF(MIN(${modelsInfo.architecture}), ''), ${models.architecture})`.as(
-          'model_architecture',
-        ),
-        modelSource: sql<
-          string | null
-        >`COALESCE(NULLIF(MIN(${modelsInfo.source}), ''), ${models.source})`.as('model_source'),
+        modelGroupKey: latestModelGroupMetadata.modelGroupKey,
+        modelId: sql<string>`${latestModelGroupMetadata.latestModelId}`.as('model_id'),
+        modelDisplayName: latestModelGroupMetadata.modelDisplayName,
+        modelFormat: latestModelGroupMetadata.modelFormat,
+        modelFileSizeBytes: latestModelGroupMetadata.modelFileSizeBytes,
+        modelParameters: latestModelGroupMetadata.modelParameters,
+        modelQuant: latestModelGroupMetadata.modelQuant,
+        modelArchitecture: latestModelGroupMetadata.modelArchitecture,
+        modelSource: latestModelGroupMetadata.modelSource,
         // Organization
-        labName: sql<string | null>`MIN(${labOrg.name})`.as('lab_name'),
-        labLogoUrl: sql<string | null>`MIN(${labOrg.logoUrl})`.as('lab_logo_url'),
-        labWebsiteUrl: sql<string | null>`MIN(${labOrg.websiteUrl})`.as('lab_website_url'),
-        labSlug: sql<string | null>`MIN(${labOrg.slug})`.as('lab_slug'),
-        familySlug: sql<string | null>`MIN(${modelFamilies.slug})`.as('family_slug'),
-        quantizedByName: sql<string | null>`MIN(${quantOrg.name})`.as('quantized_by_name'),
-        quantizedByLogoUrl: sql<string | null>`MIN(${quantOrg.logoUrl})`.as(
-          'quantized_by_logo_url',
-        ),
-        quantizedByWebsiteUrl: sql<string | null>`MIN(${quantOrg.websiteUrl})`.as(
-          'quantized_by_website_url',
-        ),
+        labName: latestModelGroupMetadata.labName,
+        labLogoUrl: latestModelGroupMetadata.labLogoUrl,
+        labWebsiteUrl: latestModelGroupMetadata.labWebsiteUrl,
+        labSlug: latestModelGroupMetadata.labSlug,
+        familySlug: latestModelGroupMetadata.familySlug,
+        quantizedByName: latestModelGroupMetadata.quantizedByName,
+        quantizedByLogoUrl: latestModelGroupMetadata.quantizedByLogoUrl,
+        quantizedByWebsiteUrl: latestModelGroupMetadata.quantizedByWebsiteUrl,
         // Device
         deviceChipId: devices.chipId,
         deviceCpu: sql<string>`MIN(${devices.cpu})`.as('device_cpu'),
@@ -441,8 +483,7 @@ export const view__model_stats_by_device = pgMaterializedView('view__model_stats
                   AND NOT (LOWER(${devices.osName}) != 'macos' AND ${runs.harnessVersion} < '0.1.19')
                   THEN ${trials.peakRssMb}
                 END),
-                COALESCE(NULLIF(MIN(${modelsInfo.fileSizeBytes}), 0), ${models.fileSizeBytes})
-                  / (1024.0 * 1024.0) + 512.0
+                ${latestModelGroupMetadata.modelFileSizeBytes} / (1024.0 * 1024.0) + 512.0
               ) / (MIN(${devices.ramGb}) * 716.8))
           -- No reliable memory data (non-macOS < 0.1.19): score on speed only
           ELSE
@@ -470,9 +511,7 @@ export const view__model_stats_by_device = pgMaterializedView('view__model_stats
       .innerJoin(models, eq(runs.modelId, models.id))
       .innerJoin(devices, eq(runs.deviceId, devices.id))
       .leftJoin(modelsInfo, eq(models.artifactSha256, modelsInfo.artifactSha256))
-      .leftJoin(labOrg, eq(modelsInfo.labId, labOrg.id))
-      .leftJoin(quantOrg, eq(modelsInfo.quantizedById, quantOrg.id))
-      .leftJoin(modelFamilies, eq(modelsInfo.familyId, modelFamilies.id))
+      .innerJoin(latestModelGroupMetadata, sql`${modelGroupKey} = ${latestModelGroupMetadata.modelGroupKey}`)
       .where(
         and(
           eq(runs.status, RunStatus.VERIFIED),
@@ -480,15 +519,44 @@ export const view__model_stats_by_device = pgMaterializedView('view__model_stats
           eq(trials.outputTokens, 1024),
         ),
       )
-      .groupBy(models.id, devices.chipId, runs.runtimeName),
+      .groupBy(
+        latestModelGroupMetadata.modelGroupKey,
+        latestModelGroupMetadata.latestModelId,
+        latestModelGroupMetadata.familySlug,
+        latestModelGroupMetadata.labName,
+        latestModelGroupMetadata.labLogoUrl,
+        latestModelGroupMetadata.labSlug,
+        latestModelGroupMetadata.labWebsiteUrl,
+        latestModelGroupMetadata.modelArchitecture,
+        latestModelGroupMetadata.modelDisplayName,
+        latestModelGroupMetadata.modelFileSizeBytes,
+        latestModelGroupMetadata.modelFormat,
+        latestModelGroupMetadata.modelParameters,
+        latestModelGroupMetadata.modelQuant,
+        latestModelGroupMetadata.modelSource,
+        latestModelGroupMetadata.quantizedByLogoUrl,
+        latestModelGroupMetadata.quantizedByName,
+        latestModelGroupMetadata.quantizedByWebsiteUrl,
+        devices.chipId,
+        runs.runtimeName,
+      );
+  },
 );
 
 export const view__model_device_summary = pgMaterializedView('view__model_device_summary').as(
-  (qb) =>
-    qb
+  (qb) => {
+    const latestModelGroupMetadata = getLatestModelGroupMetadata(qb);
+    const modelGroupKey = getModelGroupKeySql(
+      modelsInfo.source,
+      models.source,
+      models.artifactSha256,
+    );
+
+    return qb
       .select({
-        modelId: sql<string>`${models.id}`.as('model_id'),
-        familyId: sql<string | null>`MIN(${modelsInfo.familyId})`.as('family_id'),
+        modelGroupKey: latestModelGroupMetadata.modelGroupKey,
+        modelId: sql<string>`${latestModelGroupMetadata.latestModelId}`.as('model_id'),
+        familyId: sql<string | null>`${latestModelGroupMetadata.latestFamilyId}`.as('family_id'),
         deviceChipId: devices.chipId,
         deviceCpu: sql<string>`MIN(${devices.cpu})`.as('device_cpu'),
         deviceCpuCores: sql<number>`MIN(${devices.cpuCores})`.as('device_cpu_cores'),
@@ -527,8 +595,7 @@ export const view__model_device_summary = pgMaterializedView('view__model_device
                   AND NOT (LOWER(${devices.osName}) != 'macos' AND ${runs.harnessVersion} < '0.1.19')
                   THEN ${trials.peakRssMb}
                 END),
-                COALESCE(NULLIF(MIN(${modelsInfo.fileSizeBytes}), 0), ${models.fileSizeBytes})
-                  / (1024.0 * 1024.0) + 512.0
+                ${latestModelGroupMetadata.modelFileSizeBytes} / (1024.0 * 1024.0) + 512.0
               ) / (MIN(${devices.ramGb}) * 716.8))
           ELSE
             0.65 * (CASE
@@ -555,6 +622,7 @@ export const view__model_device_summary = pgMaterializedView('view__model_device
       .innerJoin(models, eq(runs.modelId, models.id))
       .innerJoin(devices, eq(runs.deviceId, devices.id))
       .leftJoin(modelsInfo, eq(models.artifactSha256, modelsInfo.artifactSha256))
+      .innerJoin(latestModelGroupMetadata, sql`${modelGroupKey} = ${latestModelGroupMetadata.modelGroupKey}`)
       .where(
         and(
           eq(runs.status, RunStatus.VERIFIED),
@@ -562,7 +630,14 @@ export const view__model_device_summary = pgMaterializedView('view__model_device
           eq(trials.outputTokens, 1024),
         ),
       )
-      .groupBy(models.id, devices.chipId),
+      .groupBy(
+        latestModelGroupMetadata.latestFamilyId,
+        latestModelGroupMetadata.modelGroupKey,
+        latestModelGroupMetadata.latestModelId,
+        latestModelGroupMetadata.modelFileSizeBytes,
+        devices.chipId,
+      );
+  },
 );
 
 // -----------------------------------------------------------------------------

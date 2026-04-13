@@ -3,7 +3,15 @@ import { unstable_cache as cache } from 'next/cache';
 import { and, countDistinct, eq, sql } from 'drizzle-orm';
 
 import { db } from '@/lib/db';
-import { modelFamilies, organizations, view__model_device_summary } from '@/lib/db/schema';
+import {
+  modelFamilies,
+  models,
+  modelsInfo,
+  organizations,
+  type Organization,
+  view__model_device_summary,
+} from '@/lib/db/schema';
+import { getModelGroupKey } from '@/lib/utils/model-grouping';
 
 export const getModelFamily = cache(
   async (orgSlug: string, modelSlug: string) => {
@@ -43,7 +51,7 @@ export const getModelFamilyChips = cache(
         gpuCores: sql<number>`MIN(${v.deviceGpuCores})`.as('gpu_cores'),
         gpuCount: sql<number>`MIN(${v.deviceGpuCount})`.as('gpu_count'),
         ramGb: sql<number>`MIN(${v.deviceRamGb})`.as('ram_gb'),
-        modelCount: countDistinct(v.modelId).as('model_count'),
+        modelCount: countDistinct(v.modelGroupKey).as('model_count'),
       })
       .from(v)
       .where(eq(v.familyId, familyId))
@@ -52,3 +60,45 @@ export const getModelFamilyChips = cache(
   ['model-family-chips'],
   { revalidate: 600 },
 );
+
+export type ModelFamilyMember = typeof modelsInfo.$inferSelect & {
+  model: typeof models.$inferSelect | null;
+  quantizedBy: Organization | null;
+};
+
+export function groupModelFamilyMembers(members: ModelFamilyMember[]) {
+  const grouped = new Map<string, ModelFamilyMember>();
+
+  for (const member of members) {
+    if (!member.model) continue;
+
+    const modelGroupKey = getModelGroupKey({
+      artifactSha256: member.model.artifactSha256,
+      modelSource: member.model.source,
+      modelsInfoSource: member.source,
+    });
+    const existing = grouped.get(modelGroupKey);
+
+    if (!existing || isNewerModel(member.model, existing.model)) {
+      grouped.set(modelGroupKey, member);
+    }
+  }
+
+  return [...grouped.entries()].map(([modelGroupKey, member]) => ({
+    modelGroupKey,
+    member,
+  }));
+}
+
+function isNewerModel(
+  left: typeof models.$inferSelect,
+  right: typeof models.$inferSelect | null,
+): boolean {
+  if (!right) return true;
+
+  const leftTime = left.createdAt.getTime();
+  const rightTime = right.createdAt.getTime();
+
+  if (leftTime !== rightTime) return leftTime > rightTime;
+  return left.id > right.id;
+}

@@ -5,11 +5,11 @@ import AnimatedCLIDemo from '../animated-cli-demo';
 import HeroCopyCommandButton from './copy-command';
 import HeroDescription from './description';
 import HeroHeading from './heading';
-import { countDistinct, sql } from 'drizzle-orm';
+import { count, sql } from 'drizzle-orm';
 import { ArrowRight } from 'lucide-react';
 
 import { db } from '@/lib/db';
-import { view__model_stats_by_device } from '@/lib/db/schema';
+import { view__model_device_summary } from '@/lib/db/schema';
 
 import { Button } from '@/components/ui';
 
@@ -22,17 +22,17 @@ const Hero: React.FC = async () => {
     async () =>
       await db
         .select({
-          chipId: view__model_stats_by_device.deviceChipId,
-          cpu: sql<string>`MIN(${view__model_stats_by_device.deviceCpu})`.as('cpu'),
-          cpuCores: sql<number>`MIN(${view__model_stats_by_device.deviceCpuCores})`.as('cpu_cores'),
-          gpu: sql<string>`MIN(${view__model_stats_by_device.deviceGpu})`.as('gpu'),
-          gpuCores: sql<number>`MIN(${view__model_stats_by_device.deviceGpuCores})`.as('gpu_cores'),
-          gpuCount: sql<number>`MIN(${view__model_stats_by_device.deviceGpuCount})`.as('gpu_count'),
-          ramGb: sql<number>`MIN(${view__model_stats_by_device.deviceRamGb})`.as('ram_gb'),
-          modelCount: countDistinct(view__model_stats_by_device.modelId).as('model_count'),
+          chipId: view__model_device_summary.deviceChipId,
+          cpu: sql<string>`MIN(${view__model_device_summary.deviceCpu})`.as('cpu'),
+          cpuCores: sql<number>`MIN(${view__model_device_summary.deviceCpuCores})`.as('cpu_cores'),
+          gpu: sql<string>`MIN(${view__model_device_summary.deviceGpu})`.as('gpu'),
+          gpuCores: sql<number>`MIN(${view__model_device_summary.deviceGpuCores})`.as('gpu_cores'),
+          gpuCount: sql<number>`MIN(${view__model_device_summary.deviceGpuCount})`.as('gpu_count'),
+          ramGb: sql<number>`MIN(${view__model_device_summary.deviceRamGb})`.as('ram_gb'),
+          modelCount: count().as('model_count'),
         })
-        .from(view__model_stats_by_device)
-        .groupBy(view__model_stats_by_device.deviceChipId),
+        .from(view__model_device_summary)
+        .groupBy(view__model_device_summary.deviceChipId),
     ['hero-chip-options'],
     { tags: ['hero'], revalidate: 600 },
   )();

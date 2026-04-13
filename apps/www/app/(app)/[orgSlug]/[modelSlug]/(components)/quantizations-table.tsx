@@ -18,6 +18,7 @@ import { Table, toast, Tooltip } from '@/components/ui';
 // -----------------------------------------------------------------------------
 
 export type Quant = {
+  modelGroupKey: string;
   modelId: string;
   quant: string | null;
   format: string;
@@ -63,7 +64,7 @@ const ModelQuantizationsTable: React.FC<ModelQuantizationsTableProps> = ({ quant
           const [sizeValue, sizeUnit] = formatBytes(v.fileSizeBytes ?? 0).split(' ');
 
           return (
-            <Table.Row key={v.modelId}>
+            <Table.Row key={v.modelGroupKey}>
               <Table.Cell className="pl-4">
                 <QuantTableCell quant={v.quant} format={v.format} source={v.source} />
               </Table.Cell>
