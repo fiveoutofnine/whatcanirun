@@ -22,6 +22,7 @@ import type {
   DropdownItemProps,
   DropdownLabelProps,
   DropdownRadioItemProps,
+  DropdownRootProps,
   DropdownSeparatorProps,
   DropdownSubContentProps,
   DropdownSubTriggerProps,
@@ -120,7 +121,9 @@ const DropdownRadioItem = forwardRef<
   </DropdownPrimitive.RadioItem>
 ));
 
-const DropdownRoot = DropdownPrimitive.Root;
+const DropdownRoot = ({ modal = false, ...rest }: DropdownRootProps) => (
+  <DropdownPrimitive.Root modal={modal} {...rest} />
+);
 
 const DropdownSeparator = forwardRef<
   React.ElementRef<typeof DropdownPrimitive.Separator>,
@@ -171,6 +174,7 @@ DropdownContent.displayName = DropdownPrimitive.Content.displayName;
 DropdownItem.displayName = DropdownPrimitive.Item.displayName;
 DropdownLabel.displayName = DropdownPrimitive.Label.displayName;
 DropdownRadioItem.displayName = DropdownPrimitive.RadioItem.displayName;
+DropdownRoot.displayName = DropdownPrimitive.Root.displayName;
 DropdownSeparator.displayName = DropdownPrimitive.Separator.displayName;
 DropdownSubContent.displayName = DropdownPrimitive.SubContent.displayName;
 DropdownSubTrigger.displayName = DropdownPrimitive.SubTrigger.displayName;
