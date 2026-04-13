@@ -1,5 +1,6 @@
 import type { FeaturedDeviceInfo, FeaturedRuntime } from '@whatcanirun/shared';
 import chalk from 'chalk';
+import { clearScreenDown, cursorTo, moveCursor } from 'node:readline';
 
 import { getAuth } from './auth/token';
 import { executeBenchmark } from './commands/run';
@@ -14,6 +15,8 @@ import { Spinner } from './utils/log';
 // -----------------------------------------------------------------------------
 // Arrow-key picker (vertical list)
 // -----------------------------------------------------------------------------
+
+const MODEL_PICKER_VISIBLE_COUNT = 5;
 
 function pick(items: string[], defaultIndex = 0): Promise<number> {
   if (!process.stdin.isTTY) {
@@ -77,6 +80,189 @@ function pick(items: string[], defaultIndex = 0): Promise<number> {
     stdin.on('data', onData);
 
     render();
+  });
+}
+
+interface SearchablePickItem {
+  label: string;
+  searchText?: string;
+}
+
+function filterPickItems(items: SearchablePickItem[], query: string): number[] {
+  const normalizedQuery = query.trim().toLowerCase();
+
+  return items.flatMap((item, index) => {
+    const searchableText = `${item.label} ${item.searchText ?? ''}`.toLowerCase();
+    return normalizedQuery === '' || searchableText.includes(normalizedQuery) ? [index] : [];
+  });
+}
+
+function pickSearchable(
+  items: SearchablePickItem[],
+  {
+    defaultIndex = 0,
+    visibleCount = MODEL_PICKER_VISIBLE_COUNT,
+    emptySearchLabel = 'start typing to filter models…',
+  }: {
+    defaultIndex?: number;
+    emptySearchLabel?: string;
+    visibleCount?: number;
+  } = {}
+): Promise<number> {
+  if (!process.stdin.isTTY) {
+    return Promise.resolve(defaultIndex);
+  }
+
+  return new Promise((resolve) => {
+    const { stdin, stdout } = process;
+
+    let query = '';
+    let filteredIndices = filterPickItems(items, query);
+    let cursor =
+      filteredIndices.length > 0 ? Math.min(defaultIndex, filteredIndices.length - 1) : 0;
+    let scrollOffset = 0;
+    let renderedLineCount = 0;
+
+    function syncViewport() {
+      if (filteredIndices.length === 0) {
+        cursor = 0;
+        scrollOffset = 0;
+        return;
+      }
+
+      cursor = Math.max(0, Math.min(cursor, filteredIndices.length - 1));
+
+      if (filteredIndices.length <= visibleCount) {
+        scrollOffset = 0;
+        return;
+      }
+
+      if (cursor < scrollOffset) {
+        scrollOffset = cursor;
+      } else if (cursor >= scrollOffset + visibleCount) {
+        scrollOffset = cursor - visibleCount + 1;
+      }
+    }
+
+    function rerender() {
+      if (renderedLineCount > 0) {
+        moveCursor(stdout, 0, -renderedLineCount);
+        cursorTo(stdout, 0);
+        clearScreenDown(stdout);
+      }
+
+      const lines: string[] = [];
+      const shouldScroll = filteredIndices.length > visibleCount;
+      const visibleItems = shouldScroll
+        ? filteredIndices.slice(scrollOffset, scrollOffset + visibleCount)
+        : filteredIndices;
+
+      lines.push(
+        `${chalk.dim('Search:')} ${query.length > 0 ? chalk.white(query) : chalk.dim(emptySearchLabel)}`
+      );
+
+      if (filteredIndices.length === 0) {
+        lines.push(chalk.dim('No matching models. Edit the search to continue.'));
+      } else if (shouldScroll) {
+        const start = scrollOffset + 1;
+        const end = scrollOffset + visibleItems.length;
+        lines.push(
+          chalk.dim('Showing ') +
+            chalk.white(start) +
+            chalk.dim('–') +
+            chalk.white(end) +
+            chalk.dim(' of ') +
+            chalk.white(filteredIndices.length) +
+            chalk.dim(' models.')
+        );
+      } else {
+        lines.push(
+          chalk.dim(
+            `${filteredIndices.length} model${filteredIndices.length === 1 ? '' : 's'} available`
+          )
+        );
+      }
+
+      for (let i = 0; i < visibleItems.length; i++) {
+        const item = items[visibleItems[i]!]!;
+        const isSelected = scrollOffset + i === cursor;
+        if (isSelected) {
+          lines.push(`\x1b[2K${chalk.cyan('❯')} ${chalk.cyan(item.label)}`);
+        } else {
+          lines.push(`\x1b[2K  ${chalk.dim(item.label)}`);
+        }
+      }
+
+      stdout.write(lines.join('\n') + '\n');
+      renderedLineCount = lines.length;
+    }
+
+    function resetFilteredItems() {
+      filteredIndices = filterPickItems(items, query);
+      cursor = 0;
+      scrollOffset = 0;
+      syncViewport();
+      rerender();
+    }
+
+    function onData(data: Buffer) {
+      const key = data.toString();
+
+      if (key === '\x1b[A') {
+        if (filteredIndices.length === 0) return;
+        cursor = (cursor - 1 + filteredIndices.length) % filteredIndices.length;
+        syncViewport();
+        rerender();
+        return;
+      }
+      if (key === '\x1b[B') {
+        if (filteredIndices.length === 0) return;
+        cursor = (cursor + 1) % filteredIndices.length;
+        syncViewport();
+        rerender();
+        return;
+      }
+      if (key === '\r' || key === '\n') {
+        if (filteredIndices.length === 0) return;
+        cleanup();
+        resolve(filteredIndices[cursor]!);
+        return;
+      }
+      if (key === '\x7f' || key === '\b') {
+        if (query.length === 0) return;
+        query = query.slice(0, -1);
+        resetFilteredItems();
+        return;
+      }
+      if (key === '\x15') {
+        if (query.length === 0) return;
+        query = '';
+        resetFilteredItems();
+        return;
+      }
+      if (key === '\x03' || key === '\x1b') {
+        cleanup();
+        resolve(-1);
+        return;
+      }
+      if (key.length === 1 && key >= ' ' && key !== '\x7f') {
+        query += key;
+        resetFilteredItems();
+      }
+    }
+
+    function cleanup() {
+      stdin.removeListener('data', onData);
+      if (stdin.isTTY) stdin.setRawMode(false);
+      stdin.pause();
+    }
+
+    if (stdin.isTTY) stdin.setRawMode(true);
+    stdin.resume();
+    stdin.on('data', onData);
+
+    syncViewport();
+    rerender();
   });
 }
 
@@ -203,9 +389,7 @@ export async function runInteractive(): Promise<void> {
   activeSpinner = null;
   fetchSpinner.stop(chalk.white(`[${chalk.green('✓')}] Loaded models.`));
   if (featured.source === 'fallback') {
-    console.log(
-      chalk.dim(' ↳ Using the bundled wishlist because the models API was unavailable.')
-    );
+    console.log(chalk.dim(' ↳ Using the bundled wishlist because the models API was unavailable.'));
   }
   const models = featured.models;
 
@@ -220,9 +404,20 @@ export async function runInteractive(): Promise<void> {
     process.exit(1);
   }
 
-  console.log(chalk.white('Select a model to benchmark'));
+  console.log(
+    chalk.white('Select a model to benchmark') +
+      chalk.dim('  (type to search · ↑/↓ to move · enter to select · esc to quit)')
+  );
 
-  const choice = await pick(models.map((m) => m.displayName));
+  const choice = await pickSearchable(
+    models.map((model) => ({
+      label: model.displayName,
+      searchText: [model.hfRepoId, model.hfFileName].filter(Boolean).join(' '),
+    })),
+    {
+      visibleCount: models.length < 6 ? models.length : MODEL_PICKER_VISIBLE_COUNT,
+    }
+  );
   if (choice < 0) process.exit(0);
 
   const selected = models[choice]!;
