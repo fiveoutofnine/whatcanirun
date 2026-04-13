@@ -277,7 +277,7 @@ const ModelRunsDataTableMobileSubComponent: React.FC<{ data: ModelRunsDataTableV
         <Stat.Name>Date</Stat.Name>
         <RelativeDate
           className="min-w-fit text-nowrap"
-          date={data.createdAt}
+          date={new Date(data.createdAt)}
           type="relative"
           clickable
         />

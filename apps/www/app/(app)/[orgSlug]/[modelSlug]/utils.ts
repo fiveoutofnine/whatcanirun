@@ -96,8 +96,8 @@ function isNewerModel(
 ): boolean {
   if (!right) return true;
 
-  const leftTime = left.createdAt.getTime();
-  const rightTime = right.createdAt.getTime();
+  const leftTime = new Date(left.createdAt).getTime();
+  const rightTime = new Date(right.createdAt).getTime();
 
   if (leftTime !== rightTime) return leftTime > rightTime;
   return left.id > right.id;

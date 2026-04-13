@@ -168,7 +168,7 @@ const ModelRunsDataTableDesktop: React.FC<ModelRunsDataTableInternalProps> = (ta
           <div className="flex justify-end">
             <RelativeDate
               className="min-w-fit text-nowrap"
-              date={row.original.createdAt}
+              date={new Date(row.original.createdAt)}
               type="relative"
               clickable
             />
