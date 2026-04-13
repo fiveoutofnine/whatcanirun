@@ -52,14 +52,23 @@ export default async function Page({
 
   if (members.length === 0 || stats.length === 0) {
     return (
-      <div className="flex grow flex-col p-4 md:px-0 md:py-6">
-        <div className="mx-auto flex w-full max-w-5xl items-center justify-center rounded-xl border border-gray-6 bg-gray-2 px-4 py-12">
-          <StateInfo
-            size="sm"
-            title="No benchmark results found"
-            description="No benchmark results yet for this model family."
-            icon={<File />}
-          />
+      <div
+        id={`content-${rootPath}`}
+        className="flex grow md:px-6"
+        role="tabpanel"
+        aria-labelledby={`trigger-${rootPath}`}
+      >
+        <div className="mx-auto flex w-full max-w-5xl grow flex-col py-4 md:py-6">
+          <div className="px-4 md:px-0">
+            <div className="flex w-full items-center justify-center rounded-xl border border-gray-6 bg-gray-2 px-4 py-12">
+              <StateInfo
+                size="sm"
+                title="No benchmark results found"
+                description="No benchmark results yet for this model family."
+                icon={<File />}
+              />
+            </div>
+          </div>
         </div>
       </div>
     );

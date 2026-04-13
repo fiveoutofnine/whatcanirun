@@ -371,134 +371,138 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
         </div>
       </header>
 
-      <div className="mx-auto flex w-full max-w-5xl grow flex-col px-4 py-4 md:px-0 md:py-6">
-        <section className="grid grid-cols-2 gap-2 md:grid-cols-4">
-          {[
-            {
-              label: 'Prompt tokens',
-              value: <span>{Number(run.promptTokens).toLocaleString()}</span>,
-            },
-            {
-              label: 'Generation tokens',
-              value: <span>{Number(run.completionTokens).toLocaleString()}</span>,
-            },
-            {
-              label: 'Trials passed',
-              value: (
-                <span>
-                  {run.trialsTotal.toLocaleString()}
-                  <span className="text-gray-11">/{run.trialsPassed.toLocaleString()}</span>
-                </span>
-              ),
-            },
-            {
-              label: <Vocab word="status" />,
-              value: (
-                <Fragment>
-                  <Badge
-                    className="hidden h-7 md:block"
-                    variant="outline"
-                    size="lg"
-                    type="text"
-                    intent={STATUS_BADGE_INTENT[run.status]}
-                  >
-                    {run.status.charAt(0).toUpperCase() + run.status.slice(1)}
-                  </Badge>
-                  <Badge
-                    className="md:hidden"
-                    variant="outline"
-                    size="md"
-                    type="text"
-                    intent={STATUS_BADGE_INTENT[run.status]}
-                  >
-                    {run.status.charAt(0).toUpperCase() + run.status.slice(1)}
-                  </Badge>
-                </Fragment>
-              ),
-            },
-            {
-              label: <Vocab word="decode" />,
-              value: (
-                <span>
-                  {Number(run.decodeTpsMean).toLocaleString(undefined, {
-                    maximumFractionDigits: 1,
-                    minimumFractionDigits: 1,
-                  })}
-                  <span className="text-gray-11"> tok/s</span>
-                </span>
-              ),
-            },
-            {
-              label: <Vocab word="prefill" />,
-              value:
-                run.prefillTpsMean != null ? (
+      <div className="flex grow md:px-6">
+        <div className="mx-auto flex w-full max-w-5xl grow flex-col px-4 py-4 md:px-0 md:py-6">
+          <section className="grid grid-cols-2 gap-2 md:grid-cols-4">
+            {[
+              {
+                label: 'Prompt tokens',
+                value: <span>{Number(run.promptTokens).toLocaleString()}</span>,
+              },
+              {
+                label: 'Generation tokens',
+                value: <span>{Number(run.completionTokens).toLocaleString()}</span>,
+              },
+              {
+                label: 'Trials passed',
+                value: (
                   <span>
-                    {Number(run.prefillTpsMean).toLocaleString(undefined, {
+                    {run.trialsTotal.toLocaleString()}
+                    <span className="text-gray-11">/{run.trialsPassed.toLocaleString()}</span>
+                  </span>
+                ),
+              },
+              {
+                label: <Vocab word="status" />,
+                value: (
+                  <Fragment>
+                    <Badge
+                      className="hidden h-7 md:block"
+                      variant="outline"
+                      size="lg"
+                      type="text"
+                      intent={STATUS_BADGE_INTENT[run.status]}
+                    >
+                      {run.status.charAt(0).toUpperCase() + run.status.slice(1)}
+                    </Badge>
+                    <Badge
+                      className="md:hidden"
+                      variant="outline"
+                      size="md"
+                      type="text"
+                      intent={STATUS_BADGE_INTENT[run.status]}
+                    >
+                      {run.status.charAt(0).toUpperCase() + run.status.slice(1)}
+                    </Badge>
+                  </Fragment>
+                ),
+              },
+              {
+                label: <Vocab word="decode" />,
+                value: (
+                  <span>
+                    {Number(run.decodeTpsMean).toLocaleString(undefined, {
                       maximumFractionDigits: 1,
                       minimumFractionDigits: 1,
                     })}
                     <span className="text-gray-11"> tok/s</span>
                   </span>
-                ) : (
-                  '—'
                 ),
-            },
-            {
-              label: 'Peak memory',
-              value: (
-                <span>
-                  {Number(run.peakRssMb / 1024).toLocaleString(undefined, {
-                    maximumFractionDigits: 2,
-                    minimumFractionDigits: 2,
-                  })}
-                  <span className="text-gray-11">/{run.device.ramGb.toLocaleString()} GB</span>
-                </span>
-              ),
-            },
-            {
-              label: <Vocab word="runnability" />,
-              value:
-                runnabilityScore != null ? (
-                  <Fragment>
-                    <ScoreBadge
-                      className="hidden h-7 md:block"
-                      score={runnabilityScore}
-                      size="lg"
-                    />
-                    <ScoreBadge className="md:hidden" score={runnabilityScore} size="md" />
-                  </Fragment>
-                ) : (
-                  '—'
+              },
+              {
+                label: <Vocab word="prefill" />,
+                value:
+                  run.prefillTpsMean != null ? (
+                    <span>
+                      {Number(run.prefillTpsMean).toLocaleString(undefined, {
+                        maximumFractionDigits: 1,
+                        minimumFractionDigits: 1,
+                      })}
+                      <span className="text-gray-11"> tok/s</span>
+                    </span>
+                  ) : (
+                    '—'
+                  ),
+              },
+              {
+                label: 'Peak memory',
+                value: (
+                  <span>
+                    {Number(run.peakRssMb / 1024).toLocaleString(undefined, {
+                      maximumFractionDigits: 2,
+                      minimumFractionDigits: 2,
+                    })}
+                    <span className="text-gray-11">/{run.device.ramGb.toLocaleString()} GB</span>
+                  </span>
                 ),
-            },
-          ].map((card, i) => (
-            <div key={i} className="rounded-xl border border-gray-6 bg-gray-2 p-4">
-              <h2 className="text-sm font-medium leading-[1.125rem] text-gray-11">{card.label}</h2>
-              <div className="mt-1 line-clamp-1 block text-lg font-medium tabular-nums leading-6 text-gray-12 md:text-xl">
-                {card.value}
+              },
+              {
+                label: <Vocab word="runnability" />,
+                value:
+                  runnabilityScore != null ? (
+                    <Fragment>
+                      <ScoreBadge
+                        className="hidden h-7 md:block"
+                        score={runnabilityScore}
+                        size="lg"
+                      />
+                      <ScoreBadge className="md:hidden" score={runnabilityScore} size="md" />
+                    </Fragment>
+                  ) : (
+                    '—'
+                  ),
+              },
+            ].map((card, i) => (
+              <div key={i} className="rounded-xl border border-gray-6 bg-gray-2 p-4">
+                <h2 className="text-sm font-medium leading-[1.125rem] text-gray-11">
+                  {card.label}
+                </h2>
+                <div className="mt-1 line-clamp-1 block text-lg font-medium tabular-nums leading-6 text-gray-12 md:text-xl">
+                  {card.value}
+                </div>
               </div>
-            </div>
-          ))}
-        </section>
+            ))}
+          </section>
 
-        {trialsChartData.length > 0 ? (
-          <Fragment>
-            <H2 className="mb-2 mt-4 md:mt-8">Trials</H2>
-            <div className="-mx-4 md:mx-0">
-              <RunDetailsTrialsChart data={trialsChartData} />
-            </div>
-          </Fragment>
-        ) : null}
+          {trialsChartData.length > 0 ? (
+            <Fragment>
+              <H2 className="mb-2 mt-4 md:mt-8">Trials</H2>
+              <div className="-mx-4 md:mx-0">
+                <RunDetailsTrialsChart data={trialsChartData} />
+              </div>
+            </Fragment>
+          ) : null}
 
-        <H2 className="mb-2 mt-4 md:mt-8">Metadata</H2>
-        <CodeBlock
-          className="-mx-4 w-[calc(100%+2rem)] rounded-none border-x-0 md:mx-0 md:w-full md:rounded-xl md:border-x [&_[code-block-header]]:rounded-none md:[&_[code-block-header]]:rounded-t-xl [&_[code-block-pre]]:max-h-80 [&_[code-block-pre]]:overflow-y-auto [&_[code-block-pre]]:rounded-none md:[&_[code-block-pre]]:rounded-b-[0.6875rem]"
-          fileName="metadata.json"
-          language="json"
-          showLineNumbers={false}
-        >
-          {metadataJson}
-        </CodeBlock>
+          <H2 className="mb-2 mt-4 md:mt-8">Metadata</H2>
+          <CodeBlock
+            className="-mx-4 w-[calc(100%+2rem)] rounded-none border-x-0 md:mx-0 md:w-full md:rounded-xl md:border-x [&_[code-block-header]]:rounded-none md:[&_[code-block-header]]:rounded-t-xl [&_[code-block-pre]]:max-h-80 [&_[code-block-pre]]:overflow-y-auto [&_[code-block-pre]]:rounded-none md:[&_[code-block-pre]]:rounded-b-[0.6875rem]"
+            fileName="metadata.json"
+            language="json"
+            showLineNumbers={false}
+          >
+            {metadataJson}
+          </CodeBlock>
+        </div>
       </div>
     </div>
   );
