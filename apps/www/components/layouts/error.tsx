@@ -29,7 +29,7 @@ const ErrorLayout: React.FC<ErrorLayoutProps> = ({
     errorMessage ?? (statusCode === 404 ? 'That page does not exist.' : 'Something went wrong.');
 
   return (
-    <div className="flex w-full flex-grow items-center justify-center">
+    <div className="flex w-full flex-grow items-center justify-center px-4 md:px-6">
       <StateInfo
         className="h-fit"
         intent="fail"
