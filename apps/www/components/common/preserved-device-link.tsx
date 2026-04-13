@@ -8,11 +8,12 @@ import { usePreservedDeviceHref } from '@/lib/hooks';
 type PreservedDeviceLinkProps = Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, 'href'> &
   Omit<LinkProps, 'href'> & {
     href: string;
+    preserveDevice?: boolean;
   };
 
 const PreservedDeviceLink = forwardRef<HTMLAnchorElement, PreservedDeviceLinkProps>(
-  ({ href, ...rest }, ref) => {
-    const preservedHref = usePreservedDeviceHref(href);
+  ({ href, preserveDevice = true, ...rest }, ref) => {
+    const preservedHref = usePreservedDeviceHref(href, preserveDevice);
 
     return <Link ref={ref} href={preservedHref} {...rest} />;
   },

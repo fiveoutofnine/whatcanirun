@@ -11,7 +11,7 @@ import {
   withDeviceSearchParam,
 } from '@/lib/preserved-device-navigation';
 
-export const usePreservedDeviceHref = (href: string) => {
+export const usePreservedDeviceHref = (href: string, preserveDevice = true) => {
   const pathname = usePathname();
   const device = useSyncExternalStore(
     subscribePreservedNavigationDevice,
@@ -20,9 +20,9 @@ export const usePreservedDeviceHref = (href: string) => {
   );
 
   return useMemo(() => {
-    if (!shouldPreserveDeviceForPath(pathname) || !device) return href;
+    if (!preserveDevice || !shouldPreserveDeviceForPath(pathname) || !device) return href;
     return withDeviceSearchParam(href, device);
-  }, [device, href, pathname]);
+  }, [device, href, pathname, preserveDevice]);
 };
 
 export const usePreservedNavigationDevice = (device: string | null) => {

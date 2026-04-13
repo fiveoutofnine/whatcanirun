@@ -29,4 +29,5 @@ export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> &
     leftIcon?: React.ReactNode;
     rightIcon?: React.ReactNode;
     newTab?: boolean;
+    preserveDevice?: boolean;
   };

@@ -22,6 +22,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       leftIcon,
       rightIcon,
       newTab = false,
+      preserveDevice = true,
       children,
       ...rest
     },
@@ -68,7 +69,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
               ) : null}
             </a>
           ) : (
-            <PreservedDeviceLink href={href} {...linkProps}>
+            <PreservedDeviceLink href={href} preserveDevice={preserveDevice} {...linkProps}>
               {leftIcon && variant !== 'text' ? (
                 <span className={buttonIconVariants({ size })} button-left-icon="">
                   {leftIcon}

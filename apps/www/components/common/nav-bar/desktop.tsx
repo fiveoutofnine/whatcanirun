@@ -34,6 +34,7 @@ const NavBarDesktop: React.FC<NavBarInternalProps> = ({ user, loading = false })
               )}
               variant="ghost"
               href={page.slug}
+              preserveDevice={false}
               disabled={selected}
             >
               {page.name}
