@@ -94,7 +94,7 @@ export function getFallbackFeaturedModels(request: FeaturedModelsRequest = {}): 
 // -----------------------------------------------------------------------------
 
 export async function fetchFeaturedModels(
-  request: FeaturedModelsRequest = {},
+  request: FeaturedModelsRequest = {}
 ): Promise<FeaturedModelsResult> {
   const fallback = getFallbackFeaturedModels(request);
 
