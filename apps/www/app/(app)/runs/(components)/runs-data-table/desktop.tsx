@@ -320,7 +320,8 @@ const RunsDataTableDesktop: React.FC<RunsDataTableInternalProps> = (tableOptions
                   />,
                   <MemoryTableCell.Skeleton key={5} align="left" />,
                   <div key={6} className="ml-auto h-5 w-16 animate-pulse rounded-full bg-gray-9" />,
-                  <div key={7} className="flex justify-end">
+                  <div key={7} className="ml-auto h-5 w-20 animate-pulse rounded bg-gray-9" />,
+                  <div key={8} className="flex justify-end">
                     <IconButton variant="outline" disabled>
                       <ArrowRight />
                     </IconButton>

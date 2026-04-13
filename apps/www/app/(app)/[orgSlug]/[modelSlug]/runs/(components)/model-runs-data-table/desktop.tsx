@@ -262,7 +262,8 @@ const ModelRunsDataTableDesktop: React.FC<ModelRunsDataTableInternalProps> = (ta
                     className="ml-auto h-[1.125rem] w-24 animate-pulse rounded bg-gray-9"
                   />,
                   <MemoryTableCell.Skeleton key={5} align="left" />,
-                  <div key={6} className="flex justify-end">
+                  <div key={6} className="ml-auto h-5 w-20 animate-pulse rounded bg-gray-9" />,
+                  <div key={7} className="flex justify-end">
                     <IconButton variant="outline" disabled>
                       <ArrowRight />
                     </IconButton>
