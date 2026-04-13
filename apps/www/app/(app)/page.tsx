@@ -5,10 +5,10 @@ import Hero from './(components)/hero';
 import ModelsDataTable from './(components)/models-data-table';
 import ModelsDataTableSkeleton from './(components)/models-data-table/skeleton';
 import type { ModelsDataTableValue } from './(components)/models-data-table/types';
-import { asc, count, countDistinct, desc, eq, sql } from 'drizzle-orm';
+import { asc, count, desc, eq, sql } from 'drizzle-orm';
 
 import { db } from '@/lib/db';
-import { view__model_stats_by_device } from '@/lib/db/schema';
+import { view__model_device_summary, view__model_stats_by_device } from '@/lib/db/schema';
 import { createPaginationParser, createSortingParser } from '@/lib/query-states';
 
 import ContainerLayout from '@/components/layouts/container';
@@ -43,17 +43,17 @@ export default async function Page({
     async () =>
       await db
         .select({
-          chipId: view__model_stats_by_device.deviceChipId,
-          cpu: sql<string>`MIN(${view__model_stats_by_device.deviceCpu})`.as('cpu'),
-          cpuCores: sql<number>`MIN(${view__model_stats_by_device.deviceCpuCores})`.as('cpu_cores'),
-          gpu: sql<string>`MIN(${view__model_stats_by_device.deviceGpu})`.as('gpu'),
-          gpuCores: sql<number>`MIN(${view__model_stats_by_device.deviceGpuCores})`.as('gpu_cores'),
-          gpuCount: sql<number>`MIN(${view__model_stats_by_device.deviceGpuCount})`.as('gpu_count'),
-          ramGb: sql<number>`MIN(${view__model_stats_by_device.deviceRamGb})`.as('ram_gb'),
-          modelCount: countDistinct(view__model_stats_by_device.modelGroupKey).as('model_count'),
+          chipId: view__model_device_summary.deviceChipId,
+          cpu: sql<string>`MIN(${view__model_device_summary.deviceCpu})`.as('cpu'),
+          cpuCores: sql<number>`MIN(${view__model_device_summary.deviceCpuCores})`.as('cpu_cores'),
+          gpu: sql<string>`MIN(${view__model_device_summary.deviceGpu})`.as('gpu'),
+          gpuCores: sql<number>`MIN(${view__model_device_summary.deviceGpuCores})`.as('gpu_cores'),
+          gpuCount: sql<number>`MIN(${view__model_device_summary.deviceGpuCount})`.as('gpu_count'),
+          ramGb: sql<number>`MIN(${view__model_device_summary.deviceRamGb})`.as('ram_gb'),
+          modelCount: count().as('model_count'),
         })
-        .from(view__model_stats_by_device)
-        .groupBy(view__model_stats_by_device.deviceChipId),
+        .from(view__model_device_summary)
+        .groupBy(view__model_device_summary.deviceChipId),
     ['hero-chip-options'],
     { tags: [], revalidate: 600 },
   )();
