@@ -2,7 +2,11 @@ export { default as enumToPgEnum } from './enum-to-pg-enum';
 export { default as formatBytes } from './format-bytes';
 export { default as formatChipName } from './format-chip-name';
 export { default as formatValueToPrecision } from './format-value-to-precision';
-export { getFeaturedModelsCacheKey } from './featured-models';
+export {
+  FEATURED_MODELS_CACHE_REVALIDATE_SECONDS,
+  FEATURED_MODELS_CACHE_TAG,
+  getFeaturedModelsCacheKey,
+} from './featured-models';
 export { getFeaturedModels } from './featured-models';
 export { default as getRunnabilityScore } from './get-runnability-score';
 export { default as parseManufacturer } from './parse-manufacturer';

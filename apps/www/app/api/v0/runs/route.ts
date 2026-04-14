@@ -1,3 +1,4 @@
+import { revalidateTag } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { processBundle } from './process-bundle';
@@ -5,7 +6,7 @@ import { eq } from 'drizzle-orm';
 
 import { db } from '@/lib/db';
 import { apiTokens } from '@/lib/db/schema';
-import { sha256 } from '@/lib/utils';
+import { FEATURED_MODELS_CACHE_TAG, sha256 } from '@/lib/utils';
 
 // -----------------------------------------------------------------------------
 // POST
@@ -57,6 +58,8 @@ export async function POST(request: NextRequest) {
     if (result.runId) body.run_id = result.runId;
     return NextResponse.json(body, { status: result.status });
   }
+
+  revalidateTag(FEATURED_MODELS_CACHE_TAG, 'max');
 
   return NextResponse.json(
     { run_id: result.runId, status: result.status, run_url: result.runUrl },
