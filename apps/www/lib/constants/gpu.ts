@@ -60,6 +60,12 @@ export const GPU_VRAM: Record<string, number> = {
   'geforce rtx 2070': 8,
   'geforce rtx 2060 super': 8,
   'geforce rtx 2060': 6,
+  // NVIDIA TITAN
+  'titan rtx': 24,
+  'titan v': 12,
+  'titan xp': 12,
+  'titan x (pascal)': 12,
+  'titan x': 12,
   // NVIDIA GeForce GTX 16-series (laptop)
   'geforce gtx 1650 ti with max-q design': 4,
   // NVIDIA A-series (data center)
@@ -151,6 +157,7 @@ const GPU_SERIES: [RegExp, number][] = [
   [/geforce rtx 40\d{2}(?!.*laptop)/i, 11],
   [/geforce rtx 30\d{2}(?!.*laptop)/i, 9],
   [/geforce rtx 20\d{2}(?!.*laptop)/i, 7],
+  [/titan/i, 7], // Legacy enthusiast TITAN family
   // NVIDIA GeForce laptop (one rank below desktop counterpart)
   [/geforce rtx 50\d{2}.*laptop/i, 12],
   [/geforce rtx 40\d{2}.*laptop/i, 10],
