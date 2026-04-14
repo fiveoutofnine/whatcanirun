@@ -12,6 +12,10 @@ declare global {
       AUTH_GOOGLE_SECRET: string;
       // Database
       DATABASE_URL: string;
+      // Notifications
+      TELEGRAM_BOT_TOKEN?: string;
+      TELEGRAM_CHAT_ID?: string;
+      TELEGRAM_MESSAGE_THREAD_ID?: string;
     }
   }
 }

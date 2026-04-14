@@ -69,6 +69,19 @@ cp .env.sample .env
       <td><code>DATABASE_URL</code></td>
       <td>The connection string for the database.</td>
     </tr>
+    <tr>
+      <td rowspan="3">Notifications</td>
+      <td><code>TELEGRAM_BOT_TOKEN</code></td>
+      <td>The Telegram bot token used to send post-submit action items.</td>
+    </tr>
+    <tr>
+      <td><code>TELEGRAM_CHAT_ID</code></td>
+      <td>The Telegram chat or channel ID that receives model metadata action items.</td>
+    </tr>
+    <tr>
+      <td><code>TELEGRAM_MESSAGE_THREAD_ID</code></td>
+      <td>Optional Telegram thread ID for routing action items into a specific topic.</td>
+    </tr>
   </tbody>
 </table>
 
