@@ -1,3 +1,4 @@
+import { revalidateTag } from 'next/cache';
 import { NextResponse } from 'next/server';
 
 import { processBundle } from '../process-bundle';
@@ -5,6 +6,7 @@ import { Credential } from 'mppx';
 import { isAddress } from 'viem';
 
 import { TEMPO_CHAIN_ID, withTempoIdentityVerification } from '@/lib/services/mppx';
+import { FEATURED_MODELS_CACHE_TAG } from '@/lib/utils';
 
 // -----------------------------------------------------------------------------
 // Constants
@@ -43,6 +45,8 @@ export const POST = withTempoIdentityVerification(async (request: Request) => {
     if (result.runId) body.run_id = result.runId;
     return NextResponse.json(body, { status: result.status });
   }
+
+  revalidateTag(FEATURED_MODELS_CACHE_TAG, 'max');
 
   return NextResponse.json(
     {
