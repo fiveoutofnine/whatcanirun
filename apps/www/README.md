@@ -40,7 +40,7 @@ cp .env.sample .env
       <td>The secret for <a href="https://vercel.com/docs/cron-jobs" target="_blank" rel="noopener noreferrer">cron jobs</a>.</td>
     </tr>
     <tr>
-      <td rowspan="2">Notifications</td>
+      <td rowspan="2">Run Notifications</td>
       <td><code>RUNS_TELEGRAM_BOT_TOKEN</code></td>
       <td>The Telegram bot token used for new run submission notifications.</td>
     </tr>
@@ -79,7 +79,7 @@ cp .env.sample .env
       <td>The connection string for the database.</td>
     </tr>
     <tr>
-      <td rowspan="3">Notifications</td>
+      <td rowspan="3">Action Items</td>
       <td><code>TELEGRAM_BOT_TOKEN</code></td>
       <td>The Telegram bot token used to send post-submit action items.</td>
     </tr>

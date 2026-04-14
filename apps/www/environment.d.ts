@@ -4,6 +4,7 @@ declare global {
       // Site
       NEXT_PUBLIC_BASE_URL: string;
       CRON_SECRET: string;
+      // Run notifications
       RUNS_TELEGRAM_BOT_TOKEN?: string;
       RUNS_TELEGRAM_CHAT_ID?: string;
       // Auth
@@ -15,7 +16,7 @@ declare global {
       AUTH_GOOGLE_SECRET: string;
       // Database
       DATABASE_URL: string;
-      // Notifications
+      // Action-item notifications
       TELEGRAM_BOT_TOKEN?: string;
       TELEGRAM_CHAT_ID?: string;
       TELEGRAM_MESSAGE_THREAD_ID?: string;

@@ -3,10 +3,10 @@ import { alias } from 'drizzle-orm/pg-core';
 
 import { db } from '@/lib/db';
 import { modelFamilies, models, modelsInfo, organizations, runs } from '@/lib/db/schema';
+import { scheduleTelegramMessage } from '@/lib/services/telegram';
 import { getModelGroupKey, getModelGroupKeySql } from '@/lib/utils/model-grouping';
 
 const DEFAULT_BASE_URL = 'https://whatcani.run';
-const TELEGRAM_API_BASE_URL = 'https://api.telegram.org';
 
 type NotifyMissingModelMetadataActionItemInput = {
   modelId: string;
@@ -84,10 +84,15 @@ export async function notifyMissingModelMetadataActionItem(
     runUrl: input.runUrl ?? `${process.env.NEXT_PUBLIC_BASE_URL ?? DEFAULT_BASE_URL}/run/${input.runId}`,
   });
 
-  const sent = await sendTelegramMessage(message);
-  if (!sent) {
-    console.warn(`Missing model metadata action item for ${input.runId} was not sent to Telegram.`);
-  }
+  scheduleTelegramMessage({
+    botToken: process.env.TELEGRAM_BOT_TOKEN,
+    chatId: process.env.TELEGRAM_CHAT_ID,
+    messageThreadId: process.env.TELEGRAM_MESSAGE_THREAD_ID
+      ? Number(process.env.TELEGRAM_MESSAGE_THREAD_ID)
+      : undefined,
+    text: message,
+    parseMode: 'HTML',
+  });
 }
 
 async function getMissingModelMetadataAction(
@@ -353,39 +358,6 @@ function renderTelegramMessage({
     '<pre>' + escapeHtml(manualSteps) + '</pre>',
     ...(context ? ['<pre>' + escapeHtml(context) + '</pre>'] : []),
   ].join('\n');
-}
-
-async function sendTelegramMessage(message: string) {
-  const botToken = process.env.TELEGRAM_BOT_TOKEN;
-  const chatId = process.env.TELEGRAM_CHAT_ID;
-  if (!botToken || !chatId) return false;
-
-  try {
-    const response = await fetch(`${TELEGRAM_API_BASE_URL}/bot${botToken}/sendMessage`, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({
-        chat_id: chatId,
-        text: message,
-        parse_mode: 'HTML',
-        disable_web_page_preview: true,
-        ...(process.env.TELEGRAM_MESSAGE_THREAD_ID
-          ? { message_thread_id: Number(process.env.TELEGRAM_MESSAGE_THREAD_ID) }
-          : {}),
-      }),
-      signal: AbortSignal.timeout(5_000),
-    });
-
-    if (!response.ok) {
-      console.error('Failed to send Telegram action item:', response.status, await response.text());
-      return false;
-    }
-
-    return true;
-  } catch (error) {
-    console.error('Failed to send Telegram action item:', error);
-    return false;
-  }
 }
 
 function toSqlLiteral(value: number | string | null) {
