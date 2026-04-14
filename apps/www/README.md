@@ -40,7 +40,7 @@ cp .env.sample .env
       <td>The secret for <a href="https://vercel.com/docs/cron-jobs" target="_blank" rel="noopener noreferrer">cron jobs</a>.</td>
     </tr>
     <tr>
-      <td rowspan="2">Run Notifications</td>
+      <td rowspan="2">Notifications</td>
       <td><code>RUNS_TELEGRAM_BOT_TOKEN</code></td>
       <td>The Telegram bot token used for new run submission notifications.</td>
     </tr>
@@ -77,19 +77,6 @@ cp .env.sample .env
       <td rowspan="1">Database</td>
       <td><code>DATABASE_URL</code></td>
       <td>The connection string for the database.</td>
-    </tr>
-    <tr>
-      <td rowspan="3">Action Items</td>
-      <td><code>TELEGRAM_BOT_TOKEN</code></td>
-      <td>The Telegram bot token used to send post-submit action items.</td>
-    </tr>
-    <tr>
-      <td><code>TELEGRAM_CHAT_ID</code></td>
-      <td>The Telegram chat or channel ID that receives model metadata action items.</td>
-    </tr>
-    <tr>
-      <td><code>TELEGRAM_MESSAGE_THREAD_ID</code></td>
-      <td>Optional Telegram thread ID for routing action items into a specific topic.</td>
     </tr>
   </tbody>
 </table>

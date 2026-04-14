@@ -3,7 +3,7 @@ import { alias } from 'drizzle-orm/pg-core';
 
 import { db } from '@/lib/db';
 import { modelFamilies, models, modelsInfo, organizations, runs } from '@/lib/db/schema';
-import { scheduleTelegramMessage } from '@/lib/services/telegram';
+import { scheduleRunTelegramNotification } from '@/lib/services/telegram';
 import { getModelGroupKey, getModelGroupKeySql } from '@/lib/utils/model-grouping';
 
 const DEFAULT_BASE_URL = 'https://whatcani.run';
@@ -78,21 +78,13 @@ export async function notifyMissingModelMetadataActionItem(
   const action = await getMissingModelMetadataAction(input.modelId);
   if (!action) return;
 
-  const message = renderTelegramMessage({
+  const message = renderActionItemMessage({
     action,
     runId: input.runId,
     runUrl: input.runUrl ?? `${process.env.NEXT_PUBLIC_BASE_URL ?? DEFAULT_BASE_URL}/run/${input.runId}`,
   });
 
-  scheduleTelegramMessage({
-    botToken: process.env.TELEGRAM_BOT_TOKEN,
-    chatId: process.env.TELEGRAM_CHAT_ID,
-    messageThreadId: process.env.TELEGRAM_MESSAGE_THREAD_ID
-      ? Number(process.env.TELEGRAM_MESSAGE_THREAD_ID)
-      : undefined,
-    text: message,
-    parseMode: 'HTML',
-  });
+  scheduleRunTelegramNotification(message);
 }
 
 async function getMissingModelMetadataAction(
@@ -266,7 +258,7 @@ function buildModelsInfoInsertSql({
   ].join('\n');
 }
 
-function renderTelegramMessage({
+function renderActionItemMessage({
   action,
   runId,
   runUrl,
@@ -277,15 +269,15 @@ function renderTelegramMessage({
 }) {
   const header =
     action.kind === 'models-info-insert'
-      ? '<b>[whatcanirun] models_info follow-up ready</b>'
-      : '<b>[whatcanirun] Manual model metadata follow-up required</b>';
+      ? '[whatcanirun] models_info follow-up ready'
+      : '[whatcanirun] Manual model metadata follow-up required';
 
   const baseDetails = [
-    `Run: <code>${escapeHtml(runId)}</code>`,
-    `Run URL: ${escapeHtml(runUrl)}`,
-    `Model: <code>${escapeHtml(action.model.displayName)}</code>`,
-    `Source: <code>${escapeHtml(action.model.source ?? '(none)')}</code>`,
-    `Artifact: <code>${escapeHtml(action.model.artifactSha256)}</code>`,
+    `Run: ${runId}`,
+    `Run URL: ${runUrl}`,
+    `Model: ${action.model.displayName}`,
+    `Source: ${action.model.source ?? '(none)'}`,
+    `Artifact: ${action.model.artifactSha256}`,
   ];
 
   const payload = [
@@ -313,9 +305,11 @@ function renderTelegramMessage({
       '',
       ...baseDetails,
       '',
-      '<pre>' + escapeHtml(resolved) + '</pre>',
-      '<pre>' + escapeHtml(payload) + '</pre>',
-      '<pre>' + escapeHtml(action.sql) + '</pre>',
+      resolved,
+      '',
+      payload,
+      '',
+      action.sql,
     ].join('\n');
   }
 
@@ -354,9 +348,10 @@ function renderTelegramMessage({
     '',
     ...baseDetails,
     '',
-    '<pre>' + escapeHtml(payload) + '</pre>',
-    '<pre>' + escapeHtml(manualSteps) + '</pre>',
-    ...(context ? ['<pre>' + escapeHtml(context) + '</pre>'] : []),
+    payload,
+    '',
+    manualSteps,
+    ...(context ? ['', context] : []),
   ].join('\n');
 }
 
@@ -376,11 +371,4 @@ function slugify(value: string) {
     .replace(/^-+|-+$/g, '')
     .replace(/-{2,}/g, '-')
     .toLowerCase();
-}
-
-function escapeHtml(value: string) {
-  return value
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;');
 }
