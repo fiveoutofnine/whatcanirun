@@ -155,6 +155,7 @@ export async function getHfRepoSize(repoId: string): Promise<number | null> {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 5000);
     const resp = await fetch(`https://huggingface.co/api/models/${repoId}`, {
+      headers: getHfHeaders(),
       signal: controller.signal,
     });
     clearTimeout(timeout);
@@ -210,6 +211,12 @@ export interface DownloadProgress {
 
 const MODELS_CACHE_DIR = join(homedir(), APP_DIR_NAME, 'models');
 
+function getHfHeaders(): HeadersInit | undefined {
+  const token = process.env.HF_TOKEN || process.env.HUGGINGFACE_HUB_TOKEN;
+  if (!token) return undefined;
+  return { Authorization: `Bearer ${token}` };
+}
+
 /**
  * Download a specific file from a HF repo via HTTPS.
  * Caches to ~/.whatcanirun/models/{org}/{repo}/{fileName}.
@@ -227,7 +234,11 @@ async function downloadHfFile(
   if (existsSync(destPath)) return destPath;
 
   const url = `https://huggingface.co/${repoId}/resolve/main/${fileName}`;
-  const resp = await fetch(url, { redirect: 'follow', signal: opts?.signal });
+  const resp = await fetch(url, {
+    headers: getHfHeaders(),
+    redirect: 'follow',
+    signal: opts?.signal,
+  });
 
   if (!resp.ok) {
     throw new Error(`Failed to download ${repoId}/${fileName}: HTTP ${resp.status}`);
