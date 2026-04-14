@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-import { processBundle } from '../process-bundle';
+import { submitRun } from '../submit-run';
 import { Credential } from 'mppx';
 import { isAddress } from 'viem';
 
@@ -35,7 +35,7 @@ export const POST = withTempoIdentityVerification(async (request: Request) => {
   const forwarded = request.headers.get('x-forwarded-for');
   const ip = forwarded?.split(',')[0]?.trim() || request.headers.get('x-real-ip') || 'unknown';
 
-  const result = await processBundle({ bundleFile, ip, did: identity.did });
+  const result = await submitRun({ bundleFile, ip, did: identity.did });
 
   if (!result.ok) {
     const body: Record<string, unknown> = { error: result.error };

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-import { processBundle } from './process-bundle';
+import { submitRun } from './submit-run';
 import { eq } from 'drizzle-orm';
 
 import { db } from '@/lib/db';
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
   const forwarded = request.headers.get('x-forwarded-for');
   const ip = forwarded?.split(',')[0]?.trim() || request.headers.get('x-real-ip') || 'unknown';
 
-  const result = await processBundle({ bundleFile, ip, userId });
+  const result = await submitRun({ bundleFile, ip, userId });
 
   if (!result.ok) {
     const body: Record<string, unknown> = { error: result.error };
