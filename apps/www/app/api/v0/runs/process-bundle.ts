@@ -5,7 +5,6 @@ import { unzipSync } from 'fflate';
 
 import { db } from '@/lib/db';
 import { devices, models, runs, RunStatus, trials } from '@/lib/db/schema';
-import { notifyMissingModelMetadataActionItem } from '@/lib/services/model-metadata-action-item';
 import { sha256 } from '@/lib/utils';
 import { validatePlausibility } from '@/lib/validators/bundle';
 
@@ -29,7 +28,7 @@ interface ProcessBundleInput {
 }
 
 type ProcessBundleResult =
-  | { ok: true; runId: string; status: string; runUrl: string }
+  | { ok: true; runId: string; modelId: string; status: string; runUrl: string }
   | { ok: false; error: string; status: number; details?: string[]; runId?: string };
 
 // -----------------------------------------------------------------------------
@@ -297,17 +296,7 @@ export async function processBundle(input: ProcessBundleInput): Promise<ProcessB
   }
 
   const runUrl = `${process.env.NEXT_PUBLIC_BASE_URL ?? 'https://whatcani.run'}/run/${run.id}`;
-  try {
-    await notifyMissingModelMetadataActionItem({
-      modelId: model.id,
-      runId: run.id,
-      runUrl,
-    });
-  } catch (error) {
-    console.error(`Failed to prepare/send model metadata action item for ${run.id}:`, error);
-  }
-
-  return { ok: true, runId: run.id, status: RunStatus.PENDING, runUrl };
+  return { ok: true, runId: run.id, modelId: model.id, status: RunStatus.PENDING, runUrl };
 }
 
 // -----------------------------------------------------------------------------

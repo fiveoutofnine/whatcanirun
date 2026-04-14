@@ -1,5 +1,6 @@
 import { processBundle } from './process-bundle';
 
+import { notifyMissingModelMetadataActionItem } from '@/lib/services/model-metadata-action-item';
 import { scheduleNewRunSubmittedNotification } from '@/lib/services/telegram';
 
 export async function submitRun(input: Parameters<typeof processBundle>[0]) {
@@ -7,6 +8,16 @@ export async function submitRun(input: Parameters<typeof processBundle>[0]) {
 
   if (result.ok) {
     scheduleNewRunSubmittedNotification(result.runUrl);
+
+    try {
+      await notifyMissingModelMetadataActionItem({
+        modelId: result.modelId,
+        runId: result.runId,
+        runUrl: result.runUrl,
+      });
+    } catch (error) {
+      console.error(`Failed to prepare/send model metadata action item for ${result.runId}:`, error);
+    }
   }
 
   return result;
