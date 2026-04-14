@@ -1,6 +1,6 @@
+import { notifyMissingModelMetadataActionItem } from './model-metadata-action-item';
 import { processBundle } from './process-bundle';
 
-import { notifyMissingModelMetadataActionItem } from '@/lib/services/model-metadata-action-item';
 import { scheduleNewRunSubmittedNotification } from '@/lib/services/telegram';
 
 export async function submitRun(input: Parameters<typeof processBundle>[0]) {

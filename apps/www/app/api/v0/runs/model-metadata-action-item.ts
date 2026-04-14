@@ -1,10 +1,6 @@
-import { and, asc, desc, eq, sql } from 'drizzle-orm';
-import { alias } from 'drizzle-orm/pg-core';
-
 import { db } from '@/lib/db';
-import { modelFamilies, models, modelsInfo, organizations, runs } from '@/lib/db/schema';
 import { scheduleRunTelegramNotification } from '@/lib/services/telegram';
-import { getModelGroupKey, getModelGroupKeySql } from '@/lib/utils/model-grouping';
+import { getModelGroupKey } from '@/lib/utils/model-grouping';
 
 const DEFAULT_BASE_URL = 'https://whatcani.run';
 
@@ -35,6 +31,14 @@ type RelatedMetadataRecord = {
   quantizedByName: string | null;
 };
 
+type RelatedMetadataCandidate = RelatedMetadataRecord & {
+  artifactSha256: string;
+  modelId: string;
+  modelSource: string | null;
+  modelsInfoSource: string | null;
+  createdAt: Date;
+};
+
 type OrganizationCandidate = {
   id: string;
   name: string;
@@ -52,7 +56,7 @@ type MissingModelMetadataAction =
       labName: string | null;
       quantizedById: string | null;
       quantizedByName: string | null;
-      sql: string;
+      drizzleCode: string;
     }
   | {
       kind: 'manual';
@@ -66,12 +70,11 @@ type MissingModelMetadataAction =
 export async function notifyMissingModelMetadataActionItem(
   input: NotifyMissingModelMetadataActionItemInput,
 ) {
-  const [firstRun] = await db
-    .select({ id: runs.id })
-    .from(runs)
-    .where(eq(runs.modelId, input.modelId))
-    .orderBy(asc(runs.createdAt), asc(runs.id))
-    .limit(1);
+  const firstRun = await db.query.runs.findFirst({
+    columns: { id: true },
+    where: (run, { eq }) => eq(run.modelId, input.modelId),
+    orderBy: (run, { asc }) => [asc(run.createdAt), asc(run.id)],
+  });
 
   if (firstRun?.id !== input.runId) return;
 
@@ -92,28 +95,26 @@ export async function notifyMissingModelMetadataActionItem(
 async function getMissingModelMetadataAction(
   modelId: string,
 ): Promise<MissingModelMetadataAction | null> {
-  const [model] = await db
-    .select({
-      id: models.id,
-      displayName: models.displayName,
-      artifactSha256: models.artifactSha256,
-      source: models.source,
-      fileSizeBytes: models.fileSizeBytes,
-      parameters: models.parameters,
-      quant: models.quant,
-      architecture: models.architecture,
-    })
-    .from(models)
-    .where(eq(models.id, modelId))
-    .limit(1);
+  const model = await db.query.models.findFirst({
+    columns: {
+      id: true,
+      displayName: true,
+      artifactSha256: true,
+      source: true,
+      fileSizeBytes: true,
+      parameters: true,
+      quant: true,
+      architecture: true,
+    },
+    where: (table, { eq }) => eq(table.id, modelId),
+  });
 
   if (!model) return null;
 
-  const [existingInfo] = await db
-    .select({ artifactSha256: modelsInfo.artifactSha256 })
-    .from(modelsInfo)
-    .where(eq(modelsInfo.artifactSha256, model.artifactSha256))
-    .limit(1);
+  const existingInfo = await db.query.modelsInfo.findFirst({
+    columns: { artifactSha256: true },
+    where: (table, { eq }) => eq(table.artifactSha256, model.artifactSha256),
+  });
 
   if (existingInfo) return null;
 
@@ -148,7 +149,7 @@ async function getMissingModelMetadataAction(
       labName: relatedMetadata.labName,
       quantizedById: relatedMetadata.quantizedById,
       quantizedByName: relatedMetadata.quantizedByName,
-      sql: buildModelsInfoInsertSql({
+      drizzleCode: buildModelsInfoInsertDrizzleCode({
         model,
         familyId,
         labId,
@@ -171,34 +172,147 @@ async function getRelatedMetadata(
   model: ModelRecord,
   modelGroupKey: string,
 ): Promise<RelatedMetadataRecord | null> {
-  const labOrg = alias(organizations, 'missing_metadata_lab_org');
-  const quantOrg = alias(organizations, 'missing_metadata_quant_org');
+  const [modelsBySource, infosBySource] = await Promise.all([
+    db.query.models.findMany({
+      columns: {
+        id: true,
+        artifactSha256: true,
+        source: true,
+        createdAt: true,
+      },
+      where: (table, { eq }) => eq(table.source, modelGroupKey),
+      with: {
+        info: {
+          columns: {
+            source: true,
+            familyId: true,
+            labId: true,
+            quantizedById: true,
+          },
+          with: {
+            family: { columns: { id: true, name: true, orgId: true } },
+            lab: { columns: { id: true, name: true } },
+            quantizedBy: { columns: { id: true, name: true } },
+          },
+        },
+      },
+    }),
+    db.query.modelsInfo.findMany({
+      columns: {
+        artifactSha256: true,
+        source: true,
+        familyId: true,
+        labId: true,
+        quantizedById: true,
+      },
+      where: (table, { eq }) => eq(table.source, modelGroupKey),
+      with: {
+        model: {
+          columns: {
+            id: true,
+            artifactSha256: true,
+            source: true,
+            createdAt: true,
+          },
+        },
+        family: { columns: { id: true, name: true, orgId: true } },
+        lab: { columns: { id: true, name: true } },
+        quantizedBy: { columns: { id: true, name: true } },
+      },
+    }),
+  ]);
 
-  const [related] = await db
-    .select({
-      familyId: modelsInfo.familyId,
-      familyName: modelFamilies.name,
-      familyOrgId: modelFamilies.orgId,
-      labId: modelsInfo.labId,
-      labName: labOrg.name,
-      quantizedById: modelsInfo.quantizedById,
-      quantizedByName: quantOrg.name,
-    })
-    .from(models)
-    .innerJoin(modelsInfo, eq(models.artifactSha256, modelsInfo.artifactSha256))
-    .leftJoin(modelFamilies, eq(modelsInfo.familyId, modelFamilies.id))
-    .leftJoin(labOrg, eq(modelsInfo.labId, labOrg.id))
-    .leftJoin(quantOrg, eq(modelsInfo.quantizedById, quantOrg.id))
-    .where(
-      and(
-        sql`${getModelGroupKeySql(modelsInfo.source, models.source, models.artifactSha256)} = ${modelGroupKey}`,
-        sql`${models.artifactSha256} <> ${model.artifactSha256}`,
-      ),
-    )
-    .orderBy(desc(models.createdAt), desc(models.id))
-    .limit(1);
+  const candidates = new Map<string, RelatedMetadataCandidate>();
 
-  return related ?? null;
+  for (const candidate of modelsBySource) {
+    if (!candidate.info) continue;
+
+    const normalized = toRelatedMetadataCandidate({
+      artifactSha256: candidate.artifactSha256,
+      modelId: candidate.id,
+      modelSource: candidate.source,
+      modelsInfoSource: candidate.info.source,
+      familyId: candidate.info.familyId,
+      familyName: candidate.info.family?.name ?? null,
+      familyOrgId: candidate.info.family?.orgId ?? null,
+      labId: candidate.info.labId,
+      labName: candidate.info.lab?.name ?? null,
+      quantizedById: candidate.info.quantizedById,
+      quantizedByName: candidate.info.quantizedBy?.name ?? null,
+      createdAt: candidate.createdAt,
+    });
+
+    maybeStoreRelatedMetadataCandidate(candidates, model, modelGroupKey, normalized);
+  }
+
+  for (const candidate of infosBySource) {
+    if (!candidate.model) continue;
+
+    const normalized = toRelatedMetadataCandidate({
+      artifactSha256: candidate.artifactSha256,
+      modelId: candidate.model.id,
+      modelSource: candidate.model.source,
+      modelsInfoSource: candidate.source,
+      familyId: candidate.familyId,
+      familyName: candidate.family?.name ?? null,
+      familyOrgId: candidate.family?.orgId ?? null,
+      labId: candidate.labId,
+      labName: candidate.lab?.name ?? null,
+      quantizedById: candidate.quantizedById,
+      quantizedByName: candidate.quantizedBy?.name ?? null,
+      createdAt: candidate.model.createdAt,
+    });
+
+    maybeStoreRelatedMetadataCandidate(candidates, model, modelGroupKey, normalized);
+  }
+
+  const latest = [...candidates.values()].sort(compareRelatedMetadataCandidates)[0];
+  return latest
+    ? {
+        familyId: latest.familyId,
+        familyName: latest.familyName,
+        familyOrgId: latest.familyOrgId,
+        labId: latest.labId,
+        labName: latest.labName,
+        quantizedById: latest.quantizedById,
+        quantizedByName: latest.quantizedByName,
+      }
+    : null;
+}
+
+function maybeStoreRelatedMetadataCandidate(
+  candidates: Map<string, RelatedMetadataCandidate>,
+  targetModel: ModelRecord,
+  targetModelGroupKey: string,
+  candidate: RelatedMetadataCandidate,
+) {
+  if (candidate.artifactSha256 === targetModel.artifactSha256) return;
+
+  const candidateModelGroupKey = getModelGroupKey({
+    artifactSha256: candidate.artifactSha256,
+    modelSource: candidate.modelSource,
+    modelsInfoSource: candidate.modelsInfoSource,
+  });
+
+  if (candidateModelGroupKey !== targetModelGroupKey) return;
+
+  const existing = candidates.get(candidate.artifactSha256);
+  if (!existing || compareRelatedMetadataCandidates(candidate, existing) < 0) {
+    candidates.set(candidate.artifactSha256, candidate);
+  }
+}
+
+function toRelatedMetadataCandidate(candidate: RelatedMetadataCandidate): RelatedMetadataCandidate {
+  return candidate;
+}
+
+function compareRelatedMetadataCandidates(
+  left: RelatedMetadataCandidate,
+  right: RelatedMetadataCandidate,
+) {
+  const timeDifference = right.createdAt.getTime() - left.createdAt.getTime();
+  if (timeDifference !== 0) return timeDifference;
+  return right.modelId.localeCompare(left.modelId);
 }
 
 async function findOrganizationCandidate(source: string): Promise<OrganizationCandidate | null> {
@@ -208,20 +322,19 @@ async function findOrganizationCandidate(source: string): Promise<OrganizationCa
   const slug = slugify(namespace);
   if (!slug) return null;
 
-  const [organization] = await db
-    .select({
-      id: organizations.id,
-      name: organizations.name,
-      slug: organizations.slug,
-    })
-    .from(organizations)
-    .where(eq(organizations.slug, slug))
-    .limit(1);
+  const organization = await db.query.organizations.findFirst({
+    columns: {
+      id: true,
+      name: true,
+      slug: true,
+    },
+    where: (table, { eq }) => eq(table.slug, slug),
+  });
 
   return organization ?? null;
 }
 
-function buildModelsInfoInsertSql({
+function buildModelsInfoInsertDrizzleCode({
   model,
   familyId,
   labId,
@@ -233,30 +346,24 @@ function buildModelsInfoInsertSql({
   quantizedById: string | null;
 }) {
   return [
-    'INSERT INTO models_info (',
-    '  artifact_sha256,',
-    '  lab_id,',
-    '  quantized_by_id,',
-    '  family_id,',
-    '  name,',
-    '  source,',
-    '  file_size_bytes,',
-    '  parameters,',
-    '  quant,',
-    '  architecture',
-    ') VALUES (',
-    `  ${toSqlLiteral(model.artifactSha256)},`,
-    `  ${toSqlLiteral(labId)},`,
-    `  ${toSqlLiteral(quantizedById)},`,
-    `  ${toSqlLiteral(familyId)},`,
-    `  ${toSqlLiteral(model.displayName)},`,
-    `  ${toSqlLiteral(model.source)},`,
-    `  ${toSqlLiteral(model.fileSizeBytes)},`,
-    `  ${toSqlLiteral(model.parameters)},`,
-    `  ${toSqlLiteral(model.quant)},`,
-    `  ${toSqlLiteral(model.architecture)}`,
-    ')',
-    'ON CONFLICT (artifact_sha256) DO NOTHING;',
+    "import { db } from '@/lib/db';",
+    "import { modelsInfo } from '@/lib/db/schema';",
+    '',
+    'await db',
+    '  .insert(modelsInfo)',
+    '  .values({',
+    `    artifactSha256: ${toCodeLiteral(model.artifactSha256)},`,
+    `    labId: ${toCodeLiteral(labId)},`,
+    `    quantizedById: ${toCodeLiteral(quantizedById)},`,
+    `    familyId: ${toCodeLiteral(familyId)},`,
+    `    name: ${toCodeLiteral(model.displayName)},`,
+    `    source: ${toCodeLiteral(model.source)},`,
+    `    fileSizeBytes: ${toCodeLiteral(model.fileSizeBytes)},`,
+    `    parameters: ${toCodeLiteral(model.parameters)},`,
+    `    quant: ${toCodeLiteral(model.quant)},`,
+    `    architecture: ${toCodeLiteral(model.architecture)},`,
+    '  })',
+    '  .onConflictDoNothing();',
   ].join('\n');
 }
 
@@ -302,21 +409,13 @@ function renderActionItemMessage({
       `model_group = ${action.modelGroupKey}`,
     ].join('\n');
 
-    return [
-      header,
-      '',
-      ...baseDetails,
-      '',
-      resolved,
-      '',
-      payload,
-      '',
-      action.sql,
-    ].join('\n');
+    return [header, '', ...baseDetails, '', resolved, '', payload, '', action.drizzleCode].join(
+      '\n',
+    );
   }
 
   const manualSteps = [
-    'I could not produce a safe models_info insert yet.',
+    'I could not produce a safe models_info Drizzle insert yet.',
     action.reason === 'missing-source'
       ? 'Reason: the model has no stable source repo/group to match against existing metadata.'
       : action.reason === 'missing-family'
@@ -325,7 +424,7 @@ function renderActionItemMessage({
     'You need to do this manually:',
     '1. Check whether the organization already exists; create it if not.',
     '2. Create the model_families row.',
-    '3. Insert the models_info row for this artifact.',
+    '3. Insert the models_info row for this artifact with Drizzle.',
   ].join('\n');
 
   const candidate = action.organizationCandidate
@@ -357,10 +456,9 @@ function renderActionItemMessage({
   ].join('\n');
 }
 
-function toSqlLiteral(value: number | string | null) {
-  if (value == null) return 'NULL';
-  if (typeof value === 'number') return Number.isFinite(value) ? String(value) : 'NULL';
-  return `'${value.replaceAll("'", "''")}'`;
+function toCodeLiteral(value: number | string | null) {
+  if (value == null) return 'null';
+  return typeof value === 'number' ? String(value) : JSON.stringify(value);
 }
 
 function slugify(value: string) {
