@@ -28,7 +28,7 @@ interface ProcessBundleInput {
 }
 
 type ProcessBundleResult =
-  | { ok: true; runId: string; modelId: string; status: string; runUrl: string }
+  | { ok: true; runId: string; status: string; runUrl: string }
   | { ok: false; error: string; status: number; details?: string[]; runId?: string };
 
 // -----------------------------------------------------------------------------
@@ -296,7 +296,7 @@ export async function processBundle(input: ProcessBundleInput): Promise<ProcessB
   }
 
   const runUrl = `${process.env.NEXT_PUBLIC_BASE_URL ?? 'https://whatcani.run'}/run/${run.id}`;
-  return { ok: true, runId: run.id, modelId: model.id, status: RunStatus.PENDING, runUrl };
+  return { ok: true, runId: run.id, status: RunStatus.PENDING, runUrl };
 }
 
 // -----------------------------------------------------------------------------

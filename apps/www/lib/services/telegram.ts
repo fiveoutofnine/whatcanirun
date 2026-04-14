@@ -7,7 +7,7 @@ const OPEN_GRAPH_WARMUP_DELAY_MS = 1_500;
 const OPEN_GRAPH_WARMUP_TIMEOUT_MS = 5_000;
 
 export function scheduleNewRunSubmittedNotification(runUrl: string): void {
-  scheduleRunTelegramNotification(`New run submitted: ${runUrl}`, runUrl);
+  scheduleRunTelegramNotification(`New run submitted:\n${runUrl}`, runUrl);
 }
 
 export function scheduleRunTelegramNotification(text: string, warmUrl?: string): void {
@@ -46,7 +46,6 @@ async function sendTelegramMessage(text: string): Promise<void> {
     body: JSON.stringify({
       chat_id: chatId,
       text,
-      disable_web_page_preview: true,
     }),
     signal: AbortSignal.timeout(TELEGRAM_TIMEOUT_MS),
   });
