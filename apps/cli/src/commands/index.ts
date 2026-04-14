@@ -1,5 +1,4 @@
 export { default as auth } from './auth';
-export { default as batch } from './batch';
 export { default as rewards } from './rewards';
 export { default as run } from './run';
 export { default as show } from './show';

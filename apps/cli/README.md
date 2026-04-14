@@ -70,45 +70,6 @@ wcir show runtime $RUNTIME
 wcir show model $MODEL_PATH
 ```
 
-## Batch Usage
-
-To benchmark a batch of models from source strings, pass `--model-sources`. On Linux x64 NVIDIA hosts, the CLI will auto-install a managed `llama.cpp` runtime if one is not already available.
-
-```bash
-# Comma-separated model source strings
-bunx whatcanirun@latest \
-  --model-sources "bartowski/Llama-3.2-3B-Instruct-GGUF:Llama-3.2-3B-Instruct-Q4_K_M.gguf,Qwen/Qwen2.5-7B-Instruct-GGUF:qwen2.5-7b-instruct-q4_k_m.gguf"
-
-# Or use an input file
-bunx whatcanirun@latest batch \
-  --model-sources ./models.json
-```
-
-Accepted `--model-sources` formats:
-
-- path to `.txt`, `.json`, or `.jsonl`
-- JSON array string
-- comma-separated source strings
-- newline-separated source strings
-
-Example `models.json`:
-
-```json
-[
-  "bartowski/Llama-3.2-3B-Instruct-GGUF:Llama-3.2-3B-Instruct-Q4_K_M.gguf",
-  {
-    "model": "Qwen/Qwen2.5-7B-Instruct-GGUF:qwen2.5-7b-instruct-q4_k_m.gguf",
-    "trials": 5,
-    "notes": "vast 5090"
-  }
-]
-```
-
-The batch command writes per-run bundles and a `summary.json` under `~/.whatcanirun/batches/<batch-id>/`.
-
-> [!NOTE]
-> Auto-install requires a Linux x64 host with a working NVIDIA driver stack already present. `whatcanirun` can install build tools and build `llama.cpp`, but it does not install GPU drivers; `nvidia-smi` must already work.
-
 ## Authentication (optional)
 
 Authentication is optional. Without it, runs are submitted anonymously. If you want to link runs to your account, login via the `auth` command:

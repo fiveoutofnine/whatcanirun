@@ -6,7 +6,6 @@ import { getAuth } from './auth/token';
 import { executeBenchmark } from './commands/run';
 import { detectDevice } from './device/detect';
 import { fetchFeaturedModels } from './featured/client';
-import { canManageLlamaCppRuntime, ensureManagedLlamaCppInstalled } from './runtime/install';
 import { resolveRuntime } from './runtime/resolve';
 import type { RuntimeInfo } from './runtime/types';
 import { binName } from './utils/bin';
@@ -280,9 +279,7 @@ const RUNTIME_NAMES = ['mlx_lm', 'llama.cpp'] as const;
 
 const INSTALL_HINTS: Record<string, string> = {
   mlx_lm: `${chalk.bold.cyan('brew install mlx-lm')} or ${chalk.bold.cyan('pip install mlx-lm')}`,
-  'llama.cpp': canManageLlamaCppRuntime()
-    ? `${chalk.bold.cyan(`${binName()} --model-sources "<repo:file.gguf>"`)} to auto-install the managed CUDA runtime`
-    : `${chalk.bold.cyan('brew install llama.cpp')}`,
+  'llama.cpp': `${chalk.bold.cyan('brew install llama.cpp')}`,
 };
 
 async function detectRuntimes(): Promise<DetectedRuntime[]> {
@@ -322,11 +319,6 @@ export async function runInteractive(): Promise<void> {
   let runtimes: DetectedRuntime[];
   try {
     runtimes = await detectRuntimes();
-    if (runtimes.length === 0 && canManageLlamaCppRuntime()) {
-      detectSpinner.update(chalk.dim('Installing llama.cpp runtime…'));
-      await ensureManagedLlamaCppInstalled();
-      runtimes = await detectRuntimes();
-    }
     if (runtimes.length === 0) {
       detectSpinner.stop(
         chalk.white(
