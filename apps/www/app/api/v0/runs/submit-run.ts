@@ -1,4 +1,4 @@
-import { notifyMissingModelMetadataActionItem } from './model-metadata-action-item';
+import { notifyMissingModelMetadataActionItem } from './metadata-action';
 import { processBundle } from './process-bundle';
 
 import { scheduleNewRunSubmittedNotification } from '@/lib/services/telegram';
