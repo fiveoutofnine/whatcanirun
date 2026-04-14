@@ -40,6 +40,15 @@ cp .env.sample .env
       <td>The secret for <a href="https://vercel.com/docs/cron-jobs" target="_blank" rel="noopener noreferrer">cron jobs</a>.</td>
     </tr>
     <tr>
+      <td rowspan="2">Notifications</td>
+      <td><code>RUNS_TELEGRAM_BOT_TOKEN</code></td>
+      <td>The Telegram bot token used for new run submission notifications.</td>
+    </tr>
+    <tr>
+      <td><code>RUNS_TELEGRAM_CHAT_ID</code></td>
+      <td>The Telegram chat ID that receives new run submission notifications.</td>
+    </tr>
+    <tr>
       <td rowspan="6">Auth</td>
       <td><code>BETTER_AUTH_URL</code></td>
       <td>The URL of your app for <a href="https://better-auth.com" target="_blank" rel="noopener noreferrer">Better Auth</a>.</td>

@@ -1,10 +1,12 @@
+import { revalidateTag } from 'next/cache';
 import { NextResponse } from 'next/server';
 
-import { processBundle } from '../process-bundle';
+import { submitRun } from '../submit-run';
 import { Credential } from 'mppx';
 import { isAddress } from 'viem';
 
 import { TEMPO_CHAIN_ID, withTempoIdentityVerification } from '@/lib/services/mppx';
+import { FEATURED_MODELS_CACHE_TAG } from '@/lib/utils';
 
 // -----------------------------------------------------------------------------
 // Constants
@@ -35,7 +37,7 @@ export const POST = withTempoIdentityVerification(async (request: Request) => {
   const forwarded = request.headers.get('x-forwarded-for');
   const ip = forwarded?.split(',')[0]?.trim() || request.headers.get('x-real-ip') || 'unknown';
 
-  const result = await processBundle({ bundleFile, ip, did: identity.did });
+  const result = await submitRun({ bundleFile, ip, did: identity.did });
 
   if (!result.ok) {
     const body: Record<string, unknown> = { error: result.error };
@@ -43,6 +45,8 @@ export const POST = withTempoIdentityVerification(async (request: Request) => {
     if (result.runId) body.run_id = result.runId;
     return NextResponse.json(body, { status: result.status });
   }
+
+  revalidateTag(FEATURED_MODELS_CACHE_TAG, 'max');
 
   return NextResponse.json(
     {

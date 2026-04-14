@@ -53,6 +53,8 @@ interface SelectFeaturedWishlistEntriesOptions {
 // -----------------------------------------------------------------------------
 
 const MAX_FEATURED_LIMIT = 50;
+export const FEATURED_MODELS_CACHE_REVALIDATE_SECONDS = 3600;
+export const FEATURED_MODELS_CACHE_TAG = 'featured-models';
 const FEATURED_REQUIRED_MEMORY_MULTIPLIER = 1.25;
 const FEATURED_REPO_BREADTH_TARGET = 4;
 const FEATURED_FOUR_BIT_QUANT_PATTERN =
@@ -149,7 +151,7 @@ export function getFeaturedModelsCacheKey(query: FeaturedModelsQuery = {}): stri
   const memoryBudgetBytes = getFeaturedMemoryBudgetBytes(query, deviceTarget);
 
   return [
-    'featured-models',
+    FEATURED_MODELS_CACHE_TAG,
     runtime ?? 'all',
     deviceTarget ?? 'any',
     String(memoryBudgetBytes ?? ''),

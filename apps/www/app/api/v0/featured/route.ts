@@ -2,7 +2,12 @@ import { isFeaturedRuntime } from '@whatcanirun/shared';
 import { unstable_cache as cache } from 'next/cache';
 import { type NextRequest, NextResponse } from 'next/server';
 
-import { getFeaturedModels, getFeaturedModelsCacheKey } from '@/lib/utils';
+import {
+  FEATURED_MODELS_CACHE_REVALIDATE_SECONDS,
+  FEATURED_MODELS_CACHE_TAG,
+  getFeaturedModels,
+  getFeaturedModelsCacheKey,
+} from '@/lib/utils';
 
 // -----------------------------------------------------------------------------
 // Constants
@@ -51,10 +56,11 @@ export async function GET(request: NextRequest) {
   const featured = await cache(
     () => getFeaturedModels(query),
     getFeaturedModelsCacheKey(query),
-    { revalidate: 300 },
+    {
+      tags: [FEATURED_MODELS_CACHE_TAG],
+      revalidate: FEATURED_MODELS_CACHE_REVALIDATE_SECONDS,
+    },
   )();
 
-  return NextResponse.json(featured, {
-    headers: { 'Cache-Control': 'public, max-age=300, s-maxage=300' },
-  });
+  return NextResponse.json(featured);
 }
