@@ -2,9 +2,12 @@ import {
   apple,
   cpu,
   defineFeaturedWishlist,
-  featuredGguf,
-  featuredMlx,
+  featuredGguf as baseFeaturedGguf,
+  featuredMlx as baseFeaturedMlx,
   gpu,
+  type FeaturedGgufInput,
+  type FeaturedMlxInput,
+  type FeaturedWishlistInput,
 } from './featured';
 
 const MLX_DEVICE_TYPES = Object.freeze([apple()]);
@@ -104,6 +107,73 @@ const LIQUID_LARGE_MODEL_GOALS = Object.freeze({
   ...LARGE_MODEL_GOALS,
   priority: 11,
 });
+
+const MIN_FEATURED_PRIORITY = 1;
+const FOUR_OR_EIGHT_BIT_PRIORITY_BOOST = 1;
+const LIQUID_VARIANT_PRIORITY_PENALTY = 3;
+
+const LIQUID_BASE_REPO_IDS = new Set([
+  'LiquidAI/LFM2-350M-GGUF',
+  'LiquidAI/LFM2-700M-GGUF',
+  'LiquidAI/LFM2-1.2B-GGUF',
+  'LiquidAI/LFM2-2.6B-GGUF',
+  'LiquidAI/LFM2-8B-A1B-GGUF',
+  'LiquidAI/LFM2-24B-A2B-GGUF',
+  'LiquidAI/LFM2.5-350M-GGUF',
+  'LiquidAI/LFM2.5-1.2B-Base-GGUF',
+]);
+
+const FOUR_BIT_QUANT_PATTERN =
+  /(?:^|[-_(\s])(?:4-bit|4bit|dq4(?:plus)?|fp4|iq4(?:[_a-z0-9]+)?|mxfp4|nvfp4|q4(?:[_a-z0-9]+)?)(?:$|[-_)\s])/i;
+const EIGHT_BIT_QUANT_PATTERN =
+  /(?:^|[-_(\s])(?:8-bit|8bit|int8|q8(?:[_a-z0-9]+)?)(?:$|[-_)\s])/i;
+const LIQUID_HIP_OPTIMIZED_PATTERN = /hip-optimized/i;
+
+type PriorityAdjustableInput = FeaturedWishlistInput & { hfFileName?: string };
+
+function isPreferredQuant(input: PriorityAdjustableInput): boolean {
+  const candidate = `${input.displayName} ${input.hfFileName ?? ''} ${input.hfRepoId}`;
+  return FOUR_BIT_QUANT_PATTERN.test(candidate) || EIGHT_BIT_QUANT_PATTERN.test(candidate);
+}
+
+function isLiquidVariant(input: PriorityAdjustableInput): boolean {
+  if (!input.hfRepoId.startsWith('LiquidAI/')) return false;
+
+  return (
+    !LIQUID_BASE_REPO_IDS.has(input.hfRepoId) ||
+    LIQUID_HIP_OPTIMIZED_PATTERN.test(input.displayName)
+  );
+}
+
+function withAdjustedPriority<T extends PriorityAdjustableInput>(input: T): T {
+  let priorityDelta = 0;
+
+  if (isPreferredQuant(input)) {
+    priorityDelta += FOUR_OR_EIGHT_BIT_PRIORITY_BOOST;
+  }
+
+  if (isLiquidVariant(input)) {
+    priorityDelta -= LIQUID_VARIANT_PRIORITY_PENALTY;
+  }
+
+  if (priorityDelta === 0) return input;
+
+  return {
+    ...input,
+    priority: Math.max(
+      MIN_FEATURED_PRIORITY,
+      (input.priority ?? MIN_FEATURED_PRIORITY) + priorityDelta,
+    ),
+  };
+}
+
+function featuredMlx(input: FeaturedMlxInput) {
+  return baseFeaturedMlx(withAdjustedPriority(input));
+}
+
+function featuredGguf(input: FeaturedGgufInput) {
+  return baseFeaturedGguf(withAdjustedPriority(input));
+}
 
 export const FEATURED_WISHLIST = defineFeaturedWishlist([
   // -----------------------------------------------------------------------------

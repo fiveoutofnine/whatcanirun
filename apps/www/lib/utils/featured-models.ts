@@ -55,6 +55,12 @@ interface SelectFeaturedWishlistEntriesOptions {
 const MAX_FEATURED_LIMIT = 50;
 const FEATURED_REQUIRED_MEMORY_MULTIPLIER = 1.25;
 const FEATURED_REPO_BREADTH_TARGET = 4;
+const FEATURED_FOUR_BIT_QUANT_PATTERN =
+  /(?:^|[-_(\s])(?:4-bit|4bit|dq4(?:plus)?|fp4|iq4(?:[_a-z0-9]+)?|mxfp4|nvfp4|q4(?:[_a-z0-9]+)?)(?:$|[-_)\s])/i;
+const FEATURED_EIGHT_BIT_QUANT_PATTERN =
+  /(?:^|[-_(\s])(?:8-bit|8bit|int8|q8(?:[_a-z0-9]+)?)(?:$|[-_)\s])/i;
+
+type PreferredFeaturedQuantBucket = '4bit' | '8bit';
 
 // -----------------------------------------------------------------------------
 // Helpers
@@ -123,6 +129,17 @@ export function getFeaturedModelCoverageKey(
   modelRef: string,
 ): string {
   return `${runtime}::${modelRef}`;
+}
+
+function getPreferredFeaturedQuantBucket(
+  entry: Pick<FeaturedWishlistEntry, 'displayName' | 'hfFileName' | 'hfRepoId'>,
+): PreferredFeaturedQuantBucket | null {
+  const candidate = `${entry.displayName} ${entry.hfFileName ?? ''} ${entry.hfRepoId}`;
+
+  if (FEATURED_FOUR_BIT_QUANT_PATTERN.test(candidate)) return '4bit';
+  if (FEATURED_EIGHT_BIT_QUANT_PATTERN.test(candidate)) return '8bit';
+
+  return null;
 }
 
 export function getFeaturedModelsCacheKey(query: FeaturedModelsQuery = {}): string[] {
@@ -202,6 +219,10 @@ export function selectFeaturedWishlistEntries(
   const coveredTargetsByModelKey = new Map<string, readonly FeaturedDeviceTarget[]>();
   const repoEntryCounts = new Map<string, number>();
   const coveredEntryCountsByRepo = new Map<string, number>();
+  const coveredPreferredQuantBucketsByRepoAndTarget = new Map<
+    string,
+    Set<PreferredFeaturedQuantBucket>
+  >();
 
   for (const entry of runtimeEntries) {
     const modelKey = getFeaturedModelCoverageKey(entry.runtime, entry.modelRef);
@@ -221,6 +242,28 @@ export function selectFeaturedWishlistEntries(
     if (coveredTargets.length === 0) continue;
 
     coveredEntryCountsByRepo.set(repoKey, (coveredEntryCountsByRepo.get(repoKey) ?? 0) + 1);
+  }
+
+  if (useTargetedEntries && deviceTarget) {
+    for (const entry of targetedEntries) {
+      const preferredQuantBucket = getPreferredFeaturedQuantBucket(entry);
+      if (!preferredQuantBucket) continue;
+
+      const exactCoverage =
+        options.coverage.get(getFeaturedCoverageKey(entry.runtime, entry.modelRef, deviceTarget)) ??
+        0;
+      if (exactCoverage <= 0) continue;
+
+      const repoTargetKey = getFeaturedCoverageKey(entry.runtime, entry.hfRepoId, deviceTarget);
+      let coveredBuckets = coveredPreferredQuantBucketsByRepoAndTarget.get(repoTargetKey);
+
+      if (!coveredBuckets) {
+        coveredBuckets = new Set<PreferredFeaturedQuantBucket>();
+        coveredPreferredQuantBucketsByRepoAndTarget.set(repoTargetKey, coveredBuckets);
+      }
+
+      coveredBuckets.add(preferredQuantBucket);
+    }
   }
 
   const scoredEntries = entries.map((entry) => {
@@ -259,6 +302,12 @@ export function selectFeaturedWishlistEntries(
             getFeaturedCoverageKey(entry.runtime, entry.modelRef, deviceTarget),
           ) ?? 0
         : 0;
+    const repoPreferredQuantSaturated =
+      useTargetedEntries && deviceTarget
+        ? (coveredPreferredQuantBucketsByRepoAndTarget.get(
+            getFeaturedCoverageKey(entry.runtime, entry.hfRepoId, deviceTarget),
+          )?.size ?? 0) >= 2
+        : false;
     const distinctCoveredTargets = coveredTargets.length;
 
     return {
@@ -275,6 +324,7 @@ export function selectFeaturedWishlistEntries(
         repoEntryCount > 1
           ? Math.max(0, FEATURED_REPO_BREADTH_TARGET - distinctCoveredEntriesForRepo)
           : 0,
+      repoPreferredQuantSaturated,
       distinctCoveredEntriesForRepo,
       underfilledTargetCount,
       weakestTargetCoverage,
@@ -284,6 +334,7 @@ export function selectFeaturedWishlistEntries(
   if (useTargetedEntries) {
     scoredEntries.sort(
       (left, right) =>
+        Number(left.repoPreferredQuantSaturated) - Number(right.repoPreferredQuantSaturated) ||
         right.exactGap - left.exactGap ||
         right.breadthGap - left.breadthGap ||
         right.repoBreadthGap - left.repoBreadthGap ||
