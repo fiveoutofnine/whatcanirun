@@ -121,6 +121,9 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
   );
 
   const modelInfo = run.model.info;
+  const modelFamily = modelInfo?.family ?? null;
+  const modelLab = modelInfo?.lab ?? null;
+  const modelQuantizedBy = modelInfo?.quantizedBy ?? null;
   const modelDisplayName = modelInfo?.name || run.model.displayName;
   const modelSource = modelInfo?.source || run.model.source;
   const primaryDeviceName = run.device.gpuCount > 0 ? run.device.gpu : run.device.cpu;
@@ -131,9 +134,8 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
   } = parseManufacturer(primaryDeviceName);
 
   const modelHref = (() => {
-    if (modelInfo?.lab?.slug && modelInfo.family?.slug)
-      return `/${modelInfo.lab.slug}/${modelInfo.family.slug}`;
-    if (modelInfo?.lab?.slug) return `/${modelInfo.lab.slug}`;
+    if (modelLab?.slug && modelFamily?.slug) return `/${modelLab.slug}/${modelFamily.slug}`;
+    if (modelLab?.slug) return `/${modelLab.slug}`;
     const source = run.model.info?.source || run.model.source;
     if (!source) return null;
     if (run.runtimeName === 'mlx_lm') return `https://huggingface.co/${source}`;
@@ -196,16 +198,16 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
         architecture: run.model.info?.architecture || run.model.architecture,
         source: modelSource,
         fileSizeBytes,
-        lab: modelInfo.lab
+        lab: modelLab
           ? {
-              name: modelInfo.lab.name,
-              slug: modelInfo.lab.slug,
+              name: modelLab.name,
+              slug: modelLab.slug,
             }
           : null,
-        quantizedBy: modelInfo.quantizedBy
+        quantizedBy: modelQuantizedBy
           ? {
-              name: modelInfo.quantizedBy.name,
-              slug: modelInfo.quantizedBy.slug,
+              name: modelQuantizedBy.name,
+              slug: modelQuantizedBy.slug,
             }
           : null,
       },
@@ -234,37 +236,37 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
     2,
   );
 
-  const ModelAvatar = modelInfo.lab?.logoUrl ? (
+  const ModelAvatar = modelLab?.logoUrl ? (
     <Fragment>
       <span className="md:hidden">
         <UserAvatar
           icon={
-            modelInfo.quantizedBy?.logoUrl ? (
+            modelQuantizedBy?.logoUrl ? (
               <UserAvatar
-                image={modelInfo.quantizedBy.logoUrl}
-                name={modelInfo.quantizedBy.name}
+                image={modelQuantizedBy.logoUrl}
+                name={modelQuantizedBy.name}
                 size={14}
               />
             ) : undefined
           }
-          image={modelInfo.lab.logoUrl}
-          name={modelInfo.lab.name}
+          image={modelLab.logoUrl}
+          name={modelLab.name}
           size={24}
         />
       </span>
       <span className="hidden md:block">
         <UserAvatar
           icon={
-            modelInfo.quantizedBy?.logoUrl ? (
+            modelQuantizedBy?.logoUrl ? (
               <UserAvatar
-                image={modelInfo.quantizedBy.logoUrl}
-                name={modelInfo.quantizedBy.name}
+                image={modelQuantizedBy.logoUrl}
+                name={modelQuantizedBy.name}
                 size={14}
               />
             ) : undefined
           }
-          image={modelInfo.lab.logoUrl}
-          name={modelInfo.lab.name}
+          image={modelLab.logoUrl}
+          name={modelLab.name}
           size={30}
         />
       </span>
