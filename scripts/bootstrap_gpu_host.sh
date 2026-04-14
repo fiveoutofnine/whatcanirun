@@ -7,6 +7,7 @@ LOCAL_SRC="${HOME}/.local/src"
 LLAMA_DIR="${WCIR_LLAMA_CPP_DIR:-${LOCAL_SRC}/llama.cpp}"
 LLAMA_BUILD_DIR="${WCIR_LLAMA_CPP_BUILD_DIR:-${LLAMA_DIR}/build}"
 BUN_BIN=""
+CUDA_ARCHITECTURES=""
 
 log() {
   printf '==> %s\n' "$*"
@@ -19,6 +20,34 @@ die() {
 
 need_cmd() {
   command -v "$1" >/dev/null 2>&1
+}
+
+infer_cuda_architecture() {
+  local gpu_name="${1,,}"
+
+  case "${gpu_name}" in
+    *"rtx 5090"*|*"rtx 5080"*|*"rtx 5070"*)
+      printf '120\n'
+      ;;
+    *"h100"*|*"h200"*|*"gh200"*)
+      printf '90\n'
+      ;;
+    *"rtx 4090"*|*"rtx 4080"*|*"rtx 4070"*|*"rtx 4060"*|*"l4"*|*"l40"*)
+      printf '89\n'
+      ;;
+    *"rtx 3090"*|*"rtx 3080"*|*"rtx 3070"*|*"rtx 3060"*|*"a10"*|*"a16"*|*"a40"*)
+      printf '86\n'
+      ;;
+    *"a100"*|*"a30"*)
+      printf '80\n'
+      ;;
+    *"t4"*)
+      printf '75\n'
+      ;;
+    *)
+      printf '\n'
+      ;;
+  esac
 }
 
 run_privileged() {
@@ -135,6 +164,25 @@ ensure_nvidia_smi() {
   die "nvidia-smi is missing. This bootstrap script does not install NVIDIA drivers; use a GPU host image or provider runtime where the NVIDIA driver stack is already available."
 }
 
+resolve_cuda_architectures() {
+  if [ -n "${WCIR_CUDA_ARCHITECTURES:-}" ]; then
+    CUDA_ARCHITECTURES="${WCIR_CUDA_ARCHITECTURES}"
+    log "Using CUDA architectures from WCIR_CUDA_ARCHITECTURES=${CUDA_ARCHITECTURES}"
+    return
+  fi
+
+  local gpu_name
+  gpu_name="$(nvidia-smi --query-gpu=name --format=csv,noheader | head -n 1 | tr -d '\r' || true)"
+  if [ -z "${gpu_name}" ]; then
+    return
+  fi
+
+  CUDA_ARCHITECTURES="$(infer_cuda_architecture "${gpu_name}")"
+  if [ -n "${CUDA_ARCHITECTURES}" ]; then
+    log "Detected ${gpu_name}; using CUDA architectures ${CUDA_ARCHITECTURES}"
+  fi
+}
+
 install_repo_dependencies() {
   log "Installing repo dependencies"
   (cd "${REPO_ROOT}" && "${BUN_BIN}" install --frozen-lockfile)
@@ -158,9 +206,6 @@ EOF
 }
 
 build_llama_cpp() {
-  local nproc
-  nproc="$(getconf _NPROCESSORS_ONLN 2>/dev/null || echo 8)"
-
   if [ ! -d "${LLAMA_DIR}/.git" ]; then
     log "Cloning llama.cpp"
     git clone --depth=1 https://github.com/ggml-org/llama.cpp "${LLAMA_DIR}"
@@ -170,8 +215,19 @@ build_llama_cpp() {
   fi
 
   log "Building llama.cpp with CUDA"
-  cmake -S "${LLAMA_DIR}" -B "${LLAMA_BUILD_DIR}" -DGGML_CUDA=ON -DCMAKE_BUILD_TYPE=Release
-  cmake --build "${LLAMA_BUILD_DIR}" --config Release --target llama-cli llama-bench -j"${nproc}"
+  local cmake_args=(
+    -DGGML_CUDA=ON
+    -DGGML_CUDA_DISABLE_GRAPHS=ON
+    -DCMAKE_BUILD_TYPE=Release
+  )
+  if [ -n "${CUDA_ARCHITECTURES}" ]; then
+    cmake_args+=("-DCMAKE_CUDA_ARCHITECTURES=${CUDA_ARCHITECTURES}")
+  fi
+
+  cmake -S "${LLAMA_DIR}" -B "${LLAMA_BUILD_DIR}" \
+    "${cmake_args[@]}"
+  CMAKE_BUILD_PARALLEL_LEVEL=1 \
+    cmake --build "${LLAMA_BUILD_DIR}" --config Release --target llama-cli llama-bench -j1
 
   ln -sf "${LLAMA_BUILD_DIR}/bin/llama-cli" "${LOCAL_BIN}/llama-cli"
   ln -sf "${LLAMA_BUILD_DIR}/bin/llama-bench" "${LOCAL_BIN}/llama-bench"
@@ -183,6 +239,7 @@ main() {
   prepend_local_path
   resolve_bun_bin
   ensure_nvidia_smi
+  resolve_cuda_architectures
   install_repo_dependencies
   build_cli
   install_wcir_wrapper

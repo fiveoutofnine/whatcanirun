@@ -1,3 +1,6 @@
+import { existsSync } from 'node:fs';
+
+import { getManagedLlamaCppPaths, hasManagedLlamaCpp } from './install.ts';
 import { warn } from '../utils/log.ts';
 import { monitorProcessMemory, monitorSystemMemory } from './memory.ts';
 import type { BenchOpts, BenchResult, BenchTrial, RuntimeAdapter, RuntimeInfo } from './types.ts';
@@ -51,12 +54,23 @@ interface LlamaBenchEntry {
 
 export class LlamaCppAdapter implements RuntimeAdapter {
   name = 'llama.cpp';
+  private llamaBenchBin = 'llama-bench';
 
   async detect(): Promise<RuntimeInfo | null> {
     // llama-cli --version gives clean output like "version: 8240 (d088d5b74)"
-    for (const bin of ['llama-cli', 'llama-completion', 'llama-cpp', 'main']) {
+    const managed = getManagedLlamaCppPaths();
+    const bins = [
+      ...(hasManagedLlamaCpp() ? [{ cli: managed.cli, bench: managed.bench }] : []),
+      { cli: 'llama-cli', bench: 'llama-bench' },
+      { cli: 'llama-completion', bench: 'llama-bench' },
+      { cli: 'llama-cpp', bench: 'llama-bench' },
+      { cli: 'main', bench: 'llama-bench' },
+    ];
+
+    for (const candidate of bins) {
+      if (candidate.cli.startsWith('/') && !existsSync(candidate.cli)) continue;
       try {
-        const proc = Bun.spawn([bin, '--version'], {
+        const proc = Bun.spawn([candidate.cli, '--version'], {
           stdout: 'pipe',
           stderr: 'pipe',
         });
@@ -76,10 +90,11 @@ export class LlamaCppAdapter implements RuntimeAdapter {
               `b${LLAMA_CPP_MIN_BUILD}`
             );
           }
+          this.llamaBenchBin = candidate.bench;
           return {
             name: this.name,
             version: `b${versionMatch[1]}`,
-            build_flags: 'metal',
+            build_flags: process.platform === 'darwin' ? 'metal' : 'cuda',
           };
         }
 
@@ -91,13 +106,14 @@ export class LlamaCppAdapter implements RuntimeAdapter {
         warn(
           `Could not parse llama.cpp build number from "${version}". Version check skipped — output format may not be compatible.`
         );
+        this.llamaBenchBin = candidate.bench;
         return { name: this.name, version };
       } catch (e: unknown) {
         if (e instanceof UnsupportedVersionError) throw e;
         if (e instanceof Error && 'code' in e && (e as NodeJS.ErrnoException).code === 'ENOENT') {
           continue;
         }
-        warn(`Failed to run ${bin}: ${e instanceof Error ? e.message : String(e)}`);
+        warn(`Failed to run ${candidate.cli}: ${e instanceof Error ? e.message : String(e)}`);
         continue;
       }
     }
@@ -131,7 +147,13 @@ export class LlamaCppAdapter implements RuntimeAdapter {
       );
     }
 
-    const proc = Bun.spawn(['llama-bench', ...args], {
+    const env =
+      process.env.WCIR_GGML_CUDA_DISABLE_GRAPHS === '1'
+        ? { ...process.env, GGML_CUDA_DISABLE_GRAPHS: '1' }
+        : process.env;
+
+    const proc = Bun.spawn([this.llamaBenchBin, ...args], {
+      env,
       stdout: 'pipe',
       stderr: 'pipe',
     });

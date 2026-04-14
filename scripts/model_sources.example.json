@@ -1,8 +1,0 @@
-[
-  "bartowski/Llama-3.2-3B-Instruct-GGUF:Llama-3.2-3B-Instruct-Q4_K_M.gguf",
-  {
-    "model": "Qwen/Qwen2.5-7B-Instruct-GGUF:qwen2.5-7b-instruct-q4_k_m.gguf",
-    "notes": "baseline q4 run",
-    "trials": 5
-  }
-]

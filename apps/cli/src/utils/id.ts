@@ -10,6 +10,7 @@ import { join } from 'path';
 // -----------------------------------------------------------------------------
 
 export const DEFAULT_BUNDLES_DIR = join(homedir(), APP_DIR_NAME, 'bundles');
+export const DEFAULT_BATCHES_DIR = join(homedir(), APP_DIR_NAME, 'batches');
 
 const RUNTIME_SLUGS: Record<string, string> = {
   mlx_lm: 'mlx',

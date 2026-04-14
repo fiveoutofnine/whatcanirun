@@ -171,9 +171,8 @@ async function detectLinuxGpuInfo(): Promise<LinuxGpuInfo> {
 }
 
 async function detectLinuxNvidiaGpuInfo(): Promise<LinuxGpuInfo | null> {
-  const [namesRaw, coresRaw, countRaw] = await Promise.all([
+  const [namesRaw, countRaw] = await Promise.all([
     exec(['nvidia-smi', '--query-gpu=name', '--format=csv,noheader'], { quietMissing: true }),
-    exec(['nvidia-smi', '--query-gpu=cuda_cores', '--format=csv,noheader'], { quietMissing: true }),
     exec(['nvidia-smi', '--query-gpu=count', '--format=csv,noheader'], { quietMissing: true }),
   ]);
 
@@ -184,11 +183,10 @@ async function detectLinuxNvidiaGpuInfo(): Promise<LinuxGpuInfo | null> {
 
   if (names.length === 0) return null;
 
-  const cores = parseInt(coresRaw?.split('\n')[0] || '0', 10);
   const count = parseInt(countRaw?.split('\n')[0] || '0', 10) || names.length;
   return {
     model: names[0]?.trim(),
-    cores,
+    cores: 0,
     count,
   };
 }

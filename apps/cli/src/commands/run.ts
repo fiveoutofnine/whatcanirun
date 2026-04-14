@@ -17,6 +17,7 @@ import {
   isHuggingFaceRepoId,
   resolveModel,
 } from '../model/resolve';
+import { canManageLlamaCppRuntime, ensureManagedLlamaCppInstalled } from '../runtime/install';
 import { resolveRuntime } from '../runtime/resolve';
 import type { BenchResult } from '../runtime/types';
 import { uploadBundle, uploadBundleWithReward } from '../upload/client';
@@ -100,6 +101,13 @@ export async function executeBenchmark(opts: BenchmarkOpts): Promise<string> {
       adapter = resolveRuntime(opts.runtime);
       runtimeInfo = await adapter.detect();
       if (!runtimeInfo) {
+        if (opts.runtime === 'llama.cpp' && canManageLlamaCppRuntime()) {
+          runtimeSpinner.update(chalk.dim('Installing llama.cpp runtime…'));
+          await ensureManagedLlamaCppInstalled();
+          runtimeInfo = await adapter.detect();
+        }
+      }
+      if (!runtimeInfo) {
         runtimeSpinner.stop(
           chalk.white(
             `[${chalk.red('✖')}] Runtime "${chalk.cyan(opts.runtime)}" is not available. Make sure it is installed and on ${chalk.cyan('PATH')}.`
@@ -107,7 +115,9 @@ export async function executeBenchmark(opts: BenchmarkOpts): Promise<string> {
         );
         const installHints: Record<string, string> = {
           mlx_lm: `Install with ${chalk.bold.cyan('brew install mlx-lm')} or ${chalk.bold.cyan('pip install mlx-lm')}.`,
-          'llama.cpp': `Install with ${chalk.bold.cyan('brew install llama.cpp')}.`,
+          'llama.cpp': canManageLlamaCppRuntime()
+            ? `Run ${chalk.bold.cyan(`${binName()} --model-sources "<repo:file.gguf>"`)} to auto-install the managed CUDA runtime.`
+            : `Install with ${chalk.bold.cyan('brew install llama.cpp')}.`,
         };
         const hint = installHints[opts.runtime];
         if (hint) console.log(chalk.dim(` ↳ ${hint}`));
