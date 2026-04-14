@@ -2,8 +2,6 @@ import { db } from '@/lib/db';
 import { scheduleRunTelegramNotification } from '@/lib/services/telegram';
 import { getModelGroupKey } from '@/lib/utils/model-grouping';
 
-const DEFAULT_BASE_URL = 'https://whatcani.run';
-
 type NotifyMissingModelMetadataActionItemInput = {
   modelId: string;
   runId: string;
@@ -81,8 +79,7 @@ export async function notifyMissingModelMetadataActionItem(
   const action = await getMissingModelMetadataAction(input.modelId);
   if (!action) return;
 
-  const runUrl =
-    input.runUrl ?? `${process.env.NEXT_PUBLIC_BASE_URL ?? DEFAULT_BASE_URL}/run/${input.runId}`;
+  const runUrl = input.runUrl ?? `${process.env.NEXT_PUBLIC_BASE_URL}/run/${input.runId}`;
   const message = renderActionItemMessage({
     action,
     runId: input.runId,
