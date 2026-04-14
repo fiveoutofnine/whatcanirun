@@ -273,72 +273,60 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
     </Fragment>
   ) : null;
 
+  const modelHeading = modelHref ? (
+    modelHref.startsWith('http://') || modelHref.startsWith('https://') ? (
+      <a className="text-gray-12 hover:underline" href={modelHref} rel="noreferrer" target="_blank">
+        <span className="break-words">{modelDisplayName}</span>
+        <ArrowUpRight className="mb-0.5 ml-1 inline size-4 text-gray-11" />
+      </a>
+    ) : (
+      <PreservedDeviceLink className="text-gray-12 hover:underline" href={modelHref}>
+        <span className="break-words">{modelDisplayName}</span>
+      </PreservedDeviceLink>
+    )
+  ) : (
+    <span className="break-words text-gray-12">{modelDisplayName}</span>
+  );
+
   return (
     <div className="flex grow flex-col">
       <header className="w-full border-b border-gray-6 bg-black px-4 py-4 md:px-6 md:py-8">
-        <div className="mx-auto flex w-full max-w-5xl items-center">
-          <div className="flex flex-col gap-1 md:gap-2">
-            <h1 className="text-wrap text-2xl font-medium leading-snug tracking-tight text-gray-11 md:text-3xl">
-              {modelHref ? (
-                modelHref?.startsWith('http://') || modelHref?.startsWith('https://') ? (
-                  <a
-                    className="inline-flex max-w-full items-center gap-2 align-[-0.125em] text-gray-12 hover:underline"
-                    href={modelHref}
-                    rel="noreferrer"
-                    target="_blank"
-                  >
-                    {ModelAvatar}
-                    <span className="flex">
-                      {modelDisplayName}
-                      <ArrowUpRight className="size-4 text-gray-11" />
-                    </span>
-                  </a>
-                ) : (
-                  <PreservedDeviceLink
-                    className="inline-flex max-w-full items-center gap-2 align-[-0.125em] text-gray-12 hover:underline"
-                    href={modelHref}
-                  >
-                    {ModelAvatar}
-                    <span>{modelDisplayName}</span>
-                  </PreservedDeviceLink>
-                )
-              ) : (
-                <span className="inline-flex max-w-full items-center gap-2 align-[-0.125em] text-gray-12">
-                  {ModelAvatar}
-                  <span>{modelDisplayName}</span>
-                </span>
-              )}
+        <div className="mx-auto flex w-full max-w-5xl items-start gap-2 md:gap-3">
+          {ModelAvatar ? <div className="shrink-0 pt-1">{ModelAvatar}</div> : null}
+          <div className="min-w-0 flex flex-1 flex-col gap-1 md:gap-2">
+            <h1 className="min-w-0 text-wrap text-2xl font-medium leading-snug tracking-tight text-gray-11 md:text-3xl">
+              {modelHeading}
               <span className="font-normal text-gray-11"> {benchmarkOnLabel} </span>
               <PreservedDeviceLink
-                className="inline-flex max-w-full items-center gap-2 align-[-0.125em] text-gray-12 hover:underline"
+                className="inline-flex max-w-full min-w-0 flex-wrap items-center gap-x-2 gap-y-1 align-[-0.125em] text-gray-12 hover:underline"
                 href={deviceHref}
               >
                 {ManufacturerLogo && manufacturer ? (
-                  <Fragment>
+                  <span className="shrink-0">
                     <span className="md:hidden">
                       <ManufacturerLogo className="rounded-full" size={24} />
                     </span>
                     <span className="hidden md:block">
                       <ManufacturerLogo className="rounded-full" size={30} />
                     </span>
-                  </Fragment>
+                  </span>
                 ) : null}
                 {manufacturer === 'apple' ? (
-                  <span>
+                  <span className="min-w-0 break-words">
                     {deviceCountPrefix}
                     {deviceDisplayName}
                     <span className="text-gray-11"> · </span>
                     {run.device.ramGb.toLocaleString()} GB
                   </span>
                 ) : (
-                  <span>
+                  <span className="min-w-0 break-words">
                     {deviceCountPrefix}
                     {deviceDisplayName}
                   </span>
                 )}
               </PreservedDeviceLink>
             </h1>
-            <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 pl-0 text-sm md:gap-x-3 md:pl-[2.375rem] md:text-base">
+            <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-sm md:gap-x-3 md:text-base">
               <Link
                 className="text-gray-11 underline decoration-dotted transition-colors hover:text-gray-12"
                 href="/runs"
