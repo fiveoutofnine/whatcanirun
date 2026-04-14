@@ -78,13 +78,15 @@ export async function notifyMissingModelMetadataActionItem(
   const action = await getMissingModelMetadataAction(input.modelId);
   if (!action) return;
 
+  const runUrl =
+    input.runUrl ?? `${process.env.NEXT_PUBLIC_BASE_URL ?? DEFAULT_BASE_URL}/run/${input.runId}`;
   const message = renderActionItemMessage({
     action,
     runId: input.runId,
-    runUrl: input.runUrl ?? `${process.env.NEXT_PUBLIC_BASE_URL ?? DEFAULT_BASE_URL}/run/${input.runId}`,
+    runUrl,
   });
 
-  scheduleRunTelegramNotification(message);
+  scheduleRunTelegramNotification(message, runUrl);
 }
 
 async function getMissingModelMetadataAction(
