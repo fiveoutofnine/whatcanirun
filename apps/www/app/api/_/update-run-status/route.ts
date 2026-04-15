@@ -32,15 +32,17 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid run status payload.' }, { status: 400 });
   }
 
+  const payload = body as Record<string, unknown>;
+
   const runId =
-    typeof body.runId === 'string'
-      ? body.runId.trim()
-      : typeof body.run_id === 'string'
-        ? body.run_id.trim()
+    typeof payload.runId === 'string'
+      ? payload.runId.trim()
+      : typeof payload.run_id === 'string'
+        ? payload.run_id.trim()
         : '';
   const status =
-    typeof body.status === 'string' && RUN_STATUSES.has(body.status as RunStatus)
-      ? (body.status as RunStatus)
+    typeof payload.status === 'string' && RUN_STATUSES.has(payload.status as RunStatus)
+      ? (payload.status as RunStatus)
       : null;
 
   if (!runId || !status) {
