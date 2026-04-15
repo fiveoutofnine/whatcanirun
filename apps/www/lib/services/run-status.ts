@@ -11,7 +11,6 @@ import {
   view__model_device_summary,
   view__model_stats_by_device,
 } from '@/lib/db/schema';
-import { grantRewardForRun } from '@/lib/rewards/grant';
 import { FEATURED_MODELS_CACHE_TAG } from '@/lib/utils';
 
 const internalRunStatusSchema = z.object({
@@ -122,11 +121,6 @@ export async function updateRunStatus(input: InternalRunStatusInput) {
 
   const changed = Boolean(updatedRun);
 
-  let rewardGranted = false;
-  if (changed && input.status === RunStatus.VERIFIED) {
-    rewardGranted = (await grantRewardForRun(input.runId)) != null;
-  }
-
   if (changed) {
     revalidatePath(`/run/${input.runId}`);
     revalidatePath('/runs');
@@ -166,7 +160,6 @@ export async function updateRunStatus(input: InternalRunStatusInput) {
     previousStatus: currentRun.status,
     status: latestStatus,
     changed,
-    rewardGranted,
   };
 }
 

@@ -35,7 +35,6 @@ export async function POST(request: NextRequest) {
     previous_status: result.previousStatus,
     status: result.status,
     changed: result.changed,
-    reward_granted: result.rewardGranted,
   });
 }
 
