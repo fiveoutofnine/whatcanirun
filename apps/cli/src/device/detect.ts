@@ -1,5 +1,6 @@
 import chalk from 'chalk';
 
+import { normalizeLinuxGpuModel, parseLinuxPciGpuModel } from './linux-gpu';
 import { warn } from '../utils/log';
 
 // -----------------------------------------------------------------------------
@@ -144,7 +145,11 @@ async function detectLinux(): Promise<DeviceInfo> {
   return {
     cpu_model: cpuMatch?.[1]?.trim() || 'Unknown',
     cpu_cores: cpuCores,
-    gpu_model: gpu.model?.trim() || 'None',
+    gpu_model: normalizeLinuxGpuModel({
+      cpuModel: cpuMatch?.[1]?.trim() || 'Unknown',
+      gpuCount: gpu.count,
+      gpuModel: gpu.model,
+    }),
     gpu_cores: gpu.cores,
     gpu_count: gpu.count,
     ram_gb: Math.round(parseInt(memMatch?.[1] || '0', 10) / 1024 / 1024),
@@ -216,34 +221,4 @@ async function detectLinuxPciGpuInfo(): Promise<LinuxGpuInfo | null> {
     cores: 0,
     count: controllers.length,
   };
-}
-
-function parseLinuxPciGpuModel(line: string): string | null {
-  const bracketValues = [...line.matchAll(/\[([^\]]+)\]/g)]
-    .map((match) => match[1]?.trim() ?? '')
-    .filter(Boolean);
-
-  const preferred = [...bracketValues]
-    .reverse()
-    .find(
-      (value) =>
-        !/^[\da-f]{4}$/i.test(value) &&
-        !/^[\da-f]{4}:[\da-f]{4}$/i.test(value) &&
-        !/^(AMD\/ATI|NVIDIA Corporation|Intel Corporation)$/i.test(value)
-    );
-
-  if (preferred) return preferred;
-
-  const [, description = ''] = line.split(/:\s+/, 2);
-  const cleaned = description
-    .replace(/\s*\([^)]*\)\s*$/u, '')
-    .replace(/\s*\[[\da-f]{4}(?::[\da-f]{4})?\]\s*/giu, ' ')
-    .replace(
-      /^(?:NVIDIA Corporation|Advanced Micro Devices, Inc\. \[AMD\/ATI\]|Advanced Micro Devices, Inc\.|AMD\/ATI|Intel Corporation)\s+/iu,
-      ''
-    )
-    .replace(/\s+/gu, ' ')
-    .trim();
-
-  return cleaned || null;
 }
