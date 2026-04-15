@@ -37,7 +37,7 @@ cp .env.sample .env
     </tr>
     <tr>
       <td><code>CRON_SECRET</code></td>
-      <td>The secret for <a href="https://vercel.com/docs/cron-jobs" target="_blank" rel="noopener noreferrer">cron jobs</a>.</td>
+      <td>The secret for <a href="https://vercel.com/docs/cron-jobs" target="_blank" rel="noopener noreferrer">cron jobs</a> and internal run status actions.</td>
     </tr>
     <tr>
       <td rowspan="2">Notifications</td>
@@ -109,6 +109,7 @@ To apply the migrations, use the following command:
 ```bash
 bunx prisma migrate dev
 ```
+
 ### Linting and Formatting
 
 The project uses [ESLint](https://eslint.org) and [Prettier](https://prettier.io) for linting and formatting.

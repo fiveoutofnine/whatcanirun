@@ -1,36 +1,67 @@
 import { after } from 'next/server';
 
+import { RunStatus } from '@/lib/db/schema';
+import { createInternalRunStatusActionUrl } from '@/lib/services/run-status';
+
 const TELEGRAM_API_BASE_URL = 'https://api.telegram.org';
 const TELEGRAM_TIMEOUT_MS = 5_000;
 const OPEN_GRAPH_WARMUP_ATTEMPTS = 5;
 const OPEN_GRAPH_WARMUP_DELAY_MS = 1_500;
 const OPEN_GRAPH_WARMUP_TIMEOUT_MS = 5_000;
 
-export function scheduleNewRunSubmittedNotification(runUrl: string): void {
-  scheduleRunTelegramNotification(`New run submitted:\n${runUrl}`, runUrl);
+interface TelegramInlineButton {
+  text: string;
+  url: string;
 }
 
-export function scheduleRunTelegramNotification(text: string, warmUrl?: string): void {
+interface ScheduleRunTelegramNotificationOptions {
+  buttons?: TelegramInlineButton[];
+  warmUrl?: string;
+}
+
+export function scheduleNewRunSubmittedNotification(runId: string, runUrl: string): void {
+  const verifyActionUrl = createInternalRunStatusActionUrl({
+    runId,
+    status: RunStatus.VERIFIED,
+  });
+
+  scheduleRunTelegramNotification(`New run submitted:\n${runUrl}`, {
+    warmUrl: runUrl,
+    buttons: verifyActionUrl
+      ? [
+          {
+            text: 'Mark verified ✅',
+            url: verifyActionUrl,
+          },
+        ]
+      : undefined,
+  });
+}
+
+export function scheduleRunTelegramNotification(
+  text: string,
+  options: ScheduleRunTelegramNotificationOptions = {},
+): void {
   try {
     after(async () => {
       try {
-        await maybeWarmOpenGraphMetadata(warmUrl);
-        await sendTelegramMessage(text);
+        await maybeWarmOpenGraphMetadata(options.warmUrl);
+        await sendTelegramMessage(text, options.buttons);
       } catch {
         // Best-effort only; submission flow must not fail on notification errors.
       }
     });
   } catch {
     void (async () => {
-      await maybeWarmOpenGraphMetadata(warmUrl);
-      await sendTelegramMessage(text);
+      await maybeWarmOpenGraphMetadata(options.warmUrl);
+      await sendTelegramMessage(text, options.buttons);
     })().catch(() => {
       // Best-effort only; submission flow must not fail on notification errors.
     });
   }
 }
 
-async function sendTelegramMessage(text: string): Promise<void> {
+async function sendTelegramMessage(text: string, buttons?: TelegramInlineButton[]): Promise<void> {
   const botToken = process.env.RUNS_TELEGRAM_BOT_TOKEN;
   const chatId = process.env.RUNS_TELEGRAM_CHAT_ID;
 
@@ -45,6 +76,12 @@ async function sendTelegramMessage(text: string): Promise<void> {
     },
     body: JSON.stringify({
       chat_id: chatId,
+      reply_markup:
+        buttons && buttons.length > 0
+          ? {
+              inline_keyboard: [buttons],
+            }
+          : undefined,
       text,
     }),
     signal: AbortSignal.timeout(TELEGRAM_TIMEOUT_MS),
