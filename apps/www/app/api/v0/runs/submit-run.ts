@@ -6,7 +6,7 @@ export async function submitRun(input: Parameters<typeof processBundle>[0]) {
   const result = await processBundle(input);
 
   if (result.ok) {
-    scheduleNewRunSubmittedNotification(result.runId, result.runUrl);
+    scheduleNewRunSubmittedNotification(result.runUrl);
   }
 
   return result;
