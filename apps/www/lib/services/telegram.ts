@@ -1,8 +1,7 @@
 import { after } from 'next/server';
 
 import { RunStatus } from '@/lib/db/schema';
-
-import { createUpdateRunStatusActionUrl } from '@/app/api/_/update-run-status/run-status';
+import getUpdateRunStatusActionUrl from '@/lib/utils/get-update-run-status-action-url';
 
 const TELEGRAM_API_BASE_URL = 'https://api.telegram.org';
 const TELEGRAM_TIMEOUT_MS = 5_000;
@@ -21,7 +20,7 @@ interface ScheduleRunTelegramNotificationOptions {
 }
 
 export function scheduleNewRunSubmittedNotification(runId: string, runUrl: string): void {
-  const verifyActionUrl = createUpdateRunStatusActionUrl(runId, RunStatus.VERIFIED);
+  const verifyActionUrl = getUpdateRunStatusActionUrl(runId, RunStatus.VERIFIED);
 
   scheduleRunTelegramNotification(`New run submitted:\n${runUrl}`, {
     warmUrl: runUrl,

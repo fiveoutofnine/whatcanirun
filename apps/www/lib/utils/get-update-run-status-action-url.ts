@@ -2,7 +2,10 @@ import { createHmac } from 'node:crypto';
 
 import { RunStatus } from '@/lib/db/schema';
 
-export function createUpdateRunStatusActionUrl(runId: string, status: RunStatus): string | null {
+export default function getUpdateRunStatusActionUrl(
+  runId: string,
+  status: RunStatus,
+): string | null {
   const secret = process.env.CRON_SECRET;
   if (!secret) return null;
 
