@@ -68,6 +68,11 @@ const QWEN35_LARGE_MODEL_GOALS = Object.freeze({
   priority: 9,
 });
 
+const QWEN36_FRONTIER_GOALS = Object.freeze({
+  ...FRONTIER_GOALS,
+  priority: 12,
+});
+
 const GEMMA_FRONTIER_GOALS = Object.freeze({
   ...FRONTIER_GOALS,
   priority: 10,
@@ -176,6 +181,186 @@ function featuredGguf(input: FeaturedGgufInput) {
 }
 
 export const FEATURED_WISHLIST = defineFeaturedWishlist([
+  // -----------------------------------------------------------------------------
+  // Qwen 3.6
+  // -----------------------------------------------------------------------------
+  featuredGguf({
+    ...QWEN36_FRONTIER_GOALS,
+    deviceTypes: LLAMA_CPP_DEVICE_TYPES,
+    displayName: 'Qwen3.6-35B-A3B-MXFP4_MOE',
+    hfFileName: 'Qwen3.6-35B-A3B-MXFP4_MOE.gguf',
+    hfRepoId: 'unsloth/Qwen3.6-35B-A3B-GGUF',
+    fileSizeBytes: 21706144736,
+  }),
+  featuredGguf({
+    ...QWEN36_FRONTIER_GOALS,
+    deviceTypes: LLAMA_CPP_DEVICE_TYPES,
+    displayName: 'Qwen3.6-35B-A3B-Q8_0',
+    hfFileName: 'Qwen3.6-35B-A3B-Q8_0.gguf',
+    hfRepoId: 'unsloth/Qwen3.6-35B-A3B-GGUF',
+    fileSizeBytes: 36903140320,
+  }),
+  featuredGguf({
+    ...QWEN36_FRONTIER_GOALS,
+    deviceTypes: LLAMA_CPP_DEVICE_TYPES,
+    displayName: 'Qwen3.6-35B-A3B-UD-IQ1_M',
+    hfFileName: 'Qwen3.6-35B-A3B-UD-IQ1_M.gguf',
+    hfRepoId: 'unsloth/Qwen3.6-35B-A3B-GGUF',
+    fileSizeBytes: 10047749088,
+  }),
+  featuredGguf({
+    ...QWEN36_FRONTIER_GOALS,
+    deviceTypes: LLAMA_CPP_DEVICE_TYPES,
+    displayName: 'Qwen3.6-35B-A3B-UD-IQ2_M',
+    hfFileName: 'Qwen3.6-35B-A3B-UD-IQ2_M.gguf',
+    hfRepoId: 'unsloth/Qwen3.6-35B-A3B-GGUF',
+    fileSizeBytes: 11522702304,
+  }),
+  featuredGguf({
+    ...QWEN36_FRONTIER_GOALS,
+    deviceTypes: LLAMA_CPP_DEVICE_TYPES,
+    displayName: 'Qwen3.6-35B-A3B-UD-IQ2_XXS',
+    hfFileName: 'Qwen3.6-35B-A3B-UD-IQ2_XXS.gguf',
+    hfRepoId: 'unsloth/Qwen3.6-35B-A3B-GGUF',
+    fileSizeBytes: 10756586464,
+  }),
+  featuredGguf({
+    ...QWEN36_FRONTIER_GOALS,
+    deviceTypes: LLAMA_CPP_DEVICE_TYPES,
+    displayName: 'Qwen3.6-35B-A3B-UD-IQ3_S',
+    hfFileName: 'Qwen3.6-35B-A3B-UD-IQ3_S.gguf',
+    hfRepoId: 'unsloth/Qwen3.6-35B-A3B-GGUF',
+    fileSizeBytes: 13676723168,
+  }),
+  featuredGguf({
+    ...QWEN36_FRONTIER_GOALS,
+    deviceTypes: LLAMA_CPP_DEVICE_TYPES,
+    displayName: 'Qwen3.6-35B-A3B-UD-IQ3_XXS',
+    hfFileName: 'Qwen3.6-35B-A3B-UD-IQ3_XXS.gguf',
+    hfRepoId: 'unsloth/Qwen3.6-35B-A3B-GGUF',
+    fileSizeBytes: 13211155424,
+  }),
+  featuredGguf({
+    ...QWEN36_FRONTIER_GOALS,
+    deviceTypes: LLAMA_CPP_DEVICE_TYPES,
+    displayName: 'Qwen3.6-35B-A3B-UD-IQ4_NL',
+    hfFileName: 'Qwen3.6-35B-A3B-UD-IQ4_NL.gguf',
+    hfRepoId: 'unsloth/Qwen3.6-35B-A3B-GGUF',
+    fileSizeBytes: 18040888288,
+  }),
+  featuredGguf({
+    ...QWEN36_FRONTIER_GOALS,
+    deviceTypes: LLAMA_CPP_DEVICE_TYPES,
+    displayName: 'Qwen3.6-35B-A3B-UD-IQ4_XS',
+    hfFileName: 'Qwen3.6-35B-A3B-UD-IQ4_XS.gguf',
+    hfRepoId: 'unsloth/Qwen3.6-35B-A3B-GGUF',
+    fileSizeBytes: 17730509792,
+  }),
+  featuredGguf({
+    ...QWEN36_FRONTIER_GOALS,
+    deviceTypes: LLAMA_CPP_DEVICE_TYPES,
+    displayName: 'Qwen3.6-35B-A3B-UD-Q2_K_XL',
+    hfFileName: 'Qwen3.6-35B-A3B-UD-Q2_K_XL.gguf',
+    hfRepoId: 'unsloth/Qwen3.6-35B-A3B-GGUF',
+    fileSizeBytes: 12290628576,
+  }),
+  featuredGguf({
+    ...QWEN36_FRONTIER_GOALS,
+    deviceTypes: LLAMA_CPP_DEVICE_TYPES,
+    displayName: 'Qwen3.6-35B-A3B-UD-Q3_K_M',
+    hfFileName: 'Qwen3.6-35B-A3B-UD-Q3_K_M.gguf',
+    hfRepoId: 'unsloth/Qwen3.6-35B-A3B-GGUF',
+    fileSizeBytes: 16600710112,
+  }),
+  featuredGguf({
+    ...QWEN36_FRONTIER_GOALS,
+    deviceTypes: LLAMA_CPP_DEVICE_TYPES,
+    displayName: 'Qwen3.6-35B-A3B-UD-Q3_K_S',
+    hfFileName: 'Qwen3.6-35B-A3B-UD-Q3_K_S.gguf',
+    hfRepoId: 'unsloth/Qwen3.6-35B-A3B-GGUF',
+    fileSizeBytes: 15359196128,
+  }),
+  featuredGguf({
+    ...QWEN36_FRONTIER_GOALS,
+    deviceTypes: LLAMA_CPP_DEVICE_TYPES,
+    displayName: 'Qwen3.6-35B-A3B-UD-Q3_K_XL',
+    hfFileName: 'Qwen3.6-35B-A3B-UD-Q3_K_XL.gguf',
+    hfRepoId: 'unsloth/Qwen3.6-35B-A3B-GGUF',
+    fileSizeBytes: 16845511648,
+  }),
+  featuredGguf({
+    ...QWEN36_FRONTIER_GOALS,
+    deviceTypes: LLAMA_CPP_DEVICE_TYPES,
+    displayName: 'Qwen3.6-35B-A3B-UD-Q4_K_M',
+    hfFileName: 'Qwen3.6-35B-A3B-UD-Q4_K_M.gguf',
+    hfRepoId: 'unsloth/Qwen3.6-35B-A3B-GGUF',
+    fileSizeBytes: 22134528992,
+  }),
+  featuredGguf({
+    ...QWEN36_FRONTIER_GOALS,
+    deviceTypes: LLAMA_CPP_DEVICE_TYPES,
+    displayName: 'Qwen3.6-35B-A3B-UD-Q4_K_S',
+    hfFileName: 'Qwen3.6-35B-A3B-UD-Q4_K_S.gguf',
+    hfRepoId: 'unsloth/Qwen3.6-35B-A3B-GGUF',
+    fileSizeBytes: 20893015008,
+  }),
+  featuredGguf({
+    ...QWEN36_FRONTIER_GOALS,
+    deviceTypes: LLAMA_CPP_DEVICE_TYPES,
+    displayName: 'Qwen3.6-35B-A3B-UD-Q4_K_XL',
+    hfFileName: 'Qwen3.6-35B-A3B-UD-Q4_K_XL.gguf',
+    hfRepoId: 'unsloth/Qwen3.6-35B-A3B-GGUF',
+    fileSizeBytes: 22360456160,
+  }),
+  featuredGguf({
+    ...QWEN36_FRONTIER_GOALS,
+    deviceTypes: LLAMA_CPP_DEVICE_TYPES,
+    displayName: 'Qwen3.6-35B-A3B-UD-Q5_K_M',
+    hfFileName: 'Qwen3.6-35B-A3B-UD-Q5_K_M.gguf',
+    hfRepoId: 'unsloth/Qwen3.6-35B-A3B-GGUF',
+    fileSizeBytes: 26456194016,
+  }),
+  featuredGguf({
+    ...QWEN36_FRONTIER_GOALS,
+    deviceTypes: LLAMA_CPP_DEVICE_TYPES,
+    displayName: 'Qwen3.6-35B-A3B-UD-Q5_K_S',
+    hfFileName: 'Qwen3.6-35B-A3B-UD-Q5_K_S.gguf',
+    hfRepoId: 'unsloth/Qwen3.6-35B-A3B-GGUF',
+    fileSizeBytes: 24942050272,
+  }),
+  featuredGguf({
+    ...QWEN36_FRONTIER_GOALS,
+    deviceTypes: LLAMA_CPP_DEVICE_TYPES,
+    displayName: 'Qwen3.6-35B-A3B-UD-Q5_K_XL',
+    hfFileName: 'Qwen3.6-35B-A3B-UD-Q5_K_XL.gguf',
+    hfRepoId: 'unsloth/Qwen3.6-35B-A3B-GGUF',
+    fileSizeBytes: 26592508896,
+  }),
+  featuredGguf({
+    ...QWEN36_FRONTIER_GOALS,
+    deviceTypes: LLAMA_CPP_DEVICE_TYPES,
+    displayName: 'Qwen3.6-35B-A3B-UD-Q6_K',
+    hfFileName: 'Qwen3.6-35B-A3B-UD-Q6_K.gguf',
+    hfRepoId: 'unsloth/Qwen3.6-35B-A3B-GGUF',
+    fileSizeBytes: 29059447776,
+  }),
+  featuredGguf({
+    ...QWEN36_FRONTIER_GOALS,
+    deviceTypes: LLAMA_CPP_DEVICE_TYPES,
+    displayName: 'Qwen3.6-35B-A3B-UD-Q6_K_XL',
+    hfFileName: 'Qwen3.6-35B-A3B-UD-Q6_K_XL.gguf',
+    hfRepoId: 'unsloth/Qwen3.6-35B-A3B-GGUF',
+    fileSizeBytes: 31843777504,
+  }),
+  featuredGguf({
+    ...QWEN36_FRONTIER_GOALS,
+    deviceTypes: LLAMA_CPP_DEVICE_TYPES,
+    displayName: 'Qwen3.6-35B-A3B-UD-Q8_K_XL',
+    hfFileName: 'Qwen3.6-35B-A3B-UD-Q8_K_XL.gguf',
+    hfRepoId: 'unsloth/Qwen3.6-35B-A3B-GGUF',
+    fileSizeBytes: 38451182560,
+  }),
+
   // -----------------------------------------------------------------------------
   // OpenAI
   // -----------------------------------------------------------------------------
