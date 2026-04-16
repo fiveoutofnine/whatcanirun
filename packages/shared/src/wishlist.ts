@@ -70,7 +70,7 @@ const QWEN35_LARGE_MODEL_GOALS = Object.freeze({
 
 const QWEN36_FRONTIER_GOALS = Object.freeze({
   ...FRONTIER_GOALS,
-  priority: 12,
+  priority: 15,
 });
 
 const GEMMA_FRONTIER_GOALS = Object.freeze({
