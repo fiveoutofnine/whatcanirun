@@ -337,10 +337,10 @@ export function selectFeaturedWishlistEntries(
     scoredEntries.sort(
       (left, right) =>
         Number(left.repoPreferredQuantSaturated) - Number(right.repoPreferredQuantSaturated) ||
+        right.entry.priority - left.entry.priority ||
         right.exactGap - left.exactGap ||
         right.breadthGap - left.breadthGap ||
         right.repoBreadthGap - left.repoBreadthGap ||
-        right.entry.priority - left.entry.priority ||
         left.exactCoverage - right.exactCoverage ||
         left.distinctCoveredEntriesForRepo - right.distinctCoveredEntriesForRepo ||
         left.distinctCoveredTargets - right.distinctCoveredTargets ||
@@ -349,10 +349,10 @@ export function selectFeaturedWishlistEntries(
   } else {
     scoredEntries.sort(
       (left, right) =>
+        right.entry.priority - left.entry.priority ||
         right.breadthGap - left.breadthGap ||
         right.repoBreadthGap - left.repoBreadthGap ||
         right.underfilledTargetCount - left.underfilledTargetCount ||
-        right.entry.priority - left.entry.priority ||
         left.distinctCoveredEntriesForRepo - right.distinctCoveredEntriesForRepo ||
         left.distinctCoveredTargets - right.distinctCoveredTargets ||
         left.weakestTargetCoverage - right.weakestTargetCoverage ||
