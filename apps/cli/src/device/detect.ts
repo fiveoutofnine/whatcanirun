@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 
-import { normalizeLinuxGpuModel, parseLinuxPciGpuModel } from './linux-gpu';
 import { warn } from '../utils/log';
+import { normalizeLinuxGpuModel, parseLinuxPciGpuModel } from './linux-gpu';
 
 // -----------------------------------------------------------------------------
 // Types

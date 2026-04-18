@@ -111,11 +111,11 @@ export function lookupAmdIntegratedGpuFromCpuModel(cpuModel: string): string | n
   if (!normalizedCpuModel.startsWith('RYZEN')) return null;
   if (normalizedCpuModel.includes('RYZEN AI')) {
     const aiToken = normalizedCpuModel.match(/\b(\d{3})\b/u)?.[1];
-    return aiToken ? AMD_RYZEN_AI_GPU_BY_CPU_TOKEN[aiToken] ?? null : null;
+    return aiToken ? (AMD_RYZEN_AI_GPU_BY_CPU_TOKEN[aiToken] ?? null) : null;
   }
 
   const cpuToken = normalizedCpuModel.match(/\b(\d{4}(?:HS|HX|H|U|GE|G)|\d{3})\b/u)?.[1];
-  return cpuToken ? AMD_RYZEN_GPU_BY_CPU_TOKEN[cpuToken] ?? null : null;
+  return cpuToken ? (AMD_RYZEN_GPU_BY_CPU_TOKEN[cpuToken] ?? null) : null;
 }
 
 function normalizeAmdCpuModel(cpuModel: string): string {
