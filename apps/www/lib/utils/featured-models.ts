@@ -126,10 +126,7 @@ export function getFeaturedCoverageKey(
   return `${runtime}::${modelRef}::${target}`;
 }
 
-export function getFeaturedModelCoverageKey(
-  runtime: FeaturedRuntime,
-  modelRef: string,
-): string {
+export function getFeaturedModelCoverageKey(runtime: FeaturedRuntime, modelRef: string): string {
   return `${runtime}::${modelRef}`;
 }
 
@@ -159,9 +156,7 @@ export function getFeaturedModelsCacheKey(query: FeaturedModelsQuery = {}): stri
   ];
 }
 
-function buildFeaturedCoverageIndex(
-  rows: readonly HistoricalFeaturedCoverageRow[],
-): {
+function buildFeaturedCoverageIndex(rows: readonly HistoricalFeaturedCoverageRow[]): {
   coverage: Map<string, number>;
   distinctTargets: Map<string, readonly FeaturedDeviceTarget[]>;
 } {
@@ -300,9 +295,9 @@ export function selectFeaturedWishlistEntries(
 
     const exactCoverage =
       useTargetedEntries && deviceTarget
-        ? options.coverage.get(
+        ? (options.coverage.get(
             getFeaturedCoverageKey(entry.runtime, entry.modelRef, deviceTarget),
-          ) ?? 0
+          ) ?? 0)
         : 0;
     const repoPreferredQuantSaturated =
       useTargetedEntries && deviceTarget
@@ -360,9 +355,7 @@ export function selectFeaturedWishlistEntries(
     );
   }
 
-  return scoredEntries
-    .slice(0, limit ?? scoredEntries.length)
-    .map(({ entry }) => entry);
+  return scoredEntries.slice(0, limit ?? scoredEntries.length).map(({ entry }) => entry);
 }
 
 async function getHistoricalFeaturedCoverageRows(
@@ -379,8 +372,9 @@ async function getHistoricalFeaturedCoverageRows(
     { devices, models, modelsInfo, runs, RunStatus },
   ] = await Promise.all([import('drizzle-orm'), import('@/lib/db'), import('@/lib/db/schema')]);
 
-  const modelSourceExpression =
-    sql<string | null>`COALESCE(NULLIF(${modelsInfo.source}, ''), ${models.source})`;
+  const modelSourceExpression = sql<
+    string | null
+  >`COALESCE(NULLIF(${modelsInfo.source}, ''), ${models.source})`;
   const whereConditions = [
     eq(runs.status, RunStatus.VERIFIED),
     inArray(modelSourceExpression, candidateModelRefs),
@@ -429,10 +423,12 @@ async function getFeaturedModelSizeRows(
     import('@/lib/db/schema'),
   ]);
 
-  const modelSourceExpression =
-    sql<string | null>`COALESCE(NULLIF(${modelsInfo.source}, ''), ${models.source})`;
-  const fileSizeExpression =
-    sql<number | null>`COALESCE(NULLIF(${modelsInfo.fileSizeBytes}, 0), ${models.fileSizeBytes})`;
+  const modelSourceExpression = sql<
+    string | null
+  >`COALESCE(NULLIF(${modelsInfo.source}, ''), ${models.source})`;
+  const fileSizeExpression = sql<
+    number | null
+  >`COALESCE(NULLIF(${modelsInfo.fileSizeBytes}, 0), ${models.fileSizeBytes})`;
 
   return db
     .select({

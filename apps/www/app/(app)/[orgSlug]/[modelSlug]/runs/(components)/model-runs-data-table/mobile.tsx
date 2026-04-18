@@ -283,7 +283,7 @@ const ModelRunsDataTableMobileSubComponent: React.FC<{ data: ModelRunsDataTableV
         />
       </Stat>
       <Button
-        className="w-full col-span-2"
+        className="col-span-2 w-full"
         href={`/run/${data.id}`}
         size="md"
         variant="outline"

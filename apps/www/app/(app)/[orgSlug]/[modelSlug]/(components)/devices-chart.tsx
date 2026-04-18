@@ -102,9 +102,7 @@ const ModelDevicesChartChart: React.FC<ModelDevicesChartProps> = ({ data, defaul
       gguf: quantOptions.filter((o) => o.format === 'gguf').map(getQuantOptionKey),
       mlx: quantOptions.filter((o) => o.format === 'mlx').map(getQuantOptionKey),
       fourBit: quantOptions.filter((o) => matchesQuantBitWidth(o.quant, 4)).map(getQuantOptionKey),
-      eightBit: quantOptions
-        .filter((o) => matchesQuantBitWidth(o.quant, 8))
-        .map(getQuantOptionKey),
+      eightBit: quantOptions.filter((o) => matchesQuantBitWidth(o.quant, 8)).map(getQuantOptionKey),
     }),
     [quantOptions],
   );

@@ -229,7 +229,7 @@ const ModelTableCellSkeleton: React.FC = () => {
             </div>
           );
         })}
-        <div className="flex w-fit text-gray-11">
+        <div className="flex w-fit text-xs leading-4 text-gray-11">
           Source
           <ArrowUpRight className="size-2.5" />
         </div>

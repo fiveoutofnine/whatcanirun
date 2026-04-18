@@ -327,6 +327,7 @@ export const trials = pgTable(
 const labOrg = alias(organizations, 'lab_org');
 const quantOrg = alias(organizations, 'quant_org');
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function getLatestModelGroupMetadata(qb: any) {
   const modelGroupKey = getModelGroupKeySql(
     modelsInfo.source,
@@ -355,9 +356,9 @@ function getLatestModelGroupMetadata(qb: any) {
       >`COALESCE(NULLIF(${modelsInfo.parameters}, ''), ${models.parameters})`.as(
         'model_parameters',
       ),
-      modelQuant: sql<
-        string | null
-      >`COALESCE(NULLIF(${modelsInfo.quant}, ''), ${models.quant})`.as('model_quant'),
+      modelQuant: sql<string | null>`COALESCE(NULLIF(${modelsInfo.quant}, ''), ${models.quant})`.as(
+        'model_quant',
+      ),
       modelArchitecture: sql<
         string | null
       >`COALESCE(NULLIF(${modelsInfo.architecture}, ''), ${models.architecture})`.as(
@@ -371,8 +372,9 @@ function getLatestModelGroupMetadata(qb: any) {
       familySlug: sql<string | null>`${modelFamilies.slug}`.as('family_slug'),
       quantizedByName: sql<string | null>`${quantOrg.name}`.as('quantized_by_name'),
       quantizedByLogoUrl: sql<string | null>`${quantOrg.logoUrl}`.as('quantized_by_logo_url'),
-      quantizedByWebsiteUrl:
-        sql<string | null>`${quantOrg.websiteUrl}`.as('quantized_by_website_url'),
+      quantizedByWebsiteUrl: sql<string | null>`${quantOrg.websiteUrl}`.as(
+        'quantized_by_website_url',
+      ),
     })
     .from(models)
     .leftJoin(modelsInfo, eq(models.artifactSha256, modelsInfo.artifactSha256))
@@ -511,7 +513,10 @@ export const view__model_stats_by_device = pgMaterializedView('view__model_stats
       .innerJoin(models, eq(runs.modelId, models.id))
       .innerJoin(devices, eq(runs.deviceId, devices.id))
       .leftJoin(modelsInfo, eq(models.artifactSha256, modelsInfo.artifactSha256))
-      .innerJoin(latestModelGroupMetadata, sql`${modelGroupKey} = ${latestModelGroupMetadata.modelGroupKey}`)
+      .innerJoin(
+        latestModelGroupMetadata,
+        sql`${modelGroupKey} = ${latestModelGroupMetadata.modelGroupKey}`,
+      )
       .where(
         and(
           eq(runs.status, RunStatus.VERIFIED),
@@ -622,7 +627,10 @@ export const view__model_device_summary = pgMaterializedView('view__model_device
       .innerJoin(models, eq(runs.modelId, models.id))
       .innerJoin(devices, eq(runs.deviceId, devices.id))
       .leftJoin(modelsInfo, eq(models.artifactSha256, modelsInfo.artifactSha256))
-      .innerJoin(latestModelGroupMetadata, sql`${modelGroupKey} = ${latestModelGroupMetadata.modelGroupKey}`)
+      .innerJoin(
+        latestModelGroupMetadata,
+        sql`${modelGroupKey} = ${latestModelGroupMetadata.modelGroupKey}`,
+      )
       .where(
         and(
           eq(runs.status, RunStatus.VERIFIED),

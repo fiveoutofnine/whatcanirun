@@ -242,11 +242,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
         <UserAvatar
           icon={
             modelQuantizedBy?.logoUrl ? (
-              <UserAvatar
-                image={modelQuantizedBy.logoUrl}
-                name={modelQuantizedBy.name}
-                size={14}
-              />
+              <UserAvatar image={modelQuantizedBy.logoUrl} name={modelQuantizedBy.name} size={14} />
             ) : undefined
           }
           image={modelLab.logoUrl}
@@ -258,11 +254,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
         <UserAvatar
           icon={
             modelQuantizedBy?.logoUrl ? (
-              <UserAvatar
-                image={modelQuantizedBy.logoUrl}
-                name={modelQuantizedBy.name}
-                size={14}
-              />
+              <UserAvatar image={modelQuantizedBy.logoUrl} name={modelQuantizedBy.name} size={14} />
             ) : undefined
           }
           image={modelLab.logoUrl}
@@ -293,12 +285,12 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       <header className="w-full border-b border-gray-6 bg-black px-4 py-4 md:px-6 md:py-8">
         <div className="mx-auto flex w-full max-w-5xl items-start gap-2 md:gap-3">
           {ModelAvatar ? <div className="shrink-0 pt-1">{ModelAvatar}</div> : null}
-          <div className="min-w-0 flex flex-1 flex-col gap-1 md:gap-2">
+          <div className="flex min-w-0 flex-1 flex-col gap-1 md:gap-2">
             <h1 className="min-w-0 text-wrap text-2xl font-medium leading-snug tracking-tight text-gray-11 md:text-3xl">
               {modelHeading}
               <span className="font-normal text-gray-11"> {benchmarkOnLabel} </span>
               <PreservedDeviceLink
-                className="inline-flex max-w-full min-w-0 flex-wrap items-center gap-x-2 gap-y-1 align-[-0.125em] text-gray-12 hover:underline"
+                className="inline-flex min-w-0 max-w-full flex-wrap items-center gap-x-2 gap-y-1 align-[-0.125em] text-gray-12 hover:underline"
                 href={deviceHref}
               >
                 {ManufacturerLogo && manufacturer ? (

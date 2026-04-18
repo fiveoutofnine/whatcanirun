@@ -187,11 +187,7 @@ const ModelRunsDataTableDesktop: React.FC<ModelRunsDataTableInternalProps> = (ta
               inverted={false}
               triggerProps={{ asChild: true }}
             >
-              <IconButton
-                aria-label="View run"
-                href={`/run/${row.original.id}`}
-                variant="outline"
-              >
+              <IconButton aria-label="View run" href={`/run/${row.original.id}`} variant="outline">
                 <ArrowRight />
               </IconButton>
             </Tooltip>

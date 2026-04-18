@@ -7,8 +7,8 @@ import {
   modelFamilies,
   models,
   modelsInfo,
-  organizations,
   type Organization,
+  organizations,
   view__model_device_summary,
 } from '@/lib/db/schema';
 import { getModelGroupKey } from '@/lib/utils/model-grouping';

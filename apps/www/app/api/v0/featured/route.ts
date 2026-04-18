@@ -1,6 +1,7 @@
-import { isFeaturedRuntime } from '@whatcanirun/shared';
 import { unstable_cache as cache } from 'next/cache';
 import { type NextRequest, NextResponse } from 'next/server';
+
+import { isFeaturedRuntime } from '@whatcanirun/shared';
 
 import {
   FEATURED_MODELS_CACHE_REVALIDATE_SECONDS,
@@ -53,14 +54,10 @@ export async function GET(request: NextRequest) {
     ...(clampedLimit ? { limit: clampedLimit } : {}),
   };
 
-  const featured = await cache(
-    () => getFeaturedModels(query),
-    getFeaturedModelsCacheKey(query),
-    {
-      tags: [FEATURED_MODELS_CACHE_TAG],
-      revalidate: FEATURED_MODELS_CACHE_REVALIDATE_SECONDS,
-    },
-  )();
+  const featured = await cache(() => getFeaturedModels(query), getFeaturedModelsCacheKey(query), {
+    tags: [FEATURED_MODELS_CACHE_TAG],
+    revalidate: FEATURED_MODELS_CACHE_REVALIDATE_SECONDS,
+  })();
 
   return NextResponse.json(featured);
 }
