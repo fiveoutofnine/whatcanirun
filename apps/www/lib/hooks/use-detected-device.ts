@@ -1,6 +1,12 @@
 import { useMemo } from 'react';
 
 // -----------------------------------------------------------------------------
+// Constants
+// -----------------------------------------------------------------------------
+
+const APPLE_CAPPED_DEVICE_MEMORY_FLOOR_GB = 32;
+
+// -----------------------------------------------------------------------------
 // Types
 // -----------------------------------------------------------------------------
 
@@ -72,13 +78,40 @@ const useDetectedDevice = <T extends DetectableDevice>(devices: T[]) => {
       if (coreMatch.length > 0) candidates = coreMatch;
     }
 
-    if (hw.ram) {
-      const ramMatch = candidates.filter((device) => device.ramGb >= hw.ram!);
+    const reportedRam = hw.ram;
+
+    if (reportedRam) {
+      const ramMatch = candidates.filter((device) => device.ramGb >= reportedRam);
       if (ramMatch.length > 0) candidates = ramMatch;
-      candidates.sort((a, b) => a.ramGb - b.ramGb);
     }
 
-    candidates.sort((a, b) => (b.modelCount ?? 0) - (a.modelCount ?? 0));
+    const ramValues = candidates.map((device) => device.ramGb);
+    const minCandidateRam = Math.min(...ramValues);
+    const maxCandidateRam = Math.max(...ramValues);
+    const isAppleDeviceMatch = candidates.every((device) =>
+      device.gpu.toLowerCase().startsWith('apple'),
+    );
+    const cappedAppleRamTarget =
+      isAppleDeviceMatch &&
+      reportedRam &&
+      reportedRam >= APPLE_CAPPED_DEVICE_MEMORY_FLOOR_GB &&
+      maxCandidateRam > reportedRam
+        ? Math.min(reportedRam * 2, maxCandidateRam)
+        : null;
+    const preferLargestAppleRam =
+      isAppleDeviceMatch && maxCandidateRam > minCandidateRam && !reportedRam;
+
+    candidates.sort((a, b) => {
+      if (cappedAppleRamTarget && a.ramGb !== b.ramGb) {
+        const aDelta = Math.abs(a.ramGb - cappedAppleRamTarget);
+        const bDelta = Math.abs(b.ramGb - cappedAppleRamTarget);
+        if (aDelta !== bDelta) return aDelta - bDelta;
+        return a.ramGb - b.ramGb;
+      }
+      if (preferLargestAppleRam && a.ramGb !== b.ramGb) return b.ramGb - a.ramGb;
+      if (reportedRam && a.ramGb !== b.ramGb) return a.ramGb - b.ramGb;
+      return (b.modelCount ?? 0) - (a.modelCount ?? 0);
+    });
 
     return candidates[0] ?? null;
   }, [devices]);
