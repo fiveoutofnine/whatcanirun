@@ -75,8 +75,13 @@ const useDetectedDevice = <T extends DetectableDevice>(devices: T[]) => {
     if (hw.ram) {
       const ramMatch = candidates.filter((device) => device.ramGb >= hw.ram!);
       if (ramMatch.length > 0) candidates = ramMatch;
-      candidates.sort((a, b) => a.ramGb - b.ramGb);
     }
+
+    // deviceMemory is coarsened and may be capped, so a reading such as 64 GB
+    // cannot distinguish a 64 GB device from a 128 GB device. Avoid assigning
+    // the "Your device" label or auto-selecting a RAM-specific chip when the
+    // browser APIs leave more than one memory configuration possible.
+    if (new Set(candidates.map((device) => device.ramGb)).size > 1) return null;
 
     candidates.sort((a, b) => (b.modelCount ?? 0) - (a.modelCount ?? 0));
 
