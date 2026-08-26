@@ -11,6 +11,7 @@ Find the best AI models you can run locally, and benchmark them on your hardware
 | --- | --- |
 | [`apps/www`](apps/www) | Next.js web app powering [whatcani.run](https://whatcani.run) |
 | [`apps/cli`](apps/cli) | CLI benchmarking tool (`whatcanirun` / `wcir`) |
+| [`apps/evals`](apps/evals) | Modal GGUF capability evaluation and task-specific Pareto reports |
 | [`packages/shared`](packages/shared) | Shared types, schemas, and utilities |
 
 ## Getting Started
@@ -41,6 +42,15 @@ See [`apps/www/README.md`](apps/www/README.md) for environment setup and local d
 cd apps/www
 cp .env.sample .env  # fill in env vars
 bun run dev
+```
+
+### Capability Evaluations
+
+See [`apps/evals/README.md`](apps/evals/README.md) for the pinned model grid, Modal setup,
+and evaluation/report commands. Validate the plan without launching cloud jobs:
+
+```bash
+bun run --filter @whatcanirun/evals validate
 ```
 
 ## Scripts

@@ -1,0 +1,98 @@
+{
+  "schema_version": "1",
+  "benchmark_id": "developer-screening-v1",
+  "engine": {
+    "name": "llama.cpp",
+    "repository": "ggml-org/llama.cpp",
+    "commit": "f280b26983ad0fdb705a0d9ebf0503e76f2899b0"
+  },
+  "inference": {
+    "context_length": 16384,
+    "gpu_layers": 999,
+    "flash_attention": true,
+    "kv_cache_type_k": "f16",
+    "kv_cache_type_v": "f16",
+    "parallel_slots": 1
+  },
+  "rounds": {
+    "screening": {
+      "temperature": 0.0,
+      "top_p": 1.0,
+      "top_k": 0,
+      "min_p": 0.0,
+      "max_tokens": 512,
+      "seeds": [42],
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    },
+    "finalists": {
+      "temperature": 0.6,
+      "top_p": 0.95,
+      "top_k": 20,
+      "min_p": 0.0,
+      "max_tokens": 2048,
+      "seeds": [11, 29, 47],
+      "chat_template_kwargs": {
+        "enable_thinking": true,
+        "reasoning_effort": "medium"
+      }
+    }
+  },
+  "candidates": [
+    {
+      "id": "qwen3.8-27b-ud-q2-k-xl",
+      "repo_id": "unsloth/Qwen3.8-27B-GGUF",
+      "filename": "Qwen3.8-27B-UD-Q2_K_XL.gguf",
+      "revision": "4ca720788d1e01f1bff70c033e0d0028fd02e502",
+      "artifact_sha256": "fd4730dd8aad070517978752b63d530aeb1740d2283cab9fa24f1e404032ddb0",
+      "file_size_bytes": 9828981664,
+      "quant": "UD-Q2_K_XL"
+    },
+    {
+      "id": "qwen3.8-27b-ud-q3-k-xl",
+      "repo_id": "unsloth/Qwen3.8-27B-GGUF",
+      "filename": "Qwen3.8-27B-UD-Q3_K_XL.gguf",
+      "revision": "4ca720788d1e01f1bff70c033e0d0028fd02e502",
+      "artifact_sha256": "8c2a45ff85e7674ca185ec8eb6cdeab0e617ed9d8018caed0b64380eb2a67a5e",
+      "file_size_bytes": 13146393504,
+      "quant": "UD-Q3_K_XL"
+    },
+    {
+      "id": "qwen3.8-27b-ud-q4-k-m",
+      "repo_id": "unsloth/Qwen3.8-27B-GGUF",
+      "filename": "Qwen3.8-27B-UD-Q4_K_M.gguf",
+      "revision": "4ca720788d1e01f1bff70c033e0d0028fd02e502",
+      "artifact_sha256": "322e194ff79741c7baa497c240f677f54b201b0efab44ca8e50f122b39123482",
+      "file_size_bytes": 16464440224,
+      "quant": "UD-Q4_K_M"
+    },
+    {
+      "id": "qwen3.8-27b-ud-q6-k-m",
+      "repo_id": "unsloth/Qwen3.8-27B-GGUF",
+      "filename": "Qwen3.8-27B-UD-Q6_K_M.gguf",
+      "revision": "4ca720788d1e01f1bff70c033e0d0028fd02e502",
+      "artifact_sha256": "493301830a596b8ad56dc1329f80bbcb578c8e910da395feafdc9cd8263430bb",
+      "file_size_bytes": 23088409504,
+      "quant": "UD-Q6_K_M"
+    },
+    {
+      "id": "qwen3.5-9b-q8-0",
+      "repo_id": "unsloth/Qwen3.5-9B-GGUF",
+      "filename": "Qwen3.5-9B-Q8_0.gguf",
+      "revision": "3885219b6810b007914f3a7950a8d1b469d598a5",
+      "artifact_sha256": "809626574d0cb43d4becfa56169980da2bb448f2299270f7be443cb89d0a6ae4",
+      "file_size_bytes": 9527502048,
+      "quant": "Q8_0"
+    },
+    {
+      "id": "qwen3.5-4b-q8-0",
+      "repo_id": "unsloth/Qwen3.5-4B-GGUF",
+      "filename": "Qwen3.5-4B-Q8_0.gguf",
+      "revision": "e87f176479d0855a907a41277aca2f8ee7a09523",
+      "artifact_sha256": "10cc391b403021dd11c614679d2fd92f611c3681d29e29651b717316965d61e1",
+      "file_size_bytes": 4482403488,
+      "quant": "Q8_0"
+    }
+  ]
+}
