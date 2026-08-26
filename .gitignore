@@ -232,6 +232,9 @@ Temporary Items
 # Python virtual environments
 **/venvs/*
 .venvs/
+__pycache__/
+*.py[cod]
+apps/evals/results/
 
 # Editor/IDE configs
 .claude

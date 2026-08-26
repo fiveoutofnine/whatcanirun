@@ -426,7 +426,10 @@ export function inferModelFromName(modelRef: string): ModelInfo {
   if (isHfFile) {
     const colonIdx = modelRef.indexOf(':');
     const fileName = modelRef.slice(colonIdx + 1);
-    source = modelRef.slice(0, colonIdx);
+    // Keep the filename in the source identity. A GGUF repository commonly
+    // contains many quantizations, so the repo ID alone collapses distinct
+    // artifacts in downstream grouping and capability joins.
+    source = modelRef;
     name = fileName;
     format = inferFormat(fileName);
   } else if (isHfRepo) {

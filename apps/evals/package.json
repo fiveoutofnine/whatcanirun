@@ -1,0 +1,10 @@
+{
+  "name": "@whatcanirun/evals",
+  "private": true,
+  "scripts": {
+    "validate": "python3 benchmark.py validate",
+    "test": "python3 -m unittest discover -s . -p 'test_*.py' -v",
+    "eval": "uvx --from modal==1.5.4 modal run modal_app.py",
+    "report": "python3 benchmark.py report"
+  }
+}
